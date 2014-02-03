@@ -1,8 +1,8 @@
 Aeon
 ====
-Luke Undhjem
-Carlos Carbonell
-Livio De La Cruz
-Justin Yang
+Luke Undhjem<br />
+Carlos Carbonell<br />
+Livio De La Cruz<br />
+Justin Yang<br />
 
 Description goes here.
