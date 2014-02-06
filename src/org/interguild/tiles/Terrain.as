@@ -1,4 +1,4 @@
-package tiles
+package org.interguild.tiles
 {
 	import flash.display.Sprite;
 	
