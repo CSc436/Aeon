@@ -1,4 +1,4 @@
-package
+package org.interguild
 {
 	import flash.display.Sprite;
 
