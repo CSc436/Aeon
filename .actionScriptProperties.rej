@@ -1,0 +1,37 @@
+diff a/.actionScriptProperties b/.actionScriptProperties	(rejected hunks)
+@@ -1,5 +1,5 @@
+ <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+-<actionScriptProperties analytics="false" mainApplicationPath="aeongui/StartUp.as" projectUUID="22058471-0421-408d-98bf-8b6e316608f7" version="10">
++<actionScriptProperties analytics="false" mainApplicationPath="examples/SimpleButton.as" projectUUID="22058471-0421-408d-98bf-8b6e316608f7" version="10">
+   <compiler additionalCompilerArguments="-locale en_US" autoRSLOrdering="true" copyDependentFiles="true" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="true" htmlHistoryManagement="true" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin-debug" removeUnusedRSL="true" sourceFolderPath="src" strict="true" targetPlayerVersion="0.0.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+     <compilerSourcePath/>
+     <libraryPath defaultLinkType="0">
+@@ -17,23 +17,23 @@
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/spark.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/sparkskins.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/rpc.swc" useDefaultLinkType="false"/>
+-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
+-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/qtp_air.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/videoPlayer.swc" useDefaultLinkType="false"/>
++          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/qtp_air.swc" useDefaultLinkType="false"/>
++          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/datavisualization.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/spark_dmv.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation.swc" useDefaultLinkType="false"/>
+-          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_dmv.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flash-integration.swc" useDefaultLinkType="false"/>
++          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_dmv.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_flashflexkit.swc" useDefaultLinkType="false"/>
+           <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/automation_agent.swc" useDefaultLinkType="false"/>
+         </excludedEntries>
+       </libraryPathEntry>
+-      <libraryPathEntry kind="3" linkType="1" path="PrimaryFeather-Starling-Framework-1a50854/starling/bin/starling.swc" useDefaultLinkType="false"/>
+-      <libraryPathEntry kind="3" linkType="1" path="feathers/swc/feathers.swc" useDefaultLinkType="false"/>
+     </libraryPath>
+     <sourceAttachmentPath/>
+   </compiler>
+   <applications>
++    <application path="examples/SimpleButton.as"/>
++    <application path="aeongui/EditorGUI.as"/>
+     <application path="aeongui/StartUp.as"/>
+     <application path="aeongui/Game.as"/>
+   </applications>
