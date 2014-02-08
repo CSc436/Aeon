@@ -1,0 +1,23 @@
+Destructibility level (enum)
+    indestructible (can't break)
+   *spike (destroyed by touch, arrows, dynamtie, falling objects)
+    wooden (destroyed by touch, arrows, dynamite)
+    steel (destroyed by arrows and dynamite)
+   *platform (steel but broken by boulders as well)
+        *special case
+
+Solidity (boolean)
+    solid (can't pass through)
+    not solid
+
+Gravitational Susceptibility (boolean)
+    affected by gravity
+    not affected by gravity
+
+Knockback (boolean)
+    knocks player back
+    doesn't...
+
+Buoyancy (boolean)
+    floats
+    sinks
