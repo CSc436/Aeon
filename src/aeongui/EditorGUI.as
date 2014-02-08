@@ -56,8 +56,8 @@ package aeongui
 			downState      = new ButtonDisplayState(downColor, size);
 			overState      = new ButtonDisplayState(overColor, size);
 			upState        = new ButtonDisplayState(upColor, size);
-			hitTestState   = new ButtonDisplayState(upColor, size * 2); // changes button hitbox
-			hitTestState.x = -(size / 4);
+			hitTestState   = new ButtonDisplayState(upColor, size); // changes button hitbox
+			hitTestState.x = 0;
 			hitTestState.y = hitTestState.x;
 			useHandCursor  = true;
 		}
