@@ -5,7 +5,6 @@ package aeongui
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.display.SimpleButton;
-	import feathers.controls.Button;
 	public class EditorGUI extends Sprite
 	{
 			public function EditorGUI() {
@@ -40,12 +39,7 @@ package aeongui
 				label.defaultTextFormat = format;
 				addChild(label);
 			}
-			
-		
-			var button:Button = new Button();
-			button.label = "Click Me";
-			button.addEventListener( Event.TRIGGERED, button_triggeredHandler );
-			this.addChild( button );
+
 	}
 }
 	import flash.display.DisplayObject;
