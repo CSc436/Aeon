@@ -1,21 +1,15 @@
 package org.interguild {
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-	import flash.display.Stage;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	
-	import feathers.controls.Button;
-	
-	import starling.core.Starling;
+	import fl.controls.Button;
 
 	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
 
 		private var levelPage:LevelPage;
 		private var keys:KeyMan;
-
-		private var game:Starling;
 
 		public function Aeon() {
 			//stop stage from scaling and stuff
@@ -33,6 +27,11 @@ package org.interguild {
 			//init level page:
 			levelPage = new LevelPage();
 			addChild(levelPage);
+			
+			//button:
+			var b:Button = new Button();
+			b.label = "Click Me";
+			addChild(b);
 		}
 	}
 }
