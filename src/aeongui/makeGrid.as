@@ -1,22 +1,47 @@
 package aeongui
 {
-	import flash.display.Sprite;
-	import flash.text.TextField;
+	import fl.controls.Button;
+	
 	import flash.display.Graphics;
+	import flash.display.Sprite;
+	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
+	import flash.events.MouseEvent;
+	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
-	import fl.controls.Button;
 	public class makeGrid extends Sprite
 	{
+		private var b:Button;
+		private var tf:TextField;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
 		function makeGrid():void {
+			//stop stage from scaling and stuff
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.TOP_LEFT;
+			
+			//init bg
+			graphics.beginFill(0xFFFFFF);
+			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			graphics.endFill();
 			//button:
 			var b:Button = new Button();
 			b.label = "Click Me";
+			b.x = 600;
+			b.y = 300;
+			b.addEventListener(MouseEvent.CLICK,buttonClick);
 			addChild(b);
+			//textfield:
+			tf = new TextField();
+			tf.width = 200;
+			tf.height = 400;
+			tf.x = 600;
+			tf.y = 400;
+			tf.border = true;
+			addChild(tf);
+			
 			// Sprite that holds grid
 			var gridContainer:Sprite = new Sprite();
 			// number of objects to place into grid
@@ -45,7 +70,7 @@ package aeongui
 				trace(i, "\tcolumn =", column, "row =", row);
 			}
 			gridContainer.x = gridContainer.y = 20;
-			addChild(gridContainer);
+			addChild(gridContainer);	
 		}
 		/**
 		 * Creates Sprite instance and draws its visuals.
@@ -63,5 +88,10 @@ package aeongui
 			g.endFill();
 			return s;
 		}
+		private function buttonClick(e:MouseEvent) {
+			var button:Button = Button(e.target);
+			tf.appendText(button.label + "\n");
+		}
 	}
+	
 }
