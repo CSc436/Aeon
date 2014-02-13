@@ -5,12 +5,18 @@ package aeongui
 	import flash.display.Graphics;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	
+	import fl.controls.Button;
 	public class makeGrid extends Sprite
 	{
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
 		function makeGrid():void {
+			//button:
+			var b:Button = new Button();
+			b.label = "Click Me";
+			addChild(b);
 			// Sprite that holds grid
 			var gridContainer:Sprite = new Sprite();
 			// number of objects to place into grid
