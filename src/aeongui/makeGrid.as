@@ -53,7 +53,7 @@ package aeongui
 			var g:Graphics = s.graphics;
 			g.lineStyle(1, 0xCCCCCC);
 			g.beginFill(0xF2F2F2);
-			g.drawRoundRect(0, 0, 16, 16, 0);
+			g.drawRoundRect(0, 0, 32, 32, 0);
 			g.endFill();
 			return s;
 		}
