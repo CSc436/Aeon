@@ -1,6 +1,7 @@
 package aeongui
 {
 	import fl.controls.Button;
+	import fl.controls.TextArea;
 	
 	import flash.display.Graphics;
 	import flash.display.Sprite;
@@ -13,7 +14,8 @@ package aeongui
 	public class makeGrid extends Sprite
 	{
 		private var b:Button;
-		private var tf:TextField;
+		private var tf:TextArea;
+		private var gridContainer:Sprite;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -30,20 +32,21 @@ package aeongui
 			var b:Button = new Button();
 			b.label = "Click Me";
 			b.x = 600;
-			b.y = 300;
+			b.y = 200;
 			b.addEventListener(MouseEvent.CLICK,buttonClick);
-			addChild(b);
+			
 			//textfield:
-			tf = new TextField();
+			tf = new TextArea();
 			tf.width = 200;
 			tf.height = 400;
 			tf.x = 600;
-			tf.y = 400;
-			tf.border = true;
+			tf.y = 200;
+			tf.editable = false;
+			tf.addEventListener(MouseEvent.CLICK,buttonClick);
 			addChild(tf);
-			
+			addChild(b);
 			// Sprite that holds grid
-			var gridContainer:Sprite = new Sprite();
+			gridContainer = new Sprite();
 			// number of objects to place into grid
 			var numObjects:int = 225;
 			// number of columns in the grid
@@ -67,9 +70,10 @@ package aeongui
 				cell.x = (cell.width + gap) * column;
 				cell.y = (cell.height + gap) * row;
 				gridContainer.addChild(cell);
-				trace(i, "\tcolumn =", column, "row =", row);
+				
 			}
 			gridContainer.x = gridContainer.y = 20;
+			gridContainer.addEventListener(MouseEvent.CLICK, buttonClick);
 			addChild(gridContainer);	
 		}
 		/**
@@ -86,11 +90,22 @@ package aeongui
 			g.beginFill(0xF2F2F2);
 			g.drawRoundRect(0, 0, 32, 32, 0);
 			g.endFill();
+			s.mouseEnabled;
+			s.buttonMode = true;
+			s.addEventListener(MouseEvent.CLICK,gridClick);
 			return s;
+		}
+		private function gridClick(e:MouseEvent) {
+			var sprite:Sprite = Sprite(e.target)
+			tf.appendText(sprite.x + "," + sprite.y + "\n");
+			var text:TextField = new TextField();
+			text.text = "W";
+			text.x = text.y = 5;
+			sprite.addChild(text);
 		}
 		private function buttonClick(e:MouseEvent) {
 			var button:Button = Button(e.target);
-			tf.appendText(button.label + "\n");
+			tf.appendText("hi\n");
 		}
 	}
 	
