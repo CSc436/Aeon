@@ -13,6 +13,8 @@ package org.interguild {
 	 */
 	public class Level extends Sprite {
 		
+		public static const GRAVITY:Number = 4;
+		
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
 		
@@ -37,7 +39,7 @@ package org.interguild {
 		}
 		
 		private function onGameLoop(evt:TimerEvent):void{
-			trace("I'm looping!");
+			player.onGameLoop();
 		}
 	}
 }
