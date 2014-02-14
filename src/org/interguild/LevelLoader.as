@@ -50,38 +50,68 @@ package org.interguild {
 		private function onTimer(evt:TimerEvent):void {
 			for (var j:uint = 0; j < LOOPS_PER_TICK && i < codeLength; j++, i++) {
 				var curChar:String = code.charAt(i);
-				//this switch only handles special characters.
-				//the default case handles non-special characters.
-				switch (curChar) {
-					case " ":
-						px += TILE_WIDTH;
-						break;
-					/*
-					 * Not all operating systems write the end-of-line character
-					 * in the same way. So the following is to compensate for that.
-					 */
-					case "\r":
-						var i1:uint = i + 1;
-						//if sequence of "\r\n" then skip the "\n" character
-						if (i1 < codeLength && code.charAt(i + 1) == "\n") {
-							i++;
-						} //then treat it as a new line:
-					case "\n":
-						px = 0;
-						py += TILE_HEIGHT;
-						break;
-					default:
-						createObject(curChar, px, py);
-						px += TILE_WIDTH;
-						break;
-				} //end switch
-			} //end for loop
+				parseChar(curChar);
+			}
 
 			//if done loading
 			if (i == codeLength) {
 				timer.stop();
 				level.startGame();
+			}else{
+				//TODO: update level progress bar
 			}
+		}
+		
+		private function parseChar(curChar:String):void{
+			//this switch only handles special chars
+			switch (curChar) {
+				case " ":
+					px += TILE_WIDTH;
+					break;
+				/*
+				* Not all operating systems write the end-of-line character
+				* in the same way. So the following is to compensate for that.
+				*/
+				case "\r":
+					var i1:uint = i + 1;
+					//if sequence of "\r\n" then skip the "\n" character
+					if (i1 < codeLength && code.charAt(i + 1) == "\n") {
+						i++;
+					} //then treat it as a new line:
+				case "\n":
+					px = 0;
+					py += TILE_HEIGHT;
+					break;
+				case "=":
+					var number:String = "";
+					//first get all the digits of the number
+					var nextChar:String = code.charAt(i + 1);
+					while (!isNaN(Number(nextChar))) {
+						number += nextChar;
+						i++;
+						nextChar = code.charAt(i + 1);
+						switch(nextChar){
+							case " ":
+							case "\r":
+							case "\n":
+								nextChar = "x"; //definitely NaN
+								break;
+						}
+					}
+					var n:Number = Number(number) - 1;
+					if(!isNaN(n)){
+						//then create N tiles
+						for(var k:uint = 0; k < n; k++){
+							parseChar(prevChar);
+						}
+					}
+					break;
+				default:
+					createObject(curChar, px, py);
+					px += TILE_WIDTH;
+					break;
+			}
+			prevChar = curChar;
 		}
 
 		/**

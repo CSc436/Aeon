@@ -3,8 +3,6 @@ package org.interguild {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	
-	import fl.controls.Button;
-
 	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
 

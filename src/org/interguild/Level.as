@@ -6,8 +6,6 @@ package org.interguild {
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
-	import org.interguild.tiles.Tile;
-
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
 	 * constructing itself based off of the level encoding, but it
