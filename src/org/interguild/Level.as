@@ -40,6 +40,9 @@ package org.interguild {
 		
 		private function onGameLoop(evt:TimerEvent):void{
 			player.onGameLoop();
+			// To DO call game loop on active objects
+			// 
+			// To DO collision detection
 		}
 	}
 }

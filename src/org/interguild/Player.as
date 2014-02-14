@@ -28,7 +28,9 @@ package org.interguild {
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
 
 		private var keys:KeyMan;
-
+		private var isStanding:Boolean;
+	
+		
 		public function Player() {
 			drawPlayer();
 
@@ -42,11 +44,15 @@ package org.interguild {
 		}
 
 		public function onGameLoop():void {
+			
 			//gravity
 			speedY += Level.GRAVITY;
-
+			
 			updateKeys();
-
+			
+			// reset isStanding
+			reset();
+			
 			//update movement
 			newX += speedX;
 			newY += speedY;
@@ -63,13 +69,21 @@ package org.interguild {
 			//stop falling off screen
 			if (newY + SPRITE_HEIGHT > 350) {
 				newY = 350 - SPRITE_HEIGHT;
+				isStanding = true; 
 			}
 
 			//commit location change:
 			x = newX;
 			y = newY;
+			
+			
 		}
-
+		
+		private function reset():void
+		{
+			isStanding = false;
+		}
+		
 		private function updateKeys():void {
 			//moving to the left
 			if (keys.isKeyLeft) {
@@ -87,8 +101,9 @@ package org.interguild {
 				if (speedX < 0)
 					speedX = 0;
 			}
+			
 			//jump
-			if(keys.isKeySpace){
+			if(keys.isKeySpace && isStanding ){
 				speedY = JUMP_SPEED;
 			}
 		}
