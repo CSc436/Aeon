@@ -27,11 +27,6 @@ package org.interguild {
 			//init level page:
 			levelPage = new LevelPage();
 			addChild(levelPage);
-			
-			//button:
-			var b:Button = new Button();
-			b.label = "Click Me";
-			addChild(b);
 		}
 	}
 }

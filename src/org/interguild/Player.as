@@ -34,6 +34,11 @@ package org.interguild {
 
 			keys = KeyMan.getMe();
 		}
+		
+		public function setStartPosition(sx:Number, sy:Number):void{
+			x = newX = sx;
+			y = newY = sy;
+		}
 
 		private function drawPlayer():void {
 			graphics.beginFill(SPRITE_COLOR);

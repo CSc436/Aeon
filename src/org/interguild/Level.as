@@ -1,7 +1,12 @@
 package org.interguild {
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	import flash.utils.Timer;
+	
+	import org.interguild.tiles.Tile;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -32,14 +37,54 @@ package org.interguild {
 			player = new Player();
 			camera.addChild(player);
 			
+			//load test level
+			var getFile:URLLoader = new URLLoader();
+			getFile.addEventListener(Event.COMPLETE, onFileLoad, false, 0, true);
+			getFile.load(new URLRequest("../testlevel.txt"));
+		}
+		
+		/**
+		 * Called after the test level file has been loaded.
+		 */
+		private function onFileLoad(evt:Event):void{
+			var levelEncoding:String = evt.target.data;
+			var loader:LevelLoader = new LevelLoader(levelEncoding, this);
+			loader.start();
+		}
+		
+		/**
+		 * Called by LevelLoader when complete.
+		 */
+		public function startGame():void{
 			//init game loop
 			timer = new Timer(PERIOD);
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
 		
+		/**
+		 * Called 30 frames per second.
+		 */
 		private function onGameLoop(evt:TimerEvent):void{
 			player.onGameLoop();
+		}
+		
+		/********************************
+		 * Initialization methods below *
+		 ********************************/
+		
+		/**
+		 * Player is already initialized, but LevelLoader
+		 * needs to specify its location.
+		 */
+		public function setPlayer(px:Number, py:Number):void{
+			player.setStartPosition(px, py);
+		}
+		
+		public function createTile(tile:Sprite):void{
+			// TODO need to add tile to list of all objects
+			// TODO add tiles to collision grid
+			camera.addChild(tile);
 		}
 	}
 }
