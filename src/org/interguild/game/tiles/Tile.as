@@ -1,4 +1,4 @@
-package org.interguild.tiles
+package org.interguild.game.tiles
 {
 	public interface Tile
 	{

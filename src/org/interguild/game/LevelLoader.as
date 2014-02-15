@@ -1,9 +1,9 @@
-package org.interguild {
+package org.interguild.game {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import org.interguild.tiles.Terrain;
+	import org.interguild.game.tiles.Terrain;
 
 	/**
 	 * Takes in a level encoding and constructs a level.

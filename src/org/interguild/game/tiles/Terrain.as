@@ -1,4 +1,4 @@
-package org.interguild.tiles {
+package org.interguild.game.tiles {
 	import flash.display.Sprite;
 
 	public class Terrain extends Sprite implements Tile {

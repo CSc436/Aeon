@@ -1,4 +1,4 @@
-package org.interguild {
+package org.interguild.game {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;

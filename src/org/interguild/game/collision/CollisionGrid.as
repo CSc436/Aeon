@@ -1,4 +1,4 @@
-package org.interguild.collision
+package org.interguild.game.collision
 {
 
 	public class CollisionGrid

@@ -1,5 +1,6 @@
-package org.interguild {
+package org.interguild.menu {
 	import flash.display.Sprite;
+	import org.interguild.game.Level;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
