@@ -10,7 +10,6 @@ package org.interguild.menu {
 	 * 		-The win screen?
 	 * 		-The level itself
 	 * 
-	 * 
 	 */
 	public class LevelPage extends Sprite {
 		
