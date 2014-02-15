@@ -1,9 +1,6 @@
 package org.interguild.game {
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.TimerEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
 	/**
@@ -21,6 +18,8 @@ package org.interguild.game {
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
 		
+		private static const TEST_LEVEL_FILE:String = "../testlevel.txt";
+		
 		private var camera:Sprite;
 		private var player:Player;
 		
@@ -36,17 +35,7 @@ package org.interguild.game {
 			camera.addChild(player);
 			
 			//load test level
-			var getFile:URLLoader = new URLLoader();
-			getFile.addEventListener(Event.COMPLETE, onFileLoad, false, 0, true);
-			getFile.load(new URLRequest("../testlevel.txt"));
-		}
-		
-		/**
-		 * Called after the test level file has been loaded.
-		 */
-		private function onFileLoad(evt:Event):void{
-			var levelEncoding:String = evt.target.data;
-			var loader:LevelLoader = new LevelLoader(levelEncoding, this);
+			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE, this);
 			loader.start();
 		}
 		

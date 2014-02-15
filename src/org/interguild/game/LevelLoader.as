@@ -1,8 +1,11 @@
 package org.interguild.game {
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
 	import flash.utils.Timer;
-
+	
 	import org.interguild.game.tiles.Terrain;
 
 	/**
@@ -16,21 +19,39 @@ package org.interguild.game {
 
 		private var level:Level;
 
-		private var code:String;
+		private var file:String;
+		private var code:String; //the level encoding
 		private var codeLength:uint;
 		private var timer:Timer;
 
-		public function LevelLoader(file:String, lvl:Level) {
+		public function LevelLoader(fileName:String, lvl:Level) {
 			level = lvl;
+			file = fileName;
+			//don't start loading until start() is called
+		}
+		
+		/**
+		 * First loads in the file. Then after it's loaded,
+		 * start parsing the level encoding.
+		 */
+		public function start():void {
+			var getFile:URLLoader = new URLLoader();
+			getFile.addEventListener(Event.COMPLETE, onFileLoad, false, 0, true);
+			getFile.load(new URLRequest(file));
+		}
 
-			code = file;
+		/**
+		 * Called after the test level file has been loaded.
+		 */
+		private function onFileLoad(evt:Event):void {
+			code = evt.target.data;
 			codeLength = code.length;
+			
+			//TODO: maybe change Level's loading message
+			//from "Loading file" to "Building Level: 0%"
 
 			timer = new Timer(20);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
-		}
-
-		public function start():void {
 			timer.start();
 		}
 
