@@ -1,7 +1,7 @@
 package org.interguild.game.tiles {
-	import flash.display.Sprite;
+	import org.interguild.Aeon;
 
-	public class Terrain extends Sprite implements Tile {
+	public class Terrain extends CollidableObject implements Tile {
 		public var destructibility:int = 0;
 		public var solidity:Boolean = true;
 		public var gravible:Boolean = false;
@@ -17,10 +17,13 @@ package org.interguild.game.tiles {
 
 
 		public function Terrain(x:int, y:int) {
+			super(Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
+			this.x = x;
+			this.y = y;
 			startX = x;
 			startY = y;
 			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(x, y, SPRITE_WIDTH, SPRITE_HEIGHT);
+			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
 
 		}

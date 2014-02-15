@@ -1,7 +1,9 @@
 package org.interguild.game {
 	import flash.display.Sprite;
+	
+	import org.interguild.game.tiles.CollidableObject;
 
-	public class Player extends Sprite {
+	public class Player extends CollidableObject {
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 48;
@@ -16,7 +18,7 @@ package org.interguild.game {
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
 
-		private static const JUMP_SPEED:Number = -25
+		private static const JUMP_SPEED:Number = -25;
 
 		private var newX:Number = 0;
 		private var newY:Number = 0;
@@ -32,6 +34,7 @@ package org.interguild.game {
 
 
 		public function Player() {
+			super(HITBOX_WIDTH, HITBOX_HEIGHT);
 			drawPlayer();
 
 			keys = KeyMan.getMe();
