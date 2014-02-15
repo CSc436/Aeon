@@ -2,7 +2,7 @@ package org.interguild.game {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	
+
 	import org.interguild.game.tiles.Terrain;
 
 	/**
@@ -57,12 +57,12 @@ package org.interguild.game {
 			if (i == codeLength) {
 				timer.stop();
 				level.startGame();
-			}else{
+			} else {
 				//TODO: update level progress bar
 			}
 		}
-		
-		private function parseChar(curChar:String):void{
+
+		private function parseChar(curChar:String):void {
 			//this switch only handles special chars
 			switch (curChar) {
 				case " ":
@@ -86,11 +86,11 @@ package org.interguild.game {
 					var number:String = "";
 					//first get all the digits of the number
 					var nextChar:String = code.charAt(i + 1);
-					while (!isNaN(Number(nextChar))) {
+					while (!isNaN(Number(nextChar)) && i + 1 < codeLength) {
 						number += nextChar;
 						i++;
 						nextChar = code.charAt(i + 1);
-						switch(nextChar){
+						switch (nextChar) {
 							case " ":
 							case "\r":
 							case "\n":
@@ -99,9 +99,9 @@ package org.interguild.game {
 						}
 					}
 					var n:Number = Number(number) - 1;
-					if(!isNaN(n)){
+					if (!isNaN(n)) {
 						//then create N tiles
-						for(var k:uint = 0; k < n; k++){
+						for (var k:uint = 0; k < n; k++) {
 							parseChar(prevChar);
 						}
 					}
