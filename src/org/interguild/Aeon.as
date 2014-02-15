@@ -7,6 +7,9 @@ package org.interguild {
 	
 	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
+		
+		public static const TILE_WIDTH:uint = 32;
+		public static const TILE_HEIGHT:uint = 32;
 
 		private var levelPage:LevelPage;
 		private var keys:KeyMan;

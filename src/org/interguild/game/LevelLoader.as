@@ -4,10 +4,11 @@ package org.interguild.game {
 	import flash.events.TimerEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
-	import flash.text.TextField;
 	import flash.utils.Timer;
 	
+	import org.interguild.Aeon;
 	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.CollidableObject;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -15,8 +16,6 @@ package org.interguild.game {
 	public class LevelLoader {
 
 		private static const LOOPS_PER_TICK:uint = 250;
-		private static const TILE_WIDTH:uint = 32;
-		private static const TILE_HEIGHT:uint = 32;
 
 		private var level:Level;
 
@@ -30,7 +29,7 @@ package org.interguild.game {
 			file = fileName;
 			//don't start loading until start() is called
 		}
-		
+
 		/**
 		 * First loads in the file. Then after it's loaded,
 		 * start parsing the level encoding.
@@ -48,6 +47,15 @@ package org.interguild.game {
 		private function onFileLoad(evt:Event):void {
 			code = evt.target.data;
 			codeLength = code.length;
+
+			//parse first line separately
+			var eol:int = code.indexOf("\n");
+			var firstLine:String = code.substr(0, eol);
+			var ix:int = firstLine.indexOf("x");
+			var lvlWidth:Number = Number(firstLine.substr(0, ix));
+			var lvlHeight:Number = Number(firstLine.substr(ix + 1));
+			level.setLevelSize(lvlWidth, lvlWidth);
+			code = code.substr(eol + 1);
 			
 			//TODO: maybe change Level's loading message
 			//from "Loading file" to "Building Level: 0%"
@@ -89,7 +97,7 @@ package org.interguild.game {
 			//this switch only handles special chars
 			switch (curChar) {
 				case " ":
-					px += TILE_WIDTH;
+					px += Aeon.TILE_WIDTH;
 					break;
 				/*
 				* Not all operating systems write the end-of-line character
@@ -103,7 +111,7 @@ package org.interguild.game {
 					} //then treat it as a new line:
 				case "\n":
 					px = 0;
-					py += TILE_HEIGHT;
+					py += Aeon.TILE_HEIGHT;
 					break;
 				case "=":
 					var number:String = "";
@@ -131,7 +139,7 @@ package org.interguild.game {
 					break;
 				default:
 					createObject(curChar, px, py);
-					px += TILE_WIDTH;
+					px += Aeon.TILE_WIDTH;
 					break;
 			}
 			prevChar = curChar;
@@ -141,14 +149,14 @@ package org.interguild.game {
 		 * Parses the non-special characters of the level encoding
 		 */
 		private function createObject(curChar:String, px:int, py:int):void {
-			var tile:Sprite;
+			var tile:CollidableObject;
 			switch (curChar) {
 				case "#": //Player
 					level.setPlayer(px, py);
 					break;
 				case "x": //Terrain
 					tile = new Terrain(px, py);
-					level.createTile(tile);
+					level.createCollidableObject(tile);
 					break;
 				default:
 					trace("Unknown level code character: " + curChar);
