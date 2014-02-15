@@ -33,10 +33,11 @@ package org.interguild.game {
 		/**
 		 * First loads in the file. Then after it's loaded,
 		 * start parsing the level encoding.
+		 * When completed, will call the level's startGame()
 		 */
 		public function start():void {
 			var getFile:URLLoader = new URLLoader();
-			getFile.addEventListener(Event.COMPLETE, onFileLoad, false, 0, true);
+			getFile.addEventListener(Event.COMPLETE, onFileLoad);
 			getFile.load(new URLRequest(file));
 		}
 
