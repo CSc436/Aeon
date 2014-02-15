@@ -4,6 +4,7 @@ package org.interguild.game {
 	import flash.events.TimerEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.text.TextField;
 	import flash.utils.Timer;
 	
 	import org.interguild.game.tiles.Terrain;
