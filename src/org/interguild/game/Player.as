@@ -50,7 +50,7 @@ package org.interguild.game {
 			graphics.endFill();
 		}
 
-		public function onGameLoop():void {
+		public override function onGameLoop():void {
 
 			//gravity
 			speedY += Level.GRAVITY;

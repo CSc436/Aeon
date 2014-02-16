@@ -5,6 +5,7 @@ package org.interguild.game {
 	
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.GameObject;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -25,11 +26,18 @@ package org.interguild.game {
 
 		private var camera:Sprite;
 		private var player:Player;
+		
 		private var collisionGrid:CollisionGrid;
+		private var allObjects:Vector.<GameObject>;
+		private var activeObjects:Vector.<GameObject>;
 
 		private var timer:Timer;
 
 		public function Level() {
+			//init lists
+			allObjects = new Vector.<GameObject>();
+			activeObjects = new Vector.<GameObject>();
+			
 			//initialize camera
 			camera = new Sprite();
 			addChild(camera);
@@ -68,10 +76,19 @@ package org.interguild.game {
 		 * Called 30 frames per second.
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
+			//update player
 			player.onGameLoop();
 			collisionGrid.updateObject(player);
-			// To DO call game loop on active objects
-			// 
+			
+			//update active objects
+			var len:uint = activeObjects.length;
+			for(var i:uint = 0; i < len; i++){
+				var obj:GameObject = activeObjects[i];
+				obj.onGameLoop();
+				if(obj is CollidableObject)
+					collisionGrid.updateObject(CollidableObject(obj));
+			}
+			 
 			// To DO collision detection
 		}
 
@@ -88,10 +105,11 @@ package org.interguild.game {
 			collisionGrid.updateObject(player);
 		}
 
-		public function createCollidableObject(tile:CollidableObject):void {
+		public function createCollidableObject(tile:CollidableObject, isActive:Boolean):void {
+			allObjects.push(tile);
+			if(isActive)
+				activeObjects.push(tile);
 			collisionGrid.updateObject(tile);
-			// TODO need to add tile to list of all objects
-			// TODO add tiles to collision grid
 			camera.addChild(tile);
 		}
 	}

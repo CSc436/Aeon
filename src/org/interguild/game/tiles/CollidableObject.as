@@ -1,10 +1,9 @@
 package org.interguild.game.tiles {
-	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.game.collision.GridTile;
 
-	public class CollidableObject extends Sprite {
+	public class CollidableObject extends GameObject {
 
 		private var myGrids:Vector.<GridTile>;
 		private var hit_box:Rectangle;

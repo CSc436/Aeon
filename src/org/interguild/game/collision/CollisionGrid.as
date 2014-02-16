@@ -62,7 +62,7 @@ package org.interguild.game.collision {
 			if (inGrids.indexOf(gridTile) == -1)
 				inGrids.push(gridTile);
 			
-			//middle cases
+			//middle cases if player
 			if(gy - gy0 > 1){
 				gy -= 1;
 				

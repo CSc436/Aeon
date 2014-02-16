@@ -156,7 +156,7 @@ package org.interguild.game {
 					break;
 				case "x": //Terrain
 					tile = new Terrain(px, py);
-					level.createCollidableObject(tile);
+					level.createCollidableObject(tile, false);
 					break;
 				default:
 					trace("Unknown level code character: " + curChar);
