@@ -1,6 +1,7 @@
 package org.interguild.game.collision {
 	import flash.display.Sprite;
-	
+	import flash.geom.Rectangle;
+
 	import org.interguild.Aeon;
 	import org.interguild.game.tiles.CollidableObject;
 
@@ -30,10 +31,44 @@ package org.interguild.game.collision {
 		 * object to its correct GridTile.
 		 */
 		public function addObject(o:CollidableObject):void {
-			var gx:int = o.x / Aeon.TILE_WIDTH;
-			var gy:int = o.y / Aeon.TILE_HEIGHT;
-			GridTile(grid[gy][gx]).addObject(o);
-			o.addGridTile(grid[gy][gx]);
+			var inGrids:Array = new Array();
+			var box:Rectangle = o.hitbox;
+			var gx:int;
+			var gy:int;
+			var gridTile:GridTile;
+
+			//top left
+			gx = box.left / Aeon.TILE_WIDTH;
+			gy = box.top / Aeon.TILE_HEIGHT;
+			gridTile = grid[gy][gx];
+			inGrids.push(gridTile);
+
+			//top right
+			gx = (box.right - 1) / Aeon.TILE_WIDTH;
+			gy = box.top / Aeon.TILE_HEIGHT;
+			gridTile = grid[gy][gx];
+			if (inGrids.indexOf(gridTile) == -1)
+				inGrids.push(gridTile);
+
+			//bottom left
+			gx = box.left / Aeon.TILE_WIDTH;
+			gy = (box.bottom - 1) / Aeon.TILE_HEIGHT;
+			gridTile = grid[gy][gx];
+			if (inGrids.indexOf(gridTile) == -1)
+				inGrids.push(gridTile);
+
+			//bottom right
+			gx = (box.right - 1) / Aeon.TILE_WIDTH;
+			gy = (box.bottom - 1) / Aeon.TILE_HEIGHT;
+			gridTile = grid[gy][gx];
+			if (inGrids.indexOf(gridTile) == -1)
+				inGrids.push(gridTile);
+
+			for (var i:uint = 0; i < inGrids.length; i++) {
+				var g:GridTile = inGrids[i];
+				g.addObject(o);
+				o.addGridTile(g);
+			}
 		}
 
 		public function detectAndHandle():void {

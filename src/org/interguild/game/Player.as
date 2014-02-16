@@ -1,5 +1,4 @@
 package org.interguild.game {
-	import flash.display.Sprite;
 	
 	import org.interguild.game.tiles.CollidableObject;
 
