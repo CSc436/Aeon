@@ -23,5 +23,12 @@ package org.interguild.game.tiles {
 			hit_box.y = y;
 			return hit_box;
 		}
+
+		public function clearGrids():void {
+			var len:uint = myGrids.length;
+			for (var i:uint = 0; i < len; i++) {
+				GridTile(myGrids[i]).removeObject(this);
+			}
+		}
 	}
 }

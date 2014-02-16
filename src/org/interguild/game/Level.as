@@ -69,6 +69,7 @@ package org.interguild.game {
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
 			player.onGameLoop();
+			collisionGrid.updateObject(player);
 			// To DO call game loop on active objects
 			// 
 			// To DO collision detection
@@ -84,10 +85,11 @@ package org.interguild.game {
 		 */
 		public function setPlayer(px:Number, py:Number):void {
 			player.setStartPosition(px, py);
+			collisionGrid.updateObject(player);
 		}
 
 		public function createCollidableObject(tile:CollidableObject):void {
-			collisionGrid.addObject(tile);
+			collisionGrid.updateObject(tile);
 			// TODO need to add tile to list of all objects
 			// TODO add tiles to collision grid
 			camera.addChild(tile);
