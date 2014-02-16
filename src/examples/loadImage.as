@@ -1,39 +1,43 @@
 package examples {
+	import fl.controls.Button;
+	import fl.controls.TextArea;
+	
     import flash.display.*;
     import flash.net.URLRequest;
-	import flash.events.*;
+    import flash.events.*;
 
     public class loadImage extends Sprite {
-        public function loadImage():void {
-            var rect:Shape = new Shape();
-            rect.graphics.beginFill(0xFFFFFF);
-            rect.graphics.drawRect(0, 0, 100, 100);
-            addChild(rect);
-
-            var ldr:Loader = new Loader();
-            ldr.mask = rect;
-
-            var url:String = "http://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Ski_trail_rating_symbol-blue_square.svg/600px-Ski_trail_rating_symbol-blue_square.svg.png";
-
-            var urlReq:URLRequest = new URLRequest(url);
-            ldr.load(urlReq);
-            addChild(ldr);
-			
-			LoadImage("C:\Users\Henry\Documents\Aeon\images\testButton.png");
-			
-			
-			
-        }
-		function LoadImage(imageURL:String) {
-			var imageLoader:Loader = new Loader();
-			imageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, ImageLoaded); // event listener which is fired when loading is complete
-			imageLoader.load(new URLRequest(imageURL));
-			addChild(imageLoader);
-		}
+		//DAFAQ??
+		[Embed (source = "images/testButton.png")]
+		private var TestButton:Class;
+		private var tf;
 		
-		function ImageLoaded(e:Event) {
-			e.target.loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, ImageLoaded);
-			this.addChild(e.target.loader.content); // loaded content is stored in e.target.loader.content variable
+        public function loadImage():void {
+            var bbb:Bitmap = new TestButton();
+//			addChild(bbb);
+			
+			var b:Button = new Button();
+			b.setStyle("icon", TestButton);
+			b.x = 0;
+			b.y = 0;
+			b.addEventListener(MouseEvent.CLICK, buttonClick);
+			
+			//textfield:
+			tf = new TextArea();
+			tf.width = 200;
+			tf.height = 400;
+			tf.x = 0;
+			tf.y = 0;
+			tf.editable = false;
+			tf.addEventListener(MouseEvent.CLICK, buttonClick);
+			addChild(tf);
+			addChild(b);
+			
+
+        }
+		private function buttonClick(e:MouseEvent) {
+			var button:Button = Button(e.target);
+			tf.appendText("Im a button click event!\n");
 		}
     }
 }
