@@ -17,7 +17,7 @@ package aeongui {
         private var tf:TextArea;
 
         private var gridContainer:Sprite;
-
+		private var maskGrid:Sprite;
         /**
          * Creates grid holder and populates it with objects.
          */
@@ -49,7 +49,8 @@ package aeongui {
             addChild(b);
             // Sprite that holds grid
             gridContainer = new Sprite();
-            // number of objects to place into grid
+            maskGrid = new Sprite();
+			// number of objects to place into grid
             var numObjects:int = 225;
             // number of columns in the grid
             var numCols:int = 15;
@@ -72,11 +73,14 @@ package aeongui {
                 cell.x = (cell.width + gap) * column;
                 cell.y = (cell.height + gap) * row;
                 gridContainer.addChild(cell);
-
+				maskGrid.addChild(cell);
             }
+			maskGrid.x = maskGrid.y = 20;
             gridContainer.x = gridContainer.y = 20;
-            gridContainer.addEventListener(MouseEvent.CLICK, buttonClick);
-            addChild(gridContainer);
+            maskGrid.addEventListener(MouseEvent.CLICK, buttonClick);
+
+			addChild(gridContainer);
+			addChild(maskGrid);
         }
 
         /**
@@ -101,11 +105,18 @@ package aeongui {
 
         private function gridClick(e:MouseEvent) {
             var sprite:Sprite = Sprite(e.target)
-            tf.appendText(sprite.x + "," + sprite.y + "\n");
-            var text:TextField = new TextField();
-            text.text = "W";
-            text.x = text.y = 5;
-            sprite.addChild(text);
+            tf.appendText(sprite.x + "," + sprite.y + "\n" + sprite.getChildAt(0));
+            if(!sprite.getChildByName("grid")){
+				var text:TextField = new TextField();
+            	text.text = "W";
+				text.name = "grid";
+            	text.x = text.y = 5;
+				sprite.addChild(text);
+			}
+			else{
+				sprite.removeChildAt(0);
+			}
+            
         }
 
         private function buttonClick(e:MouseEvent) {
