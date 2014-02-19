@@ -1,7 +1,7 @@
 package aeongui {
     import fl.controls.Button;
     import fl.controls.TextArea;
-
+    
     import flash.display.Graphics;
     import flash.display.Sprite;
     import flash.display.StageAlign;
@@ -13,7 +13,7 @@ package aeongui {
 
     public class makeGrid extends Sprite {
         private var b:Button;
-
+		private var b2:Button;
         private var tf:TextArea;
 
         private var gridContainer:Sprite;
@@ -37,6 +37,13 @@ package aeongui {
             b.y = 200;
             b.addEventListener(MouseEvent.CLICK, buttonClick);
 
+			//button2:
+			var b2:Button = new Button();
+			b2.label = "Clear All";
+			b2.x = 600;
+			b2.y = 300;
+			b2.addEventListener(MouseEvent.CLICK, buttonClick);
+			
             //textfield:
             tf = new TextArea();
             tf.width = 200;
@@ -47,6 +54,7 @@ package aeongui {
             tf.addEventListener(MouseEvent.CLICK, buttonClick);
             addChild(tf);
             addChild(b);
+			addChild(b2);
             // Sprite that holds grid
             gridContainer = new Sprite();
             maskGrid = new Sprite();
