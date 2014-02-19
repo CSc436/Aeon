@@ -1,7 +1,7 @@
 package aeongui {
     import fl.controls.Button;
     import fl.controls.TextArea;
-
+    
     import flash.display.Graphics;
     import flash.display.Sprite;
     import flash.display.StageAlign;
@@ -123,6 +123,11 @@ package aeongui {
             var button:Button = Button(e.target);
             tf.appendText("hi\n");
         }
+		
+		private function clearClick(e:MouseEvent) {
+			var button:Button = Button(e.target);
+			maskGrid.removeChildren();
+		}
     }
 
 }
