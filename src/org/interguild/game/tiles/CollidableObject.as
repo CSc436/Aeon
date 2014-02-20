@@ -1,6 +1,7 @@
 package org.interguild.game.tiles {
 	import flash.geom.Rectangle;
-
+	import flash.utils.Dictionary;
+	
 	import org.interguild.game.collision.GridTile;
 
 	/**
@@ -15,14 +16,19 @@ package org.interguild.game.tiles {
 
 		private var myGrids:Vector.<GridTile>;
 		private var hit_box:Rectangle;
+		private var hit_box_prev:Rectangle;
+		private var justCollided:Dictionary;
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS. Please instantiate
 		 * a subclass instead.
 		 */
-		public function CollidableObject(width:Number, height:Number) {
+		public function CollidableObject(_x:Number, _y:Number, width:Number, height:Number) {
+			super(_x, _y);
 			myGrids = new Vector.<GridTile>();
-			hit_box = new Rectangle(0, 0, width, height);
+			hit_box = new Rectangle(_x, _y, width, height);
+			hit_box_prev = hit_box.clone();
+			justCollided = new Dictionary(true);
 		}
 
 		/**
@@ -38,9 +44,21 @@ package org.interguild.game.tiles {
 		 * Take this. 
 		 */
 		public function get hitbox():Rectangle {
-			hit_box.x = x;
-			hit_box.y = y;
+			hit_box.x = newX;
+			hit_box.y = newY;
 			return hit_box;
+		}
+		
+		public function get hitboxPrev():Rectangle{
+			return hit_box_prev;
+		}
+		
+		public function setCollidedWith(obj:CollidableObject):void{
+			justCollided[obj] = true;
+		}
+		
+		public function hasCollidedWith(obj:CollidableObject):Boolean{
+			return justCollided[obj];
 		}
 
 		/**
@@ -52,6 +70,17 @@ package org.interguild.game.tiles {
 			for (var i:uint = 0; i < len; i++) {
 				GridTile(myGrids[i]).removeObject(this);
 			}
+			myGrids.length = 0;
+		}
+		
+		public function get myCollisionGridTiles():Vector.<GridTile>{
+			return this.myGrids;
+		}
+
+		public override function finishGameLoop():void{
+			super.finishGameLoop();
+			justCollided = new Dictionary(true);
+			hit_box_prev = hitbox.clone();
 		}
 	}
 }

@@ -85,11 +85,18 @@ package org.interguild.game {
 			for(var i:uint = 0; i < len; i++){
 				var obj:GameObject = activeObjects[i];
 				obj.onGameLoop();
-				if(obj is CollidableObject)
+				if(obj is CollidableObject){
 					collisionGrid.updateObject(CollidableObject(obj));
+				}
 			}
 			 
-			// To DO collision detection
+			//test and handle collisions
+			collisionGrid.detectAndHandleCollisions(player);
+			player.finishGameLoop();
+			for(i = 0; i < len; i++){
+				collisionGrid.detectAndHandleCollisions(activeObjects[i]);
+				GameObject(activeObjects[i]).finishGameLoop();
+			}
 		}
 
 		/********************************

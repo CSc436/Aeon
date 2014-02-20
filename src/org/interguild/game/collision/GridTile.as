@@ -21,7 +21,7 @@ package org.interguild.game.collision {
 
 			/*DEBUG*/
 			graphics.clear();
-			graphics.beginFill(0xCC0000, 0.5);
+			graphics.beginFill(0xFFFFFF, 0.25);
 			graphics.drawRect(0, 0, 31, 31);
 			graphics.endFill();
 		/*END DEBUG*/
@@ -36,7 +36,11 @@ package org.interguild.game.collision {
 			graphics.beginFill(0xCCCCCC, 0.5);
 			graphics.drawRect(0, 0, 31, 31);
 			graphics.endFill();
-			/*END DEBUG*/
+		/*END DEBUG*/
+		}
+
+		public function get myCollisionObjects():Vector.<CollidableObject> {
+			return myStuff;
 		}
 	}
 }
