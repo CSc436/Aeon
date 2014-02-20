@@ -50,7 +50,7 @@ package org.interguild.game.tiles {
 		
 		
 		public function isBuoyant():Boolean {
-			return false;
+			return buoyancy;
 		}
 	}
 }
