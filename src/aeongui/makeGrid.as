@@ -2,36 +2,49 @@ package aeongui {
     import fl.controls.Button;
     import fl.controls.TextArea;
     
+    import flash.display.*;
     import flash.display.Graphics;
     import flash.display.Sprite;
     import flash.display.StageAlign;
     import flash.display.StageScaleMode;
+    import flash.events.*;
     import flash.events.MouseEvent;
     import flash.text.TextField;
     import flash.text.TextFieldAutoSize;
     import flash.text.TextFormat;
-
-	import flash.events.*;
-	import flash.display.*;
+    import flash.net.FileReference;
+    import org.interguild.menu.DropDownMenu;
 	
     public class makeGrid extends Sprite {
         private var b:Button;
 		private var b2:Button;
+		private var b3:Button;
         private var tf:TextArea;
+		
+		[Embed (source = "images/testButton.png")]
+		private var TestButton:Class;
 		
 		[Embed (source = "images/clearAllButton.png")]
 		private var ClearButton:Class;
+		
+		[Embed (source = "images/wallButton.png")]
+		private var WallButton:Class;
 		
 		[Embed (source = "images/wall.png")]
 		private var wallImg:Class;
 
         private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
+		
+		private var dropDown:DropDownMenu;
         /**
          * Creates grid holder and populates it with objects.
          */
         function makeGrid():void {
-			
+			dropDown = new DropDownMenu;
+			dropDown.x = 5;
+			dropDown.y = 5;
+			addChild(dropDown);
 			
             //stop stage from scaling and stuff
             stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -43,8 +56,9 @@ package aeongui {
             graphics.endFill();
             //button:
             var b:Button = new Button();
-            b.label = "Click Me";
-            b.x = 600;
+            b.label = "Wall";
+			b.setStyle("icon", WallButton);
+            b.x = 650;
             b.y = 200;
             b.addEventListener(MouseEvent.CLICK, buttonClick);
 			
@@ -59,12 +73,21 @@ package aeongui {
 			b2.useHandCursor = true;
 			b2.addEventListener(MouseEvent.CLICK, clearClick);
 			
+			//Test button:
+			var b3:Button = new Button();
+			b3.label = "Test";
+			b3.setStyle("icon", TestButton);
+			b3.x = 200;
+			b3.y = 650;
+			b3.useHandCursor = true;
+			b3.addEventListener(MouseEvent.CLICK, buttonClick);
+			addChild(b3);
             //textfield:
             tf = new TextArea();
             tf.width = 200;
             tf.height = 400;
             tf.x = 600;
-            tf.y = 50;
+            tf.y = 150;
             tf.editable = false;
             tf.addEventListener(MouseEvent.CLICK, buttonClick);
             addChild(tf);
@@ -106,7 +129,8 @@ package aeongui {
 				//gridContainer.addChild(cell);
 				grid.addChild(cell);
 			}
-			grid.x = grid.y = 20;
+			grid.x = 20;
+			grid.y = 100;
 			return grid;
 			
 			
@@ -133,7 +157,7 @@ package aeongui {
 
 		private function gridClick(e:MouseEvent) {
 			var sprite:Sprite=Sprite(e.target)
-			tf.appendText(sprite.x + "," + sprite.y + "\n");
+			//tf.appendText(sprite.x + "," + sprite.y + "\n");
 
 			var text:TextField=new TextField();
 			text.text="W";
@@ -155,6 +179,13 @@ package aeongui {
 			var button:Button = Button(e.target);
 			tf.appendText("cleared\n");
 			maskGrid = makeBlank(maskGrid);
+		}
+		
+		private function exportText(e:MouseEvent) {
+			var button:Button = Button (e.target);
+			
+			var file:FileReference = new FileReference;
+			
 		}
     }
 
