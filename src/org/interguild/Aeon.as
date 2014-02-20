@@ -2,8 +2,10 @@ package org.interguild {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import org.interguild.menu.LevelPage;
+	
 	import org.interguild.game.KeyMan;
+	import org.interguild.menu.LevelPage;
+	import org.interguild.menu.MainMenu;
 	
 	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
@@ -15,6 +17,9 @@ package org.interguild {
 		private var keys:KeyMan;
 
 		public function Aeon() {
+	
+			
+			
 			//stop stage from scaling and stuff
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
@@ -29,7 +34,9 @@ package org.interguild {
 
 			//init level page:
 			levelPage = new LevelPage();
-			addChild(levelPage);
+			//addChild(levelPage);
+			
+			new MainMenu(this, levelPage);
 		}
 	}
 }

@@ -11,7 +11,8 @@ package org.interguild.game.tiles {
 		private static const SPRITE_COLOR:uint = 0x9EDB00;
 		private static const SPRITE_WIDTH:uint = 32;
 		private static const SPRITE_HEIGHT:uint = 32;
-
+		
+		private static const TILE_ENCODING:String = 'x';
 
 		public function Terrain(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);

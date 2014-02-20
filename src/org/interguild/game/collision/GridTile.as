@@ -8,7 +8,7 @@ package org.interguild.game.collision {
 		private var myStuff:Vector.<CollidableObject>;
 
 		public function GridTile() {
-			myStuff = new Vector.<CollidableObject>();
+			myStuff=new Vector.<CollidableObject>();
 			/*DEBUG*/
 			graphics.beginFill(0xCCCCCC, 0.5);
 			graphics.drawRect(0, 0, 31, 31);
@@ -28,7 +28,7 @@ package org.interguild.game.collision {
 		}
 
 		public function removeObject(o:CollidableObject):void {
-			var i:int = myStuff.indexOf(o);
+			var i:int=myStuff.indexOf(o);
 			if (i != -1)
 				myStuff.splice(i, 1);
 			/*DEBUG*/
@@ -41,6 +41,14 @@ package org.interguild.game.collision {
 
 		public function get myCollisionObjects():Vector.<CollidableObject> {
 			return myStuff;
+		}
+
+		public function containsObject(o:CollidableObject):Boolean {
+			var i:int=myStuff.indexOf(o);
+			if (i == -1)
+				return false;
+			else
+				return true;
 		}
 	}
 }
