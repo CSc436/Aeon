@@ -8,9 +8,6 @@ package org.interguild.game.tiles {
 		public var knocksback:int=0;
 		public var buoyancy:Boolean=false;
 
-		public var startX:int;
-		public var startY:int;
-
 		private static const SPRITE_COLOR:uint=0xA3A3A3;
 		private static const SPRITE_WIDTH:uint=32;
 		private static const SPRITE_HEIGHT:uint=32;
@@ -18,11 +15,7 @@ package org.interguild.game.tiles {
 		private static const TILE_ENCODING:String='s';
 
 		public function SteelCrate(x:int, y:int) {
-			super(Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			this.x=x;
-			this.y=y;
-			startX=x;
-			startY=y;
+			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			graphics.beginFill(SPRITE_COLOR);
 			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
@@ -54,5 +47,3 @@ package org.interguild.game.tiles {
 		}
 	}
 }
-import org.interguild.game.tiles;
-
