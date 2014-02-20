@@ -11,10 +11,19 @@ package aeongui {
     import flash.text.TextFieldAutoSize;
     import flash.text.TextFormat;
 
+	import flash.events.*;
+	import flash.display.*;
+	
     public class makeGrid extends Sprite {
         private var b:Button;
 		private var b2:Button;
         private var tf:TextArea;
+		
+		[Embed (source = "images/clearAllButton.png")]
+		private var ClearButton:Class;
+		
+		[Embed (source = "images/wall.png")]
+		private var wallImg:Class;
 
         private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
@@ -22,6 +31,8 @@ package aeongui {
          * Creates grid holder and populates it with objects.
          */
         function makeGrid():void {
+			
+			
             //stop stage from scaling and stuff
             stage.scaleMode = StageScaleMode.NO_SCALE;
             stage.align = StageAlign.TOP_LEFT;
@@ -36,20 +47,24 @@ package aeongui {
             b.x = 600;
             b.y = 200;
             b.addEventListener(MouseEvent.CLICK, buttonClick);
-
-			//button2:
+			
+			var bbb:Bitmap = new ClearButton();
+			
+			//clear button:
 			var b2:Button = new Button();
 			b2.label = "Clear All";
-			b2.x = 600;
+			b2.setStyle("icon", ClearButton);
+			b2.x = 650;
 			b2.y = 300;
-			b2.addEventListener(MouseEvent.CLICK, buttonClick);
+			b2.useHandCursor = true;
+			b2.addEventListener(MouseEvent.CLICK, clearClick);
 			
             //textfield:
             tf = new TextArea();
             tf.width = 200;
             tf.height = 400;
             tf.x = 600;
-            tf.y = 200;
+            tf.y = 50;
             tf.editable = false;
             tf.addEventListener(MouseEvent.CLICK, buttonClick);
             addChild(tf);
@@ -58,39 +73,44 @@ package aeongui {
             // Sprite that holds grid
             gridContainer = new Sprite();
             maskGrid = new Sprite();
-			// number of objects to place into grid
-            var numObjects:int = 225;
-            // number of columns in the grid
-            var numCols:int = 15;
-            // current column
-            var column:int = 0;
-            // current row
-            var row:int = 0;
-            // distance between objects
-            var gap:Number = 0;
-            // object that populates grid cell
-            var cell:Sprite;
-            for (var i:int = 0; i < numObjects; i++) {
-                // calculate current column using modulo operator
-                column = i % numCols;
-                // calculate current row
-                row = int(i / numCols);
-                // make object to place into grid
-                cell = makeObject(i, row, column);
-                // position object based on its width, height, column a row
-                cell.x = (cell.width + gap) * column;
-                cell.y = (cell.height + gap) * row;
-                gridContainer.addChild(cell);
-				maskGrid.addChild(cell);
-            }
-			maskGrid.x = maskGrid.y = 20;
-            gridContainer.x = gridContainer.y = 20;
-            maskGrid.addEventListener(MouseEvent.CLICK, buttonClick);
+			maskGrid = makeBlank(maskGrid);			
+            //maskGrid.addEventListener(MouseEvent.CLICK, gridClick);
 
 			addChild(gridContainer);
 			addChild(maskGrid);
         }
-
+		// creates a blank grid
+		function makeBlank(grid:Sprite){
+			// number of objects to place into grid
+			var numObjects:int = 225;
+			// number of columns in the grid
+			var numCols:int = 15;
+			// current column
+			var column:int = 0;
+			// current row
+			var row:int = 0;
+			// distance between objects
+			var gap:Number = 0;
+			// object that populates grid cell
+			var cell:Sprite;
+			for (var i:int = 0; i < numObjects; i++) {
+				// calculate current column using modulo operator
+				column = i % numCols;
+				// calculate current row
+				row = int(i / numCols);
+				// make object to place into grid
+				cell = makeObject(i, row, column);
+				// position object based on its width, height, column a row
+				cell.x = (cell.width + gap) * column;
+				cell.y = (cell.height + gap) * row;
+				//gridContainer.addChild(cell);
+				grid.addChild(cell);
+			}
+			grid.x = grid.y = 20;
+			return grid;
+			
+			
+		}
         /**
          * Creates Sprite instance and draws its visuals.
          * Arguments passed are used to create label.
@@ -111,21 +131,20 @@ package aeongui {
             return s;
         }
 
-        private function gridClick(e:MouseEvent) {
-            var sprite:Sprite = Sprite(e.target)
-            tf.appendText(sprite.x + "," + sprite.y + "\n" + sprite.getChildAt(0));
-            if(!sprite.getChildByName("grid")){
-				var text:TextField = new TextField();
-            	text.text = "W";
-				text.name = "grid";
-            	text.x = text.y = 5;
-				sprite.addChild(text);
-			}
-			else{
-				sprite.removeChildAt(0);
-			}
-            
-        }
+		private function gridClick(e:MouseEvent) {
+			var sprite:Sprite=Sprite(e.target)
+			tf.appendText(sprite.x + "," + sprite.y + "\n");
+
+			var text:TextField=new TextField();
+			text.text="W";
+			text.name="grid";
+			text.x=text.y=5;
+			sprite.addChild(text);
+			
+			var bit:Bitmap = new wallImg();
+			sprite.addChild(bit);
+
+		}
 
         private function buttonClick(e:MouseEvent) {
             var button:Button = Button(e.target);
@@ -134,7 +153,8 @@ package aeongui {
 		
 		private function clearClick(e:MouseEvent) {
 			var button:Button = Button(e.target);
-			maskGrid.removeChildren();
+			tf.appendText("cleared\n");
+			maskGrid = makeBlank(maskGrid);
 		}
     }
 

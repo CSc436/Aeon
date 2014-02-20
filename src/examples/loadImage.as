@@ -1,10 +1,10 @@
 package examples {
 	import fl.controls.Button;
 	import fl.controls.TextArea;
-	
+	import flash.events.*;
     import flash.display.*;
     import flash.net.URLRequest;
-    import flash.events.*;
+    
 
     public class loadImage extends Sprite {
 		//DAFAQ??
