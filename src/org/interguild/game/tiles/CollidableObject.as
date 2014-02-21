@@ -18,6 +18,8 @@ package org.interguild.game.tiles {
 		private var hit_box:Rectangle;
 		private var hit_box_prev:Rectangle;
 		private var justCollided:Dictionary;
+		private var sideBlocked:Array;
+		private var active:Boolean;
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS. Please instantiate
@@ -29,6 +31,8 @@ package org.interguild.game.tiles {
 			hit_box = new Rectangle(_x, _y, width, height);
 			hit_box_prev = hit_box.clone();
 			justCollided = new Dictionary(true);
+			sideBlocked = [false, false, false, false];
+			active = false;
 		}
 
 		/**
@@ -38,29 +42,7 @@ package org.interguild.game.tiles {
 		public function addGridTile(g:GridTile):void {
 			myGrids.push(g);
 		}
-
-		/**
-		 * It's dangerous to do collision detection alone.
-		 * Take this. 
-		 */
-		public function get hitbox():Rectangle {
-			hit_box.x = newX;
-			hit_box.y = newY;
-			return hit_box;
-		}
 		
-		public function get hitboxPrev():Rectangle{
-			return hit_box_prev;
-		}
-		
-		public function setCollidedWith(obj:CollidableObject):void{
-			justCollided[obj] = true;
-		}
-		
-		public function hasCollidedWith(obj:CollidableObject):Boolean{
-			return justCollided[obj];
-		}
-
 		/**
 		 * Removes the GameObject from all of the collision
 		 * grid tiles that it is currently in.
@@ -75,6 +57,58 @@ package org.interguild.game.tiles {
 		
 		public function get myCollisionGridTiles():Vector.<GridTile>{
 			return this.myGrids;
+		}
+
+		/**
+		 * It's dangerous to do collision detection alone.
+		 * Take this. 
+		 */
+		public function get hitbox():Rectangle {
+			hit_box.x = newX;
+			hit_box.y = newY;
+			return hit_box;
+		}
+		
+		/**
+		 * Return what the hitbox used to be during the last frame.
+		 */
+		public function get hitboxPrev():Rectangle{
+			return hit_box_prev;
+		}
+		
+		/**
+		 * Don't want to check collisions on the same object twice.
+		 */
+		public function setCollidedWith(obj:CollidableObject):void{
+			justCollided[obj] = true;
+		}
+		
+		public function hasCollidedWith(obj:CollidableObject):Boolean{
+			return justCollided[obj];
+		}
+		
+		/**
+		 * Use the Direction class in the collision package for the parameter.
+		 * Basically, if a tile goes to rest next to this one, tell this one
+		 * about it so that we don't test for collisions on that side of the tile.
+		 */
+		public function setBlocked(direction:uint):void{
+			sideBlocked[direction] = true;
+		}
+		
+		public function isBlocked(direction:uint):Boolean{
+			return sideBlocked[direction];
+		}
+		
+		public function set isActive(b:Boolean):void{
+			//if changing state, reset blocked sides
+			if(b != active)
+				sideBlocked = [false, false, false, false];
+			active = b;
+		}
+		
+		public function get isActive():Boolean{
+			return active;
 		}
 
 		public override function finishGameLoop():void{

@@ -1,14 +1,12 @@
 package org.interguild.game.collision {
-	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.Tile;
 
-	public class CollisionGrid /*DEBUG*/extends Sprite /*END DEBUG*/ {
+	public class CollisionGrid /*DEBUG extends Sprite /*END DEBUG*/ {
 
 		private var grid:Array;
 
@@ -20,7 +18,7 @@ package org.interguild.game.collision {
 				for (var j:uint = 0; j < width; j++) {
 					var g:GridTile = new GridTile();
 					grid[i][j] = g;
-					/*DEBUG*/
+					/*DEBUG
 					g.x = j * 32;
 					g.y = i * 32;
 					addChild(grid[i][j]);
@@ -32,8 +30,14 @@ package org.interguild.game.collision {
 		/**
 		 * To be called during initialization. Adds the
 		 * object to its correct GridTile.
+		 *
+		 * If blockNeighbors is set to true, will notify
+		 * the four adjacent tiles that they are now blocked
+		 * on that side, so they shouldn't bother testing
+		 * for collisions there. BlockNeighbors assumes that
+		 * you only take up one grid tile.
 		 */
-		public function updateObject(o:CollidableObject):void {
+		public function updateObject(o:CollidableObject, blockNeighbors:Boolean):void {
 			var inGrids:Array = new Array();
 			var box:Rectangle = o.hitbox;
 			var gx:int;
@@ -43,26 +47,73 @@ package org.interguild.game.collision {
 
 			//top left
 			gx = box.left / Aeon.TILE_WIDTH;
-			gy0 = gy = box.top / Aeon.TILE_HEIGHT;
+			gy = gy0 = box.top / Aeon.TILE_HEIGHT;
 			gridTile = grid[gy][gx];
-			inGrids.push(gridTile);
+			if (inBounds(gy, gx)) {
+				inGrids.push(gridTile);
+
+				//naively handle blockNeighbors for only one gridTile case
+				if (blockNeighbors) {
+					//top
+					var bx:int = gx;
+					var by:int = gy - 1;
+					if (inBounds(bx, by)) {
+						gridTile = grid[by][bx]
+						gridTile.block(Direction.DOWN);
+						if (gridTile.isBlocking()) {
+							o.setBlocked(Direction.UP);
+						}
+					}
+
+					//down
+					by = gy + 1;
+					if (inBounds(bx, by)) {
+						gridTile = grid[by][bx]
+						gridTile.block(Direction.UP);
+						if (gridTile.isBlocking()) {
+							o.setBlocked(Direction.DOWN);
+						}
+					}
+
+					//right
+					bx = gx + 1;
+					by = gy;
+					if (inBounds(bx, by)) {
+						gridTile = grid[by][bx]
+						gridTile.block(Direction.LEFT);
+						if (gridTile.isBlocking()) {
+							o.setBlocked(Direction.RIGHT);
+						}
+					}
+
+					//left
+					bx = gx - 1;
+					if (inBounds(bx, by)) {
+						gridTile = grid[by][bx]
+						gridTile.block(Direction.RIGHT);
+						if (gridTile.isBlocking()) {
+							o.setBlocked(Direction.LEFT);
+						}
+					}
+				}
+			}
 
 			//top right
 			gx = (box.right - 1) / Aeon.TILE_WIDTH;
 			gridTile = grid[gy][gx];
-			if (inGrids.indexOf(gridTile) == -1)
+			if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
 				inGrids.push(gridTile);
 
 			//bottom right
 			gy = (box.bottom - 1) / Aeon.TILE_HEIGHT;
 			gridTile = grid[gy][gx];
-			if (inGrids.indexOf(gridTile) == -1)
+			if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
 				inGrids.push(gridTile);
 
 			//bottom left
 			gx = box.left / Aeon.TILE_WIDTH;
 			gridTile = grid[gy][gx];
-			if (inGrids.indexOf(gridTile) == -1)
+			if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
 				inGrids.push(gridTile);
 
 			//middle cases if player
@@ -71,13 +122,13 @@ package org.interguild.game.collision {
 
 				//middle left
 				gridTile = grid[gy][gx];
-				if (inGrids.indexOf(gridTile) == -1)
+				if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
 					inGrids.push(gridTile);
 
 				//middle right
 				gx = (box.right - 1) / Aeon.TILE_WIDTH;
 				gridTile = grid[gy][gx];
-				if (inGrids.indexOf(gridTile) == -1)
+				if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
 					inGrids.push(gridTile);
 			}
 
@@ -90,6 +141,10 @@ package org.interguild.game.collision {
 				g.addObject(o);
 				o.addGridTile(g);
 			}
+		}
+
+		private function inBounds(row:int, col:int):Boolean {
+			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
 
 		/**
@@ -108,10 +163,6 @@ package org.interguild.game.collision {
 				for (var j:uint = 0; j < olen; j++) {
 					//now we can test collisions between obj and target
 					var obj:CollidableObject = gObjs[j];
-
-					if (obj.y == 288 && obj.x == 192) {
-						trace();
-					}
 
 					if (target != obj && !target.hasCollidedWith(obj) && target.hitbox.intersects(obj.hitbox)) {
 						//if they are colliding:
@@ -139,7 +190,7 @@ package org.interguild.game.collision {
 						var otherBoxCurr:Rectangle = otherObject.hitbox;
 
 
-						if (activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
+						if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
 							/*
 							 * --------------
 							 * |activeObject|
@@ -151,7 +202,7 @@ package org.interguild.game.collision {
 							activeObject.speedY = 0;
 							//set player standing
 							p.isStanding = true;
-						} else if (activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
+						} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
 							/*
 							 * --------------
 							 * |otherObject |
@@ -161,7 +212,7 @@ package org.interguild.game.collision {
 							 */
 							activeObject.newY = otherBoxCurr.bottom;
 							activeObject.speedY = 0;
-						} else if (activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+						} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
 							/*
 							* |------------||-----------|
 							* |activeObject||otherObject|
@@ -169,7 +220,7 @@ package org.interguild.game.collision {
 							*/
 							activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
 							activeObject.speedX = 0;
-						} else if (activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+						} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
 							/*
 							* |-----------||------------|
 							* |otherObject||activeObject|

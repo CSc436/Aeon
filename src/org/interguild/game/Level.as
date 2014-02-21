@@ -62,7 +62,7 @@ package org.interguild.game {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			/*DEBUG*/
+			/*DEBUG
 			addChild(collisionGrid);
 			/*END DEBUG*/
 			
@@ -78,7 +78,7 @@ package org.interguild.game {
 		private function onGameLoop(evt:TimerEvent):void {
 			//update player
 			player.onGameLoop();
-			collisionGrid.updateObject(player);
+			collisionGrid.updateObject(player, false);
 			
 			//update active objects
 			var len:uint = activeObjects.length;
@@ -86,7 +86,8 @@ package org.interguild.game {
 				var obj:GameObject = activeObjects[i];
 				obj.onGameLoop();
 				if(obj is CollidableObject){
-					collisionGrid.updateObject(CollidableObject(obj));
+					//TODO if obj is no longer active, pass true below, rather than false
+					collisionGrid.updateObject(CollidableObject(obj), false);
 				}
 			}
 			 
@@ -109,14 +110,14 @@ package org.interguild.game {
 		 */
 		public function setPlayer(px:Number, py:Number):void {
 			player.setStartPosition(px, py);
-			collisionGrid.updateObject(player);
+			collisionGrid.updateObject(player, false);
 		}
 
 		public function createCollidableObject(tile:CollidableObject, isActive:Boolean):void {
 			allObjects.push(tile);
 			if(isActive)
 				activeObjects.push(tile);
-			collisionGrid.updateObject(tile);
+			collisionGrid.updateObject(tile, !isActive);
 			camera.addChild(tile);
 		}
 	}
