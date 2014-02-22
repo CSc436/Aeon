@@ -1,4 +1,3 @@
-
 package aeongui {
 	import fl.controls.Button;
 	import fl.controls.TextArea;
@@ -14,8 +13,6 @@ package aeongui {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-
-	import org.interguild.menu.DropDownMenu;
 
 	public class makeGrid extends Sprite {
 		private var b:Button;
@@ -44,11 +41,6 @@ package aeongui {
 		 * Creates grid holder and populates it with objects.
 		 */
 		function makeGrid():void {
-			dropDown=new DropDownMenu;
-			dropDown.x=5;
-			dropDown.y=5;
-			addChild(dropDown);
-
 			//stop stage from scaling and stuff
 			stage.scaleMode=StageScaleMode.NO_SCALE;
 			stage.align=StageAlign.TOP_LEFT;
@@ -77,14 +69,14 @@ package aeongui {
 			b2.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
-			var b3:Button=new Button();
-			b3.label="Test";
-			b3.setStyle("icon", TestButton);
-			b3.x=200;
-			b3.y=650;
-			b3.useHandCursor=true;
-			b3.addEventListener(MouseEvent.CLICK, exportText);
-			addChild(b3);
+			var testButton:Button=new Button();
+			testButton.label="Test Game";
+			testButton.setStyle("icon", TestButton);
+			testButton.x=200;
+			testButton.y=650;
+			testButton.useHandCursor=true;
+			testButton.addEventListener(MouseEvent.CLICK, testGame);
+			addChild(testButton);
 			//textfield:
 			tf=new TextArea();
 			tf.width=200;
@@ -104,6 +96,12 @@ package aeongui {
 
 			addChild(gridContainer);
 			addChild(maskGrid);
+			
+			//add the drop down menu
+			dropDown=new DropDownMenu(maskGrid);
+			dropDown.x=5;
+			dropDown.y=5;
+			addChild(dropDown);
 		}
 
 		// creates a blank grid
@@ -136,8 +134,6 @@ package aeongui {
 			grid.x=20;
 			grid.y=100;
 			return grid;
-
-
 		}
 
 		/**
@@ -165,16 +161,16 @@ package aeongui {
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
 
 			var text:TextField=new TextField();
-			text.text="W";
+//			text.text="W";
 			text.name="grid";
 			text.x=text.y=5;
 			sprite.addChild(text);
 
+			//TODO get the object that we are clicking
 			var bit:Bitmap=new wallImg();
 			sprite.addChild(bit);
 
 			sprite.name="W";
-
 		}
 
 		private function buttonClick(e:MouseEvent) {
@@ -187,36 +183,10 @@ package aeongui {
 			tf.appendText("cleared\n");
 			maskGrid=makeBlank(maskGrid);
 		}
-
-		/*
-		TODO:
-		Need to get right amount of children, or change implementation of sprite/text
-		char 2darray
 		
-		*/
-		private function exportText(e:MouseEvent) {
-			var button:Button=Button(e.target);
-
-			var file:FileReference=new FileReference;
-			var i:int;
-			var j:int;
-			var string:String = "";
-			for (i=0; i < maskGrid.numChildren; i++) {
-				if(maskGrid.getChildAt(i) != null){	
-					if(maskGrid.getChildAt(i).name.length == 1){
-						string+=maskGrid.getChildAt(i).name;
-					}
-					else{
-						string+= " ";
-					}
-					string+=i;
-					if(i!= 0 && i%14 == 0){
-						string+="\n";
-					}
-				}
-			}
-			file.save(string, "level1.txt");
+		//TODO make sure the test button plays the current game
+		private function testGame(e:MouseEvent) {
+			
 		}
 	}
-
 }

@@ -3,17 +3,15 @@
  *Please click on the "Refresh" icon in "FlexUnit Results" view to regenerate this file.
  */
 
-package
+package tests
 {
 	import flash.display.Sprite;
 	
-	import flexUnitTests.GridTileTest;
-	import flexUnitTests.TestSuite;
 	
 	public class FlexUnitCompilerApplication extends Sprite
 	{
-		private var testUnitTests_TestSuite_obj:flexUnitTests.TestSuite;
+		private var testUnitTests_TestSuite_obj:tests.TestSuite;
 		
-		private var org_interguild_game_collision_GridTileTest_obj:flexUnitTests.GridTileTest;
+		private var org_interguild_game_collision_GridTileTest_obj:tests.GridTileTest;
 	}
 }
