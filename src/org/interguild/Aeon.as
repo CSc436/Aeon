@@ -37,6 +37,7 @@ package org.interguild {
 			//addChild(levelPage);
 			
 			new MainMenu(this, levelPage);
+			
 		}
 	}
 }

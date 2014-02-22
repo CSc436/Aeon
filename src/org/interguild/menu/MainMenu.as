@@ -25,6 +25,7 @@ package org.interguild.menu {
 			this.currSprite = currSprite;
 			this.levelPage = levelPage;
 			logo = new Aeon_Logo();
+			logo.x = (currSprite.stage.stageWidth / 2) - (logo.width / 2);
 			currSprite.addChild(logo);
 
 			playButton = new Button();
