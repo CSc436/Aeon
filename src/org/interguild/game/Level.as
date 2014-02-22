@@ -62,7 +62,7 @@ package org.interguild.game {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			/*DEBUG
+			/*DEBUG*/
 			addChild(collisionGrid);
 			/*END DEBUG*/
 			

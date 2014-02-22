@@ -3,13 +3,13 @@ package org.interguild.game.collision {
 	
 	import org.interguild.game.tiles.CollidableObject;
 
-	public class GridTile /*DEBUG extends Sprite /*END DEBUG*/ {
+	public class GridTile /*DEBUG*/ extends Sprite /*END DEBUG*/ {
 
 		private var myStuff:Vector.<CollidableObject>;
 
 		public function GridTile() {
 			myStuff = new Vector.<CollidableObject>();
-		/*DEBUG
+		/*DEBUG*/
 		graphics.beginFill(0xCCCCCC, 0.5);
 		graphics.drawRect(0, 0, 31, 31);
 		graphics.endFill();
@@ -19,7 +19,7 @@ package org.interguild.game.collision {
 		public function addObject(o:CollidableObject):void {
 			myStuff.push(o);
 
-		/*DEBUG
+		/*DEBUG*/
 		graphics.clear();
 		graphics.beginFill(0xFFFFFF, 0.25);
 		graphics.drawRect(0, 0, 31, 31);
@@ -31,7 +31,7 @@ package org.interguild.game.collision {
 			var i:int = myStuff.indexOf(o);
 			if (i != -1)
 				myStuff.splice(i, 1);
-		/*DEBUG
+		/*DEBUG*/
 		graphics.clear();
 		graphics.beginFill(0xCCCCCC, 0.5);
 		graphics.drawRect(0, 0, 31, 31);

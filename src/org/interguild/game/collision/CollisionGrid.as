@@ -5,8 +5,9 @@ package org.interguild.game.collision {
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
+	import flash.display.Sprite;
 
-	public class CollisionGrid /*DEBUG extends Sprite /*END DEBUG*/ {
+	public class CollisionGrid /*DEBUG*/ extends Sprite /*END DEBUG*/ {
 
 		private var grid:Array;
 
@@ -18,7 +19,7 @@ package org.interguild.game.collision {
 				for (var j:uint = 0; j < width; j++) {
 					var g:GridTile = new GridTile();
 					grid[i][j] = g;
-					/*DEBUG
+					/*DEBUG*/
 					g.x = j * 32;
 					g.y = i * 32;
 					addChild(grid[i][j]);
