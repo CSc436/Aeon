@@ -1,4 +1,4 @@
-package flexUnitTests
+package tests
 {
 	import org.interguild.game.KeyMan;
 	

@@ -1,4 +1,4 @@
-package flexUnitTests {
+package tests {
 	
 
 	public class KeyManTest {

@@ -1,5 +1,5 @@
 
-package flexUnitTests {
+package tests {
 	import flexunit.framework.Assert;
 
 	import org.interguild.game.tiles.SteelCrate;

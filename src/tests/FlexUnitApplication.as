@@ -1,10 +1,9 @@
-package
+package tests
 {
 	import Array;
 	
 	import flash.display.Sprite;
 	
-	import flexUnitTests.TestSuite;
 	
 	import flexunit.flexui.FlexUnitTestRunnerUIAS;
 	
@@ -26,7 +25,7 @@ package
 		public function currentRunTestSuite():Array
 		{
 			var testsToRun:Array = new Array();
-			testsToRun.push(flexUnitTests.TestSuite);
+			testsToRun.push(tests.TestSuite);
 			return testsToRun;
 		}
 	}
