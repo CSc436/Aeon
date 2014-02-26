@@ -97,20 +97,11 @@ package aeongui {
 			
         }
 
-        public function saveGameListener(event:MouseEvent):void {
-            //Save whatever is in the grid
-			
-        }
-
-        /*
-        TODO:
-        Need to get right amount of children, or change implementation of sprite/text
-        char 2darray
-        */
-        private function exportText(e:MouseEvent) {
+		//Save whatever is in the grid
+        private function saveGameListener(e:MouseEvent) {
             var button:Button = Button(e.target);
 
-            var file:FileReference = new FileReference;
+            var file:FileReference = new FileReference();
             var i:int;
             var j:int;
             var string:String = "";
