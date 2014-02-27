@@ -230,6 +230,14 @@ package org.interguild.game.collision {
 							activeObject.newX = otherBoxCurr.right;
 							activeObject.speedX = 0;
 						}
+						
+						//destructible
+						if (t.getDestructibility() == 2){
+							//doesn't knockback ie wood crate
+							if (!t.doesKnockback()){
+								
+							}
+						}
 					}
 				} else {
 					//other Object is nothing (yet)
