@@ -5,7 +5,7 @@ package org.interguild.game.tiles {
 		public var destructibility:int = 2;
 		public var solidity:Boolean = true;
 		public var gravible:Boolean = false;
-		public var knocksback:int = 0;
+		public var knocksback:int = 5;
 		public var buoyancy:Boolean = true;
 		
 		private static const SPRITE_COLOR:uint = 0x723207;
