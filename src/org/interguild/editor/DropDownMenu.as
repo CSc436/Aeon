@@ -1,12 +1,10 @@
-package aeongui {
+package org.interguild.editor {
     import fl.controls.Button;
     
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.net.FileReference;
     
-    import org.interguild.game.LevelLoader;
-
     public class DropDownMenu extends Sprite {
 
         private var fileLabel:Button;
@@ -105,7 +103,7 @@ package aeongui {
 			this.numColumns = col;
 		}
 		//Save whatever is in the grid
-        private function saveGameListener(e:MouseEvent) {
+        private function saveGameListener(e:MouseEvent):void {
             var button:Button = Button(e.target);
 
             var file:FileReference = new FileReference();
