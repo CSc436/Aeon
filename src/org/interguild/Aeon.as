@@ -4,15 +4,21 @@ package org.interguild {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
-	import fl.controls.Button;	
+	
+	import fl.controls.Button;
+	
 	import org.interguild.game.KeyMan;
 	import org.interguild.menu.LevelPage;	
 	
-	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
+	[SWF(backgroundColor = "0x000000", width = STAGE_WIDTH, height = STAGE_HEIGHT)]
 	public class Aeon extends Sprite {
 		
 		public static const TILE_WIDTH:uint = 32;
 		public static const TILE_HEIGHT:uint = 32;
+		public static const STAGE_WIDTH:uint = 480;
+		public static const STAGE_HEIGHT:uint = 350;
+		
+		private static const BG_COLOR:uint = 0;
 
 		private var levelPage:LevelPage;
 		private var keys:KeyMan;
@@ -26,12 +32,16 @@ package org.interguild {
 		private var logo:Bitmap;
 		
 		public function Aeon() {
+			//stop stage from scaling and stuff
+			stage.scaleMode = StageScaleMode.NO_SCALE;
+			stage.align = StageAlign.TOP_LEFT;
 			
-			this.levelPage = levelPage;
+			//init logo image
 			logo = new Aeon_Logo();
 			logo.x = (this.stage.stageWidth / 2) - (logo.width / 2);
 			this.addChild(logo);
 			
+			//int play button
 			playButton = new Button();
 			playButton.label = "PLAY GAME!";
 			playButton.y = 125;
@@ -41,6 +51,7 @@ package org.interguild {
 			playButton.addEventListener(MouseEvent.CLICK, playGame);
 			this.addChild(playButton);
 			
+			//init editor button
 			editorButton = new Button();
 			editorButton.label = "Level Editor";
 			editorButton.x = (this.stage.stageWidth / 2) - 75;
@@ -48,29 +59,24 @@ package org.interguild {
 			editorButton.height = 25;
 			editorButton.width = 150;
 			this.addChild(editorButton);
-			
-			//stop stage from scaling and stuff
-			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.align = StageAlign.TOP_LEFT;
 
 			//init bg
-			graphics.beginFill(0xFFFFFF);
+			graphics.beginFill(BG_COLOR);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 			graphics.endFill();
 
 			//init key man
 			keys = new KeyMan(stage);
-
-			//init level page:
-			levelPage = new LevelPage();
-			
 		}
 		
 		//Not sure how I'm supposed to make the game start playing
-		protected function playGame(event:MouseEvent):void {
+		private function playGame(event:MouseEvent):void {
 			this.removeChild(logo);
 			this.removeChild(playButton);
 			this.removeChild(editorButton);
+			
+			//go to level page
+			//levelPage = new LevelPage();
 			this.addChild(levelPage);
 		}
 		
