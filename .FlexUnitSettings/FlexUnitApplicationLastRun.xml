@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testrun name="" >
+<testsuite  name="Default Test Suite" project="Aeon">
+<testsuite name="tests:GridTileTest" type="testcaseclass"/>
+<testsuite name="tests:SteelCrateTest" type="testcaseclass"/>
+<testsuite name="tests:WoodCrateTest" type="testcaseclass"/>
+</testsuite>
+<portNumber value="8765" />
+</testrun>

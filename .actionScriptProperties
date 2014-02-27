@@ -37,9 +37,11 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="aeongui/makeGrid.as"/>
-    <application path="org/interguild/menu/MainMenu.as"/>
+    <application path="FlexUnitApplication.as"/>
+    <application path="tests/GridTileTest.as"/>
+    <application path="tests/FlexUnitApplication.as"/>
     <application path="org/interguild/Aeon.as"/>
+    <application path="tests/FlexUnitCompilerApplication.as"/>
   </applications>
   <modules/>
   <workers/>

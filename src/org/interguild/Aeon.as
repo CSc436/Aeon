@@ -1,9 +1,12 @@
 package org.interguild {
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import org.interguild.menu.LevelPage;
+	import flash.events.MouseEvent;
+	import fl.controls.Button;	
 	import org.interguild.game.KeyMan;
+	import org.interguild.menu.LevelPage;	
 	
 	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
@@ -13,8 +16,39 @@ package org.interguild {
 
 		private var levelPage:LevelPage;
 		private var keys:KeyMan;
-
+		
+		private var playButton:Button;
+		private var editorButton:Button;
+		
+		[Embed(source = "../../../images/aeon_logo.png")]
+		private var Aeon_Logo:Class;
+		
+		private var logo:Bitmap;
+		
 		public function Aeon() {
+			
+			this.levelPage = levelPage;
+			logo = new Aeon_Logo();
+			logo.x = (this.stage.stageWidth / 2) - (logo.width / 2);
+			this.addChild(logo);
+			
+			playButton = new Button();
+			playButton.label = "PLAY GAME!";
+			playButton.y = 125;
+			playButton.x = (this.stage.stageWidth / 2) - 100;
+			playButton.height = 50;
+			playButton.width = 200;
+			playButton.addEventListener(MouseEvent.CLICK, playGame);
+			this.addChild(playButton);
+			
+			editorButton = new Button();
+			editorButton.label = "Level Editor";
+			editorButton.x = (this.stage.stageWidth / 2) - 75;
+			editorButton.y = 190;
+			editorButton.height = 25;
+			editorButton.width = 150;
+			this.addChild(editorButton);
+			
 			//stop stage from scaling and stuff
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
@@ -29,7 +63,17 @@ package org.interguild {
 
 			//init level page:
 			levelPage = new LevelPage();
-			addChild(levelPage);
+			
 		}
+		
+		//Not sure how I'm supposed to make the game start playing
+		protected function playGame(event:MouseEvent):void {
+			this.removeChild(logo);
+			this.removeChild(playButton);
+			this.removeChild(editorButton);
+			this.addChild(levelPage);
+		}
+		
+		
 	}
 }

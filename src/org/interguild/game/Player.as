@@ -17,31 +17,25 @@ package org.interguild.game {
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
 
-		private static const JUMP_SPEED:Number = -25;
-
-		private var newX:Number = 0;
-		private var newY:Number = 0;
-
-		private var speedX:Number = 0;
-		private var speedY:Number = 0;
+		private static const JUMP_SPEED:Number = -26;
 
 		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
 
 		private var keys:KeyMan;
-		private var isStanding:Boolean;
+		public var isStanding:Boolean;
 
 
 		public function Player() {
-			super(HITBOX_WIDTH, HITBOX_HEIGHT);
+			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			drawPlayer();
 
 			keys = KeyMan.getMe();
 		}
 
 		public function setStartPosition(sx:Number, sy:Number):void {
-			x = newX = sx;
-			y = newY = sy;
+			x = newX = startX = sx;
+			y = newY = startY = sy;
 		}
 
 		private function drawPlayer():void {
@@ -82,8 +76,6 @@ package org.interguild.game {
 			//commit location change:
 			x = newX;
 			y = newY;
-
-
 		}
 
 		private function reset():void {

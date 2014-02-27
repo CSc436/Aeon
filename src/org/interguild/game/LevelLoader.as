@@ -9,6 +9,8 @@ package org.interguild.game {
 	import org.interguild.Aeon;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.SteelCrate;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -158,6 +160,13 @@ package org.interguild.game {
 					tile = new Terrain(px, py);
 					level.createCollidableObject(tile, false);
 					break;
+				case "w": //WoodCrate
+					tile = new WoodCrate(px, py);
+					level.createCollidableObject(tile, false);
+					break;
+				case "s": //SteelCrate
+					tile = new SteelCrate(px, py);
+					level.createCollidableObject(tile, false);
 				default:
 					trace("Unknown level code character: " + curChar);
 					break;
