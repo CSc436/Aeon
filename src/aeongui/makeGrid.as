@@ -13,40 +13,40 @@ package aeongui {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
-	public class EditorGUI extends Sprite {
+
+	public class makeGrid extends Sprite {
 		private var b:Button;
 		private var b2:Button;
 		private var b3:Button;
 		private var tf:TextArea;
-		
+
 		[Embed(source="images/testButton.png")]
 		private var TestButton:Class;
-		
+
 		[Embed(source="images/clearAllButton.png")]
 		private var ClearButton:Class;
-		
+
 		[Embed(source="images/wallButton.png")]
 		private var WallButton:Class;
-		
+
 		[Embed(source="images/wall.png")]
 		private var wallImg:Class;
-		
+
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
-		
+
 		private var dropDown:DropDownMenu;
 		
 		private var numColumns:int;
-		
+
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		function EditorGUI():void {
+		function makeGrid():void {
 			//stop stage from scaling and stuff
 			stage.scaleMode=StageScaleMode.NO_SCALE;
 			stage.align=StageAlign.TOP_LEFT;
-			
+
 			//init bg
 			graphics.beginFill(0xFFFFFF);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
@@ -69,9 +69,9 @@ package aeongui {
 			b.x=650;
 			b.y=200;
 			b.addEventListener(MouseEvent.CLICK, buttonClick);
-			
+
 			var bbb:Bitmap=new ClearButton();
-			
+
 			//clear button:
 			var b2:Button=new Button();
 			b2.label="Clear All";
@@ -80,7 +80,7 @@ package aeongui {
 			b2.y=300;
 			b2.useHandCursor=true;
 			b2.addEventListener(MouseEvent.CLICK, clearClick);
-			
+
 			//Test button:
 			var testButton:Button=new Button();
 			testButton.label="Test Game";
@@ -135,14 +135,10 @@ package aeongui {
 				// position object based on its width, height, column a row
 				cell.x=(cell.width + gap) * column;
 				cell.y=(cell.height + gap) * row;
-				if(row == 0 || row == numCols-1){
-					var bit:Bitmap=new wallImg();
-					cell.addChild(bit);
+				if(row == 0 || row == numCols){
 					cell.name = "W";
 				}
-				else if( column == 0 || column== numCols-1){
-					var bit:Bitmap=new wallImg();
-					cell.addChild(bit);
+				else if( column == 0 || column== numCols){
 					cell.name = "W";
 				}
 				//gridContainer.addChild(cell);
@@ -152,7 +148,7 @@ package aeongui {
 			grid.y=100;
 			return grid;
 		}
-		
+
 		/**
 		 * Creates Sprite instance and draws its visuals.
 		 * Arguments passed are used to create label.
@@ -170,38 +166,31 @@ package aeongui {
 			s.mouseEnabled;
 			s.buttonMode=true;
 			s.addEventListener(MouseEvent.CLICK, gridClick);
-			s.addEventListener(MouseEvent.CLICK,rightGridClick);
 			return s;
 		}
-		
+
 		private function gridClick(e:MouseEvent) {
 			var sprite:Sprite=Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
-			
+
+			var text:TextField=new TextField();
+//			text.text="W";
+			text.name="grid";
+			text.x=text.y=5;
+			sprite.addChild(text);
+
 			//TODO get the object that we are clicking
 			var bit:Bitmap=new wallImg();
 			sprite.addChild(bit);
-			
+
 			sprite.name="W";
 		}
 
-		private function rightGridClick(e:MouseEvent) {
-			var gridChild:Sprite=Sprite(e.target)
-			if (e.ctrlKey) {
-				tf.appendText("ctrlclick\n");
-				var i:int;
-				while (gridChild.numChildren > 0) {
-					gridChild.removeChildAt(0);
-				}
-				gridChild.name=" ";
-			}
-		}
-		
 		private function buttonClick(e:MouseEvent) {
 			var button:Button=Button(e.target);
 			tf.appendText("hi\n");
 		}
-		
+
 		private function clearClick(e:MouseEvent) {
 			var button:Button=Button(e.target);
 			tf.appendText("cleared\n");
