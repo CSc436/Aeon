@@ -1,5 +1,8 @@
-package org.interguild.game {
-	import flash.display.DisplayObject;
+
+	
+
+package org.interguild.game.level {
+    import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -9,6 +12,7 @@ package org.interguild.game {
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.Player;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -25,7 +29,7 @@ package org.interguild.game {
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
 
-		private static const TEST_LEVEL_FILE:String = "../testlevel.txt";
+		private static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
 
 		private var camera:Sprite;
 		private var player:Player;
