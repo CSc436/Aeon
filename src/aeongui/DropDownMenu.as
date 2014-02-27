@@ -1,9 +1,9 @@
 package aeongui {
     import fl.controls.Button;
-
+    
     import flash.display.Sprite;
     import flash.events.MouseEvent;
-	import flash.net.FileReference;
+    import flash.net.FileReference;
 
     public class DropDownMenu extends Sprite {
 
@@ -21,12 +21,12 @@ package aeongui {
         private var editSprite:Sprite;
 
         private var maskGrid:Sprite;
+		private var numColumns:int;
 
         public function DropDownMenu(grid:Sprite):void {
-            grid = this.maskGrid;
+            maskGrid = grid;
             fileSprite = new Sprite();
             addChild(fileSprite);
-
             editSprite = new Sprite();
             editSprite.x = 100;
             addChild(editSprite);
@@ -94,26 +94,34 @@ package aeongui {
 
         public function openGameListener(event:MouseEvent):void {
             //open the game
-			
+			trace("children: " + maskGrid.numChildren);
         }
 
+		public function setColumns(col:int):void{
+			trace("cols:: " + col);
+			this.numColumns = col;
+		}
 		//Save whatever is in the grid
         private function saveGameListener(e:MouseEvent) {
             var button:Button = Button(e.target);
 
             var file:FileReference = new FileReference();
             var i:int;
-            var j:int;
+            //var j:int;
+			var row:int;
+			var col:int;
             var string:String = "";
             for (i = 0; i < maskGrid.numChildren; i++) {
+				row = i/this.numColumns;
+				col = i%this.numColumns;
+				trace("i" + i + "row: " +row+ " col: " + col + " num" + this.numColumns);
                 if (maskGrid.getChildAt(i) != null) {
                     if (maskGrid.getChildAt(i).name.length == 1) {
                         string += maskGrid.getChildAt(i).name;
                     } else {
-                        string += " ";
+                        string += ".";
                     }
-                    string += i;
-                    if (i != 0 && i % 14 == 0) {
+                    if (col == numColumns-1) {
                         string += "\n";
                     }
                 }

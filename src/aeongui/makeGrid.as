@@ -1,7 +1,7 @@
 package aeongui {
 	import fl.controls.Button;
 	import fl.controls.TextArea;
-
+	
 	import flash.display.*;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
@@ -36,6 +36,8 @@ package aeongui {
 		private var maskGrid:Sprite;
 
 		private var dropDown:DropDownMenu;
+		
+		private var numColumns:int;
 
 		/**
 		 * Creates grid holder and populates it with objects.
@@ -49,6 +51,17 @@ package aeongui {
 			graphics.beginFill(0xFFFFFF);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 			graphics.endFill();
+			// Sprite that holds grid
+			//gridContainer=new Sprite();
+			maskGrid=new Sprite();
+			//addChild(gridContainer);
+			
+			//add the drop down menu
+			dropDown=new DropDownMenu(maskGrid);
+			dropDown.x=5;
+			dropDown.y=5;
+			setColumns(15);
+			maskGrid=makeBlank(maskGrid);
 			//button:
 			var b:Button=new Button();
 			b.label="Wall";
@@ -88,28 +101,20 @@ package aeongui {
 			addChild(tf);
 			addChild(b);
 			addChild(b2);
-			// Sprite that holds grid
-			gridContainer=new Sprite();
-			maskGrid=new Sprite();
-			maskGrid=makeBlank(maskGrid);
-			//maskGrid.addEventListener(MouseEvent.CLICK, gridClick);
-
-			addChild(gridContainer);
 			addChild(maskGrid);
-			
-			//add the drop down menu
-			dropDown=new DropDownMenu(maskGrid);
-			dropDown.x=5;
-			dropDown.y=5;
 			addChild(dropDown);
+			
 		}
-
+		private function setColumns(col:int):void{
+			this.numColumns = col;
+			dropDown.setColumns(col);
+		}
 		// creates a blank grid
 		function makeBlank(grid:Sprite) {
 			// number of objects to place into grid
 			var numObjects:int=225;
 			// number of columns in the grid
-			var numCols:int=15;
+			var numCols = numColumns;
 			// current column
 			var column:int=0;
 			// current row
@@ -123,6 +128,8 @@ package aeongui {
 				column=i % numCols;
 				// calculate current row
 				row=int(i / numCols);
+				//fprintf("%d", i);
+				//trace( "this: " + i);
 				// make object to place into grid
 				cell=makeObject(i, row, column);
 				// position object based on its width, height, column a row
