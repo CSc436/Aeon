@@ -37,8 +37,8 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="FlexUnitApplication.as"/>
     <application path="org/interguild/Aeon.as"/>
+    <application path="FlexUnitApplication.as"/>
   </applications>
   <modules/>
   <workers/>
