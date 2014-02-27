@@ -4,6 +4,8 @@ package aeongui {
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.net.FileReference;
+    
+    import org.interguild.game.LevelLoader;
 
     public class DropDownMenu extends Sprite {
 
@@ -94,6 +96,9 @@ package aeongui {
 
         public function openGameListener(event:MouseEvent):void {
             //open the game
+			var file:FileReference = new FileReference();
+			file.load();
+			//LevelLoader loads = new LevelLoader(file);
         }
 
 		public function setColumns(col:int):void{
