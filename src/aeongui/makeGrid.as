@@ -135,6 +135,12 @@ package aeongui {
 				// position object based on its width, height, column a row
 				cell.x=(cell.width + gap) * column;
 				cell.y=(cell.height + gap) * row;
+				if(row == 0 || row == numCols){
+					cell.name = "W";
+				}
+				else if( column == 0 || column== numCols){
+					cell.name = "W";
+				}
 				//gridContainer.addChild(cell);
 				grid.addChild(cell);
 			}

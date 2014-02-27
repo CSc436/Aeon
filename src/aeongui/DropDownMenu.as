@@ -94,11 +94,9 @@ package aeongui {
 
         public function openGameListener(event:MouseEvent):void {
             //open the game
-			trace("children: " + maskGrid.numChildren);
         }
 
 		public function setColumns(col:int):void{
-			trace("cols:: " + col);
 			this.numColumns = col;
 		}
 		//Save whatever is in the grid
@@ -114,7 +112,6 @@ package aeongui {
             for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;
-				trace("i" + i + "row: " +row+ " col: " + col + " num" + this.numColumns);
                 if (maskGrid.getChildAt(i) != null) {
                     if (maskGrid.getChildAt(i).name.length == 1) {
                         string += maskGrid.getChildAt(i).name;
