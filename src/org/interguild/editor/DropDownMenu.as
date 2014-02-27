@@ -1,10 +1,10 @@
-package aeongui {
+package org.interguild.editor {
     import fl.controls.Button;
     
     import flash.display.Sprite;
     import flash.events.MouseEvent;
     import flash.net.FileReference;
-
+    
     public class DropDownMenu extends Sprite {
 
         private var fileLabel:Button;
@@ -94,15 +94,16 @@ package aeongui {
 
         public function openGameListener(event:MouseEvent):void {
             //open the game
-			trace("children: " + maskGrid.numChildren);
+			var file:FileReference = new FileReference();
+			file.load();
+			//LevelLoader loads = new LevelLoader(file);
         }
 
 		public function setColumns(col:int):void{
-			trace("cols:: " + col);
 			this.numColumns = col;
 		}
 		//Save whatever is in the grid
-        private function saveGameListener(e:MouseEvent) {
+        private function saveGameListener(e:MouseEvent):void {
             var button:Button = Button(e.target);
 
             var file:FileReference = new FileReference();
@@ -114,7 +115,6 @@ package aeongui {
             for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;
-				trace("i" + i + "row: " +row+ " col: " + col + " num" + this.numColumns);
                 if (maskGrid.getChildAt(i) != null) {
                     if (maskGrid.getChildAt(i).name.length == 1) {
                         string += maskGrid.getChildAt(i).name;
