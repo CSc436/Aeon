@@ -1,4 +1,4 @@
-package org.interguild.game {
+package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -8,6 +8,7 @@ package org.interguild.game {
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.Player;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for

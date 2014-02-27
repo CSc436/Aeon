@@ -8,7 +8,7 @@ package org.interguild {
 	import fl.controls.Button;
 	
 	import org.interguild.game.KeyMan;
-	import org.interguild.menu.LevelPage;	
+	import org.interguild.game.level.LevelPage;	
 
 	/**
 	 * Aeon.as initializes the game, but it's also responsible for

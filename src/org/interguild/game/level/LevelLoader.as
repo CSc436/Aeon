@@ -1,4 +1,4 @@
-package org.interguild.game {
+package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
@@ -7,10 +7,10 @@ package org.interguild.game {
 	import flash.utils.Timer;
 	
 	import org.interguild.Aeon;
-	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.game.tiles.SteelCrate;
+	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.WoodCrate;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -26,6 +26,9 @@ package org.interguild.game {
 		private var codeLength:uint;
 		private var timer:Timer;
 
+		/**
+		 * TODO: if isEditor==true, construct LevelEdit
+		 */
 		public function LevelLoader(fileName:String, lvl:Level) {
 			level = lvl;
 			file = fileName;
