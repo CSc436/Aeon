@@ -168,7 +168,7 @@ package org.interguild.game {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile, false);
 				default:
-					trace("Unknown level code character: " + curChar);
+					trace("Unknown level code character: '" + curChar+"'");
 					break;
 			}
 		}

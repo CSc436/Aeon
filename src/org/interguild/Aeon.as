@@ -9,7 +9,14 @@ package org.interguild {
 	
 	import org.interguild.game.KeyMan;
 	import org.interguild.menu.LevelPage;	
-	
+
+	/**
+	 * Aeon.as initializes the game, but it's also responsible for
+	 * managing all of the menu transitions.
+	 * 
+	 * TODO: Put all of the main menu screen's components into its
+	 * own class or object.
+	 */
 	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
 		
@@ -18,7 +25,7 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 480;
 		public static const STAGE_HEIGHT:uint = 350;
 		
-		private static const BG_COLOR:uint = 0;
+		private static const BG_COLOR:uint = 0xFFFFFF;
 
 		private var levelPage:LevelPage;
 		private var keys:KeyMan;
@@ -69,14 +76,13 @@ package org.interguild {
 			keys = new KeyMan(stage);
 		}
 		
-		//Not sure how I'm supposed to make the game start playing
 		private function playGame(event:MouseEvent):void {
 			this.removeChild(logo);
 			this.removeChild(playButton);
 			this.removeChild(editorButton);
 			
 			//go to level page
-			//levelPage = new LevelPage();
+			levelPage = new LevelPage();
 			this.addChild(levelPage);
 		}
 		

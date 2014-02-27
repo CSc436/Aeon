@@ -95,7 +95,7 @@ package org.interguild.game {
 			collisionGrid.detectAndHandleCollisions(player);
 			player.finishGameLoop();
 			for(i = 0; i < len; i++){
-				collisionGrid.detectAndHandleCollisions(activeObjects[i]);
+				collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
 				GameObject(activeObjects[i]).finishGameLoop();
 			}
 		}
