@@ -14,7 +14,7 @@ package aeongui {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	public class makeGrid extends Sprite {
+	public class EditorGUI extends Sprite {
 		private var b:Button;
 		private var b2:Button;
 		private var b3:Button;
@@ -42,7 +42,7 @@ package aeongui {
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		function makeGrid():void {
+		function EditorGUI():void {
 			//stop stage from scaling and stuff
 			stage.scaleMode=StageScaleMode.NO_SCALE;
 			stage.align=StageAlign.TOP_LEFT;
@@ -135,10 +135,14 @@ package aeongui {
 				// position object based on its width, height, column a row
 				cell.x=(cell.width + gap) * column;
 				cell.y=(cell.height + gap) * row;
-				if(row == 0 || row == numCols){
+				if(row == 0 || row == numCols-1){
+					var bit:Bitmap=new wallImg();
+					cell.addChild(bit);
 					cell.name = "W";
 				}
-				else if( column == 0 || column== numCols){
+				else if( column == 0 || column== numCols-1){
+					var bit:Bitmap=new wallImg();
+					cell.addChild(bit);
 					cell.name = "W";
 				}
 				//gridContainer.addChild(cell);
@@ -166,6 +170,7 @@ package aeongui {
 			s.mouseEnabled;
 			s.buttonMode=true;
 			s.addEventListener(MouseEvent.CLICK, gridClick);
+			s.addEventListener(MouseEvent.CLICK,rightGridClick);
 			return s;
 		}
 		
@@ -173,17 +178,23 @@ package aeongui {
 			var sprite:Sprite=Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
 			
-			var text:TextField=new TextField();
-			//			text.text="W";
-			text.name="grid";
-			text.x=text.y=5;
-			sprite.addChild(text);
-			
 			//TODO get the object that we are clicking
 			var bit:Bitmap=new wallImg();
 			sprite.addChild(bit);
 			
 			sprite.name="W";
+		}
+
+		private function rightGridClick(e:MouseEvent) {
+			var gridChild:Sprite=Sprite(e.target)
+			if (e.ctrlKey) {
+				tf.appendText("ctrlclick\n");
+				var i:int;
+				while (gridChild.numChildren > 0) {
+					gridChild.removeChildAt(0);
+				}
+				gridChild.name=" ";
+			}
 		}
 		
 		private function buttonClick(e:MouseEvent) {
