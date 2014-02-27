@@ -1,6 +1,7 @@
 package org.interguild.game {
 	
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.level.Level;
 
 	public class Player extends CollidableObject {
 

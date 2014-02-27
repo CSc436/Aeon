@@ -6,9 +6,6 @@ package
 	
 	import flexunit.flexui.FlexUnitTestRunnerUIAS;
 	
-	import tests.GridTileTest;
-	import tests.SteelCrateTest;
-	import tests.WoodCrateTest;
 	
 	public class FlexUnitApplication extends Sprite
 	{
@@ -28,9 +25,9 @@ package
 		public function currentRunTestSuite():Array
 		{
 			var testsToRun:Array = new Array();
-			testsToRun.push(tests.GridTileTest);
-			testsToRun.push(tests.SteelCrateTest);
-			testsToRun.push(tests.WoodCrateTest);
+			testsToRun.push(GridTileTest);
+			testsToRun.push(SteelCrateTest);
+			testsToRun.push(WoodCrateTest);
 			return testsToRun;
 		}
 	}

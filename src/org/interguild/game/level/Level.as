@@ -1,11 +1,14 @@
-package org.interguild.game {
+package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.Player;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -95,7 +98,9 @@ package org.interguild.game {
 			collisionGrid.detectAndHandleCollisions(player);
 			player.finishGameLoop();
 			for(i = 0; i < len; i++){
-				collisionGrid.detectAndHandleCollisions(activeObjects[i]);
+				var remove:ArrayList = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
+				removeObjects(remove);
+				collisionGrid.resetRemovalList();
 				GameObject(activeObjects[i]).finishGameLoop();
 			}
 		}
@@ -119,6 +124,18 @@ package org.interguild.game {
 				activeObjects.push(tile);
 			collisionGrid.updateObject(tile, !isActive);
 			camera.addChild(tile);
+		}
+		
+		public function removeObjects(remove:ArrayList):void{
+			for (var object:Object in remove){
+				var index:int = allObjects.indexOf(object.<GameObject>,0);
+				allObjects.splice(index, 1);
+				
+				index = activeObjects.indexOf(object.<GameObject>,0);
+				if(index != -1){
+					activeObjects.splice(index, 1);
+				}
+			}
 		}
 	}
 }

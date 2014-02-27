@@ -1,4 +1,4 @@
-package tests {
+package  {
 	import flexunit.framework.Assert;
 
 	import org.interguild.game.tiles.WoodCrate;

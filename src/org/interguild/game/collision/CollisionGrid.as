@@ -1,15 +1,18 @@
 package org.interguild.game.collision {
+	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-
+	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
-	import flash.display.Sprite;
 
 	public class CollisionGrid /*DEBUG*/ extends Sprite /*END DEBUG*/ {
 
 		private var grid:Array;
+		private var removalObjects:ArrayList;
 
 		public function CollisionGrid(width:int, height:int) {
 			//init 2D array
@@ -151,7 +154,7 @@ package org.interguild.game.collision {
 		/**
 		 * Handle collisions!
 		 */
-		public function detectAndHandleCollisions(target:CollidableObject):void {
+		public function detectAndHandleCollisions(target:CollidableObject):ArrayList {
 
 			//iterate through all of the Collision GridTiles that the target is in
 			var gTiles:Vector.<GridTile> = target.myCollisionGridTiles;
@@ -171,6 +174,7 @@ package org.interguild.game.collision {
 					}
 				}
 			}
+			return removalObjects;
 		}
 
 		public function handleCollision(activeObject:CollidableObject, otherObject:CollidableObject):void {
@@ -234,9 +238,9 @@ package org.interguild.game.collision {
 						//destructible
 						if (t.getDestructibility() == 2){
 							//doesn't knockback ie wood crate
-							if (!t.doesKnockback()){
+							if (t.doesKnockback() > 0){
 								
-								
+								removalObjects.addItem(otherObject);
 							}
 						}
 					}
@@ -248,6 +252,10 @@ package org.interguild.game.collision {
 			} else {
 
 			}
+		}
+		
+		public function resetRemovalList():void {
+			removalObjects = new ArrayList;
 		}
 	}
 }

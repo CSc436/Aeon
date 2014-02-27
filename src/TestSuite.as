@@ -1,4 +1,4 @@
-package tests
+package 
 {
 	import org.interguild.game.KeyMan;
 	
