@@ -37,8 +37,6 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
-    <application path="aeongui/makeGrid.as"/>
-    <application path="org/interguild/menu/MainMenu.as"/>
     <application path="org/interguild/Aeon.as"/>
   </applications>
   <modules/>
