@@ -1,4 +1,5 @@
 package org.interguild.game {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -94,10 +95,12 @@ package org.interguild.game {
 			}
 			 
 			//test and handle collisions
-			collisionGrid.detectAndHandleCollisions(player);
+			var remove:ArrayList = collisionGrid.detectAndHandleCollisions(player);
+			removeObjects(remove);
+			collisionGrid.resetRemovalList();
 			player.finishGameLoop();
 			for(i = 0; i < len; i++){
-				var remove:ArrayList = collisionGrid.detectAndHandleCollisions(activeObjects[i]);
+				remove = collisionGrid.detectAndHandleCollisions(activeObjects[i]);
 				removeObjects(remove);
 				collisionGrid.resetRemovalList();
 				GameObject(activeObjects[i]).finishGameLoop();
@@ -126,14 +129,20 @@ package org.interguild.game {
 		}
 		
 		public function removeObjects(remove:ArrayList):void{
-			for (var object:Object in remove){
-				var index:int = allObjects.indexOf(object.<GameObject>,0);
+			var r:GameObject;
+			for (var i:int = 0; i < remove.length(); i++){
+				r = GameObject(remove.getItemAt(i));
+				var index:int = allObjects.indexOf(r,0);
 				allObjects.splice(index, 1);
+				camera.removeChild(DisplayObject(r));
 				
-				index = activeObjects.indexOf(object.<GameObject>,0);
+				index = activeObjects.indexOf(r,0);
 				if(index != -1){
 					activeObjects.splice(index, 1);
+					camera.removeChild(DisplayObject(r));
 				}
+				
+				CollidableObject(r).removeSelf();
 			}
 		}
 	}

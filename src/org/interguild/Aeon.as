@@ -76,7 +76,7 @@ package org.interguild {
 			this.removeChild(editorButton);
 			
 			//go to level page
-			//levelPage = new LevelPage();
+			levelPage = new LevelPage();
 			this.addChild(levelPage);
 		}
 		

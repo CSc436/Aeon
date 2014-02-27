@@ -16,6 +16,7 @@ package org.interguild.game.collision {
 
 		public function CollisionGrid(width:int, height:int) {
 			//init 2D array
+			removalObjects = new ArrayList;
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
