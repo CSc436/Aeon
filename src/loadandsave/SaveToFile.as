@@ -44,7 +44,7 @@
 
         public function saveFile():void {
             fileRef.addEventListener(Event.SELECT, onSaveFileSelected);
-            fileRef.save(fileRef.data, "NewFileName.txt");
+            fileRef.save(fileRef.data, "\gamesaves\NewFileName.txt");
         }
 
         public function onSaveFileSelected(evt:Event):void {
