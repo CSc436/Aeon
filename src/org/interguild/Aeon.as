@@ -10,7 +10,7 @@ package org.interguild {
 	import org.interguild.game.KeyMan;
 	import org.interguild.menu.LevelPage;	
 	
-	[SWF(backgroundColor = "0x000000", width = STAGE_WIDTH, height = STAGE_HEIGHT)]
+	[SWF(backgroundColor = "0x000000", width = "480", height = "350")]
 	public class Aeon extends Sprite {
 		
 		public static const TILE_WIDTH:uint = 32;
