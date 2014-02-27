@@ -236,6 +236,7 @@ package org.interguild.game.collision {
 							//doesn't knockback ie wood crate
 							if (!t.doesKnockback()){
 								
+								
 							}
 						}
 					}
