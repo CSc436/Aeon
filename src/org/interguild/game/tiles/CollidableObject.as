@@ -96,6 +96,10 @@ package org.interguild.game.tiles {
 			sideBlocked[direction] = true;
 		}
 		
+		public function setUnblocked(direction:uint):void{
+			sideBlocked[direction] = false;
+		}
+		
 		public function isBlocked(direction:uint):Boolean{
 			return sideBlocked[direction];
 		}
