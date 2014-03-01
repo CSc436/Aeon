@@ -185,6 +185,7 @@ package org.interguild.editor {
 			this.removeChild(b);
 			this.removeChild(b2);
 			this.removeChild(maskGrid);
+			this.removeChild(scrollBar);
 			this.removeChild(testButton);
 			mainMenu.addMainMenu();
 		}
