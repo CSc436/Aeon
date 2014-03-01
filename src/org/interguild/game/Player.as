@@ -18,7 +18,7 @@ package org.interguild.game {
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
 
-		private static const JUMP_SPEED:Number = -26;
+		private static const JUMP_SPEED:Number = -28;
 
 		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
@@ -30,7 +30,7 @@ package org.interguild.game {
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			drawPlayer();
-
+			isActive = true;
 			keys = KeyMan.getMe();
 		}
 
@@ -66,12 +66,6 @@ package org.interguild.game {
 				speedX = MAX_RUN_SPEED;
 			} else if (speedX < -MAX_RUN_SPEED) {
 				speedX = -MAX_RUN_SPEED;
-			}
-
-			//stop falling off screen
-			if (newY + SPRITE_HEIGHT > 350) {
-				newY = 350 - SPRITE_HEIGHT;
-				isStanding = true;
 			}
 
 			//commit location change:

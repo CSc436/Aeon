@@ -9,18 +9,19 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
 
-	public class CollisionGrid /*DEBUG*/ extends Sprite /*END DEBUG*/ {
+	public class CollisionGrid /*DEBUG*/extends Sprite /*END DEBUG*/ {
 
 		private var grid:Array;
 		private var removalObjects:ArrayList;
 
 		public function CollisionGrid(width:int, height:int) {
 			//init 2D array
+			removalObjects = new ArrayList;
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
 				for (var j:uint = 0; j < width; j++) {
-					var g:GridTile = new GridTile();
+					var g:GridTile = new GridTile(i, j);
 					grid[i][j] = g;
 					/*DEBUG*/
 					g.x = j * 32;
@@ -234,12 +235,12 @@ package org.interguild.game.collision {
 							activeObject.newX = otherBoxCurr.right;
 							activeObject.speedX = 0;
 						}
-						
+
 						//destructible
-						if (t.getDestructibility() == 2){
+						if (t.getDestructibility() == 2) {
 							//doesn't knockback ie wood crate
-							if (t.doesKnockback() > 0){
-								
+							if (t.doesKnockback() > 0) {
+
 								removalObjects.addItem(otherObject);
 							}
 						}
@@ -253,9 +254,43 @@ package org.interguild.game.collision {
 
 			}
 		}
-		
+
 		public function resetRemovalList():void {
 			removalObjects = new ArrayList;
+		}
+
+		public function unblockNeighbors(g:GridTile):void {
+			var gridTile:GridTile;
+			
+			//top
+			var bx:int = g.gridCol;
+			var by:int = g.gridRow - 1;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.unblock(Direction.DOWN);
+			}
+			
+			//down
+			by = g.gridRow + 1;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.unblock(Direction.UP);
+			}
+			
+			//right
+			bx = g.gridCol + 1;
+			by = g.gridRow;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.unblock(Direction.LEFT);
+			}
+			
+			//left
+			bx = g.gridCol - 1;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.unblock(Direction.RIGHT);
+			}
 		}
 	}
 }

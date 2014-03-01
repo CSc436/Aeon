@@ -16,7 +16,7 @@ package org.interguild.game.level {
 
 		public function LevelPage() {
 			//for now, just create a level:
-			level = new Level();
+			level = Level.createMe();
 			addChild(level);
 		}
 	}
