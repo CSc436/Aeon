@@ -174,7 +174,7 @@ package org.interguild.game.level {
 			collisionGrid.resetRemovalList();
 			player.finishGameLoop();
 			for (i = 0; i < len; i++) {
-				remove = collisionGrid.detectAndHandleCollisions(activeObjects[i]);
+				remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
 				removeObjects(remove);
 				collisionGrid.resetRemovalList();
 				GameObject(activeObjects[i]).finishGameLoop();
