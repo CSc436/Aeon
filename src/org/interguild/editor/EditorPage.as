@@ -10,6 +10,7 @@ package org.interguild.editor {
 	
 	import org.interguild.Aeon;
 
+	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		private var b:Button;
@@ -38,6 +39,8 @@ package org.interguild.editor {
 		private var numColumns:int;
 
 		private var mainMenu:Aeon;
+		
+		private var scrollBar:FullScreenScrollBar;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -97,6 +100,10 @@ package org.interguild.editor {
 			addChild(b2);
 			addChild(maskGrid);
 			addChild(dropDown);
+			
+			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
+			scrollBar = new FullScreenScrollBar(this, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 1, true);
+			addChild(scrollBar);
 
 		}
 
