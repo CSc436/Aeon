@@ -8,7 +8,6 @@ package org.interguild.game.level {
 	 * 		-The pause menu
 	 * 		-The win screen?
 	 * 		-The level itself
-	 * 
 	 */
 	public class LevelPage extends Sprite {
 		

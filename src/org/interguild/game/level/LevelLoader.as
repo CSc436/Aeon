@@ -1,5 +1,4 @@
 package org.interguild.game.level {
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.net.URLLoader;
@@ -25,13 +24,16 @@ package org.interguild.game.level {
 		private var code:String; //the level encoding
 		private var codeLength:uint;
 		private var timer:Timer;
+		
+		private var progress:LevelProgressBar;
 
 		/**
 		 * TODO: if isEditor==true, construct LevelEdit
 		 */
-		public function LevelLoader(fileName:String, lvl:Level) {
+		public function LevelLoader(fileName:String, lvl:Level, progressBar:LevelProgressBar) {
 			level = lvl;
 			file = fileName;
+			progress = progressBar;
 			//don't start loading until start() is called
 		}
 
@@ -53,19 +55,21 @@ package org.interguild.game.level {
 			code = evt.target.data;
 			codeLength = code.length;
 
-			//parse first line separately
+			//get title
 			var eol:int = code.indexOf("\n");
-			var firstLine:String = code.substr(0, eol);
-			var ix:int = firstLine.indexOf("x");
-			var lvlWidth:Number = Number(firstLine.substr(0, ix));
-			var lvlHeight:Number = Number(firstLine.substr(ix + 1));
+			level.setTitle(code.substr(0, eol));
+			code = code.substr(eol + 1);
+			
+			//get dimensions
+			eol = code.indexOf("\n");
+			var dimensionsLine:String = code.substr(0, eol);
+			var ix:int = dimensionsLine.indexOf("x");
+			var lvlWidth:Number = Number(dimensionsLine.substr(0, ix));
+			var lvlHeight:Number = Number(dimensionsLine.substr(ix + 1));
 			level.setLevelSize(lvlWidth, lvlWidth);
 			code = code.substr(eol + 1);
 			
-			//TODO: maybe change Level's loading message
-			//from "Loading file" to "Building Level: 0%"
-
-			timer = new Timer(20);
+			timer = new Timer(10);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
 			timer.start();
 		}
@@ -94,7 +98,7 @@ package org.interguild.game.level {
 				timer.stop();
 				level.startGame();
 			} else {
-				//TODO: update level progress bar
+				progress.setProgress(i / codeLength);
 			}
 		}
 

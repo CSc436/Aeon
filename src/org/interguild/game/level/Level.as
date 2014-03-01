@@ -1,14 +1,12 @@
-
-
-
 package org.interguild.game.level {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	
+
 	import flexunit.utils.ArrayList;
-	
+
+	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.GridTile;
@@ -64,6 +62,8 @@ package org.interguild.game.level {
 		private var camera:Sprite;
 		private var player:Player;
 
+		private var progressBar:LevelProgressBar;
+
 		private var collisionGrid:CollisionGrid;
 		private var allObjects:Vector.<GameObject>;
 		private var activeObjects:Vector.<GameObject>;
@@ -91,8 +91,14 @@ package org.interguild.game.level {
 			player = new Player();
 			camera.addChild(player);
 
+			//init progress bar
+			progressBar = new LevelProgressBar();
+			progressBar.x = Aeon.STAGE_WIDTH / 2 - progressBar.width / 2;
+			progressBar.y = Aeon.STAGE_HEIGHT / 2 - progressBar.height / 2;
+			addChild(progressBar);
+
 			//load test level
-			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE, this);
+			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE, this, progressBar);
 			loader.start();
 		}
 
@@ -127,8 +133,10 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
+			removeChild(progressBar);
+
 			/*DEBUG*/
-			addChild(collisionGrid);
+			addChildAt(collisionGrid, 1);
 			/*END DEBUG*/
 
 			//init game loop
@@ -202,8 +210,12 @@ package org.interguild.game.level {
 		 * this method might be called by its GridTiles
 		 * in order to unblock the neighboring GridTiles.
 		 */
-		public function unblockNeighbors(g:GridTile):void{
+		public function unblockNeighbors(g:GridTile):void {
 			collisionGrid.unblockNeighbors(g);
+		}
+
+		public function setTitle(param0:String):void {
+			
 		}
 	}
 }
