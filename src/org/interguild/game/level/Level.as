@@ -5,10 +5,11 @@ package org.interguild.game.level {
 	
 	import flexunit.utils.ArrayList;
 	
+	import org.interguild.game.Camera;
+	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
-	import org.interguild.game.Player;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -27,7 +28,7 @@ package org.interguild.game.level {
 
 		private static const TEST_LEVEL_FILE:String = "../testlevel.txt";
 
-		private var camera:Sprite;
+		private var camera:Camera;
 		private var player:Player;
 		
 		private var collisionGrid:CollisionGrid;
@@ -42,11 +43,10 @@ package org.interguild.game.level {
 			activeObjects = new Vector.<GameObject>();
 			
 			//initialize camera
-			camera = new Sprite();
+			camera = new Camera(player = new Player());
 			addChild(camera);
 
 			//init player
-			player = new Player();
 			camera.addChild(player);
 
 			//load test level
@@ -65,7 +65,7 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			/*DEBUG*/
+			/*DEBUG
 			addChild(collisionGrid);
 			/*END DEBUG*/
 			
@@ -79,9 +79,20 @@ package org.interguild.game.level {
 		 * Called 30 frames per second.
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
+		
 			//update player
 			player.onGameLoop();
+			
+			
+			//update camera
+			camera.updateCamera();
+			
+			// reset isStanding
+			player.reset();
+			
 			collisionGrid.updateObject(player, false);
+			
+			
 			
 			//update active objects
 			var len:uint = activeObjects.length;

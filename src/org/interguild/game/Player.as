@@ -1,7 +1,7 @@
 package org.interguild.game {
 	
-	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {
 
@@ -24,7 +24,12 @@ package org.interguild.game {
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
 
 		private var keys:KeyMan;
+		
 		public var isStanding:Boolean;
+		public var isFacingLeft:Boolean;
+		public var isFacingRight:Boolean;
+		public var isFacingUp:Boolean;
+		public var isCrouching:Boolean;
 
 
 		public function Player() {
@@ -52,9 +57,6 @@ package org.interguild.game {
 
 			updateKeys();
 
-			// reset isStanding
-			reset();
-
 			//update movement
 			newX += speedX;
 			newY += speedY;
@@ -68,25 +70,25 @@ package org.interguild.game {
 				speedX = -MAX_RUN_SPEED;
 			}
 
-			//stop falling off screen
-			if (newY + SPRITE_HEIGHT > 350) {
-				newY = 350 - SPRITE_HEIGHT;
-				isStanding = true;
-			}
 
 			//commit location change:
 			x = newX;
 			y = newY;
 		}
 
-		private function reset():void {
+		public function reset():void {
 			isStanding = false;
+			isFacingLeft = false;
+			isFacingRight = false;
+			isFacingUp = false;
+			isCrouching = false;
 		}
 
 		private function updateKeys():void {
 			//moving to the left
 			if (keys.isKeyLeft) {
 				speedX -= RUN_ACC;
+				isFacingLeft = true;
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
@@ -95,15 +97,25 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
+				isFacingRight = true;
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
 					speedX = 0;
 			}
+			
+			// look up
+			if ( keys.isKeyUp ) {
+				isFacingUp = true;
+			}
 
 			//jump
 			if (keys.isKeySpace && isStanding) {
 				speedY = JUMP_SPEED;
+			}
+			
+			if (keys.isKeyDown){
+				isCrouching = true;
 			}
 		}
 	}

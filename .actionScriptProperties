@@ -37,6 +37,7 @@
     <sourceAttachmentPath/>
   </compiler>
   <applications>
+    <application path="FlexUnitCompilerApplication.as"/>
     <application path="org/interguild/editor/EditorPage.as"/>
     <application path="org/interguild/Aeon.as"/>
     <application path="FlexUnitApplication.as"/>
