@@ -1,18 +1,21 @@
 package org.interguild.editor {
+	import fl.containers.ScrollPane;
+	import fl.controls.Button;
+	import fl.controls.TextArea;
+	
 	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
-	import fl.containers.ScrollPane;
-	import fl.controls.Button;
-	import fl.controls.TextArea;
+	import org.interguild.Aeon;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		private var b:Button;
 		private var b2:Button;
 		private var b3:Button;
+		private var testButton:Button;
 		private var tf:TextArea;
 
 		[Embed(source = "../../../../images/testButton.png")]
@@ -34,24 +37,14 @@ package org.interguild.editor {
 
 		private var numColumns:int;
 
+		private var mainMenu:Aeon;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		public function EditorPage():void {
-			
-			// Sprite that holds grid
-			maskGrid = new Sprite();
-
-			//add the drop down menu
-			dropDown = new DropDownMenu(maskGrid);
-			dropDown.x = 5;
-			dropDown.y = 5;
-
-			setColumns(15);
-			maskGrid = makeBlank(maskGrid);
-
+		public function EditorPage(mainMenu:Aeon):void {
+			this.mainMenu = mainMenu;
 			//button:
-			var b:Button = new Button();
+			b = new Button();
 			b.label = "Wall";
 			b.setStyle("icon", WallButton);
 			b.x = 650;
@@ -61,7 +54,7 @@ package org.interguild.editor {
 			var bbb:Bitmap = new ClearButton();
 
 			//clear button:
-			var b2:Button = new Button();
+			b2 = new Button();
 			b2.label = "Clear All";
 			b2.setStyle("icon", ClearButton);
 			b2.x = 650;
@@ -70,14 +63,14 @@ package org.interguild.editor {
 			b2.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
-			var testButton:Button = new Button();
+			testButton = new Button();
 			testButton.label = "Test Game";
 			testButton.setStyle("icon", TestButton);
 			testButton.x = 200;
 			testButton.y = 650;
 			testButton.useHandCursor = true;
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
-			addChild(testButton);
+			
 			//textfield:
 			tf = new TextArea();
 			tf.width = 200;
@@ -86,6 +79,19 @@ package org.interguild.editor {
 			tf.y = 150;
 			tf.editable = false;
 			tf.addEventListener(MouseEvent.CLICK, buttonClick);
+			
+			// Sprite that holds grid
+			maskGrid = new Sprite();
+
+			//add the drop down menu
+			dropDown = new DropDownMenu(maskGrid, this);
+			dropDown.x = 5;
+			dropDown.y = 5;
+
+			setColumns(15);
+			maskGrid = makeBlank(maskGrid);
+			
+			addChild(testButton);
 			addChild(tf);
 			addChild(b);
 			addChild(b2);
@@ -161,7 +167,20 @@ package org.interguild.editor {
 			s.addEventListener(MouseEvent.CLICK, rightGridClick);
 			return s;
 		}
-
+		
+		/**
+		 * This function is called from DropDownMenu to delete this object
+		 * so that we can return to the main menu
+		 * 
+		*/
+		public function deleteSelf():void{
+			this.removeChild(tf);
+			this.removeChild(b);
+			this.removeChild(b2);
+			this.removeChild(maskGrid);
+			this.removeChild(testButton);
+			mainMenu.addMainMenu();
+		}
 		private function gridClick(e:MouseEvent):void {
 			var sprite:Sprite = Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
@@ -192,6 +211,8 @@ package org.interguild.editor {
 		private function clearClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 			tf.appendText("cleared\n");
+			var i:int;
+			maskGrid.removeChildren();
 			maskGrid = makeBlank(maskGrid);
 		}
 

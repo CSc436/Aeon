@@ -22,9 +22,12 @@ package org.interguild.editor {
 
         private var maskGrid:Sprite;
 		private var numColumns:int;
+		
+		private var currEditor:EditorPage;
 
-        public function DropDownMenu(grid:Sprite):void {
+        public function DropDownMenu(grid:Sprite,editPage:EditorPage):void {
             maskGrid = grid;
+			currEditor = editPage;
             fileSprite = new Sprite();
             addChild(fileSprite);
             editSprite = new Sprite();
@@ -132,7 +135,8 @@ package org.interguild.editor {
         public function mainMenuListener(event:MouseEvent):void {
             //TODO Return to main menu
             //prompt to save data?
-			
+			this.removeChild(fileSprite);
+			currEditor.deleteSelf();
         }
 
 
