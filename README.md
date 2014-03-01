@@ -7,4 +7,4 @@ Justin Yang<br />
 Michael Humphrey<br />
 Henry Lopez<br />
 
-Description goes here.
+Aeon is the best 436 team.

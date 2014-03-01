@@ -96,6 +96,10 @@ package org.interguild.game.tiles {
 			sideBlocked[direction] = true;
 		}
 		
+		public function setUnblocked(direction:uint):void{
+			sideBlocked[direction] = false;
+		}
+		
 		public function isBlocked(direction:uint):Boolean{
 			return sideBlocked[direction];
 		}
@@ -109,6 +113,12 @@ package org.interguild.game.tiles {
 		
 		public function get isActive():Boolean{
 			return active;
+		}
+		
+		public function removeSelf():void{
+			for (var i:int = 0; i < myGrids.length; i++) {
+				GridTile(myGrids[i]).removeObject(this);
+			}
 		}
 
 		public override function finishGameLoop():void{
