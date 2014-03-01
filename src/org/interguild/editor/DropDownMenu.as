@@ -111,7 +111,7 @@ package org.interguild.editor {
             //var j:int;
 			var row:int;
 			var col:int;
-            var string:String = "";
+            var string:String = this.numColumns + "x" + this.numColumns + "\n";
             for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;
@@ -119,7 +119,7 @@ package org.interguild.editor {
                     if (maskGrid.getChildAt(i).name.length == 1) {
                         string += maskGrid.getChildAt(i).name;
                     } else {
-                        string += ".";
+                        string += " ";
                     }
                     if (col == numColumns-1) {
                         string += "\n";

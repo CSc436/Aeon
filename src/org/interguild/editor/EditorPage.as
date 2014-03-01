@@ -8,6 +8,7 @@ package org.interguild.editor {
 	import fl.controls.Button;
 	import fl.controls.TextArea;
 
+	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		private var b:Button;
 		private var b2:Button;
@@ -37,6 +38,7 @@ package org.interguild.editor {
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage():void {
+			
 			// Sprite that holds grid
 			maskGrid = new Sprite();
 
