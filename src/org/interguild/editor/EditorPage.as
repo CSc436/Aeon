@@ -11,6 +11,7 @@ package org.interguild.editor {
 	import org.interguild.Aeon;
 
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
+	import org.interguild.game.level.LevelPage;
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		private var b:Button;
@@ -138,11 +139,11 @@ package org.interguild.editor {
 				if (row == 0 || row == numColumns - 1) {
 					bit = new wallImg();
 					cell.addChild(bit);
-					cell.name = "W";
+					cell.name = "x";
 				} else if (column == 0 || column == numColumns - 1) {
 					bit = new wallImg();
 					cell.addChild(bit);
-					cell.name = "W";
+					cell.name = "x";
 				}
 				//gridContainer.addChild(cell);
 				grid.addChild(cell);
@@ -195,8 +196,8 @@ package org.interguild.editor {
 
 			var bit:Bitmap = new wallImg();
 			sprite.addChild(bit);
-
-			sprite.name = "W";
+			//x is a wall
+			sprite.name = "x";
 		}
 
 		private function rightGridClick(e:MouseEvent):void {
@@ -226,7 +227,16 @@ package org.interguild.editor {
 
 		//TODO make sure the test button plays the current game
 		private function testGame(e:MouseEvent):void {
-
+			this.removeChild(tf);
+			this.removeChild(b);
+			this.removeChild(b2);
+			this.removeChild(maskGrid);
+			this.removeChild(scrollBar);
+			this.removeChild(testButton);
+			this.removeChild(dropDown);
+			//go to level page
+			var levelPage:LevelPage=new LevelPage();
+			this.addChild(levelPage);
 		}
 	}
 }

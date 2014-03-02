@@ -1,16 +1,16 @@
 15x15
-WWWWWWWWWWWWWWW
-W             W
-W      W      W
-W             W
-W   W         W
-W             W
-W             W
-W W           W
-W             W
-W W           W
-W             W
-W             W
-W             W
-W             W
-WWWWWWWWWWWWWWW
+xxxxxxxxxxxxxxx
+x             x
+x          x  x
+x             x
+x      xxxx   x
+x xx          x
+x             x
+x       xx    x
+x     x       x
+x             x
+xx x       x  x
+x             x
+x             x
+x             x
+xxxxxxxxxxxxxxx
