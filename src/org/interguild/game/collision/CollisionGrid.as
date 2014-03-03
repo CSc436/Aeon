@@ -9,7 +9,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
 
-	public class CollisionGrid /*DEBUG*/extends Sprite /*END DEBUG*/ {
+	public class CollisionGrid /*DEBUGextends Sprite /*END DEBUG*/ {
 
 		private var grid:Array;
 		private var removalObjects:ArrayList;
@@ -23,7 +23,7 @@ package org.interguild.game.collision {
 				for (var j:uint = 0; j < width; j++) {
 					var g:GridTile = new GridTile(i, j);
 					grid[i][j] = g;
-					/*DEBUG*/
+					/*DEBUG
 					g.x = j * 32;
 					g.y = i * 32;
 					addChild(grid[i][j]);
