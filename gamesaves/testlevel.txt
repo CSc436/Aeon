@@ -7,9 +7,9 @@ xx     sx                  xxxxx
 xx  #  w                   xxxxx        
 xxxxxx w   xx              xxxxx        
 xx        xxx             xxxxxx        
-xx       xxxx              xxxxx        
+xx  w w wxxxx              xxxxx        
 xx  xxxxxxxxxxx   x        xxxxx        
-xx     xxxxxxxx   x     xxxxxxxx        
+xx     xxxxxxxx   x   w wwwxxxxx        
 xx     xxxxxxxx x x xxxxxxxxxxxx        
 xx  xxxxxxxxxxx x x xxxxxxxxxxxx        
 xx      xxxxxxxxxxxxxxxxxxxxxxxx        
