@@ -181,6 +181,7 @@ package org.interguild.game.collision {
 		public function handleCollision(activeObject:CollidableObject, otherObject:CollidableObject):void {
 			activeObject.setCollidedWith(otherObject);
 			otherObject.setCollidedWith(activeObject);
+			var side:String = "";
 
 			if (activeObject is Player) {
 				var p:Player = Player(activeObject);
@@ -208,6 +209,7 @@ package org.interguild.game.collision {
 							activeObject.speedY = 0;
 							//set player standing
 							p.isStanding = true;
+							side = "top";
 						} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
 							/*
 							 * --------------
@@ -218,6 +220,7 @@ package org.interguild.game.collision {
 							 */
 							activeObject.newY = otherBoxCurr.bottom;
 							activeObject.speedY = 0;
+							side = "bottom";
 						} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
 							/*
 							* |------------||-----------|
@@ -226,6 +229,7 @@ package org.interguild.game.collision {
 							*/
 							activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
 							activeObject.speedX = 0;
+							side = "left";
 						} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
 							/*
 							* |-----------||------------|
@@ -234,12 +238,26 @@ package org.interguild.game.collision {
 							*/
 							activeObject.newX = otherBoxCurr.right;
 							activeObject.speedX = 0;
+							side = "right";
 						}
 
 						//destructible
 						if (t.getDestructibility() == 2) {
 							//doesn't knockback ie wood crate
 							if (t.doesKnockback() > 0) {
+								switch(side) {
+									case "top" :
+										activeObject.newY = activeObject.newY - ((Aeon.TILE_HEIGHT * 2) - activeObject.height);
+										break;
+									case "bottom" :
+										break;
+									case "left" :
+										activeObject.newX = activeObject.newX - (Aeon.TILE_WIDTH - activeObject.width);
+										break;
+									case "right" :
+										activeObject.newX = activeObject.newX + (Aeon.TILE_WIDTH - activeObject.width);
+										break;
+								}									
 
 								removalObjects.addItem(otherObject);
 							}
