@@ -1,16 +1,21 @@
 package org.interguild.game {
 	
-	import org.interguild.game.tiles.CollidableObject;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+	
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {
 
 		private static const HITBOX_WIDTH:uint = 24;
-		private static const HITBOX_HEIGHT:uint = 48;
+		private static const HITBOX_HEIGHT:uint = 40;
 
 		private static const SPRITE_COLOR:uint = 0xFF0000;
 		private static const SPRITE_WIDTH:uint = 24;
-		private static const SPRITE_HEIGHT:uint = 48;
+		private static const SPRITE_HEIGHT:uint = 40;
 
 		private static const MAX_FALL_SPEED:Number = 7;
 		private static const MAX_RUN_SPEED:Number = 3;
@@ -25,8 +30,15 @@ package org.interguild.game {
 
 		private var keys:KeyMan;
 		public var isStanding:Boolean;
-
-
+		
+		[Embed(source = "../../../../images/WalkJumpTransparentSprite.png")]
+		private var Sprite_Sheet:Class;
+		
+		private var spriteRunRightArray:Array;
+		private var spriteJumpArray:Array;
+		private var currSprite:Bitmap;
+		private var currIndex:int = 1;
+	
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			drawPlayer();
@@ -40,13 +52,54 @@ package org.interguild.game {
 		}
 
 		private function drawPlayer():void {
+			var dogBm:Bitmap = new Sprite_Sheet();			
+			var dogBmd:BitmapData = dogBm.bitmapData;
+	
+			var dogRect:Rectangle = new Rectangle(0, 0, 36, 49);
+			var dogData:BitmapData = new BitmapData(36, 49);
+			dogData.copyPixels(dogBmd, dogRect, new Point());
+			var dogBitMap:Bitmap = new Bitmap(dogData);
+		
+			dogBitMap.x = -2;
+			dogBitMap.y = -8;
+			currSprite = dogBitMap;
+			addChild(currSprite);
+
 			graphics.beginFill(SPRITE_COLOR);
 			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
+			
+			spriteRunRightArray = new Array();
+			//populate running sprite array
+			for(var a:int = 0; a < 10; a++) {
+				var rect:Rectangle = new Rectangle(a*36, 0, 36, 49);
+				var data:BitmapData = new BitmapData(36, 49);
+				data.copyPixels(dogBmd, rect, new Point());
+				var bm:Bitmap = new Bitmap(data);
+				bm.x = -2;
+				bm.y = -8;
+				spriteRunRightArray.push(bm);
+			}
+			
+			spriteJumpArray = new Array();
+			//populate jumping sprite array
+			for(a = 0; a < 7; a++) {
+				rect = new Rectangle(a*36, 50, 36, 49);
+				data = new BitmapData(36, 49);
+				data.copyPixels(dogBmd, rect, new Point());
+				bm = new Bitmap(data);
+				bm.x = -2;
+				bm.y = -8;
+				spriteJumpArray.push(bm);
+			}
+			
 		}
 
 		public override function onGameLoop():void {
-
+			if(speedY != 0) {
+				trace("This is the vertical speed: " + speedY);
+				// TODO implement jumping frames here
+			}
 			//gravity
 			speedY += Level.GRAVITY;
 
@@ -89,6 +142,12 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
+				removeChild(currSprite);
+				currSprite = spriteRunRightArray[currIndex];
+				addChild(currSprite);
+				currIndex++;
+				if(currIndex >= spriteRunRightArray.length)
+					currIndex = 0;
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
