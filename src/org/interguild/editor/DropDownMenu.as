@@ -1,9 +1,14 @@
 package org.interguild.editor {
     import fl.controls.Button;
     
-    import flash.display.Sprite;
+    import flash.display.*;
+    import flash.events.*;
     import flash.events.MouseEvent;
+    import flash.net.*;
     import flash.net.FileReference;
+    import flash.net.URLLoader;
+    import flash.net.URLRequest;
+    import flash.utils.Timer;
     
     public class DropDownMenu extends Sprite {
 
@@ -22,9 +27,13 @@ package org.interguild.editor {
 
         private var maskGrid:Sprite;
 		private var numColumns:int;
+		private var numRows:int;
+		
+		private var currEditor:EditorPage;
 
-        public function DropDownMenu(grid:Sprite):void {
+        public function DropDownMenu(grid:Sprite,editPage:EditorPage):void {
             maskGrid = grid;
+			currEditor = editPage;
             fileSprite = new Sprite();
             addChild(fileSprite);
             editSprite = new Sprite();
@@ -94,24 +103,87 @@ package org.interguild.editor {
 
         public function openGameListener(event:MouseEvent):void {
             //open the game
-			var file:FileReference = new FileReference();
-			file.load();
-			//LevelLoader loads = new LevelLoader(file);
+            var filepath:String = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
+			
+			var filereader:FileReference = new FileReference();
+			filereader.browse();
+			filereader.addEventListener(Event.COMPLETE, getfilename);
+//			filepath = filereader.name();
+//			file.save(string, "level1.txt");
+			
+			
+			
+            var getFile:URLLoader = new URLLoader();
+            getFile.addEventListener(Event.COMPLETE, onFileLoad);
+            getFile.load(new URLRequest(filepath));
         }
+		
+		public function getfilename(event:Event):void {
+			trace(event.target.absolutePath);
+		}
 
+		//data from file and length
+        private var code:String;
+        private var codeLength:uint;
+
+        public function onFileLoad(event:Event):void {
+			//parse first line separately
+			//get the data
+            code = event.target.data;
+            codeLength = code.length;
+            var eol:int = code.indexOf("\n");
+            var firstLine:String = code.substr(0, eol);
+            var ix:int = firstLine.indexOf("x");
+            var lvlWidth:Number = Number(firstLine.substr(0, ix));
+            var lvlHeight:Number = Number(firstLine.substr(ix + 1));
+            trace("width: " + lvlWidth + " height: " + lvlHeight);
+            code = code.substr(eol + 1);
+			
+            var levelRead:String = "";
+			
+			var lineno:int = 0;
+            for (var i:uint = 0; i < codeLength; i++) {
+                var curChar:String = code.charAt(i);
+                switch (curChar) {
+					case "\n":
+						lineno++;
+					case "\r":
+                    case "#": //Player spawn
+                    case "x": //Terrain
+                    case "w": //WoodCrate
+                    case " ": //space
+                    case "s": //SteelCrate
+                        levelRead = levelRead.concat(curChar);
+                        break;
+                    //Character not found those trolls
+                    default:
+                        trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
+                }
+            }
+            trace("level is\n" + levelRead);
+			currEditor.setLevelSize(lvlWidth, lvlHeight, levelRead);
+        }
+		
+		
+		
+		
 		public function setColumns(col:int):void{
 			this.numColumns = col;
 		}
+		
+		public function setRows(row:int):void{
+			this.numRows = row;
+		}
+		
 		//Save whatever is in the grid
         private function saveGameListener(e:MouseEvent):void {
             var button:Button = Button(e.target);
 
             var file:FileReference = new FileReference();
             var i:int;
-            //var j:int;
 			var row:int;
 			var col:int;
-            var string:String = "";
+            var string:String = this.numRows + "x" + this.numColumns + "\n";
             for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;
@@ -119,7 +191,7 @@ package org.interguild.editor {
                     if (maskGrid.getChildAt(i).name.length == 1) {
                         string += maskGrid.getChildAt(i).name;
                     } else {
-                        string += ".";
+                        string += " ";
                     }
                     if (col == numColumns-1) {
                         string += "\n";
@@ -132,7 +204,8 @@ package org.interguild.editor {
         public function mainMenuListener(event:MouseEvent):void {
             //TODO Return to main menu
             //prompt to save data?
-			
+			this.removeChild(fileSprite);
+			currEditor.deleteSelf();
         }
 
 

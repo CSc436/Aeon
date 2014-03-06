@@ -1,19 +1,26 @@
 package org.interguild.editor {
+	import fl.containers.ScrollPane;
+	import fl.controls.Button;
+	import fl.controls.TextArea;
+	
 	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
-	import fl.containers.ScrollPane;
-	import fl.controls.Button;
-	import fl.controls.TextArea;
-
+	import org.interguild.Aeon;
+	import org.interguild.game.level.LevelPage;
+	
+	import fl.controls.UIScrollBar;
+	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
-		private var b:Button;
-		private var b2:Button;
-		private var b3:Button;
+		//following are objects on the map
+		private var wallButt:Button;
+		private var clearButt:Button;
+		private var woodButt:Button;
+		private var testButton:Button;
 		private var tf:TextArea;
-
+		//Following is code to import images for everything
 		[Embed(source = "../../../../images/testButton.png")]
 		private var TestButton:Class;
 
@@ -23,8 +30,14 @@ package org.interguild.editor {
 		[Embed(source = "../../../../images/wallButton.png")]
 		private var WallButton:Class;
 
+		[Embed(source = "../../../../images/woodButton.png")]
+		private var WoodButton:Class;
+		//following is temp imgs before finalized art is done
 		[Embed(source = "../../../../images/wall.png")]
 		private var wallImg:Class;
+		
+		[Embed(source = "../../../../images/woodBox.png")]
+		private var woodImg:Class;
 
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
@@ -33,60 +46,93 @@ package org.interguild.editor {
 
 		private var numColumns:int;
 
+		private var mainMenu:Aeon;
+		
+		private var scrollBar:UIScrollBar;
+		
+		//Following variables are toggles for when adding items to GUI
+		private var isWall:Boolean = false;
+		private var isWoodBox:Boolean = false;
+		private var isSteelBox:Boolean = false;
+		
+		//size of level
+		private var wLevel:int=15, hLevel:int=10;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		public function EditorPage():void {
-			// Sprite that holds grid
-			maskGrid = new Sprite();
-
-			//add the drop down menu
-			dropDown = new DropDownMenu(maskGrid);
-			dropDown.x = 5;
-			dropDown.y = 5;
-
-			setColumns(15);
-			maskGrid = makeBlank(maskGrid);
-
+		public function EditorPage(mainMenu:Aeon):void {
+			var bbb:Bitmap;
+			this.mainMenu = mainMenu;
 			//button:
-			var b:Button = new Button();
-			b.label = "Wall";
-			b.setStyle("icon", WallButton);
-			b.x = 650;
-			b.y = 200;
-			b.addEventListener(MouseEvent.CLICK, buttonClick);
+			bbb = new WallButton();
+			wallButt = new Button();
+			wallButt.label = "wal";
+			wallButt.setStyle("icon", WallButton);
+			wallButt.x = 650;
+			wallButt.y = 100;
+			wallButt.useHandCursor = true;
+			wallButt.addEventListener(MouseEvent.CLICK, wallClick);
+			
+			bbb = new WoodButton();
+			//button:
+			woodButt = new Button();
+			woodButt.label = "wood";
+			woodButt.setStyle("icon", WoodButton);
+			woodButt.x = 650;
+			woodButt.y = 175;
+			woodButt.useHandCursor = true;
+			woodButt.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
-			var bbb:Bitmap = new ClearButton();
+			bbb= new ClearButton();
 
 			//clear button:
-			var b2:Button = new Button();
-			b2.label = "Clear All";
-			b2.setStyle("icon", ClearButton);
-			b2.x = 650;
-			b2.y = 300;
-			b2.useHandCursor = true;
-			b2.addEventListener(MouseEvent.CLICK, clearClick);
+			clearButt = new Button();
+			clearButt.label = "Clear All";
+			clearButt.setStyle("icon", ClearButton);
+			clearButt.x = 650;
+			clearButt.y = 250;
+			clearButt.useHandCursor = true;
+			clearButt.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
-			var testButton:Button = new Button();
+			testButton = new Button();
 			testButton.label = "Test Game";
 			testButton.setStyle("icon", TestButton);
-			testButton.x = 200;
-			testButton.y = 650;
+			testButton.x = 350;
+			testButton.y = 50;
 			testButton.useHandCursor = true;
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
-			addChild(testButton);
+			
 			//textfield:
 			tf = new TextArea();
 			tf.width = 200;
 			tf.height = 400;
 			tf.x = 600;
-			tf.y = 150;
+			tf.y = 25;
 			tf.editable = false;
-			tf.addEventListener(MouseEvent.CLICK, buttonClick);
+			
+			// Sprite that holds grid
+			maskGrid = new Sprite();
+
+			//add the drop down menu
+			dropDown = new DropDownMenu(maskGrid, this);
+			dropDown.x = 5;
+			dropDown.y = 5;
+
+			setColumns(wLevel);
+			maskGrid = makeBlank(maskGrid);
+			
+			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
+			scrollBar = new UIScrollBar();
+			scrollBar.setSize(maskGrid.width, maskGrid.height);
+			scrollBar.move(-10,0);
+			maskGrid.addChild(scrollBar);
+			
+			addChild(testButton);
 			addChild(tf);
-			addChild(b);
-			addChild(b2);
+			addChild(wallButt);
+			addChild(woodButt);
+			addChild(clearButt);
 			addChild(maskGrid);
 			addChild(dropDown);
 
@@ -95,12 +141,13 @@ package org.interguild.editor {
 		private function setColumns(col:int):void {
 			this.numColumns = col;
 			dropDown.setColumns(col);
+			dropDown.setRows(hLevel);
 		}
 
 		// creates a blank grid
 		private function makeBlank(grid:Sprite):Sprite {
 			// number of objects to place into grid
-			var numObjects:int = 225;
+			var numObjects:int = wLevel*hLevel;
 			//TODO make numObjects scale with size of grid
 
 			// current row and column
@@ -120,14 +167,14 @@ package org.interguild.editor {
 				cell.x = (cell.width + gap) * column;
 				cell.y = (cell.height + gap) * row;
 				var bit:Bitmap;
-				if (row == 0 || row == numColumns - 1) {
+				if (row == 0 || row == hLevel - 1) {
 					bit = new wallImg();
 					cell.addChild(bit);
-					cell.name = "W";
+					cell.name = "x";
 				} else if (column == 0 || column == numColumns - 1) {
 					bit = new wallImg();
 					cell.addChild(bit);
-					cell.name = "W";
+					cell.name = "x";
 				}
 				//gridContainer.addChild(cell);
 				grid.addChild(cell);
@@ -159,21 +206,56 @@ package org.interguild.editor {
 			s.addEventListener(MouseEvent.CLICK, rightGridClick);
 			return s;
 		}
-
+		
+		/**
+		 * This function is called from DropDownMenu to delete this object
+		 * so that we can return to the main menu
+		 * 
+		*/
+		public function deleteSelf():void{
+			this.removeChild(tf);
+			this.removeChild(wallButt);
+			this.removeChild(woodButt);
+			this.removeChild(clearButt);
+			this.removeChild(maskGrid);
+			this.removeChild(scrollBar);
+			this.removeChild(testButton);
+			mainMenu.addMainMenu();
+		}
+		public function setLevelSize(width:int,height:int, level:String):void{
+			this.wLevel = width;
+			this.hLevel = height;
+		}
+		/**
+		 * 	Event Listeners Section
+		 * 
+		 */
 		private function gridClick(e:MouseEvent):void {
 			var sprite:Sprite = Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
 
-			var bit:Bitmap = new wallImg();
-			sprite.addChild(bit);
-
-			sprite.name = "W";
+			var bit:Bitmap;
+			//switch to check what trigger is active
+			if(isWall){
+				trace("wall");
+				sprite.name = "x"
+				bit = new wallImg();
+				sprite.addChild(bit);
+			}
+			else if(isWoodBox){
+				trace("wood");
+				bit = new woodImg();
+				sprite.addChild(bit);
+				sprite.name = "w";
+			}
+			else if(isSteelBox){
+				sprite.name = "s";
+			}
 		}
 
 		private function rightGridClick(e:MouseEvent):void {
 			var gridChild:Sprite = Sprite(e.target)
 			if (e.ctrlKey) {
-				tf.appendText("ctrlclick\n");
 				var i:int;
 				while (gridChild.numChildren > 0) {
 					gridChild.removeChildAt(0);
@@ -182,20 +264,45 @@ package org.interguild.editor {
 			}
 		}
 
-		private function buttonClick(e:MouseEvent):void {
+		private function wallClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
-			tf.appendText("hi\n");
+			clearBools();
+			tf.text = "wall";
+			isWall = true;
+		}
+		
+		private function woodBoxClick(e:MouseEvent):void {
+			var button:Button = Button(e.target);
+			clearBools();
+			trace("wood");
+			tf.text = "wood";
+			isWoodBox = true;
 		}
 
 		private function clearClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
-			tf.appendText("cleared\n");
+			var i:int;
+			maskGrid.removeChildren();
 			maskGrid = makeBlank(maskGrid);
 		}
 
-		//TODO make sure the test button plays the current game
 		private function testGame(e:MouseEvent):void {
-
+			this.removeChild(tf);
+			this.removeChild(wallButt);
+			this.removeChild(clearButt);
+			this.removeChild(woodButt);
+			this.removeChild(maskGrid);
+			this.removeChild(testButton);
+			this.removeChild(dropDown);
+			//go to level page
+			var levelPage:LevelPage=new LevelPage();
+			this.addChild(levelPage);
+		}
+		
+		private function clearBools():void{
+			isWall = false;
+			isWoodBox = false;
+			isSteelBox = false;
 		}
 	}
 }
