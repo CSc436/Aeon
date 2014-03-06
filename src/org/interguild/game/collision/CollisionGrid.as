@@ -195,8 +195,7 @@ package org.interguild.game.collision {
 						var activeBoxCurr:Rectangle = activeObject.hitbox;
 						var otherBoxCurr:Rectangle = otherObject.hitbox;
 
-
-						if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
+					if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
 							/*
 							 * --------------
 							 * |activeObject|

@@ -5,9 +5,9 @@ package org.interguild {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
-	
+
 	import fl.controls.Button;
-	
+
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.KeyMan;
 	import org.interguild.game.level.LevelPage;
@@ -19,7 +19,7 @@ package org.interguild {
 	 * TODO: Put all of the main menu screen's components into its
 	 * own class or object.
 	 */
-	[SWF(backgroundColor = "0x000000", width = "900", height = "500")]
+	[SWF(backgroundColor = "0x000000", width = "900", height = "500", frameRate = "30")]
 	public class Aeon extends Sprite {
 
 		public static const TILE_WIDTH:uint = 32;
@@ -28,7 +28,7 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 900;
 		public static const STAGE_HEIGHT:uint = 500;
 
-		private static const BG_COLOR:uint = 0xFFFFFF;
+		private static const BG_COLOR:uint = 0x050c0f;
 
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;
