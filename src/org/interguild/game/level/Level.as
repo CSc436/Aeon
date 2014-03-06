@@ -68,7 +68,6 @@ package org.interguild.game.level {
 		private var collisionGrid:CollisionGrid;
 		private var allObjects:Vector.<GameObject>;
 		private var activeObjects:Vector.<GameObject>;
-		private var crates:Vector.<GameObject>;
 
 		private var timer:Timer;
 
@@ -84,7 +83,6 @@ package org.interguild.game.level {
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
-			crates = new Vector.<GameObject>();
 
 			//initialize camera
 			camera = new Sprite();
@@ -112,7 +110,7 @@ package org.interguild.game.level {
 		 ********************************/
 
 		public function setLevelSize(lvlWidth:Number, lvlHeight:Number):void {
-			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
+			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 		}
 
 		/**
@@ -126,7 +124,6 @@ package org.interguild.game.level {
 
 		public function createCollidableObject(tile:CollidableObject, isActive:Boolean):void {
 			allObjects.push(tile);
-			crates.push(tile);
 			if (isActive)
 				activeObjects.push(tile);
 			collisionGrid.updateObject(tile, !isActive);
@@ -161,12 +158,6 @@ package org.interguild.game.level {
 			player.onGameLoop();
 			collisionGrid.updateObject(player, false);
 
-			//update crates
-/*			var len:uint = crates.length;
-			for (var i:uint = 0; i < len; i++){
-				var tile:GameObject = crates[i];
-				tile.onGameLoop();
-			}*/
 			//update active objects
 			var len:uint = activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
@@ -193,6 +184,7 @@ package org.interguild.game.level {
 
 		public function removeObjects(remove:ArrayList):void {
 			var r:GameObject;
+			var grid:Array = collisionGrid.getGrid();
 			for (var i:int = 0; i < remove.length(); i++) {
 				r = GameObject(remove.getItemAt(i));
 
@@ -226,6 +218,11 @@ package org.interguild.game.level {
 
 		public function setTitle(param0:String):void {
 			
+		}
+		
+		public function activateObject(obj:CollidableObject):void{
+			obj.isActive = true;
+			activeObjects.push(obj);
 		}
 	}
 }

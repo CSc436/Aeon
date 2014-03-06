@@ -1,6 +1,7 @@
 package org.interguild.game.tiles {
 	import org.interguild.Aeon;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.collision.Direction;
 	
 	public class WoodCrate extends CollidableObject implements Tile {
 		public var destructibility:int = 2;
@@ -10,6 +11,8 @@ package org.interguild.game.tiles {
 		public var buoyancy:Boolean = true;
 		
 		private static const GRAVITY:uint = 4;
+		private static const MAX_FALL_SPEED:Number = 7;
+		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		
 		private static const SPRITE_COLOR:uint = 0x723207;
 		private static const SPRITE_WIDTH:uint = 32;
@@ -52,6 +55,18 @@ package org.interguild.game.tiles {
 		public override function onGameLoop():void{
 			//gravity
 			speedY += GRAVITY;
+			
+			//update movement
+			newX += speedX;
+			newY += speedY;
+			
+			if (speedY > MAX_FALL_SPEED) {
+				speedY = MAX_FALL_SPEED;
+			}
+			
+			//commit location change:
+			x = newX;
+			y = newY;
 		}
 	}
 }

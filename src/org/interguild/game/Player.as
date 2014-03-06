@@ -71,7 +71,7 @@ package org.interguild.game {
 			
 			spriteRunRightArray = new Array();
 			//populate running sprite array
-/*			for(var a:int = 0; a < 10; a++) {
+		for(var a:int = 0; a < 10; a++) {
 				var rect:Rectangle = new Rectangle(a*36, 0, 36, 49);
 				var data:BitmapData = new BitmapData(36, 49);
 				data.copyPixels(dogBmd, rect, new Point());
@@ -91,7 +91,7 @@ package org.interguild.game {
 				bm.x = -2;
 				bm.y = -8;
 				spriteJumpArray.push(bm);
-			}*/
+			}
 			
 		}
 
@@ -142,12 +142,12 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
-	/*			removeChild(currSprite);
+				removeChild(currSprite);
 				currSprite = spriteRunRightArray[currIndex];
 				addChild(currSprite);
 				currIndex++;
 				if(currIndex >= spriteRunRightArray.length)
-					currIndex = 0; */
+					currIndex = 0;
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)

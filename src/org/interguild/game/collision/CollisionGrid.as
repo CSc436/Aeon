@@ -8,14 +8,17 @@ package org.interguild.game.collision {
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
+	import org.interguild.game.level.Level;
 
 	public class CollisionGrid /*DEBUG*/extends Sprite /*END DEBUG*/ {
 
+		private var level:Level;
 		private var grid:Array;
 		private var removalObjects:ArrayList;
 
-		public function CollisionGrid(width:int, height:int) {
+		public function CollisionGrid(width:int, height:int, level:Level) {
 			//init 2D array
+			this.level = level;
 			removalObjects = new ArrayList;
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
@@ -148,6 +151,7 @@ package org.interguild.game.collision {
 			}
 		}
 
+		
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
@@ -247,18 +251,27 @@ package org.interguild.game.collision {
 							if (t.doesKnockback() > 0) {
 								switch(side) {
 									case "top" :
-										activeObject.newY = activeObject.newY - ((Aeon.TILE_HEIGHT * 2) - activeObject.height);
+										activeObject.newY = activeObject.newY - ((Aeon.TILE_HEIGHT * 2) - activeBoxCurr.height);
 										break;
 									case "bottom" :
 										break;
 									case "left" :
-										activeObject.newX = activeObject.newX - (Aeon.TILE_WIDTH - activeObject.width);
+										activeObject.newX = activeObject.newX - (Aeon.TILE_WIDTH - activeBoxCurr.width);
 										break;
 									case "right" :
-										activeObject.newX = activeObject.newX + (Aeon.TILE_WIDTH - activeObject.width);
+										activeObject.newX = activeObject.newX + (Aeon.TILE_WIDTH - activeBoxCurr.width);
 										break;
-								}									
-
+								}
+								var tile:GridTile = otherObject.myCollisionGridTiles[0];
+								unblockNeighbors(tile);
+								if(inBounds(tile.gridRow-1,tile.gridCol)){
+									for(var i:int = 0; i < grid[tile.gridRow-1][tile.gridCol].myCollisionObjects.length; i++){
+										if(!(grid[tile.gridRow-1][tile.gridCol].myCollisionObjects[i] is Player)){
+											var obj:CollidableObject = grid[tile.gridRow-1][tile.gridCol].myCollisionObjects[0];
+											level.activateObject(obj);
+										}
+									}
+								}
 								removalObjects.addItem(otherObject);
 							}
 						}
@@ -269,8 +282,32 @@ package org.interguild.game.collision {
 					trace("CollisionGrid says: How did this happen!?");
 				}
 			} else {
-
+				var a:Tile = Tile(otherObject);
+				//player on tile collisions
+				
+				//solid collisions!!
+				if (a.isSolid()) {
+					activeBoxPrev = activeObject.hitboxPrev;
+					otherBoxPrev = otherObject.hitboxPrev;
+					activeBoxCurr = activeObject.hitbox;
+					otherBoxCurr = otherObject.hitbox;
+					
+					
+					if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
+						activeObject.newY = otherBoxCurr.top - activeBoxCurr.height;
+						activeObject.speedY = 0;
+					} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
+						activeObject.newY = otherBoxCurr.bottom;
+						activeObject.speedY = 0;
+					} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+						activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
+						activeObject.speedX = 0;
+					} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+						activeObject.newX = otherBoxCurr.right;
+						activeObject.speedX = 0;
+					}
 			}
+		}
 		}
 
 		public function resetRemovalList():void {
@@ -309,6 +346,10 @@ package org.interguild.game.collision {
 				gridTile = grid[by][bx]
 				gridTile.unblock(Direction.RIGHT);
 			}
+		}
+		
+		public function getGrid():Array{
+			return grid;
 		}
 	}
 }
