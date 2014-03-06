@@ -129,27 +129,27 @@ package org.interguild.editor {
 			
             var levelRead:String = "";
 			
+			var lineno:int = 0;
             for (var i:uint = 0; i < codeLength; i++) {
                 var curChar:String = code.charAt(i);
-                trace("i is " + i);
                 switch (curChar) {
+					case "\n":
+						lineno++;
+					case "\r":
                     case "#": //Player spawn
                     case "x": //Terrain
                     case "w": //WoodCrate
                     case " ": //space
                     case "s": //SteelCrate
-                    case "\r":
-                    case "\n":
                         levelRead = levelRead.concat(curChar);
                         break;
                     //Character not found those trolls
                     default:
-                        trace("Unknown level code character: '" + curChar + "'");
+                        trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
                 }
             }
             trace("level is\n" + levelRead);
-
-//            levelGUI.setLevelSize(lvlWidth, lvlHeight, levelRead);
+			currEditor.setLevelSize(lvlWidth, lvlHeight, levelRead);
         }
 		
 		
