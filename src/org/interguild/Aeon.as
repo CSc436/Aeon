@@ -80,11 +80,6 @@ package org.interguild {
 
 			//init key man
 			keys = new KeyMan(stage);
-			
-			var i:MovieClip = new PlayerWalkingAnimation();
-			i.scaleX = -1;
-			i.x = 100;
-			addChild(i);
 		}
 
 		private function gotoGame(event:MouseEvent):void {
