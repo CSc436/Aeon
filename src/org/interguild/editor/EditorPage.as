@@ -9,8 +9,9 @@ package org.interguild.editor {
 	import flash.events.MouseEvent;
 	
 	import org.interguild.Aeon;
-	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.game.level.LevelPage;
+	
+	import fl.controls.UIScrollBar;
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		//following are objects on the map
@@ -41,7 +42,7 @@ package org.interguild.editor {
 
 		private var mainMenu:Aeon;
 		
-		private var scrollBar:FullScreenScrollBar;
+		private var scrollBar:UIScrollBar;
 		
 		//Following variables are toggles for when adding items to GUI
 		private var isWall:Boolean;
@@ -111,7 +112,8 @@ package org.interguild.editor {
 			addChild(dropDown);
 			
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
-			scrollBar = new FullScreenScrollBar(this, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 1, true);
+			scrollBar = new UIScrollBar();
+			scrollBar.setSize(this.width, this.height);
 			addChild(scrollBar);
 
 		}
@@ -235,7 +237,8 @@ package org.interguild.editor {
 		
 		private function woodBoxClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
-			tf.appendText("hi\n");
+			clearBools();
+			isWoodBox = true;
 		}
 
 		private function clearClick(e:MouseEvent):void {
@@ -257,6 +260,12 @@ package org.interguild.editor {
 			//go to level page
 			var levelPage:LevelPage=new LevelPage();
 			this.addChild(levelPage);
+		}
+		
+		private function clearBools():void{
+			isWall = false;
+			isWoodBox = false;
+			isSteelBox = false;
 		}
 	}
 }
