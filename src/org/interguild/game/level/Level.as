@@ -70,6 +70,9 @@ package org.interguild.game.level {
 
 		private var timer:Timer;
 		private var levelPage:LevelPage;
+		
+		private var w:uint = 0;
+		private var h:uint = 0;
 
 		/**
 		 * DO NOT CALL THIS CONSTRUCTOR
@@ -112,8 +115,26 @@ package org.interguild.game.level {
 		 ********************************/
 
 		public function setLevelSize(lvlWidth:Number, lvlHeight:Number):void {
+			w = lvlWidth;
+			h = lvlHeight;
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
 			levelPage.setLevelSize(lvlWidth * Aeon.TILE_WIDTH, lvlHeight * Aeon.TILE_HEIGHT);
+		}
+		
+		public function get levelWidth():uint{
+			return w;
+		}
+		
+		public function get levelHeight():uint{
+			return h;
+		}
+		
+		public function get pixelWidth():uint{
+			return w * Aeon.TILE_WIDTH;
+		}
+		
+		public function get pixelHeight():uint{
+			return h * Aeon.TILE_HEIGHT;
 		}
 
 		/**

@@ -26,10 +26,10 @@ package org.interguild.game.level {
 		}
 		
 		public function setLevelSize(w:Number, h:Number):void{
-			var desiredSize:Number = 400;
+			var desiredSize:Number = 300;
 			level.scaleX = level.scaleY = desiredSize / h;
-			level.x = Aeon.STAGE_WIDTH / 2 - w / 2;
-			level.y = Aeon.STAGE_HEIGHT / 2 - h / 2;
+			level.x = Aeon.STAGE_WIDTH / 2 - level.levelWidth * Aeon.TILE_WIDTH * level.scaleX / 2;
+			level.y = Aeon.STAGE_HEIGHT / 2 - level.levelHeight * Aeon.TILE_HEIGHT* level.scaleY / 2;
 			addChild(level);
 		}
 	}
