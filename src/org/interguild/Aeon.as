@@ -1,12 +1,13 @@
 package org.interguild {
 	import flash.display.Bitmap;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
-
+	
 	import fl.controls.Button;
-
+	
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.KeyMan;
 	import org.interguild.game.level.LevelPage;
@@ -79,6 +80,11 @@ package org.interguild {
 
 			//init key man
 			keys = new KeyMan(stage);
+			
+			var i:MovieClip = new PlayerWalkingAnimation();
+			i.scaleX = -1;
+			i.x = 100;
+			addChild(i);
 		}
 
 		private function gotoGame(event:MouseEvent):void {
