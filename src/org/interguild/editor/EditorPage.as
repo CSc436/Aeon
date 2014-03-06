@@ -9,17 +9,18 @@ package org.interguild.editor {
 	import flash.events.MouseEvent;
 	
 	import org.interguild.Aeon;
-
-	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.game.level.LevelPage;
+	
+	import fl.controls.UIScrollBar;
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
+		//following are objects on the map
 		private var b:Button;
 		private var b2:Button;
 		private var b3:Button;
 		private var testButton:Button;
 		private var tf:TextArea;
-
+		//Following is code to import images for everything
 		[Embed(source = "../../../../images/testButton.png")]
 		private var TestButton:Class;
 
@@ -41,7 +42,15 @@ package org.interguild.editor {
 
 		private var mainMenu:Aeon;
 		
-		private var scrollBar:FullScreenScrollBar;
+		private var scrollBar:UIScrollBar;
+		
+		//Following variables are toggles for when adding items to GUI
+		private var isWall:Boolean;
+		private var isWoodBox:Boolean;
+		private var isSteelBox:Boolean;
+		
+		//size of level
+		private var wLevel:int=5, hLevel:int=5;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -53,7 +62,7 @@ package org.interguild.editor {
 			b.setStyle("icon", WallButton);
 			b.x = 650;
 			b.y = 200;
-			b.addEventListener(MouseEvent.CLICK, buttonClick);
+			b.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			var bbb:Bitmap = new ClearButton();
 
@@ -92,7 +101,7 @@ package org.interguild.editor {
 			dropDown.x = 5;
 			dropDown.y = 5;
 
-			setColumns(15);
+			setColumns(wLevel);
 			maskGrid = makeBlank(maskGrid);
 			
 			addChild(testButton);
@@ -103,7 +112,8 @@ package org.interguild.editor {
 			addChild(dropDown);
 			
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
-			scrollBar = new FullScreenScrollBar(this, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 1, true);
+			scrollBar = new UIScrollBar();
+			scrollBar.setSize(this.width, this.height);
 			addChild(scrollBar);
 
 		}
@@ -116,7 +126,7 @@ package org.interguild.editor {
 		// creates a blank grid
 		private function makeBlank(grid:Sprite):Sprite {
 			// number of objects to place into grid
-			var numObjects:int = 225;
+			var numObjects:int = wLevel*hLevel;
 			//TODO make numObjects scale with size of grid
 
 			// current row and column
@@ -190,6 +200,14 @@ package org.interguild.editor {
 			this.removeChild(testButton);
 			mainMenu.addMainMenu();
 		}
+		private function setLevelSize(width:int,height:int, level:String):void{
+			this.wLevel = width;
+			this.hLevel = height;
+		}
+		/**
+		 * 	Event Listeners Section
+		 * 
+		 */
 		private function gridClick(e:MouseEvent):void {
 			var sprite:Sprite = Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
@@ -216,6 +234,12 @@ package org.interguild.editor {
 			var button:Button = Button(e.target);
 			tf.appendText("hi\n");
 		}
+		
+		private function woodBoxClick(e:MouseEvent):void {
+			var button:Button = Button(e.target);
+			clearBools();
+			isWoodBox = true;
+		}
 
 		private function clearClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
@@ -225,7 +249,6 @@ package org.interguild.editor {
 			maskGrid = makeBlank(maskGrid);
 		}
 
-		//TODO make sure the test button plays the current game
 		private function testGame(e:MouseEvent):void {
 			this.removeChild(tf);
 			this.removeChild(b);
@@ -237,6 +260,12 @@ package org.interguild.editor {
 			//go to level page
 			var levelPage:LevelPage=new LevelPage();
 			this.addChild(levelPage);
+		}
+		
+		private function clearBools():void{
+			isWall = false;
+			isWoodBox = false;
+			isSteelBox = false;
 		}
 	}
 }
