@@ -3,15 +3,16 @@ package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-
+	
 	import flexunit.utils.ArrayList;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.tiles.Tile;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -67,6 +68,7 @@ package org.interguild.game.level {
 		private var collisionGrid:CollisionGrid;
 		private var allObjects:Vector.<GameObject>;
 		private var activeObjects:Vector.<GameObject>;
+		private var crates:Vector.<GameObject>;
 
 		private var timer:Timer;
 
@@ -82,6 +84,7 @@ package org.interguild.game.level {
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
+			crates = new Vector.<GameObject>();
 
 			//initialize camera
 			camera = new Sprite();
@@ -123,6 +126,7 @@ package org.interguild.game.level {
 
 		public function createCollidableObject(tile:CollidableObject, isActive:Boolean):void {
 			allObjects.push(tile);
+			crates.push(tile);
 			if (isActive)
 				activeObjects.push(tile);
 			collisionGrid.updateObject(tile, !isActive);
@@ -157,6 +161,12 @@ package org.interguild.game.level {
 			player.onGameLoop();
 			collisionGrid.updateObject(player, false);
 
+			//update crates
+/*			var len:uint = crates.length;
+			for (var i:uint = 0; i < len; i++){
+				var tile:GameObject = crates[i];
+				tile.onGameLoop();
+			}*/
 			//update active objects
 			var len:uint = activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
