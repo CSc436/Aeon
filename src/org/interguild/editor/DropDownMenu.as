@@ -100,15 +100,26 @@ package org.interguild.editor {
             menuButton.addEventListener(MouseEvent.CLICK, mainMenuListener);
         }
 
-        private var file:String;
-
         public function openGameListener(event:MouseEvent):void {
             //open the game
-            file = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
+            var filepath:String = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
+			
+			var filereader:FileReference = new FileReference();
+			filereader.browse();
+			filereader.addEventListener(Event.COMPLETE, getfilename);
+//			filepath = filereader.name();
+//			file.save(string, "level1.txt");
+			
+			
+			
             var getFile:URLLoader = new URLLoader();
             getFile.addEventListener(Event.COMPLETE, onFileLoad);
-            getFile.load(new URLRequest(file));
+            getFile.load(new URLRequest(filepath));
         }
+		
+		public function getfilename(event:Event):void {
+			trace(event.target.absolutePath);
+		}
 
 		//data from file and length
         private var code:String;
