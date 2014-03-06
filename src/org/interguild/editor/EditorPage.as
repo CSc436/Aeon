@@ -200,7 +200,7 @@ package org.interguild.editor {
 			this.removeChild(testButton);
 			mainMenu.addMainMenu();
 		}
-		private function setLevelSize(width:int,height:int, level:String):void{
+		public function setLevelSize(width:int,height:int, level:String):void{
 			this.wLevel = width;
 			this.hLevel = height;
 		}
