@@ -1,9 +1,14 @@
 package org.interguild.editor {
     import fl.controls.Button;
     
-    import flash.display.Sprite;
+    import flash.display.*;
+    import flash.events.*;
     import flash.events.MouseEvent;
+    import flash.net.*;
     import flash.net.FileReference;
+    import flash.net.URLLoader;
+    import flash.net.URLRequest;
+    import flash.utils.Timer;
     
     public class DropDownMenu extends Sprite {
 
@@ -95,23 +100,71 @@ package org.interguild.editor {
             menuButton.addEventListener(MouseEvent.CLICK, mainMenuListener);
         }
 
+        private var file:String;
+
         public function openGameListener(event:MouseEvent):void {
             //open the game
-			var file:FileReference = new FileReference();
-			file.load();
-			//LevelLoader loads = new LevelLoader(file);
+            file = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
+            var getFile:URLLoader = new URLLoader();
+            getFile.addEventListener(Event.COMPLETE, onFileLoad);
+            getFile.load(new URLRequest(file));
         }
 
+		//data from file and length
+        private var code:String;
+        private var codeLength:uint;
+
+        public function onFileLoad(event:Event):void {
+			//parse first line separately
+			//get the data
+            code = event.target.data;
+            codeLength = code.length;
+            var eol:int = code.indexOf("\n");
+            var firstLine:String = code.substr(0, eol);
+            var ix:int = firstLine.indexOf("x");
+            var lvlWidth:Number = Number(firstLine.substr(0, ix));
+            var lvlHeight:Number = Number(firstLine.substr(ix + 1));
+            trace("width: " + lvlWidth + " height: " + lvlHeight);
+            code = code.substr(eol + 1);
+			
+            var levelRead:String = "";
+			
+            for (var i:uint = 0; i < codeLength; i++) {
+                var curChar:String = code.charAt(i);
+                trace("i is " + i);
+                switch (curChar) {
+                    case "#": //Player spawn
+                    case "x": //Terrain
+                    case "w": //WoodCrate
+                    case " ": //space
+                    case "s": //SteelCrate
+                    case "\r":
+                    case "\n":
+                        levelRead = levelRead.concat(curChar);
+                        break;
+                    //Character not found those trolls
+                    default:
+                        trace("Unknown level code character: '" + curChar + "'");
+                }
+            }
+            trace("level is\n" + levelRead);
+
+//            levelGUI.setLevelSize(lvlWidth, lvlHeight, levelRead);
+        }
+		
+		
+		
+		
 		public function setColumns(col:int):void{
 			this.numColumns = col;
 		}
+		
 		//Save whatever is in the grid
         private function saveGameListener(e:MouseEvent):void {
             var button:Button = Button(e.target);
 
             var file:FileReference = new FileReference();
             var i:int;
-            //var j:int;
 			var row:int;
 			var col:int;
             var string:String = this.numColumns + "x" + this.numColumns + "\n";
