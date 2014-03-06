@@ -100,15 +100,26 @@ package org.interguild.editor {
             menuButton.addEventListener(MouseEvent.CLICK, mainMenuListener);
         }
 
-        private var file:String;
-
         public function openGameListener(event:MouseEvent):void {
             //open the game
-            file = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
+            var filepath:String = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
+			
+			var filereader:FILE = new FILE();
+			filereader.browse();
+			filereader.addEventListener(Event.COMPLETE, getfilename);
+//			filepath = filereader.name();
+//			file.save(string, "level1.txt");
+			
+			
+			
             var getFile:URLLoader = new URLLoader();
             getFile.addEventListener(Event.COMPLETE, onFileLoad);
-            getFile.load(new URLRequest(file));
+            getFile.load(new URLRequest(filepath));
         }
+		
+		public function getfilename(event:Event):void {
+			trace(event.target.absolutePath);
+		}
 
 		//data from file and length
         private var code:String;
@@ -129,27 +140,27 @@ package org.interguild.editor {
 			
             var levelRead:String = "";
 			
+			var lineno:int = 0;
             for (var i:uint = 0; i < codeLength; i++) {
                 var curChar:String = code.charAt(i);
-                trace("i is " + i);
                 switch (curChar) {
+					case "\n":
+						lineno++;
+					case "\r":
                     case "#": //Player spawn
                     case "x": //Terrain
                     case "w": //WoodCrate
                     case " ": //space
                     case "s": //SteelCrate
-                    case "\r":
-                    case "\n":
                         levelRead = levelRead.concat(curChar);
                         break;
                     //Character not found those trolls
                     default:
-                        trace("Unknown level code character: '" + curChar + "'");
+                        trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
                 }
             }
             trace("level is\n" + levelRead);
-
-//            levelGUI.setLevelSize(lvlWidth, lvlHeight, levelRead);
+			currEditor.setLevelSize(lvlWidth, lvlHeight, levelRead);
         }
 		
 		
