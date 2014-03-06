@@ -2,6 +2,7 @@ package org.interguild.game {
 	
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.MovieClip;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
@@ -34,10 +35,7 @@ package org.interguild.game {
 		[Embed(source = "../../../../images/WalkJumpTransparentSprite.png")]
 		private var Sprite_Sheet:Class;
 		
-		private var spriteRunRightArray:Array;
-		private var spriteJumpArray:Array;
-		private var currSprite:Bitmap;
-		private var currIndex:int = 1;
+		private var playerClip:MovieClip;
 	
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
@@ -52,59 +50,21 @@ package org.interguild.game {
 		}
 
 		private function drawPlayer():void {
-			var dogBm:Bitmap = new Sprite_Sheet();			
-			var dogBmd:BitmapData = dogBm.bitmapData;
-	
-			var dogRect:Rectangle = new Rectangle(0, 0, 36, 49);
-			var dogData:BitmapData = new BitmapData(36, 49);
-			dogData.copyPixels(dogBmd, dogRect, new Point());
-			var dogBitMap:Bitmap = new Bitmap(dogData);
-		
-			dogBitMap.x = -2;
-			dogBitMap.y = -8;
-			currSprite = dogBitMap;
-			addChild(currSprite);
 
 			graphics.beginFill(SPRITE_COLOR);
 			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
 			
-			spriteRunRightArray = new Array();
-			//populate running sprite array
-			for(var a:int = 0; a < 10; a++) {
-				var rect:Rectangle = new Rectangle(a*36, 0, 36, 49);
-				var data:BitmapData = new BitmapData(36, 49);
-				data.copyPixels(dogBmd, rect, new Point());
-				var bm:Bitmap = new Bitmap(data);
-				bm.x = -2;
-				bm.y = -8;
-				spriteRunRightArray.push(bm);
-			}
-			
-			spriteJumpArray = new Array();
-			//populate jumping sprite array
-			for(a = 0; a < 7; a++) {
-				rect = new Rectangle(a*36, 50, 36, 49);
-				data = new BitmapData(36, 49);
-				data.copyPixels(dogBmd, rect, new Point());
-				bm = new Bitmap(data);
-				bm.x = -2;
-				bm.y = -8;
-				spriteJumpArray.push(bm);
-			}
+			playerClip = new PlayerWalkingAnimation();
+			playerClip.x = -2;
+			playerClip.y = -8;
+			addChild(playerClip);
 			
 		}
 
 		public override function onGameLoop():void {
-			trace("The vertical speed is: " + speedY);
-			trace("The horizontal speed is: " + speedX);
-			
-			if(isStanding) {
-				removeChild(currSprite);
-				currSprite = spriteJumpArray[0];
-				addChild(currSprite);
-			}
-			
+
+			/*
 			// -28, -24, -20, -16, -12, -8, -4, 0, 4, 7 are all the possible vertical speeds
 			switch(speedY) {
 				case -28:
@@ -146,6 +106,7 @@ package org.interguild.game {
 				default:
 					break;
 			}
+			*/
 			
 			//gravity
 			speedY += Level.GRAVITY;
@@ -178,6 +139,10 @@ package org.interguild.game {
 		}
 
 		private function updateKeys():void {
+			
+			if(!keys.isKeyLeft && !keys.isKeyRight && isStanding)
+				playerClip.gotoAndStop(0);
+			
 			//moving to the left
 			if (keys.isKeyLeft) {
 				speedX -= RUN_ACC;
@@ -189,14 +154,10 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
-			//	if(speedY == 0) {
-					removeChild(currSprite);
-					currSprite = spriteRunRightArray[currIndex];
-					addChild(currSprite);
-					currIndex++;
-					if(currIndex >= spriteRunRightArray.length)
-						currIndex = 0;
-				//}
+				if(playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				else
+					playerClip.gotoAndStop(0);
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
