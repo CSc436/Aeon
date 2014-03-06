@@ -28,8 +28,11 @@ package org.interguild.editor {
         private var maskGrid:Sprite;
 		private var numColumns:int;
 		
-        public function DropDownMenu(grid:Sprite):void {
+		private var currEditor:EditorPage;
+
+        public function DropDownMenu(grid:Sprite,editPage:EditorPage):void {
             maskGrid = grid;
+			currEditor = editPage;
             fileSprite = new Sprite();
             addChild(fileSprite);
             editSprite = new Sprite();
@@ -164,7 +167,7 @@ package org.interguild.editor {
             var i:int;
 			var row:int;
 			var col:int;
-            var string:String = "";
+            var string:String = this.numColumns + "x" + this.numColumns + "\n";
             for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;
@@ -172,7 +175,7 @@ package org.interguild.editor {
                     if (maskGrid.getChildAt(i).name.length == 1) {
                         string += maskGrid.getChildAt(i).name;
                     } else {
-                        string += ".";
+                        string += " ";
                     }
                     if (col == numColumns-1) {
                         string += "\n";
@@ -185,7 +188,8 @@ package org.interguild.editor {
         public function mainMenuListener(event:MouseEvent):void {
             //TODO Return to main menu
             //prompt to save data?
-			
+			this.removeChild(fileSprite);
+			currEditor.deleteSelf();
         }
 
 
