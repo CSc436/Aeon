@@ -27,6 +27,7 @@ package org.interguild.editor {
 
         private var maskGrid:Sprite;
 		private var numColumns:int;
+		private var numRows:int;
 		
 		private var currEditor:EditorPage;
 
@@ -170,6 +171,10 @@ package org.interguild.editor {
 			this.numColumns = col;
 		}
 		
+		public function setRows(row:int):void{
+			this.numRows = row;
+		}
+		
 		//Save whatever is in the grid
         private function saveGameListener(e:MouseEvent):void {
             var button:Button = Button(e.target);
@@ -178,7 +183,7 @@ package org.interguild.editor {
             var i:int;
 			var row:int;
 			var col:int;
-            var string:String = this.numColumns + "x" + this.numColumns + "\n";
+            var string:String = this.numRows + "x" + this.numColumns + "\n";
             for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;

@@ -141,6 +141,7 @@ package org.interguild.editor {
 		private function setColumns(col:int):void {
 			this.numColumns = col;
 			dropDown.setColumns(col);
+			dropDown.setRows(hLevel);
 		}
 
 		// creates a blank grid

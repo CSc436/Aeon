@@ -59,7 +59,7 @@ package org.interguild.game.level {
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
 
-		private static const TEST_LEVEL_FILE:String = "../gamesaves/level1.txt";
+		private static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
 
 		private var camera:Sprite;
 		private var player:Player;
