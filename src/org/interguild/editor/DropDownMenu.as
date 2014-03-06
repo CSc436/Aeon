@@ -104,7 +104,7 @@ package org.interguild.editor {
             //open the game
             var filepath:String = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
 			
-			var filereader:FILE = new FILE();
+			var filereader:FileReference = new FileReference();
 			filereader.browse();
 			filereader.addEventListener(Event.COMPLETE, getfilename);
 //			filepath = filereader.name();
