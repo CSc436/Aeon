@@ -39,9 +39,9 @@ package org.interguild.game.level {
 			addChild(titleText);
 			
 			//init bg
-			graphics.beginFill(BG_COLOR, BG_ALPHA);
-			graphics.drawRect(titleText.x - PADDING, 0, titleText.width + 2 * PADDING, titleText.height + 2 * PADDING);
-			graphics.endFill();
+//			graphics.beginFill(BG_COLOR, BG_ALPHA);
+//			graphics.drawRect(titleText.x - PADDING, 0, titleText.width + 2 * PADDING, titleText.height + 2 * PADDING);
+//			graphics.endFill();
 		}
 	}
 }
