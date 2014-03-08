@@ -4,7 +4,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
-	public class GridTile /*DEBUG*/extends Sprite /*END DEBUG*/ {
+	public class GridTile /*DEBUGextends Sprite /*END DEBUG*/ {
 
 		private var myStuff:Vector.<CollidableObject>;
 		private var row:uint;
@@ -14,7 +14,7 @@ package org.interguild.game.collision {
 			row = r;
 			col = c;
 			myStuff = new Vector.<CollidableObject>();
-			/*DEBUG*/
+			/*DEBUG
 			graphics.beginFill(0xCCCCCC, 0.5);
 			graphics.drawRect(0, 0, 31, 31);
 			graphics.endFill();
@@ -32,7 +32,7 @@ package org.interguild.game.collision {
 		public function addObject(o:CollidableObject):void {
 			myStuff.push(o);
 
-			/*DEBUG*/
+			/*DEBUG
 			graphics.clear();
 			graphics.beginFill(0xFFFFFF, 0.25);
 			graphics.drawRect(0, 0, 31, 31);
@@ -47,7 +47,7 @@ package org.interguild.game.collision {
 			if (!o.isActive && !isBlocking()) {
 				Level.getMe().unblockNeighbors(this);
 			}
-			/*DEBUG*/
+			/*DEBUG
 			graphics.clear();
 			graphics.beginFill(0xCCCCCC, 0.5);
 			graphics.drawRect(0, 0, 31, 31);

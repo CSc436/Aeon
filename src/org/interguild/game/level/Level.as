@@ -135,7 +135,7 @@ package org.interguild.game.level {
 		public function startGame():void {
 			removeChild(progressBar);
 
-			/*DEBUG*/
+			/*DEBUG
 			addChildAt(collisionGrid, 1);
 			/*END DEBUG*/
 

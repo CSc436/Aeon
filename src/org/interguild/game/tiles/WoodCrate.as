@@ -1,12 +1,13 @@
 package org.interguild.game.tiles {
+	import org.hamcrest.object.instanceOf;
 	import org.interguild.Aeon;
 	
 	public class WoodCrate extends CollidableObject implements Tile {
 		public var destructibility:int = 2;
 		public var solidity:Boolean = true;
-		public var gravible:Boolean = false;
+		public var gravible:Boolean = true;
 		public var knocksback:int = 5;
-		public var buoyancy:Boolean = true;
+		public var buoyancy:Boolean = true; 
 		
 		private static const SPRITE_COLOR:uint = 0x723207;
 		private static const SPRITE_WIDTH:uint = 32;
