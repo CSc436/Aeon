@@ -6,9 +6,9 @@ package org.interguild.game.collision {
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
+	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
-	import org.interguild.game.level.Level;
 
 	public class CollisionGrid /*DEBUGextends Sprite /*END DEBUG*/ {
 
@@ -62,47 +62,7 @@ package org.interguild.game.collision {
 
 				//naively handle blockNeighbors for only one gridTile case
 				if (blockNeighbors) {
-					//top
-					var bx:int = gx;
-					var by:int = gy - 1;
-					if (inBounds(bx, by)) {
-						gridTile = grid[by][bx]
-						gridTile.block(Direction.DOWN);
-						if (gridTile.isBlocking()) {
-							o.setBlocked(Direction.UP);
-						}
-					}
-
-					//down
-					by = gy + 1;
-					if (inBounds(bx, by)) {
-						gridTile = grid[by][bx]
-						gridTile.block(Direction.UP);
-						if (gridTile.isBlocking()) {
-							o.setBlocked(Direction.DOWN);
-						}
-					}
-
-					//right
-					bx = gx + 1;
-					by = gy;
-					if (inBounds(bx, by)) {
-						gridTile = grid[by][bx]
-						gridTile.block(Direction.LEFT);
-						if (gridTile.isBlocking()) {
-							o.setBlocked(Direction.RIGHT);
-						}
-					}
-
-					//left
-					bx = gx - 1;
-					if (inBounds(bx, by)) {
-						gridTile = grid[by][bx]
-						gridTile.block(Direction.RIGHT);
-						if (gridTile.isBlocking()) {
-							o.setBlocked(Direction.LEFT);
-						}
-					}
+					updateBlockedNeighbors(gx, gy, gridTile, o);
 				}
 			}
 
@@ -284,7 +244,6 @@ package org.interguild.game.collision {
 				}
 			} else {
 				var a:Tile = Tile(otherObject);
-				//player on tile collisions
 				
 				//solid collisions!!
 				if (a.isSolid()) {
@@ -293,19 +252,27 @@ package org.interguild.game.collision {
 					activeBoxCurr = activeObject.hitbox;
 					otherBoxCurr = otherObject.hitbox;
 					
+					var tile:GridTile = activeObject.myCollisionGridTiles[0];
 					
 					if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
 						activeObject.newY = otherBoxCurr.top - activeBoxCurr.height;
 						activeObject.speedY = 0;
+						activeObject.isActive = false;
 					} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
+						activeObject.isActive = false;
 					} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
 						activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
 						activeObject.speedX = 0;
 					} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
 						activeObject.newX = otherBoxCurr.right;
 						activeObject.speedX = 0;
+					}
+					
+					if(!(activeObject.isActive)){
+						updateBlockedNeighbors(tile.gridCol, tile.gridRow, tile, activeObject);
+						tile.unblock(Direction.UP);
 					}
 			}
 		}
@@ -351,6 +318,50 @@ package org.interguild.game.collision {
 		
 		public function getGrid():Array{
 			return grid;
+		}
+		
+		public function updateBlockedNeighbors(gx:int, gy:int, gridTile:GridTile, o:CollidableObject):void{
+			//top
+			var bx:int = gx;
+			var by:int = gy - 1;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.block(Direction.DOWN);
+				if (gridTile.isBlocking()) {
+					o.setBlocked(Direction.UP);
+				}
+			}
+			
+			//down
+			by = gy + 1;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.block(Direction.UP);
+				if (gridTile.isBlocking()) {
+					o.setBlocked(Direction.DOWN);
+				}
+			}
+			
+			//right
+			bx = gx + 1;
+			by = gy;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.block(Direction.LEFT);
+				if (gridTile.isBlocking()) {
+					o.setBlocked(Direction.RIGHT);
+				}
+			}
+			
+			//left
+			bx = gx - 1;
+			if (inBounds(bx, by)) {
+				gridTile = grid[by][bx]
+				gridTile.block(Direction.RIGHT);
+				if (gridTile.isBlocking()) {
+					o.setBlocked(Direction.LEFT);
+				}
+			}
 		}
 	}
 }
