@@ -96,10 +96,57 @@ package org.interguild.game {
 		}
 
 		public override function onGameLoop():void {
-			if(speedY != 0) {
-				trace("This is the vertical speed: " + speedY);
-				// TODO implement jumping frames here
+			trace("The vertical speed is: " + speedY);
+			trace("The horizontal speed is: " + speedX);
+			
+			if(isStanding) {
+				removeChild(currSprite);
+				currSprite = spriteJumpArray[0];
+				addChild(currSprite);
 			}
+			
+			// -28, -24, -20, -16, -12, -8, -4, 0, 4, 7 are all the possible vertical speeds
+			switch(speedY) {
+				case -28:
+				case -24:
+					removeChild(currSprite);
+					currSprite = spriteJumpArray[1];
+					addChild(currSprite);
+					break;
+				case -20:
+				case -16:
+					removeChild(currSprite);
+					currSprite = spriteJumpArray[2];
+					addChild(currSprite);
+					break;
+				case -12:
+				case -8:
+					removeChild(currSprite);
+					currSprite = spriteJumpArray[3];
+					addChild(currSprite);
+					break;
+				case -4:
+					removeChild(currSprite);
+					currSprite = spriteJumpArray[4];
+					addChild(currSprite);
+					break;
+				case 4:
+				case 7:
+					removeChild(currSprite);
+					currSprite = spriteJumpArray[5];
+					addChild(currSprite);
+					break;
+				case 0:
+					if(!isStanding) {
+						removeChild(currSprite);
+						currSprite = spriteJumpArray[0];
+						addChild(currSprite);
+					}
+					break;
+				default:
+					break;
+			}
+			
 			//gravity
 			speedY += Level.GRAVITY;
 
@@ -142,12 +189,14 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
-				removeChild(currSprite);
-				currSprite = spriteRunRightArray[currIndex];
-				addChild(currSprite);
-				currIndex++;
-				if(currIndex >= spriteRunRightArray.length)
-					currIndex = 0;
+			//	if(speedY == 0) {
+					removeChild(currSprite);
+					currSprite = spriteRunRightArray[currIndex];
+					addChild(currSprite);
+					currIndex++;
+					if(currIndex >= spriteRunRightArray.length)
+						currIndex = 0;
+				//}
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
