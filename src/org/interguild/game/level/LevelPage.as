@@ -13,16 +13,30 @@ package org.interguild.game.level {
 	 */
 	public class LevelPage extends Sprite {
 		
-		private var level:Level;
+		private static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
 		
+		private var level:Level;
+		private var loader:LevelLoader;
+		private var progress:LevelProgressBar;
 		private var startScreen:LevelStartScreen;
 
 		public function LevelPage() {
 			//for now, just create a level:
-			level = Level.createMe(this);
+//			level = Level.createMe(this, null, TEST_LEVEL_FILE);
+			
+			//load test level
+			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE);
+			loader.addProgressListener(progress.setProgress);
+			loader.addFileLoadedListener(onFileLoad);
+			loader.start();
 			
 			startScreen = new LevelStartScreen("Test Level");
 			addChild(startScreen);
+		}
+		
+		private function onFileLoad(lvl:Level):void{
+			level = lvl;
+			//TODO: create start screen
 		}
 		
 		public function setLevelSize(w:Number, h:Number):void{
