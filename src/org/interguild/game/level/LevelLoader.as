@@ -161,7 +161,7 @@ package org.interguild.game.level {
 			//if off the map, do nothing
 			if(px > level.pixelWidth || py > level.pixelHeight)
 				return;
-			
+			trace(px, py);
 			var tile:CollidableObject;
 			switch (curChar) {
 				case "#": //Player

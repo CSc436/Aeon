@@ -117,6 +117,7 @@ package org.interguild.game.level {
 		public function setLevelSize(lvlWidth:Number, lvlHeight:Number):void {
 			w = lvlWidth;
 			h = lvlHeight;
+			trace("Level:", w, h);
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
 			levelPage.setLevelSize(lvlWidth * Aeon.TILE_WIDTH, lvlHeight * Aeon.TILE_HEIGHT);
 		}
