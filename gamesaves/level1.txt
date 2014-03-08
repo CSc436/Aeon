@@ -1,12 +1,11 @@
-10x15
+15x15
 xxxxxxxxxxxxxxx
 x             x
-x w w ww w  w x
-x  ww ww   ww x
-x w ww  w w   x
-x   w ww   w  x
-x w w w     w x
-x    w www  w x
+x          w  x
+x  #          x
+x             x
 x         w   x
+x   x x  w w  x
+x   x         x
+x             x
 xxxxxxxxxxxxxxx
- 

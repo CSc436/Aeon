@@ -15,6 +15,7 @@ package org.interguild.editor {
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		//following are objects on the map
+		private var startButt:Button;
 		private var wallButt:Button;
 		private var clearButt:Button;
 		private var woodButt:Button;
@@ -32,6 +33,9 @@ package org.interguild.editor {
 
 		[Embed(source = "../../../../images/woodButton.png")]
 		private var WoodButton:Class;
+		
+		[Embed(source = "../../../../images/startButton.png")]
+		private var StartButton:Class;
 		//following is temp imgs before finalized art is done
 		[Embed(source = "../../../../images/wall.png")]
 		private var wallImg:Class;
@@ -54,6 +58,7 @@ package org.interguild.editor {
 		private var isWall:Boolean = false;
 		private var isWoodBox:Boolean = false;
 		private var isSteelBox:Boolean = false;
+		private var isStart:Boolean = false;
 		
 		//size of level
 		private var wLevel:int=15, hLevel:int=10;
@@ -63,7 +68,17 @@ package org.interguild.editor {
 		public function EditorPage(mainMenu:Aeon):void {
 			var bbb:Bitmap;
 			this.mainMenu = mainMenu;
-			//button:
+			
+			//startingposition button
+			bbb = new StartButton();
+			startButt = new Button();
+			startButt.label= "start";
+			startButt.setStyle("icon", StartButton);
+			startButt.x = 650;
+			startButt.y = 50;
+			startButt.useHandCursor = true;
+			startButt.addEventListener(MouseEvent.CLICK, startClick);
+			//wallbutton:
 			bbb = new WallButton();
 			wallButt = new Button();
 			wallButt.label = "wal";
@@ -74,7 +89,7 @@ package org.interguild.editor {
 			wallButt.addEventListener(MouseEvent.CLICK, wallClick);
 			
 			bbb = new WoodButton();
-			//button:
+			//woodbutton:
 			woodButt = new Button();
 			woodButt.label = "wood";
 			woodButt.setStyle("icon", WoodButton);
@@ -132,6 +147,7 @@ package org.interguild.editor {
 			addChild(tf);
 			addChild(wallButt);
 			addChild(woodButt);
+			addChild(startButt);
 			addChild(clearButt);
 			addChild(maskGrid);
 			addChild(dropDown);
@@ -216,6 +232,7 @@ package org.interguild.editor {
 			this.removeChild(tf);
 			this.removeChild(wallButt);
 			this.removeChild(woodButt);
+			this.removeChild(startButt);
 			this.removeChild(clearButt);
 			this.removeChild(maskGrid);
 			this.removeChild(scrollBar);
@@ -237,19 +254,20 @@ package org.interguild.editor {
 			var bit:Bitmap;
 			//switch to check what trigger is active
 			if(isWall){
-				trace("wall");
 				sprite.name = "x"
 				bit = new wallImg();
 				sprite.addChild(bit);
 			}
 			else if(isWoodBox){
-				trace("wood");
 				bit = new woodImg();
 				sprite.addChild(bit);
 				sprite.name = "w";
 			}
 			else if(isSteelBox){
 				sprite.name = "s";
+			}
+			else if(isStart){
+				sprite.name = "#";
 			}
 		}
 
@@ -263,7 +281,12 @@ package org.interguild.editor {
 				gridChild.name = " ";
 			}
 		}
-
+		private function startClick(e:MouseEvent):void {
+			var button:Button = Button(e.target);
+			clearBools();
+			tf.text = "start";
+			isStart = true;
+		}
 		private function wallClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 			clearBools();
@@ -291,6 +314,7 @@ package org.interguild.editor {
 			this.removeChild(wallButt);
 			this.removeChild(clearButt);
 			this.removeChild(woodButt);
+			this.removeChild(startButt);
 			this.removeChild(maskGrid);
 			this.removeChild(testButton);
 			this.removeChild(dropDown);
@@ -303,6 +327,7 @@ package org.interguild.editor {
 			isWall = false;
 			isWoodBox = false;
 			isSteelBox = false;
+			isStart = false;
 		}
 	}
 }
