@@ -234,6 +234,7 @@ package org.interguild.editor {
 			s.mouseEnabled;
 			s.buttonMode = true;
 			s.addEventListener(MouseEvent.CLICK, gridClick);
+			s.addEventListener(MouseEvent.MOUSE_OVER, altClick);
 			s.addEventListener(MouseEvent.CLICK, rightGridClick);
 			return s;
 		}
@@ -262,10 +263,33 @@ package org.interguild.editor {
 		 * 	Event Listeners Section
 		 * 
 		 */
+		private function altClick(e:MouseEvent):void{
+			var sprite:Sprite = Sprite(e.target);
+			if(e.altKey){
+				var bit:Bitmap;
+				//switch to check what trigger is active
+				if(isWall){
+					sprite.name = "x"
+					bit = new wallImg();
+					sprite.addChild(bit);
+				}
+				else if(isWoodBox){
+					bit = new woodImg();
+					sprite.addChild(bit);
+					sprite.name = "w";
+				}
+				else if(isSteelBox){
+					sprite.name = "s";
+				}
+				else if(isStart){
+					sprite.name = "#";
+				}
+			}
+			
+		}
 		private function gridClick(e:MouseEvent):void {
 			var sprite:Sprite = Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
-
 			var bit:Bitmap;
 			//switch to check what trigger is active
 			if(isWall){
