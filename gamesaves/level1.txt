@@ -1,11 +1,7 @@
-15x15
-xxxxxxxxxxxxxxx
-x             x
-x          w  x
-x  #          x
-x             x
-x         w   x
-x   x x  w w  x
-x   x         x
-x             x
-xxxxxxxxxxxxxxx
+Title of death
+5x5
+xxxxx
+x   x
+x   x
+x   x
+xxxxx
