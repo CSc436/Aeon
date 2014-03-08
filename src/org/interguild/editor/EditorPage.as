@@ -32,9 +32,12 @@ package org.interguild.editor {
 
 		[Embed(source = "../../../../images/woodButton.png")]
 		private var WoodButton:Class;
-
+		//following is temp imgs before finalized art is done
 		[Embed(source = "../../../../images/wall.png")]
 		private var wallImg:Class;
+		
+		[Embed(source = "../../../../images/woodBox.png")]
+		private var woodImg:Class;
 
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
@@ -48,9 +51,9 @@ package org.interguild.editor {
 		private var scrollBar:UIScrollBar;
 		
 		//Following variables are toggles for when adding items to GUI
-		private var isWall:Boolean;
-		private var isWoodBox:Boolean;
-		private var isSteelBox:Boolean;
+		private var isWall:Boolean = false;
+		private var isWoodBox:Boolean = false;
+		private var isSteelBox:Boolean = false;
 		
 		//size of level
 		private var wLevel:int=15, hLevel:int=10;
@@ -58,24 +61,29 @@ package org.interguild.editor {
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(mainMenu:Aeon):void {
+			var bbb:Bitmap;
 			this.mainMenu = mainMenu;
 			//button:
+			bbb = new WallButton();
 			wallButt = new Button();
-			wallButt.label = "";
+			wallButt.label = "wal";
 			wallButt.setStyle("icon", WallButton);
 			wallButt.x = 650;
 			wallButt.y = 100;
+			wallButt.useHandCursor = true;
 			wallButt.addEventListener(MouseEvent.CLICK, wallClick);
 			
+			bbb = new WoodButton();
 			//button:
 			woodButt = new Button();
-			woodButt.label = "";
+			woodButt.label = "wood";
 			woodButt.setStyle("icon", WoodButton);
 			woodButt.x = 650;
 			woodButt.y = 175;
+			woodButt.useHandCursor = true;
 			woodButt.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
-			var bbb:Bitmap = new ClearButton();
+			bbb= new ClearButton();
 
 			//clear button:
 			clearButt = new Button();
@@ -133,6 +141,7 @@ package org.interguild.editor {
 		private function setColumns(col:int):void {
 			this.numColumns = col;
 			dropDown.setColumns(col);
+			dropDown.setRows(hLevel);
 		}
 
 		// creates a blank grid
@@ -206,6 +215,7 @@ package org.interguild.editor {
 		public function deleteSelf():void{
 			this.removeChild(tf);
 			this.removeChild(wallButt);
+			this.removeChild(woodButt);
 			this.removeChild(clearButt);
 			this.removeChild(maskGrid);
 			this.removeChild(scrollBar);
@@ -224,15 +234,23 @@ package org.interguild.editor {
 			var sprite:Sprite = Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
 
-			var bit:Bitmap = new wallImg();
-			sprite.addChild(bit);
+			var bit:Bitmap;
 			//switch to check what trigger is active
-			if(isWall)
+			if(isWall){
+				trace("wall");
 				sprite.name = "x"
-			else if(isWoodBox)
-				sprite.name = "w"
-			else if(isSteelBox)
-				sprite.name = "s"
+				bit = new wallImg();
+				sprite.addChild(bit);
+			}
+			else if(isWoodBox){
+				trace("wood");
+				bit = new woodImg();
+				sprite.addChild(bit);
+				sprite.name = "w";
+			}
+			else if(isSteelBox){
+				sprite.name = "s";
+			}
 		}
 
 		private function rightGridClick(e:MouseEvent):void {
@@ -249,12 +267,15 @@ package org.interguild.editor {
 		private function wallClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 			clearBools();
+			tf.text = "wall";
 			isWall = true;
 		}
 		
 		private function woodBoxClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 			clearBools();
+			trace("wood");
+			tf.text = "wood";
 			isWoodBox = true;
 		}
 
@@ -269,8 +290,8 @@ package org.interguild.editor {
 			this.removeChild(tf);
 			this.removeChild(wallButt);
 			this.removeChild(clearButt);
+			this.removeChild(woodButt);
 			this.removeChild(maskGrid);
-			this.removeChild(scrollBar);
 			this.removeChild(testButton);
 			this.removeChild(dropDown);
 			//go to level page
