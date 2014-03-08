@@ -4,11 +4,10 @@ package org.interguild.editor {
     import flash.display.*;
     import flash.events.*;
     import flash.events.MouseEvent;
-    import flash.net.*;
     import flash.net.FileReference;
     import flash.net.URLLoader;
     import flash.net.URLRequest;
-    import flash.utils.Timer;
+    import flash.net.FileFilter;
     
     public class DropDownMenu extends Sprite {
 
@@ -104,11 +103,12 @@ package org.interguild.editor {
             //open the game
             var filepath:String = "C:\\Users\\Henry\\Documents\\Aeon\\gamesaves\\level1.txt";
 			
-			var filereader:FILE = new FILE();
-			filereader.browse();
-			filereader.addEventListener(Event.COMPLETE, getfilename);
-//			filepath = filereader.name();
-//			file.save(string, "level1.txt");
+			
+			
+	loadFile = new FileReference();
+	loadFile.addEventListener(Event.SELECT, selectHandler);
+	var fileFilter:FileFilter = new FileFilter("Level Files: (*.txt)", "*.txt"); 
+	loadFile.browse([fileFilter]);
 			
 			
 			
@@ -116,6 +116,20 @@ package org.interguild.editor {
             getFile.addEventListener(Event.COMPLETE, onFileLoad);
             getFile.load(new URLRequest(filepath));
         }
+		
+		private var loadFile:FileReference; 
+		
+		private function selectHandler(event:Event):void { 
+			loadFile.removeEventListener(Event.SELECT, selectHandler); 
+			loadFile.addEventListener(Event.COMPLETE, loadCompleteHandler);
+			loadFile.load();
+		}
+		private function loadCompleteHandler(event:Event):void { 
+			loadFile.removeEventListener(Event.COMPLETE, loadCompleteHandler);
+			var loader:Loader = new Loader(); 
+			loader.loadBytes(loadFile.data);
+			onFileLoad(String(loadFile.data));
+		}
 		
 		public function getfilename(event:Event):void {
 			trace(event.target.absolutePath);
@@ -125,10 +139,10 @@ package org.interguild.editor {
         private var code:String;
         private var codeLength:uint;
 
-        public function onFileLoad(event:Event):void {
+        public function onFileLoad(data:String):void {
 			//parse first line separately
 			//get the data
-            code = event.target.data;
+            code = data;
             codeLength = code.length;
             var eol:int = code.indexOf("\n");
             var firstLine:String = code.substr(0, eol);
