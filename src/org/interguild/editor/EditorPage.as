@@ -1,14 +1,14 @@
 package org.interguild.editor {
+	import fl.controls.Button;
+	import fl.controls.TextArea;
+	import fl.controls.TextInput;
+	import fl.controls.UIScrollBar;
+	
 	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	
-	import fl.controls.Button;
-	import fl.controls.TextArea;
-	import fl.controls.TextInput;
-	import fl.controls.UIScrollBar;
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.level.LevelPage;
@@ -255,7 +255,7 @@ package org.interguild.editor {
 			this.removeChild(testButton);
 			mainMenu.addMainMenu();
 		}
-		public function setLevelSize(width:int,height:int, level:String):void{
+		public function setLevelSize(title:String, level:String, width:int,height:int):void{
 			this.wLevel = width;
 			this.hLevel = height;
 		}
