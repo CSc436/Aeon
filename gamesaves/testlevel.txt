@@ -3,11 +3,11 @@ The Test Level of Doom
 x=40
 x=40    
 xx      xx                 xxxxx        
-xx     sx                  xxxxx        
-xx  #  w                   xxxxx        
+xx     wx                  xxxxx        
+xx  #  s                   xxxxx        
 xxxxxx w   xx              xxxxx        
 xx        xxx             xxxxxx        
-xx  w  w xxxx              xxxxx        
+xx       xxxx              xxxxx        
 xx  xxxxxxxxxxx   x        xxxxx        
 xx     xxxxxxxx   x   w wwwxxxxx        
 xx     xxxxxxxx x x xxxxxxxxxxxx        

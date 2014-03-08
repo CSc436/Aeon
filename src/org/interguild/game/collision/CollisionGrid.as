@@ -269,6 +269,7 @@ package org.interguild.game.collision {
 										if(!(grid[tile.gridRow-1][tile.gridCol].myCollisionObjects[i] is Player)){
 											var obj:CollidableObject = grid[tile.gridRow-1][tile.gridCol].myCollisionObjects[0];
 											level.activateObject(obj);
+											obj.setUnblocked(Direction.UP);
 										}
 									}
 								}

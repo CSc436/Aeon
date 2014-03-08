@@ -174,11 +174,13 @@ package org.interguild.game.level {
 			removeObjects(remove);
 			collisionGrid.resetRemovalList();
 			player.finishGameLoop();
-			for (i = 0; i < len; i++) {
-				remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
-				removeObjects(remove);
-				collisionGrid.resetRemovalList();
-				GameObject(activeObjects[i]).finishGameLoop();
+			if(activeObjects.length > 0){
+				for (i = 0; i < activeObjects.length; i++) {
+					remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
+					removeObjects(remove);
+					collisionGrid.resetRemovalList();
+					GameObject(activeObjects[i]).finishGameLoop();
+				}
 			}
 		}
 
