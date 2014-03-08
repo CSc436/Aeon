@@ -146,6 +146,16 @@ package org.interguild.game {
 			//moving to the left
 			if (keys.isKeyLeft) {
 				speedX -= RUN_ACC;
+				// Use scaleX = -1 to flip the direction of movement
+				if(playerClip.scaleX != -1) {
+					playerClip.scaleX = -1;
+					//This value might need to be changed, I think it might be off a few pixels
+					playerClip.x = 25;
+				}
+				if(playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				else
+					playerClip.gotoAndStop(0);
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
@@ -154,6 +164,11 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
+				//animate moving to the right
+				if(playerClip.scaleX != 1) {
+					playerClip.scaleX = 1;
+					playerClip.x = -2;
+				}
 				if(playerClip.currentFrame != playerClip.totalFrames)
 					playerClip.nextFrame();
 				else
