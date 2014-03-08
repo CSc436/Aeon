@@ -12,11 +12,16 @@ package org.interguild.game.level {
 	public class LevelPage extends Sprite {
 		
 		private var level:Level;
+		
+		private var startScreen:LevelStartScreen;
 
 		public function LevelPage() {
 			//for now, just create a level:
 			level = Level.createMe();
 			addChild(level);
+			
+			startScreen = new LevelStartScreen("Test Level");
+			addChild(startScreen);
 		}
 	}
 }
