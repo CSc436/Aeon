@@ -21,17 +21,19 @@ package org.interguild.game.level {
 		private var level:Level;
 
 		private var file:String;
-		private var code:String; //the level encoding
+		private var code:String; //the level encoding in the file
 		private var codeLength:uint;
 		private var timer:Timer;
 
 		private var progressCallback:Function;
 		private var fileLoadedCallback:Function;
+		private var errorCallback:Function;
+		private var loadingCompleteCallback:Function;
 
 		/**
-		 * 
+		 *
 		 */
-		public function LevelLoader(fileName:String){
+		public function LevelLoader(fileName:String) {
 			file = fileName;
 			//don't start loading until start() is called
 		}
@@ -43,9 +45,17 @@ package org.interguild.game.level {
 		public function addProgressListener(onProgress:Function):void {
 			progressCallback = onProgress;
 		}
+
+		public function addFileLoadedListener(cb:Function):void {
+			fileLoadedCallback = cb;
+		}
+
+		public function addErrorListener(cb:Function):void {
+			errorCallback = cb;
+		}
 		
-		public function addFileLoadedListener(method:Function):void{
-			fileLoadedCallback = method;
+		public function addCompletionListener(cb:Function):void{
+			loadingCompleteCallback = cb;
 		}
 
 		/**
@@ -66,7 +76,7 @@ package org.interguild.game.level {
 			var title:String;
 			var lvlWidth:uint;
 			var lvlHeight:uint;
-			
+
 			code = evt.target.data;
 			codeLength = code.length;
 
@@ -82,11 +92,15 @@ package org.interguild.game.level {
 			lvlWidth = Number(dimensionsLine.substr(0, ix));
 			lvlHeight = Number(dimensionsLine.substr(ix + 1));
 			code = code.substr(eol + 1);
-			
-			//TODO do error handling
-			
+
+			if (lvlWidth <= 0 || lvlHeight <= 0) {
+				errorCallback("Invalid Level Dimensions: '" + dimensionsLine + "'");
+				return;
+			}
+
 			//create the level
 			level = new Level(lvlWidth, lvlHeight);
+			level.title = title;
 			fileLoadedCallback(level);
 
 			timer = new Timer(10);
@@ -116,6 +130,7 @@ package org.interguild.game.level {
 			//if done loading
 			if (i == codeLength) {
 				timer.stop();
+				loadingCompleteCallback();
 				level.startGame();
 			} else {
 				progressCallback(i / codeLength);

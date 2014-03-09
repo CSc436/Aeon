@@ -7,7 +7,6 @@ package org.interguild.game.level {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
-	import org.interguild.editor.EditorPage;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.GridTile;
@@ -28,11 +27,13 @@ package org.interguild.game.level {
 
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
+		
+		private var myTitle:String;
 
 		private var camera:Sprite;
 		private var player:Player;
 
-		private var progressBar:LevelProgressBar;
+//		private var progressBar:LevelProgressBar;
 
 		private var collisionGrid:CollisionGrid;
 		private var allObjects:Vector.<GameObject>;
@@ -40,16 +41,15 @@ package org.interguild.game.level {
 
 		private var timer:Timer;
 //		private var levelPage:LevelPage;
-		
+
 		private var w:uint = 0;
 		private var h:uint = 0;
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
 			w = lvlWidth;
 			h = lvlHeight;
-			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
-			levelPage.setLevelSize(lvlWidth * Aeon.TILE_WIDTH, lvlHeight * Aeon.TILE_HEIGHT);
-			
+			myTitle = "Untitled";
+
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
@@ -61,27 +61,32 @@ package org.interguild.game.level {
 			//init player
 			player = new Player();
 			camera.addChild(player);
-
-			//init progress bar
-			progressBar = new LevelProgressBar();
-			progressBar.x = Aeon.STAGE_WIDTH / 2 - progressBar.width / 2;
-			progressBar.y = Aeon.STAGE_HEIGHT / 2 - progressBar.height / 2;
-			addChild(progressBar);
+			
+			//init collision grid
+			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
 		}
-		
-		public function get levelWidth():uint{
+
+		public function get title():String {
+			return myTitle;
+		}
+
+		public function set title(t:String):void {
+			myTitle = t;
+		}
+
+		public function get levelWidth():uint {
 			return w;
 		}
-		
-		public function get levelHeight():uint{
+
+		public function get levelHeight():uint {
 			return h;
 		}
-		
-		public function get pixelWidth():uint{
+
+		public function get pixelWidth():uint {
 			return w * Aeon.TILE_WIDTH;
 		}
-		
-		public function get pixelHeight():uint{
+
+		public function get pixelHeight():uint {
 			return h * Aeon.TILE_HEIGHT;
 		}
 
@@ -106,8 +111,6 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			removeChild(progressBar);
-
 			/*DEBUG
 			addChildAt(collisionGrid, 1);
 			/*END DEBUG*/
@@ -176,15 +179,6 @@ package org.interguild.game.level {
 				if (r is CollidableObject)
 					CollidableObject(r).removeSelf();
 			}
-		}
-
-		/**
-		 * When an object is removed from the game,
-		 * this method might be called by its GridTiles
-		 * in order to unblock the neighboring GridTiles.
-		 */
-		public function unblockNeighbors(g:GridTile):void {
-			collisionGrid.unblockNeighbors(g);
 		}
 	}
 }
