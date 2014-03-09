@@ -4,12 +4,7 @@ package org.interguild.editor {
 	import flash.display.*;
 	import flash.events.*;
 	import flash.events.MouseEvent;
-	import flash.net.FileFilter;
 	import flash.net.FileReference;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.utils.ByteArray;
-	
 	public class DropDownMenu extends Sprite {
 		
 		private var fileLabel:Button;
