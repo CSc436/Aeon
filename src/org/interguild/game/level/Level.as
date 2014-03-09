@@ -180,6 +180,7 @@ package org.interguild.game.level {
 					removeObjects(remove);
 					collisionGrid.resetRemovalList();
 					GameObject(activeObjects[i]).finishGameLoop();
+
 				}
 			}
 		}
@@ -225,6 +226,14 @@ package org.interguild.game.level {
 		public function activateObject(obj:CollidableObject):void{
 			obj.isActive = true;
 			activeObjects.push(obj);
+		}
+		
+		public function deactivateObject(obj:CollidableObject):void{
+			var index:int = activeObjects.indexOf(obj,0);
+			
+			obj.isActive = false;
+			activeObjects.splice(index,1);
+			obj.finishGameLoop;
 		}
 	}
 }

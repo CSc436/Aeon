@@ -62,7 +62,7 @@ package org.interguild.game.collision {
 
 				//naively handle blockNeighbors for only one gridTile case
 				if (blockNeighbors) {
-					updateBlockedNeighbors(gx, gy, gridTile, o);
+					updateBlockedNeighbors(gx, gy, o);
 				}
 			}
 
@@ -258,10 +258,12 @@ package org.interguild.game.collision {
 						activeObject.newY = otherBoxCurr.top - activeBoxCurr.height;
 						activeObject.speedY = 0;
 						activeObject.isActive = false;
+						//level.deactivateObject(activeObject);
 					} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
 						activeObject.isActive = false;
+						//level.deactivateObject(activeObject);
 					} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
 						activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
 						activeObject.speedX = 0;
@@ -271,7 +273,7 @@ package org.interguild.game.collision {
 					}
 					
 					if(!(activeObject.isActive)){
-						updateBlockedNeighbors(tile.gridCol, tile.gridRow, tile, activeObject);
+						updateBlockedNeighbors(tile.gridCol, tile.gridRow, activeObject);
 						tile.unblock(Direction.UP);
 					}
 			}
@@ -320,7 +322,9 @@ package org.interguild.game.collision {
 			return grid;
 		}
 		
-		public function updateBlockedNeighbors(gx:int, gy:int, gridTile:GridTile, o:CollidableObject):void{
+		public function updateBlockedNeighbors(gx:int, gy:int, o:CollidableObject):void{
+			var gridTile:GridTile;
+			
 			//top
 			var bx:int = gx;
 			var by:int = gy - 1;
