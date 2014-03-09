@@ -3,9 +3,9 @@ package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-
+	
 	import flexunit.utils.ArrayList;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
@@ -46,9 +46,9 @@ package org.interguild.game.level {
 		 * Discards the old level and makes a new one.
 		 * Returns the newly created level.
 		 */
-		public static function createMe():Level {
+		public static function createMe(lvlPage:LevelPage):Level {
 			staticCall = true;
-			instance = new Level();
+			instance = new Level(lvlPage);
 			return instance;
 		}
 
@@ -69,15 +69,21 @@ package org.interguild.game.level {
 		private var activeObjects:Vector.<GameObject>;
 
 		private var timer:Timer;
+		private var levelPage:LevelPage;
+		
+		private var w:uint = 0;
+		private var h:uint = 0;
 
 		/**
 		 * DO NOT CALL THIS CONSTRUCTOR
+		 * Use Level.createMe() or Level.getMe() instead.
 		 */
-		public function Level() {
+		public function Level(lvlPage:LevelPage) {
 			if (!staticCall) {
 				throw new Error("You are not allowed to call Level's constructor. Use Level.createMe() or Level.getMe() instead.");
 			}
 			staticCall = false;
+			levelPage = lvlPage;
 
 			//init lists
 			allObjects = new Vector.<GameObject>();
@@ -109,7 +115,27 @@ package org.interguild.game.level {
 		 ********************************/
 
 		public function setLevelSize(lvlWidth:Number, lvlHeight:Number):void {
+			w = lvlWidth;
+			h = lvlHeight;
+			trace("Level:", w, h);
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
+			levelPage.setLevelSize(lvlWidth * Aeon.TILE_WIDTH, lvlHeight * Aeon.TILE_HEIGHT);
+		}
+		
+		public function get levelWidth():uint{
+			return w;
+		}
+		
+		public function get levelHeight():uint{
+			return h;
+		}
+		
+		public function get pixelWidth():uint{
+			return w * Aeon.TILE_WIDTH;
+		}
+		
+		public function get pixelHeight():uint{
+			return h * Aeon.TILE_HEIGHT;
 		}
 
 		/**
@@ -135,7 +161,7 @@ package org.interguild.game.level {
 		public function startGame():void {
 			removeChild(progressBar);
 
-			/*DEBUG*/
+			/*DEBUG
 			addChildAt(collisionGrid, 1);
 			/*END DEBUG*/
 

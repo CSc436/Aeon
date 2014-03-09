@@ -66,7 +66,7 @@ package org.interguild.game.level {
 			var ix:int = dimensionsLine.indexOf("x");
 			var lvlWidth:Number = Number(dimensionsLine.substr(0, ix));
 			var lvlHeight:Number = Number(dimensionsLine.substr(ix + 1));
-			level.setLevelSize(lvlWidth, lvlWidth);
+			level.setLevelSize(lvlWidth, lvlHeight);
 			code = code.substr(eol + 1);
 			
 			timer = new Timer(10);
@@ -158,6 +158,10 @@ package org.interguild.game.level {
 		 * Parses the non-special characters of the level encoding
 		 */
 		private function createObject(curChar:String, px:int, py:int):void {
+			//if off the map, do nothing
+			if(px > level.pixelWidth || py > level.pixelHeight)
+				return;
+			trace(px, py);
 			var tile:CollidableObject;
 			switch (curChar) {
 				case "#": //Player
