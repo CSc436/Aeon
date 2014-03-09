@@ -23,67 +23,32 @@ package org.interguild.game.level {
 	 */
 	public class Level extends Sprite {
 
-		private static var staticCall:Boolean = false;
-		private static var instance:Level;
-
-		/**
-		 * We're following a variant of the singleton pattern here.
-		 * Multiple instances of Level will be created throughout
-		 * the program's lifetime, but only one Level will be allowed
-		 * to exist at a time.
-		 *
-		 * Call getMe() to get a reference to the current Level.
-		 * If one doesn't exist, it will return null, so watch out!
-		 *
-		 * Call createMe() to discard the old level and create a new
-		 * one from scratch.
-		 */
-		public static function getMe():Level {
-			return instance;
-		}
-
-		/**
-		 * Discards the old level and makes a new one.
-		 * Returns the newly created level.
-		 */
-		public static function createMe(lvlPage:LevelPage):Level {
-			staticCall = true;
-			instance = new Level(lvlPage);
-			return instance;
-		}
-
 		public static const GRAVITY:Number = 4;
 
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
 
-		private static const TEST_LEVEL_FILE:String = "../gamesaves/level1.txt";
+		private var myTitle:String;
 
 		private var camera:Sprite;
 		private var player:Player;
 
-		private var progressBar:LevelProgressBar;
+//		private var progressBar:LevelProgressBar;
 
 		private var collisionGrid:CollisionGrid;
 		private var allObjects:Vector.<GameObject>;
 		private var activeObjects:Vector.<GameObject>;
 
 		private var timer:Timer;
-		private var levelPage:LevelPage;
-		
+//		private var levelPage:LevelPage;
+
 		private var w:uint = 0;
 		private var h:uint = 0;
 
-		/**
-		 * DO NOT CALL THIS CONSTRUCTOR
-		 * Use Level.createMe() or Level.getMe() instead.
-		 */
-		public function Level(lvlPage:LevelPage) {
-			if (!staticCall) {
-				throw new Error("You are not allowed to call Level's constructor. Use Level.createMe() or Level.getMe() instead.");
-			}
-			staticCall = false;
-			levelPage = lvlPage;
+		public function Level(lvlWidth:Number, lvlHeight:Number) {
+			w = lvlWidth;
+			h = lvlHeight;
+			myTitle = "Untitled";
 
 			//init lists
 			allObjects = new Vector.<GameObject>();
@@ -96,45 +61,32 @@ package org.interguild.game.level {
 			//init player
 			player = new Player();
 			camera.addChild(player);
-
-			//init progress bar
-			progressBar = new LevelProgressBar();
-			progressBar.x = Aeon.STAGE_WIDTH / 2 - progressBar.width / 2;
-			progressBar.y = Aeon.STAGE_HEIGHT / 2 - progressBar.height / 2;
-			addChild(progressBar);
-
-			//load test level
-			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE, this, progressBar);
-			loader.start();
-		}
-
-
-		/********************************
-		 * Initialization methods below *
-		 * (all called by LevelLoader)	*
-		 ********************************/
-
-		public function setLevelSize(lvlWidth:Number, lvlHeight:Number):void {
-			w = lvlWidth;
-			h = lvlHeight;
-			trace("Level:", w, h);
+			
+			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
-			levelPage.setLevelSize(lvlWidth * Aeon.TILE_WIDTH, lvlHeight * Aeon.TILE_HEIGHT);
 		}
-		
-		public function get levelWidth():uint{
+
+		public function get title():String {
+			return myTitle;
+		}
+
+		public function set title(t:String):void {
+			myTitle = t;
+		}
+
+		public function get levelWidth():uint {
 			return w;
 		}
-		
-		public function get levelHeight():uint{
+
+		public function get levelHeight():uint {
 			return h;
 		}
-		
-		public function get pixelWidth():uint{
+
+		public function get pixelWidth():uint {
 			return w * Aeon.TILE_WIDTH;
 		}
-		
-		public function get pixelHeight():uint{
+
+		public function get pixelHeight():uint {
 			return h * Aeon.TILE_HEIGHT;
 		}
 
@@ -159,13 +111,12 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			removeChild(progressBar);
-
 			/*DEBUG
 			addChildAt(collisionGrid, 1);
 			/*END DEBUG*/
 
-			//init game loop
+			
+			player.wasJumping = true;
 			timer = new Timer(PERIOD);
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
@@ -229,19 +180,6 @@ package org.interguild.game.level {
 				if (r is CollidableObject)
 					CollidableObject(r).removeSelf();
 			}
-		}
-
-		/**
-		 * When an object is removed from the game,
-		 * this method might be called by its GridTiles
-		 * in order to unblock the neighboring GridTiles.
-		 */
-		public function unblockNeighbors(g:GridTile):void {
-			collisionGrid.unblockNeighbors(g);
-		}
-
-		public function setTitle(param0:String):void {
-			
 		}
 	}
 }

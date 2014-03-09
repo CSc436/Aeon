@@ -21,20 +21,41 @@ package org.interguild.game.level {
 		private var level:Level;
 
 		private var file:String;
-		private var code:String; //the level encoding
+		private var code:String; //the level encoding in the file
 		private var codeLength:uint;
 		private var timer:Timer;
-		
-		private var progress:LevelProgressBar;
+
+		private var progressCallback:Function;
+		private var fileLoadedCallback:Function;
+		private var errorCallback:Function;
+		private var loadingCompleteCallback:Function;
 
 		/**
-		 * TODO: if isEditor==true, construct LevelEdit
+		 *
 		 */
-		public function LevelLoader(fileName:String, lvl:Level, progressBar:LevelProgressBar) {
-			level = lvl;
+		public function LevelLoader(fileName:String) {
 			file = fileName;
-			progress = progressBar;
 			//don't start loading until start() is called
+		}
+
+		/**
+		 * Whenever it's time to display the progress of
+		 * loading, display a message.
+		 */
+		public function addProgressListener(onProgress:Function):void {
+			progressCallback = onProgress;
+		}
+
+		public function addFileLoadedListener(cb:Function):void {
+			fileLoadedCallback = cb;
+		}
+
+		public function addErrorListener(cb:Function):void {
+			errorCallback = cb;
+		}
+		
+		public function addCompletionListener(cb:Function):void{
+			loadingCompleteCallback = cb;
 		}
 
 		/**
@@ -52,23 +73,36 @@ package org.interguild.game.level {
 		 * Called after the test level file has been loaded.
 		 */
 		private function onFileLoad(evt:Event):void {
+			var title:String;
+			var lvlWidth:uint;
+			var lvlHeight:uint;
+
 			code = evt.target.data;
 			codeLength = code.length;
 
 			//get title
 			var eol:int = code.indexOf("\n");
-			level.setTitle(code.substr(0, eol));
+			title = code.substr(0, eol);
 			code = code.substr(eol + 1);
-			
+
 			//get dimensions
 			eol = code.indexOf("\n");
 			var dimensionsLine:String = code.substr(0, eol);
 			var ix:int = dimensionsLine.indexOf("x");
-			var lvlWidth:Number = Number(dimensionsLine.substr(0, ix));
-			var lvlHeight:Number = Number(dimensionsLine.substr(ix + 1));
-			level.setLevelSize(lvlWidth, lvlHeight);
+			lvlWidth = Number(dimensionsLine.substr(0, ix));
+			lvlHeight = Number(dimensionsLine.substr(ix + 1));
 			code = code.substr(eol + 1);
-			
+
+			if (lvlWidth <= 0 || lvlHeight <= 0) {
+				errorCallback("Invalid Level Dimensions: '" + dimensionsLine + "'");
+				return;
+			}
+
+			//create the level
+			level = new Level(lvlWidth, lvlHeight);
+			level.title = title;
+			fileLoadedCallback(level);
+
 			timer = new Timer(10);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
 			timer.start();
@@ -96,9 +130,9 @@ package org.interguild.game.level {
 			//if done loading
 			if (i == codeLength) {
 				timer.stop();
-				level.startGame();
+				loadingCompleteCallback();
 			} else {
-				progress.setProgress(i / codeLength);
+				progressCallback(i / codeLength);
 			}
 		}
 
@@ -159,9 +193,9 @@ package org.interguild.game.level {
 		 */
 		private function createObject(curChar:String, px:int, py:int):void {
 			//if off the map, do nothing
-			if(px > level.pixelWidth || py > level.pixelHeight)
+			if (px >= level.pixelWidth || py >= level.pixelHeight)
 				return;
-			trace(px, py);
+
 			var tile:CollidableObject;
 			switch (curChar) {
 				case "#": //Player
@@ -179,7 +213,7 @@ package org.interguild.game.level {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile, false);
 				default:
-					trace("Unknown level code character: '" + curChar+"'");
+					trace("Unknown level code character: '" + curChar + "'");
 					break;
 			}
 		}

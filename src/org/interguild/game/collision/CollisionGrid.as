@@ -21,7 +21,7 @@ package org.interguild.game.collision {
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
 				for (var j:uint = 0; j < width; j++) {
-					var g:GridTile = new GridTile(i, j);
+					var g:GridTile = new GridTile(i, j, this);
 					grid[i][j] = g;
 					/*DEBUG
 					g.x = j * 32;

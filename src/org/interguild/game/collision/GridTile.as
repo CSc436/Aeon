@@ -1,7 +1,5 @@
 package org.interguild.game.collision {
-	import flash.display.Sprite;
 
-	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
 	public class GridTile /*DEBUGextends Sprite /*END DEBUG*/ {
@@ -9,10 +7,12 @@ package org.interguild.game.collision {
 		private var myStuff:Vector.<CollidableObject>;
 		private var row:uint;
 		private var col:uint;
+		private var grid:CollisionGrid;
 
-		public function GridTile(r:uint, c:uint) {
+		public function GridTile(r:uint, c:uint, g:CollisionGrid) {
 			row = r;
 			col = c;
+			grid = g;
 			myStuff = new Vector.<CollidableObject>();
 			/*DEBUG
 			graphics.beginFill(0xCCCCCC, 0.5);
@@ -45,7 +45,7 @@ package org.interguild.game.collision {
 			if (i != -1)
 				myStuff.splice(i, 1);
 			if (!o.isActive && !isBlocking()) {
-				Level.getMe().unblockNeighbors(this);
+				grid.unblockNeighbors(this);
 			}
 			/*DEBUG
 			graphics.clear();
