@@ -1,17 +1,18 @@
 package org.interguild.editor {
-	import fl.containers.ScrollPane;
-	import fl.controls.Button;
-	import fl.controls.TextArea;
-	
 	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
+	
+	import fl.controls.Button;
+	import fl.controls.TextArea;
+	import fl.controls.TextInput;
+	import fl.controls.UIScrollBar;
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.level.LevelPage;
-	
-	import fl.controls.UIScrollBar;
+
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 		//following are objects on the map
@@ -21,6 +22,7 @@ package org.interguild.editor {
 		private var woodButt:Button;
 		private var testButton:Button;
 		private var tf:TextArea;
+		public  var title:TextInput;
 		//Following is code to import images for everything
 		[Embed(source = "../../../../images/testButton.png")]
 		private var TestButton:Class;
@@ -42,6 +44,9 @@ package org.interguild.editor {
 		
 		[Embed(source = "../../../../images/woodBox.png")]
 		private var woodImg:Class;
+		
+		[Embed(source = "../../../../images/flag.jpg")]
+		private var flagImg:Class;
 
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
@@ -118,6 +123,17 @@ package org.interguild.editor {
 			testButton.useHandCursor = true;
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
 			
+			//title text field
+			var titlef:TextField = new TextField();
+			titlef.text = "Title:";
+			titlef.x= 25;
+			titlef.y = 50;
+			title = new TextInput();
+			title.width = 250;
+			title.height = 25;
+			title.x = 55;
+			title.y = 50;
+			
 			//textfield:
 			tf = new TextArea();
 			tf.width = 200;
@@ -143,6 +159,8 @@ package org.interguild.editor {
 			scrollBar.move(-10,0);
 			maskGrid.addChild(scrollBar);
 			
+			addChild(title);
+			addChild(titlef);
 			addChild(testButton);
 			addChild(tf);
 			addChild(wallButt);
@@ -219,6 +237,7 @@ package org.interguild.editor {
 			s.mouseEnabled;
 			s.buttonMode = true;
 			s.addEventListener(MouseEvent.CLICK, gridClick);
+			s.addEventListener(MouseEvent.MOUSE_OVER, altClick);
 			s.addEventListener(MouseEvent.CLICK, rightGridClick);
 			return s;
 		}
@@ -239,7 +258,7 @@ package org.interguild.editor {
 			this.removeChild(testButton);
 			mainMenu.addMainMenu();
 		}
-		public function setLevelSize(width:int,height:int, level:String):void{
+		public function setLevelSize(title:String, level:String, width:int,height:int):void{
 			this.wLevel = width;
 			this.hLevel = height;
 		}
@@ -247,10 +266,34 @@ package org.interguild.editor {
 		 * 	Event Listeners Section
 		 * 
 		 */
+		private function altClick(e:MouseEvent):void{
+			var sprite:Sprite = Sprite(e.target);
+			if(e.altKey){
+				var bit:Bitmap;
+				//switch to check what trigger is active
+				if(isWall){
+					sprite.name = "x"
+					bit = new wallImg();
+					sprite.addChild(bit);
+				}
+				else if(isWoodBox){
+					bit = new woodImg();
+					sprite.addChild(bit);
+					sprite.name = "w";
+				}
+				else if(isSteelBox){
+					sprite.name = "s";
+				}
+				else if(isStart){
+					bit = new flagImg();
+					sprite.addChild(bit);
+					sprite.name = "#";
+				}
+			}
+		}
 		private function gridClick(e:MouseEvent):void {
 			var sprite:Sprite = Sprite(e.target)
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
-
 			var bit:Bitmap;
 			//switch to check what trigger is active
 			if(isWall){
@@ -267,6 +310,8 @@ package org.interguild.editor {
 				sprite.name = "s";
 			}
 			else if(isStart){
+				bit = new flagImg();
+				sprite.addChild(bit);
 				sprite.name = "#";
 			}
 		}
