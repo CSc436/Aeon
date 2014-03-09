@@ -1,14 +1,14 @@
 package org.interguild.editor {
-	import fl.controls.Button;
-	import fl.controls.TextArea;
-	import fl.controls.TextInput;
-	import fl.controls.UIScrollBar;
-	
 	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	
+	import fl.controls.Button;
+	import fl.controls.TextArea;
+	import fl.controls.TextInput;
+	import fl.controls.UIScrollBar;
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.level.LevelPage;
@@ -44,6 +44,9 @@ package org.interguild.editor {
 		
 		[Embed(source = "../../../../images/woodBox.png")]
 		private var woodImg:Class;
+		
+		[Embed(source = "../../../../images/flag.jpg")]
+		private var flagImg:Class;
 
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
@@ -282,6 +285,8 @@ package org.interguild.editor {
 					sprite.name = "s";
 				}
 				else if(isStart){
+					bit = new flagImg();
+					sprite.addChild(bit);
 					sprite.name = "#";
 				}
 			}
@@ -306,6 +311,8 @@ package org.interguild.editor {
 				sprite.name = "s";
 			}
 			else if(isStart){
+				bit = new flagImg();
+				sprite.addChild(bit);
 				sprite.name = "#";
 			}
 		}
