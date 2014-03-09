@@ -118,18 +118,14 @@ package org.interguild.editor {
 		
 		private function loadCompleteHandler(event:Event):void { 
 			filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
-			onFileLoad(String(filereader.data));
+			onFileLoad((String(filereader.data)).split("\r").join(""));
 		}
 		
 		//data from file and length
-		private var code:String;
-		private var codeLength:uint;
-		
 		public function onFileLoad(data:String):void {
 			//get the data
 //			trace("textFile: \n"+data);
-			code = data;
-			codeLength = data.length;
+			var code:String = data;
 			//parse the first line to get title name
 			var eol:int = code.indexOf("\n");
 			var title:String = code.substr(0, eol);
@@ -146,15 +142,14 @@ package org.interguild.editor {
 			code = code.substr(eol + 1); // skip this line
 			
 			var levelRead:String = "";
-			
 			var lineno:int = 1;
-			for (var i:uint = 0; i < codeLength; i++) {
+			var len:int = lvlWidth * lvlHeight + lvlHeight - 1;
+			for (var i:uint = 0; i < len; i++) {
 				var curChar:String = code.charAt(i);
+//				trace("i: "+i+" char: "+curChar);
 				switch (curChar) {
 					case "\n":
 						lineno++;
-					case "\r":
-						i++;
 					case "#": //Player spawn
 					case "x": //Terrain
 					case "w": //WoodCrate

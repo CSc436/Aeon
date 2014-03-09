@@ -285,7 +285,6 @@ package org.interguild.editor {
 					sprite.name = "#";
 				}
 			}
-			
 		}
 		private function gridClick(e:MouseEvent):void {
 			var sprite:Sprite = Sprite(e.target)
