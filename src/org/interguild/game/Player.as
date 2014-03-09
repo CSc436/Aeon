@@ -1,7 +1,7 @@
 package org.interguild.game {
 	
-	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {
 
@@ -24,6 +24,7 @@ package org.interguild.game {
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
 
 		private var keys:KeyMan;
+		public var wasJumping:Boolean;
 		public var isStanding:Boolean;
 
 
@@ -96,9 +97,13 @@ package org.interguild.game {
 			}
 
 			//jump
-			if (keys.isKeySpace && isStanding) {
+			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
 			}
+			if(keys.isKeySpace)
+				wasJumping = true;
+			else
+				wasJumping = false;
 		}
 	}
 }

@@ -115,7 +115,8 @@ package org.interguild.game.level {
 			addChildAt(collisionGrid, 1);
 			/*END DEBUG*/
 
-			//init game loop
+			
+			player.wasJumping = true;
 			timer = new Timer(PERIOD);
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();

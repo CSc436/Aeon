@@ -131,7 +131,6 @@ package org.interguild.game.level {
 			if (i == codeLength) {
 				timer.stop();
 				loadingCompleteCallback();
-				level.startGame();
 			} else {
 				progressCallback(i / codeLength);
 			}
@@ -194,7 +193,7 @@ package org.interguild.game.level {
 		 */
 		private function createObject(curChar:String, px:int, py:int):void {
 			//if off the map, do nothing
-			if (px > level.pixelWidth || py > level.pixelHeight)
+			if (px >= level.pixelWidth || py >= level.pixelHeight)
 				return;
 
 			var tile:CollidableObject;

@@ -1,7 +1,9 @@
 package org.interguild.game.level {
 	import flash.display.Sprite;
+	import flash.geom.Rectangle;
 	
 	import org.interguild.Aeon;
+	import org.interguild.game.KeyMan;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
@@ -12,9 +14,9 @@ package org.interguild.game.level {
 	 * 		-The level itself
 	 */
 	public class LevelPage extends Sprite {
-		
+
 		private static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
-		
+
 		private var level:Level;
 		private var loader:LevelLoader;
 		private var progressBar:LevelProgressBar;
@@ -26,7 +28,7 @@ package org.interguild.game.level {
 			progressBar.x = Aeon.STAGE_WIDTH / 2 - progressBar.width / 2;
 			progressBar.y = Aeon.STAGE_HEIGHT / 2 - progressBar.height / 2;
 			addChild(progressBar);
-			
+
 			//load test level
 			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE);
 			loader.addProgressListener(progressBar.setProgress);
@@ -35,27 +37,50 @@ package org.interguild.game.level {
 			loader.addCompletionListener(onLoadComplete);
 			loader.start();
 		}
-		
-		private function onFileLoad(lvl:Level):void{
+
+		private function onFileLoad(lvl:Level):void {
 			level = lvl;
-			
-			var desiredSize:Number = 300;
-			level.scaleX = level.scaleY = desiredSize / level.pixelHeight;
-			level.x = Aeon.STAGE_WIDTH / 2 - level.levelWidth * Aeon.TILE_WIDTH * level.scaleX / 2;
-			level.y = Aeon.STAGE_HEIGHT / 2 - level.levelHeight * Aeon.TILE_HEIGHT* level.scaleY / 2;
-			addChild(level);
-			
 			startScreen = new LevelStartScreen(level.title);
 			addChild(startScreen);
+			showPreviewLevel();
+			addChild(level);
 		}
-		
-		private function onLoadError(e:String):void{
-			trace("Error: "+e);
+
+		private function onLoadError(e:String):void {
+			trace("Error: " + e);
 			//TODO display error to user
 		}
-		
-		private function onLoadComplete():void{
+
+		private function onLoadComplete():void {
 			removeChild(progressBar);
+			startScreen.loadComplete();
+			KeyMan.getMe().addSpacebarListener(showFullLevel);
+		}
+		
+		private function showPreviewLevel():void{
+			startScreen.visible = true;
+			
+			//scale level preview:
+			var box:Rectangle = startScreen.getPreviewRegion();
+			level.scaleX = level.scaleY = box.height / level.pixelHeight;
+			var tmpScale:Number = box.width / level.pixelWidth;
+			if (tmpScale < level.scaleX)
+				level.scaleX = level.scaleY = tmpScale;
+			if(level.scaleX > 1)
+				level.scaleX = level.scaleY = 1;
+			
+			//position level preview:
+			level.x = Aeon.STAGE_WIDTH / 2 - level.pixelWidth * level.scaleX / 2;
+			level.y = box.y + (box.height / 2) - level.pixelHeight * level.scaleY / 2;
+		}
+		
+		private function showFullLevel():void{
+			if(startScreen.visible){
+				startScreen.visible = false;
+				level.scaleX = level.scaleY = 1;
+				level.x = level.y = 0;
+				level.startGame();
+			}
 		}
 	}
 }
