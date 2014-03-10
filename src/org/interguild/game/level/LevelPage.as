@@ -62,16 +62,16 @@ package org.interguild.game.level {
 			
 			//scale level preview:
 			var box:Rectangle = startScreen.getPreviewRegion();
-			level.scaleX = level.scaleY = box.height / level.pixelHeight;
-			var tmpScale:Number = box.width / level.pixelWidth;
+			level.scaleX = level.scaleY = box.height / level.heightInPixels;
+			var tmpScale:Number = box.width / level.widthInPixels;
 			if (tmpScale < level.scaleX)
 				level.scaleX = level.scaleY = tmpScale;
 			if(level.scaleX > 1)
 				level.scaleX = level.scaleY = 1;
 			
 			//position level preview:
-			level.x = Aeon.STAGE_WIDTH / 2 - level.pixelWidth * level.scaleX / 2;
-			level.y = box.y + (box.height / 2) - level.pixelHeight * level.scaleY / 2;
+			level.x = Aeon.STAGE_WIDTH / 2 - level.widthInPixels * level.scaleX / 2;
+			level.y = box.y + (box.height / 2) - level.heightInPixels * level.scaleY / 2;
 		}
 		
 		private function showFullLevel():void{
