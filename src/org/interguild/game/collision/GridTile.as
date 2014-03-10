@@ -1,8 +1,9 @@
 package org.interguild.game.collision {
 
 	import org.interguild.game.tiles.CollidableObject;
+	import flash.display.Sprite;
 
-	public class GridTile /*DEBUGextends Sprite /*END DEBUG*/ {
+	public class GridTile extends Sprite {
 
 		private var myStuff:Vector.<CollidableObject>;
 		private var row:uint;
@@ -14,11 +15,11 @@ package org.interguild.game.collision {
 			col = c;
 			grid = g;
 			myStuff = new Vector.<CollidableObject>();
-			/*DEBUG
-			graphics.beginFill(0xCCCCCC, 0.5);
-			graphics.drawRect(0, 0, 31, 31);
-			graphics.endFill();
-		/*END DEBUG*/
+			CONFIG::DEBUG {
+				graphics.beginFill(0xCCCCCC, 0.5);
+				graphics.drawRect(0, 0, 31, 31);
+				graphics.endFill();
+			}
 		}
 
 		internal function get gridRow():uint {
@@ -32,12 +33,12 @@ package org.interguild.game.collision {
 		public function addObject(o:CollidableObject):void {
 			myStuff.push(o);
 
-			/*DEBUG
-			graphics.clear();
-			graphics.beginFill(0xFFFFFF, 0.25);
-			graphics.drawRect(0, 0, 31, 31);
-			graphics.endFill();
-		/*END DEBUG*/
+			CONFIG::DEBUG {
+				graphics.clear();
+				graphics.beginFill(0xFFFFFF, 0.25);
+				graphics.drawRect(0, 0, 31, 31);
+				graphics.endFill();
+			}
 		}
 
 		public function removeObject(o:CollidableObject):void {
@@ -47,12 +48,12 @@ package org.interguild.game.collision {
 			if (!o.isActive && !isBlocking()) {
 				grid.unblockNeighbors(this);
 			}
-			/*DEBUG
-			graphics.clear();
-			graphics.beginFill(0xCCCCCC, 0.5);
-			graphics.drawRect(0, 0, 31, 31);
-			graphics.endFill();
-		/*END DEBUG*/
+			CONFIG::DEBUG {
+				graphics.clear();
+				graphics.beginFill(0xCCCCCC, 0.5);
+				graphics.drawRect(0, 0, 31, 31);
+				graphics.endFill();
+			}
 		}
 
 		public function get myCollisionObjects():Vector.<CollidableObject> {

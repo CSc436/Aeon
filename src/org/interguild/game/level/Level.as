@@ -123,10 +123,9 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			/*DEBUG
-			addChildAt(collisionGrid, 1);
-			/*END DEBUG*/
-
+			CONFIG::DEBUG{
+				addChildAt(collisionGrid, 1);
+			}
 
 			player.wasJumping = true;
 			timer = new Timer(PERIOD);
