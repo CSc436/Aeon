@@ -3,13 +3,12 @@ package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	
+
 	import flexunit.utils.ArrayList;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
-	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 
@@ -33,14 +32,11 @@ package org.interguild.game.level {
 		private var camera:Sprite;
 		private var player:Player;
 
-//		private var progressBar:LevelProgressBar;
-
 		private var collisionGrid:CollisionGrid;
 		private var allObjects:Vector.<GameObject>;
 		private var activeObjects:Vector.<GameObject>;
 
 		private var timer:Timer;
-//		private var levelPage:LevelPage;
 
 		private var w:uint = 0;
 		private var h:uint = 0;
@@ -61,7 +57,7 @@ package org.interguild.game.level {
 			//init player
 			player = new Player();
 			camera.addChild(player);
-			
+
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
 		}
@@ -74,19 +70,35 @@ package org.interguild.game.level {
 			myTitle = t;
 		}
 
-		public function get levelWidth():uint {
+		/**
+		 * Returns the width of the level as measured
+		 * in the number of tiles.
+		 */
+		public function get widthInTiles():uint {
 			return w;
 		}
 
-		public function get levelHeight():uint {
+		/**
+		 * Returns the hight of the level as measured
+		 * in the number of tiles.
+		 */
+		public function get heightInTiles():uint {
 			return h;
 		}
 
-		public function get pixelWidth():uint {
+		/**
+		 * Returns the width of the level as measured
+		 * in pixels. Basically: widthInTiles * 32
+		 */
+		public function get widthInPixels():uint {
 			return w * Aeon.TILE_WIDTH;
 		}
 
-		public function get pixelHeight():uint {
+		/**
+		 * Returns the width of the level as measured
+		 * in pixels. Basically: widthInTiles * 32
+		 */
+		public function get heightInPixels():uint {
 			return h * Aeon.TILE_HEIGHT;
 		}
 
@@ -111,11 +123,10 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			/*DEBUG
-			addChildAt(collisionGrid, 1);
-			/*END DEBUG*/
+			CONFIG::DEBUG{
+				addChildAt(collisionGrid, 1);
+			}
 
-			
 			player.wasJumping = true;
 			timer = new Timer(PERIOD);
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);

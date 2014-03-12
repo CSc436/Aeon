@@ -1,13 +1,15 @@
 package org.interguild {
 	import flash.display.Bitmap;
-	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
-
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
+	
 	import fl.controls.Button;
-
+	
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.KeyMan;
 	import org.interguild.game.level.LevelPage;
@@ -58,6 +60,17 @@ package org.interguild {
 			addMainMenu();
 			//init key man
 			keys = new KeyMan(stage);
+			
+			CONFIG::DEBUG{
+				var textField:TextField = new TextField();
+				textField.defaultTextFormat = new TextFormat("Impact", 20, 0xFFFFFF, true);
+				textField.autoSize = TextFieldAutoSize.LEFT;
+				textField.selectable = false;
+				textField.text = "DEBUGGING MODE";
+				textField.x = 5;
+				textField.y = Aeon.STAGE_HEIGHT - textField.height - 5;
+				addChild(textField);
+			}
 		}
 
 		private function gotoGame(event:MouseEvent):void {

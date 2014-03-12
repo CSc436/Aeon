@@ -31,7 +31,11 @@ package org.interguild.game.level {
 		private var loadingCompleteCallback:Function;
 
 		/**
-		 *
+		 * This constructor assumes you want to load a level
+		 * from a remote file.
+		 * 
+		 * TODO: Make a version of this constructor for loading
+		 * levels from a user's local files.
 		 */
 		public function LevelLoader(fileName:String) {
 			file = fileName;
@@ -193,7 +197,7 @@ package org.interguild.game.level {
 		 */
 		private function createObject(curChar:String, px:int, py:int):void {
 			//if off the map, do nothing
-			if (px >= level.pixelWidth || py >= level.pixelHeight)
+			if (px >= level.widthInPixels || py >= level.heightInPixels)
 				return;
 
 			var tile:CollidableObject;
