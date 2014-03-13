@@ -133,7 +133,7 @@ package org.interguild.game.collision {
 					//now we can test collisions between obj and target
 					var obj:CollidableObject = gObjs[j];
 
-					if (target != obj && !target.hasCollidedWith(obj) && target.hitbox.intersects(obj.hitbox)) {
+					if (target != obj && !target.hasCollidedWith(obj) && target.hitbox.intersects(obj.hitboxPrev)) {
 						//if they are colliding:
 						handleCollision(target, obj);
 					}

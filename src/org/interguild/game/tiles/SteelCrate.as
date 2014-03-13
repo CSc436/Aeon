@@ -9,7 +9,7 @@ package org.interguild.game.tiles {
 		public var buoyancy:Boolean=false;
 
 		private static const GRAVITY:uint = 4;
-		private static const MAX_FALL_SPEED:Number = 7;
+		private static const MAX_FALL_SPEED:Number = 6;
 		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		
 		private static const SPRITE_COLOR:uint=0xA3A3A3;
@@ -54,17 +54,14 @@ package org.interguild.game.tiles {
 			//gravity
 			speedY += GRAVITY;
 			
-			//update movement
-			newX += speedX;
-			newY += speedY;
-			
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
 			}
 			
-			//commit location change:
-			x = newX;
-			y = newY;
+			//update movement
+			newX += speedX;
+			newY += speedY;
+			updateHitBox();
 		}
 	}
 }

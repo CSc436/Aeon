@@ -42,7 +42,9 @@ package org.interguild.game {
 
 		public function setStartPosition(sx:Number, sy:Number):void {
 			x = newX = startX = sx;
-			y = newY = startY = sy;
+			y = newY = startY = sy - hitbox.height + 32;
+			updateHitBox();
+			finishGameLoop();
 		}
 
 		private function drawPlayer():void {
@@ -124,6 +126,7 @@ package org.interguild.game {
 			//update movement
 			newX += speedX;
 			newY += speedY;
+			updateHitBox();
 		}
 
 		private function updateKeys():void {

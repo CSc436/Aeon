@@ -2,6 +2,7 @@ package org.interguild.game.tiles {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
+	import org.interguild.game.Player;
 	import org.interguild.game.collision.GridTile;
 
 	/**
@@ -58,14 +59,17 @@ package org.interguild.game.tiles {
 		public function get myCollisionGridTiles():Vector.<GridTile>{
 			return this.myGrids;
 		}
+		
+		protected function updateHitBox():void{
+			hit_box.x = newX;
+			hit_box.y = newY;
+		}
 
 		/**
 		 * It's dangerous to do collision detection alone.
 		 * Take this. 
 		 */
 		public function get hitbox():Rectangle {
-			hit_box.x = newX;
-			hit_box.y = newY;
 			return hit_box;
 		}
 		
@@ -124,6 +128,10 @@ package org.interguild.game.tiles {
 		public override function finishGameLoop():void{
 			super.finishGameLoop();
 			justCollided = new Dictionary(true);
+			updateHitBox();
+			if(this is Player){
+				trace("I am player");
+			}
 			hit_box_prev = hitbox.clone();
 		}
 	}
