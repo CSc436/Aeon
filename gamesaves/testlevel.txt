@@ -1,6 +1,6 @@
-The Test Level of Doom super long name that wraps
-120x30
-x=120
+The Test Level of Doom
+100x30
+x=100
 x=80    
 xx      xx                 xxxxx        
 xx     sx                  xxxxx        
