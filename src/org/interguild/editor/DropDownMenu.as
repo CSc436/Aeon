@@ -158,7 +158,7 @@ package org.interguild.editor {
 				}
             }
             trace("levelRead: \n" + levelRead);
-			currEditor.setLevelSize(title, levelRead, lvlWidth, lvlHeight);
+			currEditor.setLevelSize(title, levelRead, lvlHeight, lvlWidth);
 		}
 		
 		

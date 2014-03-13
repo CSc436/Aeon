@@ -15,45 +15,33 @@ package org.interguild.editor {
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
-		//following are objects on the map
-		private var startButt:Button;
-		private var wallButt:Button;
-		private var clearButt:Button;
-		private var woodButt:Button;
+		//Following is code to import images for everything
+		[Embed(source = "../../../../images/testButton.png")] private var TestButton:Class;
+		[Embed(source = "../../../../images/clearAllButton.png")] private var ClearButton:Class;
+		[Embed(source = "../../../../images/wallButton.png")] private var WallButton:Class;
+		[Embed(source = "../../../../images/woodButton.png")] private var WoodButton:Class;
+		[Embed(source = "../../../../images/startButton.png")] private var StartButton:Class;
+		[Embed(source = "../../../../images/woodBox.png")] private var woodImg:Class;
+		//TODO update picture
+		[Embed(source = "../../../../images/wall.png")]
+		private var wallImg:Class;
+		//TODO update picture
+		[Embed(source = "../../../../images/flag.jpg")]
+		private var flagImg:Class;
+		
+		//following are objects on this sprite
+		private var playerSpawnButton:Button;
+		private var wallButton:Button;
+		private var clearButton:Button;
+		private var woodButton:Button;
 		private var testButton:Button;
 		private var tf:TextArea;
 		public  var title:TextInput;
-		//Following is code to import images for everything
-		[Embed(source = "../../../../images/testButton.png")]
-		private var TestButton:Class;
-
-		[Embed(source = "../../../../images/clearAllButton.png")]
-		private var ClearButton:Class;
-
-		[Embed(source = "../../../../images/wallButton.png")]
-		private var WallButton:Class;
-
-		[Embed(source = "../../../../images/woodButton.png")]
-		private var WoodButton:Class;
-		
-		[Embed(source = "../../../../images/startButton.png")]
-		private var StartButton:Class;
-		//following is temp imgs before finalized art is done
-		[Embed(source = "../../../../images/wall.png")]
-		private var wallImg:Class;
-		
-		[Embed(source = "../../../../images/woodBox.png")]
-		private var woodImg:Class;
-		
-		[Embed(source = "../../../../images/flag.jpg")]
-		private var flagImg:Class;
 
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
 
 		private var dropDown:DropDownMenu;
-
-		private var numColumns:int;
 
 		private var mainMenu:Aeon;
 		
@@ -66,61 +54,31 @@ package org.interguild.editor {
 		private var isStart:Boolean = false;
 		
 		//size of level
-		private var wLevel:int=15, hLevel:int=10;
+		private var levelColumns:int, levelRows:int;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(mainMenu:Aeon):void {
-			var bbb:Bitmap;
 			this.mainMenu = mainMenu;
 			
-			//startingposition button
-			bbb = new StartButton();
-			startButt = new Button();
-			startButt.label= "start";
-			startButt.setStyle("icon", StartButton);
-			startButt.x = 650;
-			startButt.y = 50;
-			startButt.useHandCursor = true;
-			startButt.addEventListener(MouseEvent.CLICK, startClick);
-			//wallbutton:
-			bbb = new WallButton();
-			wallButt = new Button();
-			wallButt.label = "wal";
-			wallButt.setStyle("icon", WallButton);
-			wallButt.x = 650;
-			wallButt.y = 100;
-			wallButt.useHandCursor = true;
-			wallButt.addEventListener(MouseEvent.CLICK, wallClick);
+			//playerstart button
+			playerSpawnButton = makeButton("Start", StartButton, 650, 50);
+			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 			
-			bbb = new WoodButton();
+			//wallbutton
+			wallButton = makeButton("Wall", WallButton, 650, 100);
+			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
+			
 			//woodbutton:
-			woodButt = new Button();
-			woodButt.label = "wood";
-			woodButt.setStyle("icon", WoodButton);
-			woodButt.x = 650;
-			woodButt.y = 175;
-			woodButt.useHandCursor = true;
-			woodButt.addEventListener(MouseEvent.CLICK, woodBoxClick);
-
-			bbb= new ClearButton();
-
+			woodButton = makeButton("Wood", WoodButton, 650, 150);
+			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
+			
 			//clear button:
-			clearButt = new Button();
-			clearButt.label = "Clear All";
-			clearButt.setStyle("icon", ClearButton);
-			clearButt.x = 650;
-			clearButt.y = 250;
-			clearButt.useHandCursor = true;
-			clearButt.addEventListener(MouseEvent.CLICK, clearClick);
-
+			clearButton = makeButton("Clear All", ClearButton, 650, 250);
+			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
+			
 			//Test button:
-			testButton = new Button();
-			testButton.label = "Test Game";
-			testButton.setStyle("icon", TestButton);
-			testButton.x = 350;
-			testButton.y = 50;
-			testButton.useHandCursor = true;
+			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
 			
 			//title text field
@@ -128,6 +86,8 @@ package org.interguild.editor {
 			titlef.text = "Title:";
 			titlef.x= 25;
 			titlef.y = 50;
+			titlef.backgroundColor(0xFFFFFF);
+			//for entering a title name
 			title = new TextInput();
 			title.width = 250;
 			title.height = 25;
@@ -150,7 +110,8 @@ package org.interguild.editor {
 			dropDown.x = 5;
 			dropDown.y = 5;
 
-			setColumns(wLevel);
+			//default this level size
+			setColumns(15, 15);
 			maskGrid = makeBlank(maskGrid);
 			
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
@@ -163,25 +124,57 @@ package org.interguild.editor {
 			addChild(titlef);
 			addChild(testButton);
 			addChild(tf);
-			addChild(wallButt);
-			addChild(woodButt);
-			addChild(startButt);
-			addChild(clearButt);
+			addChild(wallButton);
+			addChild(woodButton);
+			addChild(playerSpawnButton);
+			addChild(clearButton);
 			addChild(maskGrid);
 			addChild(dropDown);
 
 		}
 
-		private function setColumns(col:int):void {
-			this.numColumns = col;
-			dropDown.setColumns(col);
-			dropDown.setRows(hLevel);
+		/**
+		 * set size of the grid
+		 */
+		private function setColumns(r:int, c:int):void {
+			levelRows = r;
+			levelColumns = c;
+			dropDown.setRows(r);
+			dropDown.setColumns(c);
+		}
+		
+		/**
+		 * This function is given by the i/o buffer reader to create a new level
+		 */
+		public function setLevelSize(title:String, level:String, row:int, col:int):void{
+			levelRows = row;
+			levelColumns = col;
+			this.title.text = title;
+		}
+		
+		/**
+		 * Helps populate the sprite by setting up buttons
+		 *
+		 * @param   index
+		 * @param   row
+		 * @param   column
+		 */
+		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
+			var b:Button = new Button();
+			b.label = label;
+			b.setStyle("icon", image);
+			b.x = xpixel;
+			b.y = ypixel;
+			b.useHandCursor = true;
+			return b;
 		}
 
-		// creates a blank grid
+		/**
+		 * this function creates a blank grid
+		 */
 		private function makeBlank(grid:Sprite):Sprite {
 			// number of objects to place into grid
-			var numObjects:int = wLevel*hLevel;
+			var numObjects:int = levelColumns*levelRows;
 			//TODO make numObjects scale with size of grid
 
 			// current row and column
@@ -192,8 +185,8 @@ package org.interguild.editor {
 			// object that populates grid cell
 			var cell:Sprite;
 			for (var i:int = 0; i < numObjects; i++) {
-				column = i % numColumns;
-				row = int(i / numColumns);
+				column = i % levelColumns;
+				row = int(i / levelColumns);
 
 				// make object to place into grid
 				cell = makeObject(i, row, column);
@@ -201,16 +194,15 @@ package org.interguild.editor {
 				cell.x = (cell.width + gap) * column;
 				cell.y = (cell.height + gap) * row;
 				var bit:Bitmap;
-				if (row == 0 || row == hLevel - 1) {
+				if (row == 0 || row == levelRows - 1) {
 					bit = new wallImg();
 					cell.addChild(bit);
 					cell.name = "x";
-				} else if (column == 0 || column == numColumns - 1) {
+				} else if (column == 0 || column == levelColumns - 1) {
 					bit = new wallImg();
 					cell.addChild(bit);
 					cell.name = "x";
 				}
-				//gridContainer.addChild(cell);
 				grid.addChild(cell);
 			}
 			grid.x = 20;
@@ -245,23 +237,19 @@ package org.interguild.editor {
 		/**
 		 * This function is called from DropDownMenu to delete this object
 		 * so that we can return to the main menu
-		 * 
-		*/
+		 */
 		public function deleteSelf():void{
 			this.removeChild(tf);
-			this.removeChild(wallButt);
-			this.removeChild(woodButt);
-			this.removeChild(startButt);
-			this.removeChild(clearButt);
+			this.removeChild(wallButton);
+			this.removeChild(woodButton);
+			this.removeChild(playerSpawnButton);
+			this.removeChild(clearButton);
 			this.removeChild(maskGrid);
 			this.removeChild(scrollBar);
 			this.removeChild(testButton);
 			mainMenu.addMainMenu();
 		}
-		public function setLevelSize(title:String, level:String, width:int,height:int):void{
-			this.wLevel = width;
-			this.hLevel = height;
-		}
+		
 		/**
 		 * 	Event Listeners Section
 		 * 
@@ -356,10 +344,10 @@ package org.interguild.editor {
 
 		private function testGame(e:MouseEvent):void {
 			this.removeChild(tf);
-			this.removeChild(wallButt);
-			this.removeChild(clearButt);
-			this.removeChild(woodButt);
-			this.removeChild(startButt);
+			this.removeChild(wallButton);
+			this.removeChild(clearButton);
+			this.removeChild(woodButton);
+			this.removeChild(playerSpawnButton);
 			this.removeChild(maskGrid);
 			this.removeChild(testButton);
 			this.removeChild(dropDown);
