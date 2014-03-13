@@ -14,8 +14,8 @@ package org.interguild.game {
 		private static const SPRITE_WIDTH:uint = 24;
 		private static const SPRITE_HEIGHT:uint = 40;
 
-		private static const MAX_FALL_SPEED:Number = 7;
-		private static const MAX_RUN_SPEED:Number = 3;
+		private static const MAX_FALL_SPEED:Number = 14;
+		private static const MAX_RUN_SPEED:Number = 6;
 
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
@@ -119,15 +119,11 @@ package org.interguild.game {
 			}
 			
 			// reset isStanding
-			reset();
+			isStanding = false;
 
 			//update movement
 			newX += speedX;
 			newY += speedY;
-		}
-
-		private function reset():void {
-			isStanding = false;
 		}
 
 		private function updateKeys():void {
