@@ -55,17 +55,10 @@ package org.interguild.game {
 			playerClip.x = -2;
 			playerClip.y = -8;
 			addChild(playerClip);
-			
-			trace("There are " + (new PlayerJumpUpAnimation().totalFrames) + " frames in the jump up animation");
-			trace("There are " + (new PlayerJumpPeakThenFallAnimation().totalFrames) + " frames in the jump peak then fall animation");
-			trace("There are " + (new PlayerJumpLandAnimation().totalFrames) + " frames in the jump land animation");
-			
+						
 		}
 
 		public override function onGameLoop():void {
-			
-	
-			// -28, -24, -20, -16, -12, -8, -4, 0, 4, 7 are all the possible vertical speeds
 			switch(speedY) {
 				case -28:
 				case -24:
@@ -95,6 +88,13 @@ package org.interguild.game {
 						playerClip = new PlayerJumpPeakThenFallAnimation();
 						addChild(playerClip);
 						playerClip.gotoAndStop(0);
+					}
+					else if(isStanding && prevSpeedY == 11 && !(playerClip is PlayerJumpLandAnimation)) {
+						removeChild(playerClip);
+						playerClip = new PlayerJumpLandAnimation();
+						addChild(playerClip);
+						playerClip.gotoAndPlay(0);
+						trace("land animation")
 					}
 					else if(!(playerClip is PlayerWalkingAnimation)) {
 						removeChild(playerClip);
