@@ -193,7 +193,8 @@ package org.interguild.editor {
 					}
 				}
 			}
-			file.save(string, "level1.txt");
+			var titlename:String = currEditor.title.text;
+			file.save(string, titlename + ".txt");
 		}
 		
 		public function mainMenuListener(event:MouseEvent):void {

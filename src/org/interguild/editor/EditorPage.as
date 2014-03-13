@@ -37,6 +37,8 @@ package org.interguild.editor {
 		private var testButton:Button;
 		private var tf:TextArea;
 		public  var title:TextInput;
+		private var undoButton:Button;
+		private var redoButton:Button;
 
 		private var gridContainer:Sprite;
 		private var maskGrid:Sprite;
@@ -46,7 +48,9 @@ package org.interguild.editor {
 		private var mainMenu:Aeon;
 		
 		private var scrollBar:UIScrollBar;
-		
+		// UNDO REDO ACTIONS ARRAYLIST
+		private var undoList:Array;
+		private var redoList:Array;
 		//Following variables are toggles for when adding items to GUI
 		private var isWall:Boolean = false;
 		private var isWoodBox:Boolean = false;
@@ -80,6 +84,17 @@ package org.interguild.editor {
 			//Test button:
 			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
+			
+			undoList = new Array();
+			redoList = new Array();
+			
+			//undo button:
+			undoButton = new Button();
+			undoButton.label = "Undo";
+			undoButton.x = 650;
+			undoButton.y = 275;
+			undoButton.useHandCursor = true;
+			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			
 			//title text field
 			var titlef:TextField = new TextField();
@@ -130,7 +145,7 @@ package org.interguild.editor {
 			addChild(clearButton);
 			addChild(maskGrid);
 			addChild(dropDown);
-
+			addChild(undoButton);
 		}
 
 		/**
@@ -247,6 +262,8 @@ package org.interguild.editor {
 			this.removeChild(maskGrid);
 			this.removeChild(scrollBar);
 			this.removeChild(testButton);
+			this.removeChild(title);
+			this.removeChild(undoButton);
 			mainMenu.addMainMenu();
 		}
 		
@@ -284,6 +301,8 @@ package org.interguild.editor {
 			//tf.appendText(sprite.x + "," + sprite.y + "\n");
 			var bit:Bitmap;
 			//switch to check what trigger is active
+			var undoAction:Object = new Object;
+			undoAction.oldsprite = sprite;
 			if(isWall){
 				sprite.name = "x"
 				bit = new wallImg();
@@ -302,6 +321,8 @@ package org.interguild.editor {
 				sprite.addChild(bit);
 				sprite.name = "#";
 			}
+			undoAction.newsprite = sprite;
+			undoList.push(undoAction);
 		}
 
 		private function rightGridClick(e:MouseEvent):void {
@@ -351,6 +372,8 @@ package org.interguild.editor {
 			this.removeChild(maskGrid);
 			this.removeChild(testButton);
 			this.removeChild(dropDown);
+			this.removeChild(title);
+			this.removeChild(undoButton);
 			//go to level page
 			var levelPage:LevelPage=new LevelPage();
 			this.addChild(levelPage);
@@ -361,6 +384,15 @@ package org.interguild.editor {
 			isWoodBox = false;
 			isSteelBox = false;
 			isStart = false;
+		}
+		
+		private function undoClick(e:MouseEvent):void{
+			var button:Button = Button(e.target);
+			if(undoList.length > 0){
+				var lastAction:Object = undoList.pop;
+				undoList.newsprite = undoList.oldsprite;
+			}
+			
 		}
 	}
 }
