@@ -1,5 +1,4 @@
 package org.interguild.game.collision {
-	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
 	import flexunit.utils.ArrayList;
@@ -8,6 +7,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
 
 	public class CollisionGrid /*DEBUGextends Sprite /*END DEBUG*/ {
@@ -151,6 +151,8 @@ package org.interguild.game.collision {
 				var p:Player = Player(activeObject);
 				if (otherObject is Tile) {
 					var t:Tile = Tile(otherObject);
+					if(otherObject is SteelCrate)
+						trace("I am steel");
 					//player on tile collisions
 
 					//solid collisions!!
@@ -169,7 +171,9 @@ package org.interguild.game.collision {
 							 * |otherObject |
 							 * --------------
 							 */
-							activeObject.newY = otherBoxCurr.top - activeBoxCurr.height;
+							trace("PrevY:",activeObject.newY);
+							activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
+							trace("CurrY:",activeObject.newY);
 							activeObject.speedY = 0;
 							//set player standing
 							p.isStanding = true;

@@ -1,10 +1,6 @@
 package org.interguild.game {
 	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
@@ -109,18 +105,10 @@ package org.interguild.game {
 			}
 			*/
 			
-			//gravity
-			speedY += Level.GRAVITY;
-
 			updateKeys();
-
-			// reset isStanding
-			reset();
-
-			//update movement
-			newX += speedX;
-			newY += speedY;
-
+			
+			speedY += Level.GRAVITY;
+			
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
 			}
@@ -129,10 +117,13 @@ package org.interguild.game {
 			} else if (speedX < -MAX_RUN_SPEED) {
 				speedX = -MAX_RUN_SPEED;
 			}
+			
+			// reset isStanding
+			reset();
 
-			//commit location change:
-			x = newX;
-			y = newY;
+			//update movement
+			newX += speedX;
+			newY += speedY;
 		}
 
 		private function reset():void {
@@ -140,7 +131,6 @@ package org.interguild.game {
 		}
 
 		private function updateKeys():void {
-			
 			if(!keys.isKeyLeft && !keys.isKeyRight && isStanding)
 				playerClip.gotoAndStop(0);
 			
