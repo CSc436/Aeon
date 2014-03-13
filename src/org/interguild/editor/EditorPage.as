@@ -256,6 +256,7 @@ package org.interguild.editor {
 			this.removeChild(maskGrid);
 			this.removeChild(scrollBar);
 			this.removeChild(testButton);
+			this.removeChild(title);
 			mainMenu.addMainMenu();
 		}
 		public function setLevelSize(title:String, level:String, width:int,height:int):void{
@@ -363,6 +364,7 @@ package org.interguild.editor {
 			this.removeChild(maskGrid);
 			this.removeChild(testButton);
 			this.removeChild(dropDown);
+			this.removeChild(title);
 			//go to level page
 			var levelPage:LevelPage=new LevelPage();
 			this.addChild(levelPage);
