@@ -136,29 +136,8 @@ package org.interguild.editor {
 			trace("width: " + lvlWidth + " height: " + lvlHeight);
 			code = code.substr(eol + 1); // skip this line
 			
-			var levelRead:String = "";
-			var lineno:int = 1;
-			var len:int = lvlWidth * lvlHeight + lvlHeight - 1;
-			for (var i:uint = 0; i < len; i++) {
-				var curChar:String = code.charAt(i);
-//				trace("i: "+i+" char: "+curChar);
-				switch (curChar) {
-					case "\n":
-						lineno++;
-					case "#": //Player spawn
-					case "x": //Terrain
-					case "w": //WoodCrate
-					case " ": //space
-					case "s": //SteelCrate
-						levelRead = levelRead.concat(curChar);
-						break;
-					//Character not found those trolls
-					default:
-						trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
-				}
-            }
-            trace("levelRead: \n" + levelRead);
-			currEditor.setLevelSize(title, levelRead, lvlHeight, lvlWidth);
+		
+			currEditor.setLevelSize(title, code, lvlHeight, lvlWidth);
 		}
 		
 		
@@ -197,11 +176,12 @@ package org.interguild.editor {
 			file.save(string, titlename + ".txt");
 		}
 		
+		//Return to main menu
 		public function mainMenuListener(event:MouseEvent):void {
-			//TODO Return to main menu
+			//Return to main menu
 			//prompt to save data?
 			this.removeChild(fileSprite);
-			currEditor.deleteSelf();
+			currEditor.gotoMainMenu();
 		}
 		
 		
