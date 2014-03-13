@@ -1,7 +1,7 @@
 package org.interguild.game {
-	
+
 	import flash.display.MovieClip;
-	
+
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
@@ -28,9 +28,9 @@ package org.interguild.game {
 		private var keys:KeyMan;
 		public var wasJumping:Boolean;
 		public var isStanding:Boolean;
-		
+
 		private var playerClip:MovieClip;
-	
+
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			drawPlayer();
@@ -45,15 +45,17 @@ package org.interguild.game {
 
 		private function drawPlayer():void {
 
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
-			
+			CONFIG::DEBUG {
+				graphics.beginFill(SPRITE_COLOR);
+				graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+				graphics.endFill();
+			}
+
 			playerClip = new PlayerWalkingAnimation();
 			playerClip.x = -2;
 			playerClip.y = -8;
 			addChild(playerClip);
-			
+
 		}
 
 		public override function onGameLoop():void {
@@ -101,7 +103,7 @@ package org.interguild.game {
 					break;
 			}
 			*/
-			
+
 			//gravity
 			speedY += Level.GRAVITY;
 
@@ -133,20 +135,20 @@ package org.interguild.game {
 		}
 
 		private function updateKeys():void {
-			
-			if(!keys.isKeyLeft && !keys.isKeyRight && isStanding)
+
+			if (!keys.isKeyLeft && !keys.isKeyRight && isStanding)
 				playerClip.gotoAndStop(0);
-			
+
 			//moving to the left
 			if (keys.isKeyLeft) {
 				speedX -= RUN_ACC;
 				// Use scaleX = -1 to flip the direction of movement
-				if(playerClip.scaleX != -1) {
+				if (playerClip.scaleX != -1) {
 					playerClip.scaleX = -1;
 					//This value might need to be changed, I think it might be off a few pixels
 					playerClip.x = 25;
 				}
-				if(playerClip.currentFrame != playerClip.totalFrames)
+				if (playerClip.currentFrame != playerClip.totalFrames)
 					playerClip.nextFrame();
 				else
 					playerClip.gotoAndStop(0);
@@ -159,11 +161,11 @@ package org.interguild.game {
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
 				//animate moving to the right
-				if(playerClip.scaleX != 1) {
+				if (playerClip.scaleX != 1) {
 					playerClip.scaleX = 1;
 					playerClip.x = -2;
 				}
-				if(playerClip.currentFrame != playerClip.totalFrames)
+				if (playerClip.currentFrame != playerClip.totalFrames)
 					playerClip.nextFrame();
 				else
 					playerClip.gotoAndStop(0);
@@ -177,7 +179,7 @@ package org.interguild.game {
 			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
 			}
-			if(keys.isKeySpace)
+			if (keys.isKeySpace)
 				wasJumping = true;
 			else
 				wasJumping = false;
