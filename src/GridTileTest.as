@@ -8,7 +8,7 @@ package  {
 
 		[Test]
 		public function testAddRemoveObject():void {
-			var gridTile:GridTile=new GridTile(0, 0);
+			var gridTile:GridTile=new GridTile(0, 0, null);
 
 
 			var o:SteelCrate=new SteelCrate(0, 0);
