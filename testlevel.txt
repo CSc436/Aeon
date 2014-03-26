@@ -1,16 +1,16 @@
 40x40
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx     x
-xx      xx                 xxxxx         x
-xx     sx                  xxxxx         x
-xx  #  w                   xxxxx         x
-xxxxxx w   xx              xxxxx         x
-xx        xxx             xxxxxx         x
-xx       xxxx              xxxxx         x
-xx  xxxxxxxxxxx   x        xxxxx         x
-xx     xxxxxxxx   x     xxxxxxxx         x
-xx     xxxxxxxx x x xxxxxxxxxxxx         x
-xx  xxxxxxxxxxx x x xxxxxxxxxxxx         x
+x=40
+x=40     
+xx                    
+xx #
+x  
+x
+x
+x=40
+x=40
+xx  xxxxxxxxxxxxxxxxxxxxxxxxxxxx         x
 xx      xxxxxxxxxxxxxxxxxxxxxxxx         x
 xx      xxxxxxxxxxxxxxxxxxxxxxxx         x
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx         x

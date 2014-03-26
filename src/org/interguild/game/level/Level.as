@@ -5,6 +5,7 @@ package org.interguild.game.level {
 	
 	import flexunit.utils.ArrayList;
 	
+	import org.interguild.Aeon;
 	import org.interguild.game.Camera;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
@@ -59,6 +60,8 @@ package org.interguild.game.level {
 		 */
 		public function setLevelSize(lvlWidth:Number, lvlHeight:Number):void {
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
+			camera.setLevelX( Aeon.TILE_WIDTH * lvlWidth ); // need to send to camera so it knows level width
+			camera.setLevelY( Aeon.TILE_HEIGHT * lvlHeight ); // need to send to camera so it knows level height
 		}
 
 		/**
