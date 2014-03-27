@@ -1,5 +1,4 @@
 package org.interguild.editor {
-	import flash.display.Bitmap;
 	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -168,7 +167,7 @@ package org.interguild.editor {
 
 			//default this level size
 			setColumns(15, 15);
-			grid = makeBlank();
+			grid = makeBlank(15,15);
 			
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
 			scrollBar = new UIScrollBar();
@@ -206,15 +205,19 @@ package org.interguild.editor {
 		/**
 		 * This function is given by the i/o buffer reader to create a new level
 		 */
-		public function setLevelSize(title:String, code:String, row:int, col:int):void{
-			levelRows = row;
-			levelColumns = col;
+		public function setLevelSize(title:String, code:String, rows:int, columns:int):void{
+			this.levelRows = rows;
+			this.levelColumns = columns;
 			this.title.text = title;
 			
 			var levelRead:String = "";
 			var lineno:int = 1;
-			var len:int = col * row + row - 1;
-			var sprite:Sprite;
+			var len:int = columns * rows + rows -1;
+//			trace("title: " + title);
+//			trace("width: " + lvlWidth + " height: " + lvlHeight);
+//			trace("length of file "+len);
+//			trace(code);
+			var sprite:Sprite = this.makeBlank(rows, columns);
 			for (var i:uint = 0; i < len; i++) {
 				var curChar:String = code.charAt(i);
 				sprite = Sprite(grid.getChildAt(i));
@@ -223,16 +226,16 @@ package org.interguild.editor {
 						lineno++; levelRead = levelRead.concat(curChar); break;
 					case "#": //Player spawn
 						levelRead = levelRead.concat(curChar);
-						sprite.name = "#"; sprite.addChild(new wallImg()); break;
+						sprite.name = "#"; sprite.addChild(new flagImg()); break;
 					case "x": //Terrain
 						levelRead = levelRead.concat(curChar);
 						sprite.name = "x"; sprite.addChild(new wallImg()); break;
 					case "w": //WoodCrate
 						levelRead = levelRead.concat(curChar);
-						sprite.name = "w"; sprite.addChild(new wallImg()); break;
+						sprite.name = "w"; sprite.addChild(new woodImg()); break;
 					case " ": //space
 						levelRead = levelRead.concat(curChar);
-						sprite.name = " "; sprite.addChild(new wallImg()); break;
+						sprite.name = " "; sprite.addChild(new Sprite()); break;
 					case "s": //SteelCrate
 						levelRead = levelRead.concat(curChar);
 						sprite.name = "s"; sprite.addChild(new wallImg()); break;
@@ -241,7 +244,8 @@ package org.interguild.editor {
 						trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
 				}
 			}
-			
+//			trace("lvl read");
+//			trace(levelRead);
 		}
 		
 		/**
@@ -264,14 +268,14 @@ package org.interguild.editor {
 		/**
 		 * this function creates a blank grid
 		 */
-		private function makeBlank():Sprite {
+		private function makeBlank(rows:int, columns:int):Sprite {
 			// number of objects to place into grid
-			var numObjects:int = levelColumns*levelRows;
+			var numObjects:int = rows*columns;
 
 			// object that populates grid cell
 			var cell:Sprite;
-			for(var r:int = 0; r < levelRows; r++){
-				for(var c:int = 0; c < levelColumns; c++){
+			for(var r:int = 0; r < rows; r++){
+				for(var c:int = 0; c < columns; c++){
 					// make object to place into grid
 					cell = new Sprite();
 					
@@ -291,7 +295,8 @@ package org.interguild.editor {
 					cell.x = cell.width * c;
 					cell.y = cell.height * r;
 					
-					if (r == 0 || r == levelRows - 1 || c == 0 || c == levelColumns - 1) {
+					if (r == 0 || r == rows - 1 || c == 0 || c == columns - 1) {
+						//If end of level
 						cell.addChild(new wallImg());
 						cell.name = "x";
 					}
@@ -374,7 +379,7 @@ package org.interguild.editor {
 		private function clearClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 			grid.removeChildren();
-			grid = makeBlank();
+			grid = makeBlank(this.levelRows, this.levelColumns);
 		}
 		
 		private function undoClick(e:MouseEvent):void{

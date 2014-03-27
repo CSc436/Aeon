@@ -1,5 +1,5 @@
 Level Title
-15x15
+10x15
 xxxxxxxxxxxxxxx
 x             x
 x          w  x
