@@ -29,7 +29,8 @@ package org.interguild.game.level {
 		private var fileLoadedCallback:Function;
 		private var errorCallback:Function;
 		private var loadingCompleteCallback:Function;
-
+		private var levelParsedCallback:Function;
+		
 		/**
 		 * This constructor assumes you want to load a level
 		 * from a remote file.
@@ -37,9 +38,7 @@ package org.interguild.game.level {
 		 * TODO: Make a version of this constructor for loading
 		 * levels from a user's local files.
 		 */
-		public function LevelLoader(fileName:String) {
-			file = fileName;
-			//don't start loading until start() is called
+		public function LevelLoader() {
 		}
 
 		/**
@@ -61,34 +60,44 @@ package org.interguild.game.level {
 		public function addCompletionListener(cb:Function):void{
 			loadingCompleteCallback = cb;
 		}
+		
+		public function addLevelParsedListener(cb:Function):void{
+			levelParsedCallback = cb;
+		}
 
 		/**
 		 * First loads in the file. Then after it's loaded,
 		 * start parsing the level encoding.
 		 * When completed, will call the level's startGame()
 		 */
-		public function start():void {
+		public function startServer(filename:String):void {
+			file = filename;
 			var getFile:URLLoader = new URLLoader();
 			getFile.addEventListener(Event.COMPLETE, onFileLoad);
 			getFile.load(new URLRequest(file));
 		}
+		
 
 		/**
 		 * Called after the test level file has been loaded.
 		 */
 		private function onFileLoad(evt:Event):void {
+			parseLevelCode(evt.target.data, true);
+		}
+		
+		public function parseLevelCode(levelCode:String, isLevelPage:Boolean = false):void{
 			var title:String;
 			var lvlWidth:uint;
 			var lvlHeight:uint;
 
-			code = evt.target.data;
+			code = levelCode;
 			codeLength = code.length;
-
+			
 			//get title
 			var eol:int = code.indexOf("\n");
 			title = code.substr(0, eol);
 			code = code.substr(eol + 1);
-
+			
 			//get dimensions
 			eol = code.indexOf("\n");
 			var dimensionsLine:String = code.substr(0, eol);
@@ -96,20 +105,24 @@ package org.interguild.game.level {
 			lvlWidth = Number(dimensionsLine.substr(0, ix));
 			lvlHeight = Number(dimensionsLine.substr(ix + 1));
 			code = code.substr(eol + 1);
-
+			
 			if (lvlWidth <= 0 || lvlHeight <= 0) {
 				errorCallback("Invalid Level Dimensions: '" + dimensionsLine + "'");
 				return;
 			}
-
-			//create the level
-			level = new Level(lvlWidth, lvlHeight);
-			level.title = title;
-			fileLoadedCallback(level);
-
-			timer = new Timer(10);
-			timer.addEventListener(TimerEvent.TIMER, onTimer);
-			timer.start();
+			
+			if(isLevelPage){
+				//create the level
+				level = new Level(lvlWidth, lvlHeight);
+				level.title = title;
+				fileLoadedCallback(level);
+				
+				timer = new Timer(10);
+				timer.addEventListener(TimerEvent.TIMER, onTimer);
+				timer.start();				
+			}else{
+				levelParsedCallback(code, title, lvlWidth, lvlHeight);
+			}
 		}
 
 		private var i:uint = 0;
