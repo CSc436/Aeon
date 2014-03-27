@@ -12,7 +12,6 @@ package org.interguild.game.level {
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
-	import org.interguild.game.tiles.Tile;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
