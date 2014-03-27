@@ -10,6 +10,7 @@ package org.interguild.editor {
 	import fl.controls.UIScrollBar;
 	
 	import org.interguild.Aeon;
+	import org.interguild.game.level.LevelLoader;
 	import org.interguild.game.level.LevelPage;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 
@@ -47,6 +48,7 @@ package org.interguild.editor {
 		private var widthf:TextField;
 		private var heightf:TextField;
 
+		private var lvlloader:LevelLoader;
 		private var gridContainer:Sprite;
 		private var grid:Sprite;
 
@@ -188,6 +190,8 @@ package org.interguild.editor {
 			addChild(grid);
 			addChild(dropDown);
 			addChild(undoButton);
+			lvlloader = new LevelLoader();
+			lvlloader.addLevelParsedListener(setLevelSize);
 		}
 
 		/**
@@ -198,6 +202,10 @@ package org.interguild.editor {
 			levelColumns = c;
 			dropDown.setRows(r);
 			dropDown.setColumns(c);
+		}
+		
+		public function openLevel(data:String):void{
+			lvlloader.parseLevelCode(data);
 		}
 		
 		/**
@@ -242,8 +250,8 @@ package org.interguild.editor {
 						trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
 				}
 			}
-//			trace("lvl read");
-//			trace(levelRead);
+			
+//			this.lvlloader.setLevel(levelRead, title, rows, columns);
 		}
 		
 		/**
