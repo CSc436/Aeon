@@ -8,6 +8,10 @@ package org.interguild.game.tiles {
 		public var knocksback:int=0;
 		public var buoyancy:Boolean=false;
 
+		private static const GRAVITY:uint = 4;
+		private static const MAX_FALL_SPEED:Number = 6;
+		private var maxSpeedY:Number = MAX_FALL_SPEED;
+		
 		private static const SPRITE_COLOR:uint=0xA3A3A3;
 		private static const SPRITE_WIDTH:uint=32;
 		private static const SPRITE_HEIGHT:uint=32;
@@ -44,6 +48,20 @@ package org.interguild.game.tiles {
 
 		public function isBuoyant():Boolean {
 			return buoyancy;
+		}
+		
+		public override function onGameLoop():void{
+			//gravity
+			speedY += GRAVITY;
+			
+			if (speedY > MAX_FALL_SPEED) {
+				speedY = MAX_FALL_SPEED;
+			}
+			
+			//update movement
+			newX += speedX;
+			newY += speedY;
+			updateHitBox();
 		}
 	}
 }

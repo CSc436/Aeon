@@ -49,5 +49,6 @@ package org.interguild.game.tiles
 		return: Boolean
 		*/
 		function isBuoyant():Boolean;
+		
 	}
 }

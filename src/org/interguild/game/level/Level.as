@@ -3,7 +3,7 @@ package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-
+	
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
@@ -61,7 +61,7 @@ package org.interguild.game.level {
 			camera.addChild(player);
 
 			//init collision grid
-			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight);
+			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 		}
 
 		public function get title():String {
@@ -173,17 +173,27 @@ package org.interguild.game.level {
 			var remove:ArrayList = collisionGrid.detectAndHandleCollisions(player);
 			removeObjects(remove);
 			collisionGrid.resetRemovalList();
+			if(activeObjects.length > 0){
+				for (i = 0; i < activeObjects.length; i++) {
+					remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
+					removeObjects(remove);
+					collisionGrid.resetRemovalList();
+
+				}
+			}
+			
+			//finish game loops
 			player.finishGameLoop();
-			for (i = 0; i < len; i++) {
-				remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
-				removeObjects(remove);
-				collisionGrid.resetRemovalList();
-				GameObject(activeObjects[i]).finishGameLoop();
+			if(activeObjects.length > 0){
+				for (i = 0; i < activeObjects.length; i++) {
+					GameObject(activeObjects[i]).finishGameLoop();
+				}
 			}
 		}
 
 		public function removeObjects(remove:ArrayList):void {
 			var r:GameObject;
+			var grid:Array = collisionGrid.getGrid();
 			for (var i:int = 0; i < remove.length(); i++) {
 				r = GameObject(remove.getItemAt(i));
 
@@ -204,6 +214,19 @@ package org.interguild.game.level {
 				if (r is CollidableObject)
 					CollidableObject(r).removeSelf();
 			}
+		}
+
+		public function activateObject(obj:CollidableObject):void{
+			obj.isActive = true;
+			activeObjects.push(obj);
+		}
+		
+		public function deactivateObject(obj:CollidableObject):void{
+			var index:int = activeObjects.indexOf(obj,0);
+			
+			obj.isActive = false;
+			activeObjects.splice(index,1);
+			obj.finishGameLoop;
 		}
 	}
 }
