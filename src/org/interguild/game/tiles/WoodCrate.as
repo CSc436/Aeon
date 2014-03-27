@@ -1,5 +1,8 @@
 package org.interguild.game.tiles {
-	import org.hamcrest.object.instanceOf;
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	
 	import org.interguild.Aeon;
 	
 	public class WoodCrate extends CollidableObject implements Tile {
@@ -17,9 +20,11 @@ package org.interguild.game.tiles {
 		
 		public function WoodCrate(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
+			addChild(new Bitmap(new WoodenCrateSprite()));
+			var a:BitmapData = new WoodenCrateSprite();
+			var b:BitmapData = new SteelCrateSprite();
+			trace("wood crate height is: " + a.height);
+			trace("steel crate height is " + b.height);
 			
 		}
 		
