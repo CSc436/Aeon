@@ -20,11 +20,18 @@ package org.interguild.game.tiles {
 		
 		public function WoodCrate(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
+			graphics.beginFill(SPRITE_COLOR);
+			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+			graphics.endFill();
+			
+			// Wood crate image is not working for some reason, even though steel crate is
+			/*
 			addChild(new Bitmap(new WoodenCrateSprite()));
 			var a:BitmapData = new WoodenCrateSprite();
 			var b:BitmapData = new SteelCrateSprite();
 			trace("wood crate height is: " + a.height);
 			trace("steel crate height is " + b.height);
+			*/
 			
 		}
 		
