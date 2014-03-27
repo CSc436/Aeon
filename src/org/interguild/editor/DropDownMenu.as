@@ -124,16 +124,14 @@ package org.interguild.editor {
 			//parse the first line to get title name
 			var eol:int = code.indexOf("\n");
 			var title:String = code.substr(0, eol);
-			trace("title: " + title);
 			code = code.substr(eol + 1); // skip this line
 			
 			//parse second line to get length and width
 			eol = code.indexOf("\n");
 			var line:String = code.substr(0, eol);
 			var ix:int = line.indexOf("x");
-			var lvlWidth:Number = Number(line.substr(0, ix));
-			var lvlHeight:Number = Number(line.substr(ix + 1));
-			trace("width: " + lvlWidth + " height: " + lvlHeight);
+			var lvlHeight:Number = Number(line.substr(0, ix));
+			var lvlWidth:Number = Number(line.substr(ix + 1));
 			code = code.substr(eol + 1); // skip this line
 			
 		
