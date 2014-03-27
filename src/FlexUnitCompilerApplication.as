@@ -10,7 +10,6 @@ package
 	
 	public class FlexUnitCompilerApplication extends Sprite
 	{
-		private var flexUnitTests_CameraTest_obj:CameraTest;
 		private var testUnitTests_TestSuite_obj:TestSuite;
 		
 		private var org_interguild_game_collision_GridTileTest_obj:GridTileTest;

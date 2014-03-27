@@ -13,8 +13,8 @@ package org.interguild.game {
 		private var player:Player;
 
 		private static const UPWARD_DISTANCE:uint = 150;
-		private static const LEFT_DISTANCE:uint = 150;
-		private static const RIGHT_DISTANCE:uint = 150;
+		private static const LEFT_DISTANCE:uint = 0;
+		private static const RIGHT_DISTANCE:uint = 0;
 		private static const DOWNWARD_DISTANCE:uint = 150;
 
 		private var levelXSize:int;
