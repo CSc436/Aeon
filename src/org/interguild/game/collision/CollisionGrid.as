@@ -1,15 +1,16 @@
 package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
-	
+
 	import flexunit.utils.ArrayList;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Tile;
 
-	public class CollisionGrid /*DEBUGextends Sprite /*END DEBUG*/ {
+
+	public class CollisionGrid extends Sprite {
 
 		private var grid:Array;
 		private var removalObjects:ArrayList;
@@ -21,13 +22,14 @@ package org.interguild.game.collision {
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
 				for (var j:uint = 0; j < width; j++) {
-					var g:GridTile = new GridTile(i, j);
+					var g:GridTile = new GridTile(i, j, this);
 					grid[i][j] = g;
-					/*DEBUG
-					g.x = j * 32;
-					g.y = i * 32;
-					addChild(grid[i][j]);
-					/*END DEBUG*/
+
+					CONFIG::DEBUG {
+						g.x = j * 32;
+						g.y = i * 32;
+						addChild(grid[i][j]);
+					}
 				}
 			}
 		}
@@ -53,8 +55,8 @@ package org.interguild.game.collision {
 			//top left
 			gx = box.left / Aeon.TILE_WIDTH;
 			gy = gy0 = box.top / Aeon.TILE_HEIGHT;
-			gridTile = grid[gy][gx];
 			if (inBounds(gy, gx)) {
+				gridTile = grid[gy][gx];
 				inGrids.push(gridTile);
 
 				//naively handle blockNeighbors for only one gridTile case
@@ -62,7 +64,7 @@ package org.interguild.game.collision {
 					//top
 					var bx:int = gx;
 					var by:int = gy - 1;
-					if (inBounds(bx, by)) {
+					if (inBounds(by, bx)) {
 						gridTile = grid[by][bx]
 						gridTile.block(Direction.DOWN);
 						if (gridTile.isBlocking()) {
@@ -72,7 +74,7 @@ package org.interguild.game.collision {
 
 					//down
 					by = gy + 1;
-					if (inBounds(bx, by)) {
+					if (inBounds(by, bx)) {
 						gridTile = grid[by][bx]
 						gridTile.block(Direction.UP);
 						if (gridTile.isBlocking()) {
@@ -83,7 +85,7 @@ package org.interguild.game.collision {
 					//right
 					bx = gx + 1;
 					by = gy;
-					if (inBounds(bx, by)) {
+					if (inBounds(by, bx)) {
 						gridTile = grid[by][bx]
 						gridTile.block(Direction.LEFT);
 						if (gridTile.isBlocking()) {
@@ -93,7 +95,7 @@ package org.interguild.game.collision {
 
 					//left
 					bx = gx - 1;
-					if (inBounds(bx, by)) {
+					if (inBounds(by, bx)) {
 						gridTile = grid[by][bx]
 						gridTile.block(Direction.RIGHT);
 						if (gridTile.isBlocking()) {
@@ -105,36 +107,46 @@ package org.interguild.game.collision {
 
 			//top right
 			gx = (box.right - 1) / Aeon.TILE_WIDTH;
-			gridTile = grid[gy][gx];
-			if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
-				inGrids.push(gridTile);
+			if (inBounds(gy, gx)) {
+				gridTile = grid[gy][gx];
+				if (inGrids.indexOf(gridTile) == -1)
+					inGrids.push(gridTile);
+			}
 
 			//bottom right
 			gy = (box.bottom - 1) / Aeon.TILE_HEIGHT;
-			gridTile = grid[gy][gx];
-			if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
-				inGrids.push(gridTile);
+			if (inBounds(gy, gx)) {
+				gridTile = grid[gy][gx];
+				if (inGrids.indexOf(gridTile) == -1)
+					inGrids.push(gridTile);
+			}
 
 			//bottom left
 			gx = box.left / Aeon.TILE_WIDTH;
-			gridTile = grid[gy][gx];
-			if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
-				inGrids.push(gridTile);
+			if (inBounds(gy, gx)) {
+				gridTile = grid[gy][gx];
+				if (inGrids.indexOf(gridTile) == -1)
+					inGrids.push(gridTile);
+			}
 
 			//middle cases if player
 			if (gy - gy0 > 1) {
 				gy -= 1;
 
 				//middle left
-				gridTile = grid[gy][gx];
-				if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
-					inGrids.push(gridTile);
+				if (inBounds(gy, gx)) {
+					gridTile = grid[gy][gx];
+					if (inGrids.indexOf(gridTile) == -1)
+						inGrids.push(gridTile);
+				}
 
 				//middle right
 				gx = (box.right - 1) / Aeon.TILE_WIDTH;
-				gridTile = grid[gy][gx];
-				if (inBounds(gy, gx) && inGrids.indexOf(gridTile) == -1)
-					inGrids.push(gridTile);
+				if (inBounds(gy, gx)) {
+					gridTile = grid[gy][gx];
+					if (inGrids.indexOf(gridTile) == -1)
+						inGrids.push(gridTile);
+				}
 			}
 
 			//remove old grids
@@ -195,7 +207,6 @@ package org.interguild.game.collision {
 						var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
 						var activeBoxCurr:Rectangle = activeObject.hitbox;
 						var otherBoxCurr:Rectangle = otherObject.hitbox;
-
 
 						if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
 							/*
@@ -279,7 +290,7 @@ package org.interguild.game.collision {
 
 		public function unblockNeighbors(g:GridTile):void {
 			var gridTile:GridTile;
-			
+
 			//top
 			var bx:int = g.gridCol;
 			var by:int = g.gridRow - 1;
@@ -287,14 +298,14 @@ package org.interguild.game.collision {
 				gridTile = grid[by][bx]
 				gridTile.unblock(Direction.DOWN);
 			}
-			
+
 			//down
 			by = g.gridRow + 1;
 			if (inBounds(bx, by)) {
 				gridTile = grid[by][bx]
 				gridTile.unblock(Direction.UP);
 			}
-			
+
 			//right
 			bx = g.gridCol + 1;
 			by = g.gridRow;
@@ -302,7 +313,7 @@ package org.interguild.game.collision {
 				gridTile = grid[by][bx]
 				gridTile.unblock(Direction.LEFT);
 			}
-			
+
 			//left
 			bx = g.gridCol - 1;
 			if (inBounds(bx, by)) {

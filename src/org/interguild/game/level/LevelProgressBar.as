@@ -11,14 +11,14 @@ package org.interguild.game.level {
 		
 		//text vars
 		private static const FONT:String = "Arial";
-		private static const SIZE:Number = 18;
-		private static const COLOR:uint = 0xCC0000; // dark red
+		private static const SIZE:Number = 20;
+		private static const COLOR:uint = 0xCCCCCC; // light gray
 		private static const BOLD:Boolean = true;
 		private static const LOADING_TEXT:String = "Loading: ";
 		private static const LOADING_FILE:String = "Loading File...";
 		
 		//background vars
-		private static const BG_COLOR:uint = 0xFFFFFF; // white
+		private static const BG_COLOR:uint = 0; // black
 		private static const BG_ALPHA:Number = 0.75; // 100%
 		private static const PADDING:uint = 10;
 		

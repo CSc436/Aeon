@@ -1,10 +1,6 @@
 package org.interguild.game {
 	
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	import flash.geom.Point;
-	import flash.geom.Rectangle;
 	
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
@@ -30,10 +26,8 @@ package org.interguild.game {
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
 
 		private var keys:KeyMan;
+		public var wasJumping:Boolean;
 		public var isStanding:Boolean;
-		
-		[Embed(source = "../../../../images/WalkJumpTransparentSprite.png")]
-		private var Sprite_Sheet:Class;
 		
 		private var playerClip:MovieClip;
 	
@@ -180,9 +174,13 @@ package org.interguild.game {
 			}
 
 			//jump
-			if (keys.isKeySpace && isStanding) {
+			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
 			}
+			if(keys.isKeySpace)
+				wasJumping = true;
+			else
+				wasJumping = false;
 		}
 	}
 }
