@@ -1,6 +1,7 @@
 package org.interguild.game {
 
 	import flash.display.MovieClip;
+
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
@@ -25,8 +26,14 @@ package org.interguild.game {
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
 
 		private var keys:KeyMan;
+
 		public var wasJumping:Boolean;
+
 		public var isStanding:Boolean;
+		public var isFacingLeft:Boolean;
+		public var isFacingRight:Boolean;
+		public var isFacingUp:Boolean;
+		public var isCrouching:Boolean;
 
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
@@ -135,9 +142,6 @@ package org.interguild.game {
 
 			updateKeys();
 
-			// reset isStanding
-			reset();
-
 			//update movement
 			prevSpeedY = speedY;
 			newX += speedX;
@@ -157,8 +161,12 @@ package org.interguild.game {
 			y = newY;
 		}
 
-		private function reset():void {
+		public function reset():void {
 			isStanding = false;
+			isFacingLeft = false;
+			isFacingRight = false;
+			isFacingUp = false;
+			isCrouching = false;
 		}
 
 		private function updateKeys():void {
@@ -169,6 +177,7 @@ package org.interguild.game {
 			//moving to the left
 			if (keys.isKeyLeft) {
 				speedX -= RUN_ACC;
+
 				// Use scaleX = -1 to flip the direction of movement
 				if (playerClip.scaleX != -1) {
 					playerClip.scaleX = -1;
@@ -183,6 +192,8 @@ package org.interguild.game {
 						playerClip.gotoAndStop(0);
 				}
 
+				isFacingLeft = true;
+				
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
@@ -191,6 +202,7 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
+
 				//animate moving to the right
 				if (playerClip.scaleX != 1) {
 					playerClip.scaleX = 1;
@@ -203,20 +215,33 @@ package org.interguild.game {
 					else
 						playerClip.gotoAndStop(0);
 				}
+
+				isFacingRight = true;
+
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
 					speedX = 0;
+			}
+			
+			// look up
+			if ( keys.isKeyUp ) {
+				isFacingUp = true;
 			}
 
 			//jump
 			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
 			}
+
 			if (keys.isKeySpace)
 				wasJumping = true;
 			else
 				wasJumping = false;
+			
+			if (keys.isKeyDown){
+				isCrouching = true;
+			}
 		}
 	}
 }
