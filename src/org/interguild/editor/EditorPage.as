@@ -37,9 +37,13 @@ package org.interguild.editor {
 		private var testButton:Button;
 		private var tf:TextArea;
 		public  var title:TextInput;
+		public  var widthBox:TextInput;
+		public  var heightBox:TextInput;
 		private var undoButton:Button;
 		private var redoButton:Button;
 		private var titlef:TextField;
+		private var widthf:TextField;
+		private var heightf:TextField;
 
 		private var gridContainer:Sprite;
 		private var grid:Sprite;
@@ -74,19 +78,19 @@ package org.interguild.editor {
 			this.mainMenu = mainMenu;
 			
 			//playerstart button
-			playerSpawnButton = makeButton("Start", StartButton, 650, 50);
+			playerSpawnButton = makeButton("Start", StartButton, 650, 150);
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 			
 			//wallbutton
-			wallButton = makeButton("Wall", WallButton, 650, 100);
+			wallButton = makeButton("Wall", WallButton, 650, 200);
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 			
 			//woodbutton:
-			woodButton = makeButton("Wood", WoodButton, 650, 150);
+			woodButton = makeButton("Wood", WoodButton, 650, 250);
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
 			//clear button:
-			clearButton = makeButton("Clear All", ClearButton, 650, 250);
+			clearButton = makeButton("Clear All", ClearButton, 650, 300);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			
 			//Test button:
@@ -100,7 +104,7 @@ package org.interguild.editor {
 			undoButton = new Button();
 			undoButton.label = "Undo";
 			undoButton.x = 650;
-			undoButton.y = 275;
+			undoButton.y = 350;
 			undoButton.useHandCursor = true;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			
@@ -110,7 +114,12 @@ package org.interguild.editor {
 			titlef.x= 25;
 			titlef.y = 50;
 			titlef.textColor = 0xFFFFFF;
-			
+			//width text field
+			widthf = new TextField();
+			widthf.text = "Title:";
+			widthf.x= 25;
+			widthf.y = 50;
+			widthf.textColor = 0xFFFFFF;
 			//for entering a title name
 			title = new TextInput();
 			title.width = 250;
@@ -119,12 +128,23 @@ package org.interguild.editor {
 			title.y = 50;
 			title.text = "Level Name";
 			
+			//for entering a width and height
+			widthBox = new TextInput();
+			widthBox.width = 50;
+			widthBox.height = 25;
+			widthBox.x = 600;
+			widthBox.y = 15;
+			heightBox = new TextInput();
+			heightBox.width = 50;
+			heightBox.height = 25;
+			heightBox.x = 600;
+			heightBox.y = 40;
 			//textfield
 			tf = new TextArea();
 			tf.width = 200;
 			tf.height = 400;
 			tf.x = 600;
-			tf.y = 25;
+			tf.y = 100;
 			tf.editable = false;
 			
 			// Sprite that holds grid
@@ -144,7 +164,8 @@ package org.interguild.editor {
 			scrollBar.setSize(grid.width, grid.height);
 			scrollBar.move(-10,0);
 			grid.addChild(scrollBar);
-			
+			addChild(widthBox);
+			addChild(heightBox);
 			addChild(title);
 			addChild(titlef);
 			addChild(testButton);
