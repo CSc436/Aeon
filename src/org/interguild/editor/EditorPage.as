@@ -21,6 +21,7 @@ package org.interguild.editor {
 		[Embed(source = "../../../../images/wallButton.png")] private var WallButton:Class;
 		[Embed(source = "../../../../images/woodButton.png")] private var WoodButton:Class;
 		[Embed(source = "../../../../images/startButton.png")] private var StartButton:Class;
+		[Embed(source = "../../../../images/resizeButton.png")] private var ResizeButton:Class;
 		[Embed(source = "../../../../images/woodBox.png")] private var woodImg:Class;
 		//TODO update picture
 		[Embed(source = "../../../../images/wall.png")]
@@ -35,10 +36,11 @@ package org.interguild.editor {
 		private var clearButton:Button;
 		private var woodButton:Button;
 		private var testButton:Button;
+		private var resizeButton:Button;
 		private var tf:TextArea;
-		public  var title:TextInput;
-		public  var widthBox:TextInput;
-		public  var heightBox:TextInput;
+		private  var title:TextInput;
+		private  var widthBox:TextInput;
+		private  var heightBox:TextInput;
 		private var undoButton:Button;
 		private var redoButton:Button;
 		private var titlef:TextField;
@@ -97,6 +99,9 @@ package org.interguild.editor {
 			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
 			
+			//change size button:
+			resizeButton = makeButton("Resize", ResizeButton, 700, 50);
+			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			undoList = new Array();
 			redoList = new Array();
 			
@@ -116,10 +121,16 @@ package org.interguild.editor {
 			titlef.textColor = 0xFFFFFF;
 			//width text field
 			widthf = new TextField();
-			widthf.text = "Title:";
-			widthf.x= 25;
-			widthf.y = 50;
+			widthf.text = "Width:";
+			widthf.x= 555;
+			widthf.y = 15;
 			widthf.textColor = 0xFFFFFF;
+			//height text field
+			heightf = new TextField();
+			heightf.text = "Height:";
+			heightf.x= 555;
+			heightf.y = 40;
+			heightf.textColor = 0xFFFFFF;
 			//for entering a title name
 			title = new TextInput();
 			title.width = 250;
@@ -164,6 +175,9 @@ package org.interguild.editor {
 			scrollBar.setSize(grid.width, grid.height);
 			scrollBar.move(-10,0);
 			grid.addChild(scrollBar);
+			addChild(resizeButton);
+			addChild(heightf);
+			addChild(widthf);
 			addChild(widthBox);
 			addChild(heightBox);
 			addChild(title);
@@ -371,6 +385,12 @@ package org.interguild.editor {
 				undoList.newsprite = undoList.oldsprite;
 			}
 			
+		}
+		
+		private function resizeClick(e:MouseEvent):void{
+			var button:Button = Button(e.target);
+			setColumns(Number(widthf.text), Number(heightf.text));
+			grid = makeBlank();
 		}
 		
 		/**
