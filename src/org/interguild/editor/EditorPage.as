@@ -11,6 +11,7 @@ package org.interguild.editor {
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.level.LevelPage;
+	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
@@ -53,7 +54,7 @@ package org.interguild.editor {
 
 		private var mainMenu:Aeon;
 		
-		private var scrollBar:UIScrollBar;
+		private var scrollBar:FullScreenScrollBar;
 		// UNDO REDO ACTIONS ARRAYLIST
 		private var undoList:Array;
 		private var redoList:Array;
@@ -165,13 +166,12 @@ package org.interguild.editor {
 
 			//default this level size
 			setColumns(15, 15);
-			grid = makeBlank(15,15);
-			
+			grid = makeBlank(25,25);
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
-			scrollBar = new UIScrollBar();
-			scrollBar.setSize(grid.width, grid.height);
-			scrollBar.move(-10,0);
-			grid.addChild(scrollBar);
+			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scrollBar);
+			//grid.addChild(scrollBar);
 			addChild(resizeButton);
 			addChild(heightf);
 			addChild(widthf);
