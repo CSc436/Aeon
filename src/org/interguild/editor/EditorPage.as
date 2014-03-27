@@ -37,7 +37,7 @@ package org.interguild.editor {
 		private var testButton:Button;
 		private var resizeButton:Button;
 		private var tf:TextArea;
-		private  var title:TextInput;
+		public  var title:TextInput;
 		private  var widthBox:TextInput;
 		private  var heightBox:TextInput;
 		private var undoButton:Button;
@@ -156,10 +156,8 @@ package org.interguild.editor {
 			tf.x = 600;
 			tf.y = 100;
 			tf.editable = false;
-			
-			// Sprite that holds grid
-			grid = new Sprite();
 
+			grid = new Sprite();
 			//add the drop down menu
 			dropDown = new DropDownMenu(grid, this);
 			dropDown.x = 5;
@@ -380,6 +378,7 @@ package org.interguild.editor {
 			var button:Button = Button(e.target);
 			grid.removeChildren();
 			grid = makeBlank(this.levelRows, this.levelColumns);
+			this.addChild(grid);
 		}
 		
 		private function undoClick(e:MouseEvent):void{
@@ -394,8 +393,10 @@ package org.interguild.editor {
 		
 		private function resizeClick(e:MouseEvent):void{
 			var button:Button = Button(e.target);
-			setColumns(Number(widthf.text), Number(heightf.text));
-			grid = makeBlank();
+			setColumns(int(widthBox.text), int(heightBox.text));
+			grid.removeChildren();
+			grid = makeBlank(this.levelRows, this.levelColumns);
+			this.addChild(grid);
 		}
 		
 		/**
