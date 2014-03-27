@@ -1,4 +1,6 @@
 package org.interguild.game.tiles {
+	
+	import flash.display.Bitmap;
 	import org.interguild.Aeon;
 
 	public class SteelCrate extends CollidableObject implements Tile {
@@ -16,9 +18,7 @@ package org.interguild.game.tiles {
 
 		public function SteelCrate(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
+			addChild(new Bitmap(new SteelCrateSprite()));
 
 		}
 
