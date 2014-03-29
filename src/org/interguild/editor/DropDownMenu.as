@@ -118,47 +118,26 @@ package org.interguild.editor {
 		
 		//data from file and length
 		public function onFileLoad(data:String):void {
-			//get the data
-//			trace("textFile: \n"+data);
-			var code:String = data;
-			//parse the first line to get title name
-			var eol:int = code.indexOf("\n");
-			var title:String = code.substr(0, eol);
-			trace("title: " + title);
-			code = code.substr(eol + 1); // skip this line
+//			//get the data
+////			trace("textFile: \n"+data);
+//			var code:String = data;
+//			//parse the first line to get title name
+//			var eol:int = code.indexOf("\n");
+//			var title:String = code.substr(0, eol);
+//			code = code.substr(eol + 1); // skip this line
+//			
+//			//parse second line to get length and width
+//			eol = code.indexOf("\n");
+//			var line:String = code.substr(0, eol);
+//			var ix:int = line.indexOf("x");
+//			var lvlHeight:Number = Number(line.substr(0, ix));
+//			var lvlWidth:Number = Number(line.substr(ix + 1));
+//			code = code.substr(eol + 1); // skip this line
+//			
+		
+//			currEditor.setLevelSize(title, code, lvlHeight, lvlWidth);
 			
-			//parse second line to get length and width
-			eol = code.indexOf("\n");
-			var line:String = code.substr(0, eol);
-			var ix:int = line.indexOf("x");
-			var lvlWidth:Number = Number(line.substr(0, ix));
-			var lvlHeight:Number = Number(line.substr(ix + 1));
-			trace("width: " + lvlWidth + " height: " + lvlHeight);
-			code = code.substr(eol + 1); // skip this line
-			
-			var levelRead:String = "";
-			var lineno:int = 1;
-			var len:int = lvlWidth * lvlHeight + lvlHeight - 1;
-			for (var i:uint = 0; i < len; i++) {
-				var curChar:String = code.charAt(i);
-//				trace("i: "+i+" char: "+curChar);
-				switch (curChar) {
-					case "\n":
-						lineno++;
-					case "#": //Player spawn
-					case "x": //Terrain
-					case "w": //WoodCrate
-					case " ": //space
-					case "s": //SteelCrate
-						levelRead = levelRead.concat(curChar);
-						break;
-					//Character not found those trolls
-					default:
-						trace("Unknown level code character: '" + curChar + "' at line " + lineno + " at char number " + i);
-				}
-            }
-            trace("levelRead: \n" + levelRead);
-			currEditor.setLevelSize(title, levelRead, lvlWidth, lvlHeight);
+			currEditor.openLevel(data);
 		}
 		
 		
@@ -193,14 +172,16 @@ package org.interguild.editor {
 					}
 				}
 			}
-			file.save(string, "level1.txt");
+			var titlename:String = currEditor.title.text;
+			file.save(string, titlename + ".txt");
 		}
 		
+		//Return to main menu
 		public function mainMenuListener(event:MouseEvent):void {
-			//TODO Return to main menu
+			//Return to main menu
 			//prompt to save data?
 			this.removeChild(fileSprite);
-			currEditor.deleteSelf();
+			currEditor.gotoMainMenu();
 		}
 		
 		

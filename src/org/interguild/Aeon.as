@@ -4,9 +4,12 @@ package org.interguild {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.MouseEvent;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	
+	CONFIG::DEBUG{
+		import flash.text.TextField;
+		import flash.text.TextFieldAutoSize;
+		import flash.text.TextFormat;
+	}
 	
 	import fl.controls.Button;
 	
@@ -32,7 +35,7 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint=900;
 		public static const STAGE_HEIGHT:uint=500;
 
-		private static const BG_COLOR:uint = 0x050c0f;
+		private static const BG_COLOR:uint = 0xFFFFFF;//0x050c0f;
 
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;

@@ -1,5 +1,4 @@
 package org.interguild.game {
-
 	import flash.display.MovieClip;
 
 	import org.interguild.game.level.Level;
@@ -14,8 +13,8 @@ package org.interguild.game {
 		private static const SPRITE_WIDTH:uint = 24;
 		private static const SPRITE_HEIGHT:uint = 40;
 
-		private static const MAX_FALL_SPEED:Number = 7;
-		private static const MAX_RUN_SPEED:Number = 3;
+		private static const MAX_FALL_SPEED:Number = 14;
+		private static const MAX_RUN_SPEED:Number = 6;
 
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
@@ -48,7 +47,9 @@ package org.interguild.game {
 
 		public function setStartPosition(sx:Number, sy:Number):void {
 			x = newX = startX = sx;
-			y = newY = startY = sy;
+			y = newY = startY = sy - hitbox.height + 32;
+			updateHitBox();
+			finishGameLoop();
 		}
 
 		private function drawPlayer():void {
@@ -137,15 +138,9 @@ package org.interguild.game {
 				playerClip.x = 25;
 			playerClip.y = -8;
 			
-			//gravity
-			speedY += Level.GRAVITY;
-
-			updateKeys();
-
-			//update movement
 			prevSpeedY = speedY;
-			newX += speedX;
-			newY += speedY;
+			speedY += Level.GRAVITY;
+			updateKeys();
 
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
@@ -156,9 +151,10 @@ package org.interguild.game {
 				speedX = -MAX_RUN_SPEED;
 			}
 
-			//commit location change:
-			x = newX;
-			y = newY;
+			//update movement
+			newX += speedX;
+			newY += speedY;
+			updateHitBox();
 		}
 
 		public function reset():void {

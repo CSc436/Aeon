@@ -30,12 +30,12 @@ package org.interguild.game.level {
 			addChild(progressBar);
 
 			//load test level
-			var loader:LevelLoader = new LevelLoader(TEST_LEVEL_FILE);
+			var loader:LevelLoader = new LevelLoader();
 			loader.addProgressListener(progressBar.setProgress);
 			loader.addFileLoadedListener(onFileLoad);
 			loader.addErrorListener(onLoadError);
 			loader.addCompletionListener(onLoadComplete);
-			loader.start();
+			loader.startServer(TEST_LEVEL_FILE);
 		}
 
 		private function onFileLoad(lvl:Level):void {

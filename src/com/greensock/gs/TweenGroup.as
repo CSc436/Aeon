@@ -130,7 +130,7 @@ CODED BY: Jack Doyle, jack@greensock.com
 Copyright 2008, GreenSock (This work is subject to the terms in http://www.greensock.com/terms_of_use.html.)
 */
 
-package org.interguild.editor.scrollBar.gs {
+package com.greensock.gs {
 	import flash.events.*;
 	import flash.utils.*;
 
