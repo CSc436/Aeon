@@ -228,7 +228,11 @@ package org.interguild.game {
 			if ( keys.isKeyUp ) {
 				isFacingUp = true;
 			}
-
+			// no longer looking up
+			if ( !keys.isKeyUp ) {
+				isFacingUp = false;
+			}
+			
 			//jump
 			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
@@ -239,8 +243,13 @@ package org.interguild.game {
 			else
 				wasJumping = false;
 			
+			// crouching
 			if (keys.isKeyDown){
 				isCrouching = true;
+			}
+			// no longer crouching
+			if (!keys.isKeyDown) {
+				isCrouching = false;
 			}
 		}
 	}
