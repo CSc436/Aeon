@@ -1,4 +1,4 @@
-package org.interguild.game {
+package org.interguild {
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
 
@@ -18,6 +18,8 @@ package org.interguild.game {
 		public var isKeyLeft:Boolean = false;
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
+		
+		private var spacebarCallback:Function;
 
 		public function KeyMan(stage:Stage) {
 			instance = this;
@@ -41,6 +43,8 @@ package org.interguild.game {
 					break;
 				case 32: //spacebar
 					isKeySpace = true;
+					if(spacebarCallback)
+						spacebarCallback();
 					break;
 			}
 		}
@@ -63,6 +67,10 @@ package org.interguild.game {
 					isKeySpace = false;
 					break;
 			}
+		}
+		
+		public function addSpacebarListener(cb:Function):void{
+			spacebarCallback = cb;
 		}
 	}
 }
