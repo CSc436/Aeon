@@ -1,4 +1,4 @@
-package org.interguild.game {
+package org.interguild {
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
 

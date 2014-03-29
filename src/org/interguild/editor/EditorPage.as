@@ -7,15 +7,15 @@ package org.interguild.editor {
 	import fl.controls.Button;
 	import fl.controls.TextArea;
 	import fl.controls.TextInput;
-	import fl.controls.UIScrollBar;
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.level.LevelLoader;
 	import org.interguild.game.level.LevelPage;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
+	import org.interguild.Page;
 
 	// EditorPage handles all the initialization for the level editor gui and more
-	public class EditorPage extends Sprite {
+	public class EditorPage extends Page {
 		//Following is code to import images for everything
 		[Embed(source = "../../../../images/testButton.png")] private var TestButton:Class;
 		[Embed(source = "../../../../images/clearAllButton.png")] private var ClearButton:Class;
@@ -205,7 +205,7 @@ package org.interguild.editor {
 		}
 		
 		public function openLevel(data:String):void{
-			lvlloader.parseLevelCode(data);
+			lvlloader.loadFromCode(data);
 		}
 		
 		/**
@@ -411,34 +411,36 @@ package org.interguild.editor {
 		 * This function returns to the title menu
 		 */
 		public function gotoMainMenu():void{
-			deleteSelf();
-			mainMenu.addMainMenu();
+//			deleteSelf();
+//			mainMenu.initMainMenu();
+			Aeon.getMe().gotoMainMenu();
 		}
 		
 		/**
 		 * This function deletes level editor and moves on to level page
 		 */
 		private function testGame(e:MouseEvent):void {
-			deleteSelf();
-			this.addChild(new LevelPage());
+//			deleteSelf();
+//			this.addChild(new LevelPage());
+			Aeon.getMe().playLevelCode("");
 		}
 		
-		/**
-		 * This function is called from DropDownMenu to delete this object
-		 * so that we can return to the main menu
-		 */
-		private function deleteSelf():void{
-			this.removeChild(tf);
-			this.removeChild(wallButton);
-			this.removeChild(woodButton);
-			this.removeChild(playerSpawnButton);
-			this.removeChild(clearButton);
-			this.removeChild(grid);
-			this.removeChild(scrollBar);
-			this.removeChild(testButton);
-			this.removeChild(title);
-			this.removeChild(undoButton);
-			this.removeChild(titlef);
-		}
+//		/**
+//		 * This function is called from DropDownMenu to delete this object
+//		 * so that we can return to the main menu
+//		 */
+//		private function deleteSelf():void{
+//			this.removeChild(tf);
+//			this.removeChild(wallButton);
+//			this.removeChild(woodButton);
+//			this.removeChild(playerSpawnButton);
+//			this.removeChild(clearButton);
+//			this.removeChild(grid);
+//			this.removeChild(scrollBar);
+//			this.removeChild(testButton);
+//			this.removeChild(title);
+//			this.removeChild(undoButton);
+//			this.removeChild(titlef);
+//		}
 	}
 }

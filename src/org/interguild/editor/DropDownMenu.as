@@ -157,7 +157,7 @@ package org.interguild.editor {
 			var i:int;
 			var row:int;
 			var col:int;
-			var string:String = currEditor.title + "\n" + this.numColumns + "x" + this.numColumns + "\n";
+			var string:String = currEditor.title.text + "\n" + this.numColumns + "x" + this.numColumns + "\n";
 			for (i = 0; i < maskGrid.numChildren; i++) {
 				row = i/this.numColumns;
 				col = i%this.numColumns;

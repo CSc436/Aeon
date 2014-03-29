@@ -13,6 +13,12 @@ package org.interguild.game.level {
 
 	/**
 	 * Takes in a level encoding and constructs a level.
+	 * 
+	 * HOW TO USE
+	 * 
+	 * 1. Create new LevelLoader
+	 * 2. Set up all of the Listeners (callbacks) that you want.
+	 *    (see Listener functions below)
 	 */
 	public class LevelLoader {
 
@@ -26,69 +32,119 @@ package org.interguild.game.level {
 		private var timer:Timer;
 
 		private var progressCallback:Function;
-		private var fileLoadedCallback:Function;
+		private var levelInitializedCallback:Function;
 		private var errorCallback:Function;
 		private var loadingCompleteCallback:Function;
 		private var levelParsedCallback:Function;
-		
-		/**
-		 * This constructor assumes you want to load a level
-		 * from a remote file.
-		 * 
-		 * TODO: Make a version of this constructor for loading
-		 * levels from a user's local files.
-		 */
-		public function LevelLoader() {
-		}
+
+		/*******************************
+		 * LISTENER/CALLBACK FUNCTIONS *
+		 *******************************/
 
 		/**
-		 * Whenever it's time to display the progress of
-		 * loading, display a message.
+		 * If you want to display the progress of level loading.
+		 * 
+		 * For the callback method, you'll typically pass in
+		 * 		LevelProgressBar.setProgress;
+		 * 
+		 * Your callback function must have this format:
+		 * 		myFunctionName(percent:Number);
 		 */
 		public function addProgressListener(onProgress:Function):void {
 			progressCallback = onProgress;
 		}
 
-		public function addFileLoadedListener(cb:Function):void {
-			fileLoadedCallback = cb;
+		/**
+		 * This function is how we will pass you the Level object.
+		 * This is called when we first initialized the level, which
+		 * is usually before we begin to parse the level code to
+		 * construct the level. Giving you the reference to the Level
+		 * object at this stage allows as to pass you some info, such
+		 * as the level name, dimensions, and level code, so that you
+		 * can use these while the level is being constructed.
+		 * 
+		 * Your callback function must have this format:
+		 * 		myFunctionName(level:Level);
+		 */
+		public function addLevelInitializedListener(cb:Function):void {
+			levelInitializedCallback = cb;
 		}
 
+		/**
+		 * If an error happens, we'll pass it to you so that you can
+		 * display it to the user.
+		 * 
+		 * Your callback function must have this format:
+		 * 		myFunctionName(error:String);
+		 */
 		public function addErrorListener(cb:Function):void {
 			errorCallback = cb;
 		}
 		
+		/**
+		 * This is called when the level has finished being parsed
+		 * and constructed.
+		 * 
+		 * Your callback function must have this format:
+		 * 		myFunctionName();
+		 */
 		public function addCompletionListener(cb:Function):void{
 			loadingCompleteCallback = cb;
 		}
 		
+		/**
+		 * If you are not asking LevelLoader to construct your level,
+		 * it will still parse the important things for you, such as
+		 * the title and dimensions. Use this callback to get that
+		 * information.
+		 * 
+		 * Your callback function must have this format:
+		 * 		myFunctionName(code:String, title:String, lvlWidth:int, lvlHeight:int);
+		 */
 		public function addLevelParsedListener(cb:Function):void{
 			levelParsedCallback = cb;
 		}
 
+		/**********************************
+		 * PUBLIC LEVEL LOADING FUNCTIONS *
+		 **********************************/
+
 		/**
-		 * First loads in the file. Then after it's loaded,
-		 * start parsing the level encoding.
-		 * When completed, will call the level's startGame()
+		 * This will first open the file, and then start
+		 * constructing the level. Calls these callbacks:
+		 * 		ErrorListener
+		 * 		LevelInitializedListener
+		 * 		ProgressListener
+		 * 		CompletionListener
 		 */
-		public function startServer(filename:String):void {
+		public function loadFromFile(filename:String):void {
 			file = filename;
 			var getFile:URLLoader = new URLLoader();
 			getFile.addEventListener(Event.COMPLETE, onFileLoad);
 			getFile.load(new URLRequest(file));
 		}
 		
-
 		/**
-		 * Called after the test level file has been loaded.
+		 * If you already have the levelCode, you can have LevelLoader
+		 * parse it for you.
+		 * 
+		 * If constructLevel is false, it will not construct the level
+		 * for you, and it will call the following callbacks:
+		 * 		LevelParsedListener
+		 * 
+		 * If constructLevel is true, LevelLoader will automatically
+		 * start parsing the level and constructing a Level object.
+		 * Calls the following callbacks:
+		 * 		ErrorListener
+		 * 		LevelInitializedListener
+		 * 		ProgressListener
+		 * 		CompletionListener
+		 * 		
 		 */
-		private function onFileLoad(evt:Event):void {
-			parseLevelCode(evt.target.data, true);
-		}
-		
-		public function parseLevelCode(levelCode:String, isLevelPage:Boolean = false):void{
+		public function loadFromCode(levelCode:String, constructLevel:Boolean = false):void{
 			var title:String;
-			var lvlWidth:uint;
-			var lvlHeight:uint;
+			var lvlWidth:int;
+			var lvlHeight:int;
 
 			code = levelCode;
 			codeLength = code.length;
@@ -111,11 +167,11 @@ package org.interguild.game.level {
 				return;
 			}
 			
-			if(isLevelPage){
+			if(constructLevel){
 				//create the level
 				level = new Level(lvlWidth, lvlHeight);
 				level.title = title;
-				fileLoadedCallback(level);
+				levelInitializedCallback(level);
 				
 				timer = new Timer(10);
 				timer.addEventListener(TimerEvent.TIMER, onTimer);
@@ -123,6 +179,17 @@ package org.interguild.game.level {
 			}else{
 				levelParsedCallback(code, title, lvlWidth, lvlHeight);
 			}
+		}
+		
+		/*********************
+		 * PRIVATE FUNCTIONS *
+		 *********************/
+		
+		/**
+		 * Called after the test level file has been loaded.
+		 */
+		private function onFileLoad(evt:Event):void {
+			loadFromCode(evt.target.data, true);
 		}
 
 		private var i:uint = 0;
@@ -153,6 +220,10 @@ package org.interguild.game.level {
 			}
 		}
 
+		/**
+		 * This method parses the special characters in the level
+		 * encoding. It passes the other chars to createObject().
+		 */
 		private function parseChar(curChar:String):void {
 			//this switch only handles special chars
 			switch (curChar) {
