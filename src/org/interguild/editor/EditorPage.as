@@ -185,6 +185,7 @@ package org.interguild.editor {
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar.y = 100;
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
 			addChild(scroll);
@@ -420,6 +421,12 @@ package org.interguild.editor {
 			grid.removeChildren();
 			grid = makeBlank(this.levelRows, this.levelColumns);
 			this.addChild(grid);
+			removeChild(scrollBar);
+			removeChild(scroll);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
 		}
 		
 		/**
