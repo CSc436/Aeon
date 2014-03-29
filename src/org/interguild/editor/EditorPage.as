@@ -205,7 +205,7 @@ package org.interguild.editor {
 			addChild(clearButton);
 			addChild(grid);
 			addChild(dropDown);
-			addChild(undoButton);
+			//addChild(undoButton);
 			lvlloader = new LevelLoader();
 			lvlloader.addLevelParsedListener(setLevelSize);
 		}
