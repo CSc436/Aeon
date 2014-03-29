@@ -120,19 +120,16 @@ package org.interguild.editor {
 			titlef.text = "Title:";
 			titlef.x= 25;
 			titlef.y = 50;
-			titlef.textColor = 0xFFFFFF;
 			//width text field
 			widthf = new TextField();
 			widthf.text = "Width:";
 			widthf.x= 555;
 			widthf.y = 15;
-			widthf.textColor = 0xFFFFFF;
 			//height text field
 			heightf = new TextField();
 			heightf.text = "Height:";
 			heightf.x= 555;
 			heightf.y = 40;
-			heightf.textColor = 0xFFFFFF;
 			//for entering a title name
 			title = new TextInput();
 			title.width = 250;
