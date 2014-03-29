@@ -2,24 +2,24 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	
+
 	import fl.controls.Button;
 	import fl.controls.TextArea;
 	import fl.controls.TextInput;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.Page;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
+	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-	import org.interguild.editor.scrollBar.HorizontalBar;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
-		
+
 		private static const DEFAULT_LEVEL_WIDTH:uint = 15;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 15;
-		
+
 		//Following is code to import images for everything
 		[Embed(source = "../../../../images/testButton.png")]
 		private var TestButton:Class;
@@ -137,12 +137,12 @@ package org.interguild.editor {
 			//width text field
 			widthf = new TextField();
 			widthf.text = "Width:";
-			widthf.x= 655;
+			widthf.x = 655;
 			widthf.y = 15;
 			//height text field
 			heightf = new TextField();
 			heightf.text = "Height:";
-			heightf.x= 655;
+			heightf.x = 655;
 			heightf.y = 40;
 			//for entering a title name
 			title = new TextInput();
@@ -178,8 +178,7 @@ package org.interguild.editor {
 
 			grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
 			grid.y = 100;
-			//default this level size
-			makeBlank();
+
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
 			scrollBar.y = 100;
@@ -203,8 +202,8 @@ package org.interguild.editor {
 			addChild(grid);
 			addChild(dropDown);
 			addChild(undoButton);
-			
-			
+
+
 			loader = new EditorLoader();
 			loader.addInitializedListener(loadLevelCode);
 		}
@@ -218,10 +217,10 @@ package org.interguild.editor {
 		 */
 		public function loadLevelCode(title:String, newGrid:EditorGrid):void {
 			this.title.text = title;
-			if(grid){
+			if (grid) {
 				removeChild(grid);
 			}
-			grid = newGrid;  
+			grid = newGrid;
 			grid.y = 100;
 			addChild(grid);
 		}
@@ -241,46 +240,6 @@ package org.interguild.editor {
 			b.y = ypixel;
 			b.useHandCursor = true;
 			return b;
-		}
-
-		/**
-		 * this function creates a blank grid
-		 */
-		private function makeBlank():void {
-//			// object that populates grid cell
-//			var cell:Sprite;
-//			for (var r:int = 0; r < levelRows; r++) {
-//				for (var c:int = 0; c < levelColumns; c++) {
-//					// make object to place into grid
-//					cell = new Sprite();
-//
-//					var g:Graphics = cell.graphics;
-//					g.lineStyle(1, 0xCCCCCC);
-//					g.beginFill(0xF2F2F2);
-//					g.drawRoundRect(0, 0, 32, 32, 0);
-//					g.endFill();
-//
-//					cell.mouseEnabled;
-//					cell.buttonMode = true;
-//					cell.addEventListener(MouseEvent.CLICK, leftClick);
-//					cell.addEventListener(MouseEvent.MOUSE_OVER, altClick);
-//					cell.addEventListener(MouseEvent.CLICK, ctrlClick);
-//
-//					// position object based on its width, height, column a row
-//					cell.x = cell.width * c;
-//					cell.y = cell.height * r;
-//
-//					if (r == 0 || r == levelRows - 1 || c == 0 || c == levelColumns - 1) {
-//						//If end of level
-//						cell.addChild(new wallImg());
-//						cell.name = "x";
-//					}
-//					grid.addChild(cell);
-//				}
-//			}
-//
-//			grid.x = 20;
-//			grid.y = 100;
 		}
 
 		/**
@@ -370,10 +329,7 @@ package org.interguild.editor {
 		}
 
 		private function clearClick(e:MouseEvent):void {
-			var button:Button = Button(e.target);
-			grid.removeChildren();
-			makeBlank();
-			this.addChild(grid);
+			grid.clearGrid();
 		}
 
 		private function undoClick(e:MouseEvent):void {
@@ -387,9 +343,13 @@ package org.interguild.editor {
 		}
 
 		private function resizeClick(e:MouseEvent):void {
-			grid.removeChildren();
-			makeBlank();
-			this.addChild(grid);
+			var w:Number = Number(widthBox.text);
+			var h:Number = Number(heightBox.text);
+			if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0)
+				throw new Error("Invalid Level Dimensions: '" + w + "' by '" + h + "'");
+			grid.resize(h, w);
+
+			//reset scrollbar
 			removeChild(scrollBar);
 			removeChild(scroll);
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
