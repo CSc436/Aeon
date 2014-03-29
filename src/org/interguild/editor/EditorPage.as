@@ -7,12 +7,12 @@ package org.interguild.editor {
 	import fl.controls.Button;
 	import fl.controls.TextArea;
 	import fl.controls.TextInput;
-	import fl.controls.UIScrollBar;
 	
 	import org.interguild.Aeon;
+	import org.interguild.editor.scrollBar.FullScreenScrollBar;
+	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.level.LevelLoader;
 	import org.interguild.game.level.LevelPage;
-	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
@@ -51,12 +51,14 @@ package org.interguild.editor {
 		private var lvlloader:LevelLoader;
 		private var gridContainer:Sprite;
 		private var grid:Sprite;
+		private var gridMask:Sprite;
 
 		private var dropDown:DropDownMenu;
 
 		private var mainMenu:Aeon;
 		
 		private var scrollBar:FullScreenScrollBar;
+		private var scroll:HorizontalBar;
 		// UNDO REDO ACTIONS ARRAYLIST
 		private var undoList:Array;
 		private var redoList:Array;
@@ -82,19 +84,19 @@ package org.interguild.editor {
 			this.mainMenu = mainMenu;
 			
 			//playerstart button
-			playerSpawnButton = makeButton("Start", StartButton, 650, 150);
+			playerSpawnButton = makeButton("Start", StartButton, 750, 150);
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 			
 			//wallbutton
-			wallButton = makeButton("Wall", WallButton, 650, 200);
+			wallButton = makeButton("Wall", WallButton, 750, 200);
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 			
 			//woodbutton:
-			woodButton = makeButton("Wood", WoodButton, 650, 250);
+			woodButton = makeButton("Wood", WoodButton, 750, 250);
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
 			//clear button:
-			clearButton = makeButton("Clear All", ClearButton, 650, 300);
+			clearButton = makeButton("Clear All", ClearButton, 750, 300);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			
 			//Test button:
@@ -102,7 +104,7 @@ package org.interguild.editor {
 			testButton.addEventListener(MouseEvent.CLICK, testGame);
 			
 			//change size button:
-			resizeButton = makeButton("Resize", ResizeButton, 700, 50);
+			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			undoList = new Array();
 			redoList = new Array();
@@ -110,7 +112,7 @@ package org.interguild.editor {
 			//undo button:
 			undoButton = new Button();
 			undoButton.label = "Undo";
-			undoButton.x = 650;
+			undoButton.x = 750;
 			undoButton.y = 350;
 			undoButton.useHandCursor = true;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
@@ -124,13 +126,13 @@ package org.interguild.editor {
 			//width text field
 			widthf = new TextField();
 			widthf.text = "Width:";
-			widthf.x= 555;
+			widthf.x= 655;
 			widthf.y = 15;
 			widthf.textColor = 0xFFFFFF;
 			//height text field
 			heightf = new TextField();
 			heightf.text = "Height:";
-			heightf.x= 555;
+			heightf.x= 655;
 			heightf.y = 40;
 			heightf.textColor = 0xFFFFFF;
 			//for entering a title name
@@ -145,18 +147,18 @@ package org.interguild.editor {
 			widthBox = new TextInput();
 			widthBox.width = 50;
 			widthBox.height = 25;
-			widthBox.x = 600;
+			widthBox.x = 700;
 			widthBox.y = 15;
 			heightBox = new TextInput();
 			heightBox.width = 50;
 			heightBox.height = 25;
-			heightBox.x = 600;
+			heightBox.x = 700;
 			heightBox.y = 40;
 			//textfield
 			tf = new TextArea();
 			tf.width = 200;
 			tf.height = 400;
-			tf.x = 600;
+			tf.x = 700;
 			tf.y = 100;
 			tf.editable = false;
 
@@ -169,10 +171,24 @@ package org.interguild.editor {
 			//default this level size
 			setColumns(15, 15);
 			grid = makeBlank(25,25);
+			
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
+			addChild(gridMask);
+			
+			
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny"
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar.y = 100;
 			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
 			//grid.addChild(scrollBar);
 			addChild(resizeButton);
 			addChild(heightf);
@@ -405,6 +421,12 @@ package org.interguild.editor {
 			grid.removeChildren();
 			grid = makeBlank(this.levelRows, this.levelColumns);
 			this.addChild(grid);
+			removeChild(scrollBar);
+			removeChild(scroll);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
 		}
 		
 		/**
@@ -435,10 +457,16 @@ package org.interguild.editor {
 			this.removeChild(clearButton);
 			this.removeChild(grid);
 			this.removeChild(scrollBar);
+			this.removeChild(scroll);
+			this.removeChild(widthBox);
+			this.removeChild(widthf);
+			this.removeChild(heightBox);
+			this.removeChild(heightf);
 			this.removeChild(testButton);
 			this.removeChild(title);
 			this.removeChild(undoButton);
 			this.removeChild(titlef);
+			this.removeChild(resizeButton);
 		}
 	}
 }
