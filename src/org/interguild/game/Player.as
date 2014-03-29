@@ -3,6 +3,7 @@ package org.interguild.game {
 
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.KeyMan;
 
 	public class Player extends CollidableObject {
 

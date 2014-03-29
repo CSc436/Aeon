@@ -140,40 +140,14 @@ package org.interguild.editor {
 			currEditor.openLevel(data);
 		}
 		
-		
-		public function setColumns(col:int):void{
-			this.numColumns = col;
-		}
-		
-		public function setRows(row:int):void{
-			this.numRows = row;
-		}
-		
 		//Save whatever is in the grid
 		private function saveGameListener(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 			
 			var file:FileReference = new FileReference();
-			var i:int;
-			var row:int;
-			var col:int;
-			var string:String = currEditor.title + "\n" + this.numColumns + "x" + this.numColumns + "\n";
-			for (i = 0; i < maskGrid.numChildren; i++) {
-				row = i/this.numColumns;
-				col = i%this.numColumns;
-				if (maskGrid.getChildAt(i) != null) {
-					if (maskGrid.getChildAt(i).name.length == 1) {
-						string += maskGrid.getChildAt(i).name;
-					} else {
-						string += " ";
-					}
-					if (col == numColumns-1) {
-						string += "\n";
-					}
-				}
-			}
+			
 			var titlename:String = currEditor.title.text;
-			file.save(string, titlename + ".txt");
+			file.save(currEditor.getLevelCode(), titlename + ".txt");
 		}
 		
 		//Return to main menu

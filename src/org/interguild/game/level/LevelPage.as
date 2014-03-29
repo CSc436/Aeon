@@ -1,9 +1,10 @@
 package org.interguild.game.level {
-	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
 	import org.interguild.Aeon;
-	import org.interguild.game.KeyMan;
+	import org.interguild.KeyMan;
+	import org.interguild.Page;
+	import org.interguild.loader.LevelLoader;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
@@ -13,9 +14,9 @@ package org.interguild.game.level {
 	 * 		-The win screen?
 	 * 		-The level itself
 	 */
-	public class LevelPage extends Sprite {
+	public class LevelPage extends Page {
 
-		private static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
+		public static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
 
 		private var level:Level;
 		private var loader:LevelLoader;
@@ -28,14 +29,21 @@ package org.interguild.game.level {
 			progressBar.x = Aeon.STAGE_WIDTH / 2 - progressBar.width / 2;
 			progressBar.y = Aeon.STAGE_HEIGHT / 2 - progressBar.height / 2;
 			addChild(progressBar);
-
-			//load test level
-			var loader:LevelLoader = new LevelLoader();
+			
+			//init Level Loader
+			loader = new LevelLoader();
 			loader.addProgressListener(progressBar.setProgress);
-			loader.addFileLoadedListener(onFileLoad);
+			loader.addInitializedListener(onFileLoad);
 			loader.addErrorListener(onLoadError);
 			loader.addCompletionListener(onLoadComplete);
-			loader.startServer(TEST_LEVEL_FILE);
+		}
+		
+		public function playLevelFromFile(file:String):void{
+			loader.loadFromFile(file);
+		}
+		
+		public function playLevelFromCode(code:String):void{
+			loader.loadFromCode(code);
 		}
 
 		private function onFileLoad(lvl:Level):void {
