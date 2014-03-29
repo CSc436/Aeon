@@ -1,41 +1,31 @@
-package org.interguild.game.level {
+package org.interguild.loader {
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
-	
-	import org.interguild.Aeon;
-	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
 
-	/**
-	 * Takes in a level encoding and constructs a level.
-	 * 
-	 * HOW TO USE
-	 * 
-	 * 1. Create new LevelLoader
-	 * 2. Set up all of the Listeners (callbacks) that you want.
-	 *    (see Listener functions below)
-	 */
-	public class LevelLoader {
+	import org.interguild.Aeon;
+
+	public class Loader {
 
 		private static const LOOPS_PER_TICK:uint = 250;
 
-		private var level:Level;
-
-		private var file:String;
 		private var code:String; //the level encoding in the file
 		private var codeLength:uint;
 		private var timer:Timer;
 
+		private var levelWidth:int;
+		private var levelHeight:int;
+
+		protected var initializedCallback:Function;
 		private var progressCallback:Function;
-		private var levelInitializedCallback:Function;
 		private var errorCallback:Function;
 		private var loadingCompleteCallback:Function;
 		private var levelParsedCallback:Function;
+
+		public function Loader() {
+		}
 
 		/*******************************
 		 * LISTENER/CALLBACK FUNCTIONS *
@@ -43,10 +33,10 @@ package org.interguild.game.level {
 
 		/**
 		 * If you want to display the progress of level loading.
-		 * 
+		 *
 		 * For the callback method, you'll typically pass in
 		 * 		LevelProgressBar.setProgress;
-		 * 
+		 *
 		 * Your callback function must have this format:
 		 * 		myFunctionName(percent:Number);
 		 */
@@ -62,47 +52,39 @@ package org.interguild.game.level {
 		 * object at this stage allows as to pass you some info, such
 		 * as the level name, dimensions, and level code, so that you
 		 * can use these while the level is being constructed.
-		 * 
-		 * Your callback function must have this format:
+		 *
+		 * If you're using LevelLoader, your callback function must
+		 * have this format:
 		 * 		myFunctionName(level:Level);
+		 *
+		 * If you're using EditorLoader, your callback function must
+		 * have this format:
+		 * 		myFunctionName(title:String, grid:EditorGrid);
 		 */
-		public function addLevelInitializedListener(cb:Function):void {
-			levelInitializedCallback = cb;
+		public function addInitializedListener(cb:Function):void {
+			initializedCallback = cb;
 		}
 
 		/**
 		 * If an error happens, we'll pass it to you so that you can
 		 * display it to the user.
-		 * 
+		 *
 		 * Your callback function must have this format:
 		 * 		myFunctionName(error:String);
 		 */
 		public function addErrorListener(cb:Function):void {
 			errorCallback = cb;
 		}
-		
+
 		/**
 		 * This is called when the level has finished being parsed
 		 * and constructed.
-		 * 
+		 *
 		 * Your callback function must have this format:
 		 * 		myFunctionName();
 		 */
-		public function addCompletionListener(cb:Function):void{
+		public function addCompletionListener(cb:Function):void {
 			loadingCompleteCallback = cb;
-		}
-		
-		/**
-		 * If you are not asking LevelLoader to construct your level,
-		 * it will still parse the important things for you, such as
-		 * the title and dimensions. Use this callback to get that
-		 * information.
-		 * 
-		 * Your callback function must have this format:
-		 * 		myFunctionName(code:String, title:String, lvlWidth:int, lvlHeight:int);
-		 */
-		public function addLevelParsedListener(cb:Function):void{
-			levelParsedCallback = cb;
 		}
 
 		/**********************************
@@ -118,20 +100,19 @@ package org.interguild.game.level {
 		 * 		CompletionListener
 		 */
 		public function loadFromFile(filename:String):void {
-			file = filename;
 			var getFile:URLLoader = new URLLoader();
 			getFile.addEventListener(Event.COMPLETE, onFileLoad);
-			getFile.load(new URLRequest(file));
+			getFile.load(new URLRequest(filename));
 		}
-		
+
 		/**
 		 * If you already have the levelCode, you can have LevelLoader
 		 * parse it for you.
-		 * 
+		 *
 		 * If constructLevel is false, it will not construct the level
 		 * for you, and it will call the following callbacks:
 		 * 		LevelParsedListener
-		 * 
+		 *
 		 * If constructLevel is true, LevelLoader will automatically
 		 * start parsing the level and constructing a Level object.
 		 * Calls the following callbacks:
@@ -139,21 +120,21 @@ package org.interguild.game.level {
 		 * 		LevelInitializedListener
 		 * 		ProgressListener
 		 * 		CompletionListener
-		 * 		
+		 *
 		 */
-		public function loadFromCode(levelCode:String, constructLevel:Boolean = false):void{
+		public function loadFromCode(levelCode:String):void {
 			var title:String;
 			var lvlWidth:int;
 			var lvlHeight:int;
 
 			code = levelCode;
 			codeLength = code.length;
-			
+
 			//get title
 			var eol:int = code.indexOf("\n");
 			title = code.substr(0, eol);
 			code = code.substr(eol + 1);
-			
+
 			//get dimensions
 			eol = code.indexOf("\n");
 			var dimensionsLine:String = code.substr(0, eol);
@@ -161,35 +142,32 @@ package org.interguild.game.level {
 			lvlWidth = Number(dimensionsLine.substr(0, ix));
 			lvlHeight = Number(dimensionsLine.substr(ix + 1));
 			code = code.substr(eol + 1);
-			
+
 			if (lvlWidth <= 0 || lvlHeight <= 0) {
 				errorCallback("Invalid Level Dimensions: '" + dimensionsLine + "'");
 				return;
 			}
-			
-			if(constructLevel){
-				//create the level
-				level = new Level(lvlWidth, lvlHeight);
-				level.title = title;
-				levelInitializedCallback(level);
-				
-				timer = new Timer(10);
-				timer.addEventListener(TimerEvent.TIMER, onTimer);
-				timer.start();				
-			}else{
-				levelParsedCallback(code, title, lvlWidth, lvlHeight);
-			}
+
+			setLevelInfo(title, lvlWidth, lvlHeight);
+
+			timer = new Timer(10);
+			timer.addEventListener(TimerEvent.TIMER, onTimer);
+			timer.start();
 		}
-		
-		/*********************
-		 * PRIVATE FUNCTIONS *
-		 *********************/
-		
+
+		/********************
+		 * HIDDEN FUNCTIONS *
+		 ********************/
+
+		protected function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void {
+			throw new Error("initObject is abstract. Please override it.");
+		}
+
 		/**
 		 * Called after the test level file has been loaded.
 		 */
 		private function onFileLoad(evt:Event):void {
-			loadFromCode(evt.target.data, true);
+			loadFromCode(evt.target.data);
 		}
 
 		private var i:uint = 0;
@@ -214,8 +192,9 @@ package org.interguild.game.level {
 			//if done loading
 			if (i == codeLength) {
 				timer.stop();
-				loadingCompleteCallback();
-			} else {
+				if (loadingCompleteCallback)
+					loadingCompleteCallback();
+			} else if (progressCallback) {
 				progressCallback(i / codeLength);
 			}
 		}
@@ -269,7 +248,7 @@ package org.interguild.game.level {
 					}
 					break;
 				default:
-					createObject(curChar, px, py);
+					initObject(curChar, px, py);
 					px += Aeon.TILE_WIDTH;
 					break;
 			}
@@ -279,31 +258,8 @@ package org.interguild.game.level {
 		/**
 		 * Parses the non-special characters of the level encoding
 		 */
-		private function createObject(curChar:String, px:int, py:int):void {
-			//if off the map, do nothing
-			if (px >= level.widthInPixels || py >= level.heightInPixels)
-				return;
-
-			var tile:CollidableObject;
-			switch (curChar) {
-				case "#": //Player
-					level.setPlayer(px, py);
-					break;
-				case "x": //Terrain
-					tile = new Terrain(px, py);
-					level.createCollidableObject(tile, false);
-					break;
-				case "w": //WoodCrate
-					tile = new WoodCrate(px, py);
-					level.createCollidableObject(tile, false);
-					break;
-				case "s": //SteelCrate
-					tile = new SteelCrate(px, py);
-					level.createCollidableObject(tile, false);
-				default:
-					trace("Unknown level code character: '" + curChar + "'");
-					break;
-			}
+		protected function initObject(curChar:String, px:int, py:int):void {
+			throw new Error("initObject is abstract. Please override it.");
 		}
 	}
 }

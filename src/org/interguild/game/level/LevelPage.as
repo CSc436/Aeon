@@ -4,6 +4,7 @@ package org.interguild.game.level {
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
 	import org.interguild.Page;
+	import org.interguild.loader.LevelLoader;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
@@ -32,7 +33,7 @@ package org.interguild.game.level {
 			//init Level Loader
 			loader = new LevelLoader();
 			loader.addProgressListener(progressBar.setProgress);
-			loader.addLevelInitializedListener(onFileLoad);
+			loader.addInitializedListener(onFileLoad);
 			loader.addErrorListener(onLoadError);
 			loader.addCompletionListener(onLoadComplete);
 		}
@@ -42,7 +43,7 @@ package org.interguild.game.level {
 		}
 		
 		public function playLevelFromCode(code:String):void{
-			loader.loadFromCode(code, true);
+			loader.loadFromCode(code);
 		}
 
 		private function onFileLoad(lvl:Level):void {

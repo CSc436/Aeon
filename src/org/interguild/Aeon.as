@@ -12,6 +12,7 @@ package org.interguild {
 
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
+	import org.interguild.editor.EditorGrid;
 
 	/**
 	 * Aeon.as initializes the game, but it's also responsible for
