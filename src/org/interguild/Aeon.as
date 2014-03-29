@@ -32,7 +32,7 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint=900;
 		public static const STAGE_HEIGHT:uint=500;
 
-		private static const BG_COLOR:uint = 0x050c0f;
+		private static const BG_COLOR:uint = 0xFFFFFF;//0x050c0f;
 
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;
