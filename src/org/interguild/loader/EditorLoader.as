@@ -16,7 +16,7 @@ package org.interguild.loader {
 		}
 		
 		protected override function initObject(curChar:String, px:int, py:int):void {
-			
+			grid.placeTile(curChar, py, px);
 		}
 	}
 }

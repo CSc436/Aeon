@@ -2,17 +2,18 @@ package org.interguild.game.tiles {
 	import org.interguild.Aeon;
 
 	public class Terrain extends CollidableObject implements Tile {
+
+		public static const LEVEL_CODE_CHAR:String = 'x';
+
+		private static const SPRITE_COLOR:uint = 0x9EDB00;
+		private static const SPRITE_WIDTH:uint = 32;
+		private static const SPRITE_HEIGHT:uint = 32;
+
 		public var destructibility:int = 0;
 		public var solidity:Boolean = true;
 		public var gravible:Boolean = false;
 		public var knocksback:int = 0;
 		public var buoyancy:Boolean = false;
-
-		private static const SPRITE_COLOR:uint = 0x9EDB00;
-		private static const SPRITE_WIDTH:uint = 32;
-		private static const SPRITE_HEIGHT:uint = 32;
-		
-		private static const TILE_ENCODING:String = 'x';
 
 		public function Terrain(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
@@ -21,7 +22,7 @@ package org.interguild.game.tiles {
 			graphics.endFill();
 
 		}
-		
+
 //		/*
 //		 * DEBUG
 //		 */

@@ -2,15 +2,18 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-
+	
 	import fl.controls.Button;
 	import fl.controls.TextArea;
 	import fl.controls.TextInput;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.Page;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
+	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
 
@@ -33,14 +36,6 @@ package org.interguild.editor {
 		private var StartButton:Class;
 		[Embed(source = "../../../../images/resizeButton.png")]
 		private var ResizeButton:Class;
-		[Embed(source = "../../../../images/woodBox.png")]
-		private var woodImg:Class;
-		//TODO update picture
-		[Embed(source = "../../../../images/wall.png")]
-		private var wallImg:Class;
-		//TODO update picture
-		[Embed(source = "../../../../images/flag.jpg")]
-		private var flagImg:Class;
 
 		//following are objects on this sprite
 		private var playerSpawnButton:Button;
@@ -79,12 +74,7 @@ package org.interguild.editor {
 		private var isSteelBox:Boolean = false;
 		private var isStart:Boolean = false;
 
-		private static var activeButton:int = 0;
-		private static const air:int = 0;
-		private static const wall:int = 1;
-		private static const wood:int = 2;
-		private static const steel:int = 3;
-		private static const playerspawn:int = 4;
+		private static var activeButton:String = "";
 
 		//size of level
 //		private var levelColumns:int, levelRows:int;
@@ -172,12 +162,14 @@ package org.interguild.editor {
 			tf.editable = false;
 
 			//add the drop down menu
-			dropDown = new DropDownMenu(grid, this);
+			dropDown = new DropDownMenu(this);
 			dropDown.x = 5;
 			dropDown.y = 5;
 
 			grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
 			grid.y = 100;
+			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
+			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
 
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
@@ -205,7 +197,7 @@ package org.interguild.editor {
 
 
 			loader = new EditorLoader();
-			loader.addInitializedListener(loadLevelCode);
+			loader.addInitializedListener(newGridReady);
 		}
 
 		public function openLevel(data:String):void {
@@ -215,7 +207,7 @@ package org.interguild.editor {
 		/**
 		 * Called by EditorLoader
 		 */
-		public function loadLevelCode(title:String, newGrid:EditorGrid):void {
+		public function newGridReady(title:String, newGrid:EditorGrid):void {
 			this.title.text = title;
 			if (grid) {
 				removeChild(grid);
@@ -247,85 +239,43 @@ package org.interguild.editor {
 		 *
 		 */
 		private function altClick(e:MouseEvent):void {
-			var sprite:Sprite = Sprite(e.target);
+			var cell:EditorCell = EditorCell(e.target);
 			if (e.altKey) {
 				//switch to check what trigger is active
-				switch (activeButton) {
-					case wall:
-						sprite.name = "x";
-						sprite.addChild(new wallImg());
-						break;
-					case wood:
-						sprite.addChild(new woodImg());
-						sprite.name = "w";
-						break;
-					case steel:
-						sprite.addChild(new woodImg()); //TODO change this to steel
-						sprite.name = "s";
-						break;
-					case playerspawn:
-						sprite.addChild(new flagImg());
-						sprite.name = "#";
-						break;
-					default:
-				}
+				cell.setTile(activeButton);
 			}
 		}
 
 		private function leftClick(e:MouseEvent):void {
-			var gridChild:Sprite = Sprite(e.target)
-
-			//TODO make undo
-			var undoAction:Object = new Object;
-			undoAction.oldsprite = gridChild;
-			//switch to check what trigger is active
-			switch (activeButton) {
-				case wall:
-					gridChild.name = "x";
-					gridChild.addChild(new wallImg());
-					break;
-				case wood:
-					gridChild.addChild(new woodImg());
-					gridChild.name = "w";
-					break;
-				case steel:
-					gridChild.addChild(new woodImg()); //TODO change this to steel
-					gridChild.name = "s";
-					break;
-				case playerspawn:
-					gridChild.addChild(new flagImg());
-					gridChild.name = "#";
-					break;
-				default:
-			}
-			undoAction.newsprite = gridChild;
-			undoList.push(undoAction);
-		}
-
-		private function ctrlClick(e:MouseEvent):void {
-			var gridChild:Sprite = Sprite(e.target)
+			var cell:EditorCell = EditorCell(e.target);
+			
 			if (e.ctrlKey) {
-				var i:int;
-				while (gridChild.numChildren > 0) {
-					gridChild.removeChildAt(0);
-				}
-				gridChild.name = " ";
+				cell.clearTile();
+			}else{
+				cell.setTile(activeButton);
 			}
+			
+			//TODO make undo
+			var undoAction:Object = new Object();
+			undoAction.oldsprite = cell;
+			//switch to check what trigger is active
+			undoAction.newsprite = cell;
+			undoList.push(undoAction);
 		}
 
 		private function startClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
-			activeButton = playerspawn;
+			activeButton = Player.LEVEL_CODE_CHAR;
 		}
 
 		private function wallClick(e:MouseEvent):void {
 			var button:Button = Button(e.target);
-			activeButton = wall;
+			activeButton = Terrain.LEVEL_CODE_CHAR;
 		}
 
 		private function woodBoxClick(e:MouseEvent):void {
 			var button:Button = Button(e.target); // focus mouse event
-			activeButton = wood;
+			activeButton = WoodCrate.LEVEL_CODE_CHAR;
 		}
 
 		private function clearClick(e:MouseEvent):void {

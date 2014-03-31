@@ -2,11 +2,8 @@ package org.interguild.game.tiles {
 	import org.interguild.Aeon;
 	
 	public class WoodCrate extends CollidableObject implements Tile {
-		public var destructibility:int = 2;
-		public var solidity:Boolean = true;
-		public var gravible:Boolean = false;
-		public var knocksback:int = 5;
-		public var buoyancy:Boolean = true;
+		
+		public static const LEVEL_CODE_CHAR:String = 'w';
 		
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 7;
@@ -16,7 +13,11 @@ package org.interguild.game.tiles {
 		private static const SPRITE_WIDTH:uint = 32;
 		private static const SPRITE_HEIGHT:uint = 32;
 		
-		private static const TILE_ENCODING:String = 'w';
+		public var destructibility:int = 2;
+		public var solidity:Boolean = true;
+		public var gravible:Boolean = false;
+		public var knocksback:int = 5;
+		public var buoyancy:Boolean = true;
 		
 		public function WoodCrate(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
