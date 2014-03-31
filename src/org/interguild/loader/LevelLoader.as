@@ -1,15 +1,12 @@
 package org.interguild.loader {
-	import flash.events.Event;
-	import flash.events.TimerEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.utils.Timer;
-	
+
+	import org.interguild.Aeon;
+	import org.interguild.game.Player;
+	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
-	import org.interguild.game.level.Level;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -32,28 +29,27 @@ package org.interguild.loader {
 		}
 
 		protected override function initObject(curChar:String, px:int, py:int):void {
-			//if off the map, do nothing
-			if (px >= level.widthInPixels || py >= level.heightInPixels)
-				return;
+			px *= Aeon.TILE_WIDTH;
+			py *= Aeon.TILE_HEIGHT;
 
 			var tile:CollidableObject;
 			switch (curChar) {
-				case "#": //Player
+				case Player.LEVEL_CODE_CHAR:
 					level.setPlayer(px, py);
 					break;
-				case "x": //Terrain
+				case Terrain.LEVEL_CODE_CHAR:
 					tile = new Terrain(px, py);
 					level.createCollidableObject(tile, false);
 					break;
-				case "w": //WoodCrate
+				case WoodCrate.LEVEL_CODE_CHAR:
 					tile = new WoodCrate(px, py);
 					level.createCollidableObject(tile, false);
 					break;
-				case "s": //SteelCrate
+				case SteelCrate.LEVEL_CODE_CHAR:
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile, false);
 				default:
-					trace("Unknown level code character: '" + curChar + "'");
+					trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;
 			}
 		}
