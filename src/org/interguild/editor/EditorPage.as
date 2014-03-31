@@ -201,7 +201,7 @@ package org.interguild.editor {
 			addChild(clearButton);
 			addChild(grid);
 			addChild(dropDown);
-			addChild(undoButton);
+			//addChild(undoButton);
 
 
 			loader = new EditorLoader();

@@ -1,7 +1,5 @@
 package org.interguild.game.tiles {
 	import org.interguild.Aeon;
-	import org.interguild.game.level.Level;
-	import org.interguild.game.collision.Direction;
 	
 	public class WoodCrate extends CollidableObject implements Tile {
 		public var destructibility:int = 2;
