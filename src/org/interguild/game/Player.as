@@ -6,6 +6,8 @@ package org.interguild.game {
 	import org.interguild.KeyMan;
 
 	public class Player extends CollidableObject {
+		
+		public static const LEVEL_CODE_CHAR:String = '#';
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;

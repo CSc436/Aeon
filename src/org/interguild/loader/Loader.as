@@ -124,8 +124,6 @@ package org.interguild.loader {
 		 */
 		public function loadFromCode(levelCode:String):void {
 			var title:String;
-			var lvlWidth:int;
-			var lvlHeight:int;
 
 			code = levelCode;
 			codeLength = code.length;
@@ -139,16 +137,16 @@ package org.interguild.loader {
 			eol = code.indexOf("\n");
 			var dimensionsLine:String = code.substr(0, eol);
 			var ix:int = dimensionsLine.indexOf("x");
-			lvlWidth = Number(dimensionsLine.substr(0, ix));
-			lvlHeight = Number(dimensionsLine.substr(ix + 1));
+			levelWidth = Number(dimensionsLine.substr(0, ix));
+			levelHeight = Number(dimensionsLine.substr(ix + 1));
 			code = code.substr(eol + 1);
 
-			if (lvlWidth <= 0 || lvlHeight <= 0) {
+			if (levelWidth <= 0 || levelHeight <= 0) {
 				errorCallback("Invalid Level Dimensions: '" + dimensionsLine + "'");
 				return;
 			}
 
-			setLevelInfo(title, lvlWidth, lvlHeight);
+			setLevelInfo(title, levelWidth, levelHeight);
 
 			timer = new Timer(10);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
@@ -207,7 +205,7 @@ package org.interguild.loader {
 			//this switch only handles special chars
 			switch (curChar) {
 				case " ":
-					px += Aeon.TILE_WIDTH;
+					px += 1;
 					break;
 				/*
 				* Not all operating systems write the end-of-line character
@@ -221,7 +219,7 @@ package org.interguild.loader {
 					} //then treat it as a new line:
 				case "\n":
 					px = 0;
-					py += Aeon.TILE_HEIGHT;
+					py += 1;
 					break;
 				case "=":
 					var number:String = "";
@@ -248,8 +246,11 @@ package org.interguild.loader {
 					}
 					break;
 				default:
-					initObject(curChar, px, py);
-					px += Aeon.TILE_WIDTH;
+					//if off the map, do nothing
+					if (px < levelWidth && py < levelHeight) {
+						initObject(curChar, px, py);
+						px += 1;
+					}
 					break;
 			}
 			prevChar = curChar;
