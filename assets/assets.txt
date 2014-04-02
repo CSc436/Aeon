@@ -1,0 +1,35 @@
+Player Animations{
+//ALL ARE MovieClip OBJECTS
+
+	Walking Animations{
+		new PlayerWalkingAnimation();
+	}
+
+	Jumping Animation{
+	
+		new PlayerJumpUpAnimation();
+		new PlayerJumpPeakThenFallAnimation();
+		new PlayerJumpLandAnimation();		
+	}
+}
+
+Tile Sprites{
+//ALL ARE BitmapData OBJECTS
+
+	new WoodenCrateSprite();
+	new SteelCrateSprite();
+}
+
+Embedded Fonts{
+	"Motorwerk"
+}
+
+GUI Components{
+	new Button();
+	new Label();
+	new ProgressBar();
+	new ScrollPane();
+	new UIScrollBar();
+	new TextArea(); //large text box
+	new TextInput(); //single-line text box
+}

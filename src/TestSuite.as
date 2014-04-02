@@ -1,6 +1,6 @@
 package 
 {
-	import org.interguild.game.KeyMan;
+	import org.interguild.KeyMan;
 	
 
 	[Suite]

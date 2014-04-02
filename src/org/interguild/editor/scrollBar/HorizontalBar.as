@@ -14,9 +14,8 @@ package org.interguild.editor.scrollBar
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	
-	import org.interguild.editor.scrollBar.gs.OverwriteManager;
-	import org.interguild.editor.scrollBar.gs.TweenFilterLite;
+	import com.greensock.gs.OverwriteManager;
+	import com.greensock.gs.TweenFilterLite;
 	
 	public class HorizontalBar extends Sprite
 	{
