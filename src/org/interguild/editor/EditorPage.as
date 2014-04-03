@@ -335,27 +335,16 @@ package org.interguild.editor {
 			Aeon.getMe().gotoMainMenu();
 		}
 
+		/**
+		 * This function ask the grid for the code of the level so we may
+		 * save this code
+		 */
 		public function getLevelCode():String {
-//			var i:int;
-//			var row:int;
-//			var col:int;
-//			var string:String = title.text + "\n" + this.levelColumns + "x" + this.levelRows + "\n";
-//			for (i = 0; i < grid.numChildren; i++) {
-//				row = i / this.levelColumns;
-//				col = i % this.levelColumns;
-//				if (grid.getChildAt(i) != null) {
-//					if (grid.getChildAt(i).name.length == 1) {
-//						string += grid.getChildAt(i).name;
-//					} else {
-//						string += " ";
-//					}
-//					if (col == levelColumns - 1) {
-//						string += "\n";
-//					}
-//				}
-//			}
-//			return string;
-			return "";
+			var string:String = "";
+			string += this.title.text+"\n";
+			string += this.grid.levelHeight+"x"+grid.levelWidth+"\n";
+			string += this.grid.toStringCells();
+			return string;
 		}
 
 		/**

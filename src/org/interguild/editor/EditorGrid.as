@@ -5,8 +5,8 @@ package org.interguild.editor {
 
 		private var cells:Array;
 
-		private var cols:uint;
-		private var rows:uint;
+		private var cols:uint=0;
+		private var rows:uint=0;
 
 		public function EditorGrid(numRows:uint, numCols:uint) {
 			cols = numRows;
@@ -34,6 +34,9 @@ package org.interguild.editor {
 			initGridCells();
 		}
 
+		/**
+		 * place a type on a specific cell
+		 */
 		public function placeTile(char:String, row:uint, col:uint):void {
 			if (row < rows && col < cols) {
 				EditorCell(cells[row][col]).setTile(char);
@@ -42,6 +45,9 @@ package org.interguild.editor {
 			}
 		}
 
+		/**
+		 * create a new grid
+		 */
 		private function initGridCells():void {
 			for (var i:uint = 0; i < rows; i++) {
 				for (var j:uint = 0; j < cols; j++) {
@@ -53,7 +59,24 @@ package org.interguild.editor {
 				}
 			}
 		}
+		
+		/**
+		 * print out the cell types using chars
+		 */
+		public function toStringCells():String {
+			var s:String = "";
+			for (var r:uint = 0; r < rows; r++) {
+				for (var c:uint = 0; c < cols; c++) {
+					s += EditorCell(cells[r][c]).cellName;
+				}
+				s+="\n";
+			}
+			return s;
+		}
 
+		/**
+		 * resize the new grid to the new dimensions
+		 */
 		public function resize(newRows:uint, newCols:uint):void {
 			var i:uint, j:uint;
 			var c:EditorCell;
