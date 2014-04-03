@@ -5,8 +5,6 @@ package org.interguild.loader {
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 
-	import org.interguild.Aeon;
-
 	public class Loader {
 
 		private static const LOOPS_PER_TICK:uint = 250;
