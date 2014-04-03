@@ -3,8 +3,11 @@ package org.interguild.game {
 
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.KeyMan;
 
 	public class Player extends CollidableObject {
+		
+		public static const LEVEL_CODE_CHAR:String = '#';
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
@@ -224,7 +227,11 @@ package org.interguild.game {
 			if ( keys.isKeyUp ) {
 				isFacingUp = true;
 			}
-
+			// no longer looking up
+			if ( !keys.isKeyUp ) {
+				isFacingUp = false;
+			}
+			
 			//jump
 			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
@@ -235,8 +242,13 @@ package org.interguild.game {
 			else
 				wasJumping = false;
 			
+			// crouching
 			if (keys.isKeyDown){
 				isCrouching = true;
+			}
+			// no longer crouching
+			if (!keys.isKeyDown) {
+				isCrouching = false;
 			}
 		}
 	}
