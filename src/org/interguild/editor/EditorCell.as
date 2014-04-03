@@ -15,7 +15,7 @@ package org.interguild.editor {
 		private static const LINE_COLOR:uint = 0xCCCCCC;
 		private static const CELL_BG_COLOR:uint = 0xF2F2F2;
 		
-		private var currentTile:String = "";
+		private var currentTitleName:String = " ";
 		
 		public function EditorCell() {
 			//draw sprite
@@ -30,11 +30,11 @@ package org.interguild.editor {
 		}
 		
 		public function setTile(char:String):void{
-			if(currentTile != char){
-				currentTile = char;
+			if(currentTitleName != char){
+				currentTitleName = char;
 				removeChildren();
 				
-				switch(currentTile){
+				switch(currentTitleName){
 					case Terrain.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new TerrainSprite()));
 						break;
@@ -54,8 +54,11 @@ package org.interguild.editor {
 		}
 		
 		public function clearTile():void{
-			currentTile = "";
+			currentTitleName = "";
 			removeChildren();
+		}
+		public function get cellName():String {
+			return currentTitleName;
 		}
 	}
 }

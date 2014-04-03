@@ -146,6 +146,9 @@ package org.interguild.editor {
 			var file:FileReference = new FileReference();
 
 			var titlename:String = currEditor.title.text;
+			
+			//TODO save file
+			
 			file.save(currEditor.getLevelCode(), titlename + ".txt");
 		}
 
