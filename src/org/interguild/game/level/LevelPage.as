@@ -55,7 +55,7 @@ package org.interguild.game.level {
 		}
 
 		private function onLoadError(e:String):void {
-			trace("Error: " + e);
+			trace(e);
 			//TODO display error to user
 		}
 
