@@ -210,6 +210,13 @@ package org.interguild.editor {
 
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data);
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
 			removeChild(scrollBar);
 			removeChild(scroll);
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
