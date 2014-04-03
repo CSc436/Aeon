@@ -215,6 +215,7 @@ package org.interguild.editor {
 		/**
 		 * Called by EditorLoader
 		 */
+		
 		public function newGridReady(title:String, newGrid:EditorGrid):void {
 			this.title.text = title;
 			if (grid) {
