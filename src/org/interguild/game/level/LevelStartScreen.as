@@ -19,13 +19,13 @@ package org.interguild.game.level {
 		//text vars
 		private static const TITLE_FONT:String = new LevelTitleFont().fontName;
 		private static const TITLE_SIZE:Number = 60;
-		private static const TITLE_COLOR:uint = 0xFFFFFF; // white
+		private static const TITLE_COLOR:uint = 0;//0xFFFFFF; // white
 		private static const TITLE_BOLD:Boolean = true;
 
 		//jump-to-start vars
 		private static const JUMP_FONT:String = new LevelTitleFont().fontName;
 		private static const JUMP_SIZE:Number = 40;
-		private static const JUMP_COLOR:uint = 0xFFFFFF; // white
+		private static const JUMP_COLOR:uint = 0;//0xFFFFFF; // white
 		private static const JUMP_BOLD:Boolean = false;
 
 		//text strings
