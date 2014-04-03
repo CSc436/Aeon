@@ -1,4 +1,8 @@
 package org.interguild.game.tiles {
+	
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	
 	import org.interguild.Aeon;
 	
 	public class WoodCrate extends CollidableObject implements Tile {
@@ -12,6 +16,7 @@ package org.interguild.game.tiles {
 		private static const SPRITE_COLOR:uint = 0x723207;
 		private static const SPRITE_WIDTH:uint = 32;
 		private static const SPRITE_HEIGHT:uint = 32;
+		private static const TILE_ENCODING:String = 'w';
 		
 		public var destructibility:int = 2;
 		public var solidity:Boolean = true;
@@ -24,6 +29,15 @@ package org.interguild.game.tiles {
 			graphics.beginFill(SPRITE_COLOR);
 			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
+			
+			// Wood crate image is not working for some reason, even though steel crate is
+			/*
+			addChild(new Bitmap(new WoodenCrateSprite()));
+			var a:BitmapData = new WoodenCrateSprite();
+			var b:BitmapData = new SteelCrateSprite();
+			trace("wood crate height is: " + a.height);
+			trace("steel crate height is " + b.height);
+			*/
 			
 		}
 		
