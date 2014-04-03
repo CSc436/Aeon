@@ -15,7 +15,6 @@ package org.interguild.game.tiles {
 		private static const SPRITE_COLOR:uint = 0x723207;
 		private static const SPRITE_WIDTH:uint = 32;
 		private static const SPRITE_HEIGHT:uint = 32;
-		
 		private static const TILE_ENCODING:String = 'w';
 		
 		public function WoodCrate(x:int, y:int) {

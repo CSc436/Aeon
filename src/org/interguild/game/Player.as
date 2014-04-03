@@ -94,7 +94,6 @@ package org.interguild.game {
 						playerClip = new PlayerJumpLandAnimation();
 						addChild(playerClip);
 						playerClip.gotoAndPlay(0);
-						trace("land animation")
 					}
 					else if(!(playerClip is PlayerWalkingAnimation)) {
 						removeChild(playerClip);
@@ -133,11 +132,11 @@ package org.interguild.game {
 			//gravity
 			speedY += Level.GRAVITY;
 
-			updateKeys();
+			updateKeys();		
 
 			// reset isStanding
 			reset();
-
+			
 			//update movement
 			prevSpeedY = speedY;
 			newX += speedX;
@@ -163,7 +162,7 @@ package org.interguild.game {
 
 		private function updateKeys():void {
 
-			if (!keys.isKeyLeft && !keys.isKeyRight && isStanding)
+			if (!keys.isKeyLeft && !keys.isKeyRight && !keys.isKeyDown && isStanding)
 				playerClip.gotoAndStop(0);
 
 			//moving to the left
@@ -208,6 +207,11 @@ package org.interguild.game {
 				if (speedX < 0)
 					speedX = 0;
 			}
+			
+			//crawl position
+			if(keys.isKeyDown) {
+				// Make the frame go to the crawling clip
+			}
 
 			//jump
 			if (keys.isKeySpace && isStanding && !wasJumping) {
@@ -217,6 +221,8 @@ package org.interguild.game {
 				wasJumping = true;
 			else
 				wasJumping = false;
+			
+			
 		}
 	}
 }

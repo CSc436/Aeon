@@ -3,9 +3,9 @@ package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-
+	
 	import flexunit.utils.ArrayList;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
@@ -42,6 +42,7 @@ package org.interguild.game.level {
 		private var h:uint = 0;
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
+			
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
@@ -132,6 +133,10 @@ package org.interguild.game.level {
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
+		
+		public function stopGame():void {
+			timer.stop();
+		}
 
 		/***************************
 		 * Game Loop methods below *
@@ -141,6 +146,7 @@ package org.interguild.game.level {
 		 * Called 30 frames per second.
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
+			
 			//update player
 			player.onGameLoop();
 			collisionGrid.updateObject(player, false);
