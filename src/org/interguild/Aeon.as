@@ -97,6 +97,10 @@ package org.interguild {
 
 		public function playLevelFile(file:String):void {
 			currentPage.visible = false;
+			if (currentPage == levelPage) {
+				removeChild(levelPage);
+				levelPage = null;
+			}
 
 			//go to level page
 			levelPage = new LevelPage();

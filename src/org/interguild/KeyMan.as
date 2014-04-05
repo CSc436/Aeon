@@ -32,16 +32,12 @@ package org.interguild {
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key
-					if(!isKeyEsc) {
+					if(!isKeyEsc)
 						isKeyEsc = true;
-						if(escapeCallback)
-							escapeCallback();
-					}
-					else {
+					else
 						isKeyEsc = false;
-						if(escapeCallback)
-							escapeCallback();
-					}
+					if(escapeCallback)
+						escapeCallback();
 					break;
 				case 39: //right arrow key
 					isKeyRight = true;
@@ -58,7 +54,7 @@ package org.interguild {
 				case 32: //spacebar
 					isKeySpace = true;
 					if(spacebarCallback)
-						spacebarCallback();
+						spacebarCallback(false);
 					break;
 			}
 		}
@@ -81,6 +77,15 @@ package org.interguild {
 					isKeySpace = false;
 					break;
 			}
+		}
+		
+		public function resumeFromButton():void {
+			if(!isKeyEsc)
+				isKeyEsc = true;
+			else
+				isKeyEsc = false;
+			if(escapeCallback)
+				escapeCallback();
 		}
 		
 		public function addEscapeListener(f:Function):void {
