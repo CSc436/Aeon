@@ -20,6 +20,22 @@ package org.interguild.editor {
 
 			initGridCells();
 		}
+		
+		public function clone():EditorGrid{
+			var temp:EditorGrid = new EditorGrid(rows,cols);
+			for(var i:uint =0; i<temp.rows; i++){
+				for(var j:uint =0; j<temp.cols; j++){
+					var c:EditorCell = new EditorCell();
+					c.x = j * c.width;
+					c.y = i * c.height;
+					temp.cells[i][j] = c;
+					temp.cells[i][j].setTile(cells[i][j].cellName);
+					temp.addChild(c);
+				}
+				
+			}
+			return temp;
+		}
 
 		public function get levelWidth():uint {
 			return cols;

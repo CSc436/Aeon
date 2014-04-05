@@ -112,13 +112,11 @@ package org.interguild.editor {
 			redoList = new Array();
 
 			//undo button:
-			undoButton = new Button();
-			undoButton.label = "Undo";
-			undoButton.x = 750;
-			undoButton.y = 350;
-			undoButton.useHandCursor = true;
+			undoButton = makeButton("Undo",null , 750,350) ;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
-
+			//redobutton:
+			redoButton = makeButton("Redo", null, 750, 375);
+			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
 			//title text field
 			titlef = new TextField();
 			titlef.text = "Title:";
@@ -202,28 +200,16 @@ package org.interguild.editor {
 			addChild(clearButton);
 			addChild(grid);
 			addChild(dropDown);
-			//addChild(undoButton);
-
+			addChild(undoButton);
+			addChild(redoButton);
 			loader = new EditorLoader();
 			loader.addInitializedListener(newGridReady);
 		}
 
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data);
-			gridMask = new Sprite();
-			gridMask.graphics.beginFill(0);
-			gridMask.graphics.drawRect(0,0,550,370);
-			gridMask.graphics.endFill();
-			gridMask.x = 20;
-			gridMask.y = 100;
-			grid.mask = gridMask;
-			removeChild(scrollBar);
-			removeChild(scroll);
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			scrollBar.y = 100;
-			addChild(scrollBar);
-			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			addChild(scroll);
+			//adding in mask and new scrollbar
+			resetComponents();
 		}
 
 		/**
@@ -239,6 +225,9 @@ package org.interguild.editor {
 			grid.x = 20;
 			grid.y = 100;
 			addChild(grid);
+			resetComponents();
+			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
+			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
 		}
 
 		/**
@@ -264,7 +253,9 @@ package org.interguild.editor {
 		 */
 		private function altClick(e:MouseEvent):void {
 			var cell:EditorCell = EditorCell(e.target);
+			
 			if (e.altKey) {
+				undoList.push(grid.clone());
 				//switch to check what trigger is active
 				cell.setTile(activeButton);
 			}
@@ -272,19 +263,18 @@ package org.interguild.editor {
 
 		private function leftClick(e:MouseEvent):void {
 			var cell:EditorCell = EditorCell(e.target);
-			
+			//TODO make undo	
+			trace(undoList.length);
+			undoList.push(grid.clone());
+			trace(undoList.length);
 			if (e.ctrlKey) {
 				cell.clearTile();
 			}else{
 				cell.setTile(activeButton);
 			}
 			
-			//TODO make undo
-			var undoAction:Object = new Object();
-			undoAction.oldsprite = cell;
 			//switch to check what trigger is active
-			undoAction.newsprite = cell;
-			undoList.push(undoAction);
+			
 		}
 
 		private function startClick(e:MouseEvent):void {
@@ -307,13 +297,19 @@ package org.interguild.editor {
 		}
 
 		private function undoClick(e:MouseEvent):void {
-			//TODO
-			var button:Button = Button(e.target);
+			//this function takes from the undo stack and puts it back on the grid
 			if (undoList.length > 0) {
-				var lastAction:Object = undoList.pop;
-				undoList.newsprite = undoList.oldsprite;
+				var popped:EditorGrid = undoList.pop();
+				redoList.push(grid.clone());
+				newGridReady(this.title.text , popped);
 			}
-
+		}
+		private function redoClick(e:MouseEvent):void{
+			if(redoList.length >0){
+				var popped:EditorGrid = redoList.pop();
+				undoList.push(grid.clone());
+				newGridReady(this.title.text , popped);
+			}
 		}
 
 		private function resizeClick(e:MouseEvent):void {
@@ -324,6 +320,7 @@ package org.interguild.editor {
 			grid.resize(h, w);
 
 			//reset scrollbar
+			
 			removeChild(scrollBar);
 			removeChild(scroll);
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
@@ -333,6 +330,23 @@ package org.interguild.editor {
 			addChild(scroll);
 		}
 
+		private function resetComponents():void{
+			//adding back mask, scrollbar, and listeners for undo grid
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
+			removeChild(scrollBar);
+			removeChild(scroll);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar.y = 100;
+			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
+		}
 		/**
 		 * This function returns to the title menu
 		 */
@@ -362,7 +376,6 @@ package org.interguild.editor {
 //			this.addChild(new LevelPage());
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
-			trace(s);
 		}
 
 //		/**
