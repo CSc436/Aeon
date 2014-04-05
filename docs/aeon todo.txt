@@ -23,7 +23,7 @@ definitions: (nice = shippable)
 Level Editor: (Justin, Henry)
 	Write the getLevelCode() method to work with new EditorGrid
 	Get scrolling to be nice
-	undo/redo
+	undo/redo (justin)
 	having multiple levels open, with tabs.
 Graphic/Interface Design work (Livio, Luke, Carlos)
 	Design/Implement the EditorGUI to look nice (Livio, Justin, Henry)
@@ -51,7 +51,7 @@ Collision Detection (Livio, Mike)
 	fix glitch where you can sometimes fall through that steel crate in the test level
 	Make several tiles fall (active/inactive transition propagation)
 Add more tiles (Carlos, and more!)
-	treasure/collectables and the door! (the win condition)
+	treasure/collectables and the door! (the win condition) (Henry)
 	arrow crates!
 	dynamite crates!
 	platforms
