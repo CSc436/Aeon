@@ -165,8 +165,8 @@ package org.interguild.game.collision {
 				var p:Player = Player(activeObject);
 				if (otherObject is Tile) {
 					var t:Tile = Tile(otherObject);
-					if (otherObject is SteelCrate)
-						trace("I am steel");
+//					if (otherObject is SteelCrate)
+//						trace("I am steel");
 					//player on tile collisions
 
 					//solid collisions!!
@@ -184,9 +184,9 @@ package org.interguild.game.collision {
 							 * |otherObject |
 							 * --------------
 							 */
-							trace("PrevY:", activeObject.newY);
+//							trace("PrevY:", activeObject.newY);
 							activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
-							trace("CurrY:", activeObject.newY);
+//							trace("CurrY:", activeObject.newY);
 							activeObject.speedY = 0;
 							//set player standing
 							p.isStanding = true;
@@ -241,7 +241,7 @@ package org.interguild.game.collision {
 								}
 								tile = otherObject.myCollisionGridTiles[0];
 								unblockNeighbors(tile);
-								if (inBounds(tile.gridRow - 1, tile.gridCol)) {
+								if (inBounds(tile.gridRow - 1, tile.gridCol) && grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length > 0) {
 									for (var i:int = 0; i < grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length; i++) {
 										if (!(grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[i] is Player)) {
 											var obj:CollidableObject = grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[0];

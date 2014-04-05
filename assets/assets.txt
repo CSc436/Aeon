@@ -11,6 +11,9 @@ Player Animations{
 		new PlayerJumpPeakThenFallAnimation();
 		new PlayerJumpLandAnimation();		
 	}
+	Crawling Animation{
+		new PlayerCrawlAnimation();
+	}
 }
 
 Tile Sprites{
@@ -32,4 +35,12 @@ GUI Components{
 	new UIScrollBar();
 	new TextArea(); //large text box
 	new TextInput(); //single-line text box
+}
+Main Menu Sprites{
+	LevelEditorButton
+	OptionsButton
+	PlayGameButton
+	PlayUserLevelsButton
+	MenuButtonSelectBG
+	MenuButtonClickBG
 }
