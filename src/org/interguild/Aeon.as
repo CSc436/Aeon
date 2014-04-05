@@ -2,7 +2,6 @@ package org.interguild {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import flash.events.MouseEvent;
 
 	CONFIG::DEBUG {
 		import flash.text.TextField;
@@ -12,7 +11,6 @@ package org.interguild {
 
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
-	import org.interguild.editor.EditorGrid;
 
 	/**
 	 * Aeon.as initializes the game, but it's also responsible for
