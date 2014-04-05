@@ -241,7 +241,7 @@ package org.interguild.game.collision {
 								}
 								tile = otherObject.myCollisionGridTiles[0];
 								unblockNeighbors(tile);
-								if (inBounds(tile.gridRow - 1, tile.gridCol)) {
+								if (inBounds(tile.gridRow - 1, tile.gridCol) && grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length > 0) {
 									for (var i:int = 0; i < grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length; i++) {
 										if (!(grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[i] is Player)) {
 											var obj:CollidableObject = grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[0];
