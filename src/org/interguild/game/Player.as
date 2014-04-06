@@ -56,7 +56,6 @@ package org.interguild.game {
 		}
 
 		private function drawPlayer():void {
-
 			CONFIG::DEBUG {
 				graphics.beginFill(SPRITE_COLOR);
 				graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);

@@ -25,7 +25,9 @@ package org.interguild {
 		}
 		
 		public var spacebarCallback:Function;
-		public var escapeCallback:Function;
+		private var escapeCallback:Function;
+		
+		private var menuCallback:Function;
 
 		public function KeyMan(stage:Stage) {
 			instance = this;
@@ -71,6 +73,8 @@ package org.interguild {
 				else if(evt.keyCode == 78)//n key
 					isClearKey = true;
 			}
+			if(menuCallback)
+				menuCallback(evt.keyCode);
 		}
 
 		private function onKeyUp(evt:KeyboardEvent):void {
@@ -109,6 +113,10 @@ package org.interguild {
 		
 		public function removeSpacebarListener():void {
 			spacebarCallback = null;
+		}
+		
+		public function addMenuCallback(cb:Function):void{
+			menuCallback = cb;
 		}
 	}
 }
