@@ -40,7 +40,8 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 900;
 		public static const STAGE_HEIGHT:uint = 500;
 
-		private static const BG_COLOR:uint = 0xFFFFFF; //0x050c0f;
+		private static const BG_COLOR:uint = 0x060606; //0x050c0f;
+		private static const BORDER_COLOR:uint = 0x666666; //0x050c0f;
 
 		private var currentPage:Page;
 		private var mainMenu:MainMenuPage;
@@ -58,8 +59,11 @@ package org.interguild {
 			scaleX = scaleY = stage.stageWidth / STAGE_WIDTH;
 
 			//init bg
-			graphics.beginFill(BG_COLOR);
+			graphics.beginFill(BORDER_COLOR);
 			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			graphics.endFill();
+			graphics.beginFill(BG_COLOR);
+			graphics.drawRect(1, 1, stage.stageWidth-2, stage.stageHeight-2);
 			graphics.endFill();
 
 			//init key man
@@ -72,7 +76,7 @@ package org.interguild {
 			//init debug mode
 			CONFIG::DEBUG {
 				var textField:TextField = new TextField();
-				textField.defaultTextFormat = new TextFormat("Impact", 20, 0xFFFFFF, true);
+				textField.defaultTextFormat = new TextFormat("Impact", 12, 0xFFFFFF);
 				textField.autoSize = TextFieldAutoSize.LEFT;
 				textField.selectable = false;
 				textField.text = "DEBUGGING MODE";
