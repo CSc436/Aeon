@@ -48,6 +48,7 @@ package org.interguild.loader {
 				case SteelCrate.LEVEL_CODE_CHAR:
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile, false);
+					break;
 				default:
 					trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;
