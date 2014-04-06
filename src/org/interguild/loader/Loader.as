@@ -5,6 +5,8 @@ package org.interguild.loader {
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
 	
 	public class Loader {
@@ -122,21 +124,24 @@ package org.interguild.loader {
 		 * 		CompletionListener
 		 *
 		 */
-		public function loadFromCode(levelCode:String):void {
+		public function loadFromCode(levelCode:String, src:String):void {
 			var title:String;
+			var errors:ArrayList = new ArrayList();
 			
 			code = levelCode;
 			codeLength = code.length;
 			
 			var length:int = levelCode.split("\n").length;
-			if(length < 3)
-				errorCallback("ERROR! Invalid Level Code: Title, dimensions, followed by encoding");
+			if(length < 3){
+				errors.addItem("Invalid Level Code; title, dimensions, followed by encoding.");
+			}
 			
 			//get title
 			var eol:int = code.indexOf("\n");
 			title = code.substr(0, eol);
-			if(title.length < 1)
-				errorCallback("ERROR! Invalid Encoding: First line must be level title");
+			if(title.length < 1){
+				errors.addItem("Invalid Encoding; first line must be level title.");
+			}
 			code = code.substr(eol + 1);
 			
 			//get dimensions
@@ -144,20 +149,24 @@ package org.interguild.loader {
 			var dimensionsLine:String = code.substr(0, eol);
 			var ix:int = dimensionsLine.indexOf("x");
 			if(ix == -1)
-				errorCallback("ERROR! Invalid Level Dimensions: Input should be in the form ##x##");
+				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
 			
 			if(dimensionsLine.substr(0, ix).length < 1)
-				errorCallback("ERROR! Invalid Level Dimensions: Input should be in the form ##x##");
+				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
 			levelWidth = Number(dimensionsLine.substr(0, ix));
 			
 			if(dimensionsLine.substr(ix + 1).length < 1)
-				errorCallback("ERROR! Invalid Level Dimensions: Input should be in the form ##x##");
+				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
 			levelHeight = Number(dimensionsLine.substr(ix + 1));
 			
 			code = code.substr(eol + 1);
 			
 			if (levelWidth <= 0 || levelHeight <= 0) {
-				errorCallback("ERROR! Invalid Level Dimensions: '" + dimensionsLine + "'");
+				errors.addItem("Invalid Level Dimensions; must be positive values.");
+			}
+			
+			if (errors.length() > 0){
+				errorCallback(errors);
 				return;
 			}
 			
@@ -180,7 +189,7 @@ package org.interguild.loader {
 		 * Called after the test level file has been loaded.
 		 */
 		private function onFileLoad(evt:Event):void {
-			loadFromCode(evt.target.data);
+			loadFromCode(evt.target.data,"LevelLoader");
 		}
 		
 		private var i:uint = 0;

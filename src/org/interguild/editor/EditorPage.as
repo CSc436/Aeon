@@ -7,11 +7,14 @@ package org.interguild.editor {
 	import fl.controls.TextArea;
 	import fl.controls.TextInput;
 	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
 	import org.interguild.Page;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.Player;
+	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
@@ -63,6 +66,8 @@ package org.interguild.editor {
 
 		private var mainMenu:Aeon;
 
+		private var progressBar:LevelProgressBar;
+		
 		private var scrollBar:FullScreenScrollBar;
 		private var scroll:HorizontalBar;
 		// UNDO REDO ACTIONS ARRAYLIST
@@ -198,10 +203,11 @@ package org.interguild.editor {
 
 			loader = new EditorLoader();
 			loader.addInitializedListener(newGridReady);
+			loader.addErrorListener(onLoadError);
 		}
 
 		public function openLevel(data:String):void {
-			loader.loadFromCode(data);
+			loader.loadFromCode(data,"Editor");
 		}
 
 		/**
@@ -217,13 +223,23 @@ package org.interguild.editor {
 			addChild(grid);
 		}
 
+		private function onLoadError(e:ArrayList):void {
+			trace(e);
+			returnFromError(e);
+			//TODO display error to user
+		}
+		private function returnFromError(e:ArrayList):void{
+			var aeon:Aeon = Aeon.getMe();
+			aeon.returnFromError(e, "Editor");
+		}
+		
 		/**
 		 * Helps populate the sprite by setting up buttons
 		 *
 		 * @param   index
 		 * @param   row
 		 * @param   column
-		 */
+		 */		
 		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
 			var b:Button = new Button();
 			b.label = label;

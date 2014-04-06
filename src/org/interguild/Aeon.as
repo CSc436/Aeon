@@ -13,6 +13,8 @@ package org.interguild {
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
 	import org.interguild.editor.EditorGrid;
+	import org.interguild.loader.ErrorDialog;
+	import flexunit.utils.ArrayList;
 
 	/**
 	 * Aeon.as initializes the game, but it's also responsible for
@@ -93,6 +95,17 @@ package org.interguild {
 
 			mainMenu.visible = true;
 			currentPage = mainMenu;
+		}
+		
+		public function returnFromError(e:ArrayList, src:String):void{
+			if(src == "MainMenu" || src.search("Loader") >= 0)
+				gotoMainMenu();
+			if(src == "Editor")
+				gotoEditorPage();
+			var dialog:ErrorDialog = new ErrorDialog(e, src);
+			dialog.y = 120;
+			dialog.x=(Aeon.STAGE_WIDTH / 2) - 150;
+			addChild(dialog);
 		}
 
 		public function playLevelFile(file:String):void {
