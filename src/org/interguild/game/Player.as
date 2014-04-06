@@ -1,11 +1,12 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
-
+	
 	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.Tile;
 
-	public class Player extends CollidableObject {
+	public class Player extends CollidableObject implements Tile {
 
 		public static const LEVEL_CODE_CHAR:String = '#';
 
@@ -23,6 +24,8 @@ package org.interguild.game {
 		private static const RUN_FRICTION:Number = 2;
 
 		private static const JUMP_SPEED:Number = -28;
+		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
+		public static const KNOCKBACK_HORIZONTAL:Number = -14;
 
 		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
@@ -247,6 +250,69 @@ package org.interguild.game {
 			else
 				wasJumping = false;
 
+		}
+
+		/*
+		function: getDestructibility()
+		description: returns value indicating whether or not
+		a tile should be destroyed and by what.
+		param: None
+		return: int
+		0 = indestructible (terrain)
+		1 = destructible by arrows and dynamite (steel)
+		2 = destructible by arrows, dynamite and touch (wooden)
+		*/
+		public function getDestructibility():int {
+			return 1;
+		}
+
+		/*
+		function: isSolid()
+		description: returns whether or not the tile is solid
+		i.e. player/tiles can pass through it.
+		param: None
+		return: Boolean
+		*/
+		public function isSolid():Boolean {
+			return true;
+		}
+
+		/*
+		function: isGravible()
+		description: returns whether or not the tile is affected
+		by simulated game gravity.
+		param: None
+		return: Boolean
+		*/
+		public function isGravible():Boolean {
+			return true;
+		}
+
+		/*
+		function: doesKnockback()
+		description: returns whether or not the tile knocks back
+		the character/tile that has collided with it.
+		param: None
+		return: int
+		0 = does not knockback
+		>0 = amount to knockback
+		*/
+		public function doesKnockback():int {
+			return 0;
+		}
+
+		/*
+		function: isBuoyant()
+		description: returns whether or not the tile can float.
+		param: None
+		return: Boolean
+		*/
+		public function isBuoyant():Boolean {
+			return false;
+		}
+
+		public function die():void {
+			trace("YOU DEAD");
 		}
 	}
 }

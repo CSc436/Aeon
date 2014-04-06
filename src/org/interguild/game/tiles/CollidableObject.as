@@ -140,12 +140,6 @@ package org.interguild.game.tiles {
 			return active;
 		}
 
-		public function removeSelf():void {
-			for (var i:int = 0; i < myGrids.length; i++) {
-				GridTile(myGrids[i]).removeObject(this);
-			}
-		}
-
 		public override function finishGameLoop():void {
 			super.finishGameLoop();
 			justCollided = new Dictionary(true);

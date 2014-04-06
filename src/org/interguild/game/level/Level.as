@@ -42,13 +42,13 @@ package org.interguild.game.level {
 
 		private var w:uint = 0;
 		private var h:uint = 0;
-		
-		CONFIG::DEBUG{
+
+		CONFIG::DEBUG {
 			private var debugSprite:Sprite = new Sprite();
 		}
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
-			
+
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
@@ -59,8 +59,8 @@ package org.interguild.game.level {
 
 			//initialize camera
 			camera = new Camera(player = new Player());
-			camera.setLevelX( Aeon.TILE_WIDTH * lvlWidth ); // need to send to camera so it knows level width
-			camera.setLevelY( Aeon.TILE_HEIGHT * lvlHeight ); // need to send to camera so it knows level height
+			camera.setLevelX(Aeon.TILE_WIDTH * lvlWidth); // need to send to camera so it knows level width
+			camera.setLevelY(Aeon.TILE_HEIGHT * lvlHeight); // need to send to camera so it knows level height
 			addChild(camera);
 
 			//init player
@@ -132,7 +132,7 @@ package org.interguild.game.level {
 		 * Called by LevelLoader when complete.
 		 */
 		public function startGame():void {
-			CONFIG::DEBUG{
+			CONFIG::DEBUG {
 				camera.addChildAt(collisionGrid, 1);
 				camera.addChild(debugSprite);
 			}
@@ -144,7 +144,7 @@ package org.interguild.game.level {
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
-		
+
 		public function stopGame():void {
 			timer.stop();
 		}
@@ -152,19 +152,23 @@ package org.interguild.game.level {
 		/***************************
 		 * Game Loop methods below *
 		 ****************************/
-		
+
 		/**
 		 * Called 30 frames per second.
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
-			/*
-			 * UPDATE
-			 */
+			update();
 
+			collisions();
+			
+			remove();
+
+			cleanup();
+		}
+
+		private function update():void {
 			//update player
 			player.onGameLoop();
-			
-			// reset isStanding
 			player.reset();
 
 			//update active objects
@@ -173,25 +177,22 @@ package org.interguild.game.level {
 				var obj:GameObject = activeObjects[i];
 				obj.onGameLoop();
 			}
-			
-			//draw collision wireframes
-			CONFIG::DEBUG {
+		}
+
+		private function collisions():void {
+			CONFIG::DEBUG { //draw collision wireframes
 				var s:Sprite = player.drawHitBow(false);
-				if(s)
+				if (s)
 					debugSprite.addChild(s);
 			}
-				
-			/*
-			 * COLLISIONS
-			 */
-			
+
 			//detect collisions for player
 			collisionGrid.updateObject(player, false);
-			
+
 			//detect collisions for active objects
-			len = activeObjects.length;
-			for (i = 0; i < len; i++) {
-				obj = activeObjects[i];
+			var len:uint = activeObjects.length;
+			for (var i:uint = 0; i < len; i++) {
+				var obj:GameObject = activeObjects[i];
 				if (obj is CollidableObject) {
 					//TODO if obj is no longer active, pass true below, rather than false
 					collisionGrid.updateObject(CollidableObject(obj), false);
@@ -199,55 +200,45 @@ package org.interguild.game.level {
 			}
 
 			//test and handle collisions
-			var remove:ArrayList = collisionGrid.detectAndHandleCollisions(player);
-			removeObjects(remove);
-			collisionGrid.resetRemovalList();
-			if(activeObjects.length > 0){
+			collisionGrid.detectAndHandleCollisions(player);
+			if (activeObjects.length > 0) {
 				for (i = 0; i < activeObjects.length; i++) {
-					remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
-					removeObjects(remove);
-					collisionGrid.resetRemovalList();
-				}
-			}
-			
-			/*
-			 * FINISH GAME LOOP
-			 */
-			
-			//finish game loops
-			player.finishGameLoop();
-			if(activeObjects.length > 0){
-				for (i = 0; i < activeObjects.length; i++) {
-					GameObject(activeObjects[i]).finishGameLoop();
-				}
-			}
-			
-			//update camera
-			camera.updateCamera();
-			
-			//draw collision wireframes
-			CONFIG::DEBUG {
-				s = player.drawHitBow(true);
-				if(s)
-					debugSprite.addChild(s);
-				if(KeyMan.getMe().isClearKey){
-					debugSprite.removeChildren();
+					collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
 				}
 			}
 		}
 
-		public function removeObjects(remove:ArrayList):void {
-			var r:GameObject;
-			var grid:Array = collisionGrid.getGrid();
-			for (var i:int = 0; i < remove.length(); i++) {
-				r = GameObject(remove.getItemAt(i));
+		private function cleanup():void {
+			//finish game loops
+			player.finishGameLoop();
+			if (activeObjects.length > 0) {
+				for (var i:uint = 0; i < activeObjects.length; i++) {
+					GameObject(activeObjects[i]).finishGameLoop();
+				}
+			}
+			CONFIG::DEBUG { //draw collision wireframes
+				var s:Sprite = player.drawHitBow(true);
+				if (s)
+					debugSprite.addChild(s);
+				if (KeyMan.getMe().isClearKey) {
+					debugSprite.removeChildren();
+				}
+			}
 
-				//remove from allObjects list
-				var index:int = allObjects.indexOf(r, 0);
-				allObjects.splice(index, 1);
+			//update camera
+			camera.updateCamera();
+		}
+
+		public function remove():void {
+			var remove:Array = collisionGrid.removalList;
+			for (var i:int = 0; i < remove.length; i++) {
+				var r:GameObject = GameObject(remove[i]);
+
+				//do not remove from allObjects list
+				//need to store references for the sake of restarting the level
 
 				//remove from activeObjects list
-				index = activeObjects.indexOf(r, 0);
+				var index:int = activeObjects.indexOf(r);
 				if (index != -1) {
 					activeObjects.splice(index, 1);
 				}
@@ -256,21 +247,23 @@ package org.interguild.game.level {
 				camera.removeChild(DisplayObject(r));
 
 				//remove from grid tiles
-				if (r is CollidableObject)
-					CollidableObject(r).removeSelf();
+				if (r is CollidableObject){
+					collisionGrid.destroyObject(CollidableObject(r));
+				}
 			}
+			collisionGrid.resetRemovalList();
 		}
 
-		public function activateObject(obj:CollidableObject):void{
+		public function activateObject(obj:CollidableObject):void {
 			obj.isActive = true;
 			activeObjects.push(obj);
 		}
-		
-		public function deactivateObject(obj:CollidableObject):void{
-			var index:int = activeObjects.indexOf(obj,0);
-			
+
+		public function deactivateObject(obj:CollidableObject):void {
+			var index:int = activeObjects.indexOf(obj, 0);
+
 			obj.isActive = false;
-			activeObjects.splice(index,1);
+			activeObjects.splice(index, 1);
 			obj.finishGameLoop;
 		}
 	}
