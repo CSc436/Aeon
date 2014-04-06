@@ -23,9 +23,9 @@ package org.interguild.game {
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
 
-		private static const JUMP_SPEED:Number = -28;
+		private static const JUMP_SPEED:Number = -20;
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
-		public static const KNOCKBACK_HORIZONTAL:Number = -14;
+		public static const KNOCKBACK_HORIZONTAL:Number = 20;
 
 		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
@@ -140,7 +140,6 @@ package org.interguild.game {
 				playerClip.x = 25;
 			playerClip.y = -8;
 
-			prevSpeedY = speedY;
 			speedY += Level.GRAVITY;
 
 			updateKeys();

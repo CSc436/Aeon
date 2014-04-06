@@ -2,26 +2,33 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
-	import flexunit.utils.ArrayList;
-	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.SteelCrate;
+	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Tile;
-
 
 	public class CollisionGrid extends Sprite {
 
 		private var level:Level;
 		private var grid:Array;
+		
+		private var allObjects:Vector.<GameObject>;
+		public var activeObjects:Vector.<GameObject>;
+		
 		private var removalObjects:Array;
+		private var deactivateObjects:Array;
 
 		public function CollisionGrid(width:int, height:int, level:Level) {
 			this.level = level;
 			removalObjects = new Array();
+			deactivateObjects = new Array();
 			
+			//init lists
+			allObjects = new Vector.<GameObject>();
+			activeObjects = new Vector.<GameObject>();
+
 			//init 2D array
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
@@ -41,6 +48,13 @@ package org.interguild.game.collision {
 
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
+		}
+		
+		public function addObject(tile:CollidableObject):void{
+			allObjects.push(tile);
+			if (tile.isActive)
+				activeObjects.push(tile);
+			updateObject(tile, !tile.isActive);
 		}
 
 		/**
@@ -156,7 +170,7 @@ package org.interguild.game.collision {
 
 //			if(otherObject is SteelCrate)
 //				trace("I am steel");
-			
+
 			// get dirction of collision
 			var direction:uint = determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
 
@@ -172,13 +186,13 @@ package org.interguild.game.collision {
 			var otherTile:Tile = Tile(otherObject);
 
 			/*
-			 * DESTRUCTION
+			 * PLAYER HITS CRATE
 			 */
 			if (p && otherTile.getDestructibility() == 2) {
 				// knockback stuff:
 				if (otherTile.doesKnockback() > 0) {
 					if (direction == Direction.DOWN) {
-						activeObject.speedY = Player.KNOCKBACK_JUMP_SPEED;
+						p.speedY = Player.KNOCKBACK_JUMP_SPEED;
 					} else if (direction == Direction.UP) {
 						activeObject.speedY = 0;
 					} else if (direction == Direction.RIGHT) {
@@ -188,17 +202,18 @@ package org.interguild.game.collision {
 					}
 				}
 				removalObjects.push(otherObject);
-			}
 
-			/*
-			 * SOLID COLLISIONS
-			 */
-			if (activeTile.isSolid() && otherTile.isSolid()) {
+				/*
+				 * SOLID COLLISIONS
+				 */
+			} else if (activeTile.isSolid() && otherTile.isSolid()) {
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
 					if (p) {
 						p.isStanding = true;
+					}else{
+						deactivateObjects.push(activeObject);
 					}
 				} else if (direction == Direction.UP) {
 					if (otherTile.isActive) {
@@ -223,6 +238,7 @@ package org.interguild.game.collision {
 		}
 
 		public function destroyObject(obj:CollidableObject):void {
+			//remove from activeObjects list
 			if (!obj.isActive) {
 				var tile:GridTile = obj.myCollisionGridTiles[0];
 				if (inBounds(tile.gridRow - 1, tile.gridCol)) {
@@ -244,9 +260,17 @@ package org.interguild.game.collision {
 //				}
 //			}
 		}
+		
+		public function get deactivationList():Array{
+			return deactivateObjects;
+		}
 
 		public function get removalList():Array {
 			return removalObjects;
+		}
+		
+		public function resetDeactivationList():void{
+			deactivateObjects = new Array();
 		}
 
 		public function resetRemovalList():void {

@@ -106,7 +106,10 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				o.isActive = true;
+				if (!o.isActive) {
+					o.isActive = true;
+					grid.activeObjects.push(o);
+				}
 			}
 		}
 	}

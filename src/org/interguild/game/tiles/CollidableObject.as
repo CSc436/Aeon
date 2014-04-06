@@ -5,7 +5,6 @@ package org.interguild.game.tiles {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
-	import org.interguild.game.Player;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.KeyMan;
 

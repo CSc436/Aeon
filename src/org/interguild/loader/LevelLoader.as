@@ -39,15 +39,15 @@ package org.interguild.loader {
 					break;
 				case Terrain.LEVEL_CODE_CHAR:
 					tile = new Terrain(px, py);
-					level.createCollidableObject(tile, false);
+					level.createCollidableObject(tile);
 					break;
 				case WoodCrate.LEVEL_CODE_CHAR:
 					tile = new WoodCrate(px, py);
-					level.createCollidableObject(tile, false);
+					level.createCollidableObject(tile);
 					break;
 				case SteelCrate.LEVEL_CODE_CHAR:
 					tile = new SteelCrate(px, py);
-					level.createCollidableObject(tile, false);
+					level.createCollidableObject(tile);
 				default:
 					trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;

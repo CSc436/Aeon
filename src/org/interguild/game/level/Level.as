@@ -4,8 +4,6 @@ package org.interguild.game.level {
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import flexunit.utils.ArrayList;
-	
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
 	import org.interguild.game.Camera;
@@ -24,7 +22,7 @@ package org.interguild.game.level {
 	 */
 	public class Level extends Sprite {
 
-		public static const GRAVITY:Number = 4;
+		public static const GRAVITY:Number = 2;
 
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
@@ -35,8 +33,6 @@ package org.interguild.game.level {
 		private var player:Player;
 
 		private var collisionGrid:CollisionGrid;
-		private var allObjects:Vector.<GameObject>;
-		private var activeObjects:Vector.<GameObject>;
 
 		private var timer:Timer;
 
@@ -52,10 +48,6 @@ package org.interguild.game.level {
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
-
-			//init lists
-			allObjects = new Vector.<GameObject>();
-			activeObjects = new Vector.<GameObject>();
 
 			//initialize camera
 			camera = new Camera(player = new Player());
@@ -120,11 +112,8 @@ package org.interguild.game.level {
 			collisionGrid.updateObject(player, false);
 		}
 
-		public function createCollidableObject(tile:CollidableObject, isActive:Boolean):void {
-			allObjects.push(tile);
-			if (isActive)
-				activeObjects.push(tile);
-			collisionGrid.updateObject(tile, !isActive);
+		public function createCollidableObject(tile:CollidableObject):void {
+			collisionGrid.addObject(tile);
 			camera.addChild(tile);
 		}
 
@@ -158,12 +147,9 @@ package org.interguild.game.level {
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
 			update();
-
 			collisions();
-			
-			remove();
-
 			cleanup();
+			remove();
 		}
 
 		private function update():void {
@@ -172,9 +158,9 @@ package org.interguild.game.level {
 			player.reset();
 
 			//update active objects
-			var len:uint = activeObjects.length;
+			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
-				var obj:GameObject = activeObjects[i];
+				var obj:GameObject = collisionGrid.activeObjects[i];
 				obj.onGameLoop();
 			}
 		}
@@ -190,9 +176,9 @@ package org.interguild.game.level {
 			collisionGrid.updateObject(player, false);
 
 			//detect collisions for active objects
-			var len:uint = activeObjects.length;
+			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
-				var obj:GameObject = activeObjects[i];
+				var obj:GameObject = collisionGrid.activeObjects[i];
 				if (obj is CollidableObject) {
 					//TODO if obj is no longer active, pass true below, rather than false
 					collisionGrid.updateObject(CollidableObject(obj), false);
@@ -201,19 +187,56 @@ package org.interguild.game.level {
 
 			//test and handle collisions
 			collisionGrid.detectAndHandleCollisions(player);
-			if (activeObjects.length > 0) {
-				for (i = 0; i < activeObjects.length; i++) {
-					collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
+			if (collisionGrid.activeObjects.length > 0) {
+				for (i = 0; i < collisionGrid.activeObjects.length; i++) {
+					collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
 				}
 			}
+		}
+
+		public function remove():void {
+			var remove:Array = collisionGrid.removalList;
+			for (var i:int = 0; i < remove.length; i++) {
+				var r:GameObject = GameObject(remove[i]);
+				
+				//remove from active objects
+				var index:int = collisionGrid.activeObjects.indexOf(r);
+				if (index != -1) {
+					collisionGrid.activeObjects.splice(index, 1);
+				}
+
+				//remove from display list
+				camera.removeChild(DisplayObject(r));
+
+				//remove from grid tiles
+				if (r is CollidableObject) {
+					collisionGrid.destroyObject(CollidableObject(r));
+				}
+			}
+			collisionGrid.resetRemovalList();
+			
+			remove = collisionGrid.deactivationList;
+			for(i = 0; i < remove.length; i++){
+				r = GameObject(remove[i]);
+				
+				index = collisionGrid.activeObjects.indexOf(r);
+				if (index != -1) {
+					collisionGrid.activeObjects.splice(index, 1);
+				}
+				
+				if (r is CollidableObject) {
+					CollidableObject(r).isActive = false;
+				}
+			}
+			collisionGrid.resetDeactivationList();
 		}
 
 		private function cleanup():void {
 			//finish game loops
 			player.finishGameLoop();
-			if (activeObjects.length > 0) {
-				for (var i:uint = 0; i < activeObjects.length; i++) {
-					GameObject(activeObjects[i]).finishGameLoop();
+			if (collisionGrid.activeObjects.length > 0) {
+				for (var i:uint = 0; i < collisionGrid.activeObjects.length; i++) {
+					GameObject(collisionGrid.activeObjects[i]).finishGameLoop();
 				}
 			}
 			CONFIG::DEBUG { //draw collision wireframes
@@ -229,41 +252,16 @@ package org.interguild.game.level {
 			camera.updateCamera();
 		}
 
-		public function remove():void {
-			var remove:Array = collisionGrid.removalList;
-			for (var i:int = 0; i < remove.length; i++) {
-				var r:GameObject = GameObject(remove[i]);
-
-				//do not remove from allObjects list
-				//need to store references for the sake of restarting the level
-
-				//remove from activeObjects list
-				var index:int = activeObjects.indexOf(r);
-				if (index != -1) {
-					activeObjects.splice(index, 1);
-				}
-
-				//remove from display list
-				camera.removeChild(DisplayObject(r));
-
-				//remove from grid tiles
-				if (r is CollidableObject){
-					collisionGrid.destroyObject(CollidableObject(r));
-				}
-			}
-			collisionGrid.resetRemovalList();
-		}
-
 		public function activateObject(obj:CollidableObject):void {
 			obj.isActive = true;
-			activeObjects.push(obj);
+			collisionGrid.activeObjects.push(obj);
 		}
 
 		public function deactivateObject(obj:CollidableObject):void {
-			var index:int = activeObjects.indexOf(obj, 0);
+			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
 
 			obj.isActive = false;
-			activeObjects.splice(index, 1);
+			collisionGrid.activeObjects.splice(index, 1);
 			obj.finishGameLoop;
 		}
 	}
