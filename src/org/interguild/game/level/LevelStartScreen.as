@@ -163,10 +163,12 @@ package org.interguild.game.level {
 		}
 		
 		protected function quitGame(event:MouseEvent):void {
+			KeyMan.getMe().resetEscKey();
 			Aeon.getMe().gotoMainMenu();
 		}
 		
 		protected function goToEditor(event:MouseEvent):void {
+			KeyMan.getMe().resetEscKey();
 			// Probably want to give the user some kind of dialog warning them
 			// that exiting to the editor will cause them to lose their progress
 			// in the current level
@@ -174,6 +176,7 @@ package org.interguild.game.level {
 		}
 		
 		protected function restartFromBeginning(event:MouseEvent):void {
+			KeyMan.getMe().resetEscKey();
 			// This is hardcoded right now, but we probably want some kind of
 			// global reference to the current file so that we know what level
 			// needs to be restarted

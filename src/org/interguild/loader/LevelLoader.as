@@ -3,6 +3,7 @@ package org.interguild.loader {
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
@@ -48,6 +49,11 @@ package org.interguild.loader {
 				case SteelCrate.LEVEL_CODE_CHAR:
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile, false);
+					break;
+				case ArrowCrate.LEVEL_CODE_CHAR:
+					tile = new ArrowCrate(px, py);
+					level.createCollidableObject(tile, false);
+					break;
 				default:
 					trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;

@@ -88,6 +88,10 @@ package org.interguild {
 				escapeCallback();
 		}
 		
+		public function resetEscKey():void {
+			isKeyEsc = false;
+		}
+		
 		public function addEscapeListener(f:Function):void {
 			escapeCallback = f;
 		}
