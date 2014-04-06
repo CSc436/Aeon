@@ -48,6 +48,7 @@ package org.interguild.game.level {
 		}
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
+			
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
@@ -143,6 +144,10 @@ package org.interguild.game.level {
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
+		
+		public function stopGame():void {
+			timer.stop();
+		}
 
 		/***************************
 		 * Game Loop methods below *
@@ -155,7 +160,7 @@ package org.interguild.game.level {
 			/*
 			 * UPDATE
 			 */
-		
+
 			//update player
 			player.onGameLoop();
 			

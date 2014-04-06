@@ -56,7 +56,6 @@ package org.interguild.game {
 		}
 
 		private function drawPlayer():void {
-
 			CONFIG::DEBUG {
 				graphics.beginFill(SPRITE_COLOR);
 				graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
@@ -105,7 +104,6 @@ package org.interguild.game {
 						playerClip = new PlayerJumpLandAnimation();
 						addChild(playerClip);
 						playerClip.gotoAndPlay(0);
-						trace("land animation")
 					}
 					else if(!(playerClip is PlayerWalkingAnimation)) {
 						removeChild(playerClip);
@@ -143,7 +141,16 @@ package org.interguild.game {
 			
 			prevSpeedY = speedY;
 			speedY += Level.GRAVITY;
-			updateKeys();
+
+			updateKeys();		
+
+			// reset isStanding
+			reset();
+			
+			//update movement
+			prevSpeedY = speedY;
+			newX += speedX;
+			newY += speedY;
 
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
@@ -170,7 +177,7 @@ package org.interguild.game {
 
 		private function updateKeys():void {
 
-			if (!keys.isKeyLeft && !keys.isKeyRight && isStanding)
+			if (!keys.isKeyLeft && !keys.isKeyRight && !keys.isKeyDown && isStanding)
 				playerClip.gotoAndStop(0);
 
 			//moving to the left
@@ -223,6 +230,11 @@ package org.interguild.game {
 					speedX = 0;
 			}
 			
+			//crawl position
+			if(keys.isKeyDown) {
+				// Make the frame go to the crawling clip
+			}
+
 			// look up
 			if ( keys.isKeyUp ) {
 				isFacingUp = true;
@@ -241,15 +253,7 @@ package org.interguild.game {
 				wasJumping = true;
 			else
 				wasJumping = false;
-			
-			// crouching
-			if (keys.isKeyDown){
-				isCrouching = true;
-			}
-			// no longer crouching
-			if (!keys.isKeyDown) {
-				isCrouching = false;
-			}
+
 		}
 	}
 }
