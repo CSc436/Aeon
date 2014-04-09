@@ -25,7 +25,7 @@ package org.interguild {
 	 * own class or object.
 	 */
 
-	[SWF(backgroundColor = "0x000000", width = "900", height = "500", frameRate = "30")]
+	[SWF(backgroundColor = "0x999999", width = "900", height = "500", frameRate = "30")]
 
 	public class Aeon extends Sprite {
 
@@ -45,8 +45,8 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 900;
 		public static const STAGE_HEIGHT:uint = 500;
 
-		private static const BG_COLOR:uint = 0x060606; //0x050c0f;
-		private static const BORDER_COLOR:uint = 0x666666; //0x050c0f;
+		private static const BG_COLOR:uint = 0x000b17;
+		private static const BORDER_COLOR:uint = 0x000b17; //no border
 
 		private var currentPage:Page;
 		private var mainMenu:MainMenuPage;
@@ -65,10 +65,10 @@ package org.interguild {
 
 			//init bg
 			graphics.beginFill(BORDER_COLOR);
-			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			graphics.drawRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
 			graphics.endFill();
 			graphics.beginFill(BG_COLOR);
-			graphics.drawRect(1, 1, stage.stageWidth-2, stage.stageHeight-2);
+			graphics.drawRect(1, 1, STAGE_WIDTH-2, STAGE_HEIGHT-2);
 			graphics.endFill();
 
 			//init key man
@@ -81,7 +81,7 @@ package org.interguild {
 			//init debug mode
 			CONFIG::DEBUG {
 				var textField:TextField = new TextField();
-				textField.defaultTextFormat = new TextFormat("Impact", 12, 0xFFFFFF);
+				textField.defaultTextFormat = new TextFormat("Impact", 14, 0xFFFFFF);
 				textField.autoSize = TextFieldAutoSize.LEFT;
 				textField.selectable = false;
 				textField.text = "DEBUGGING MODE";

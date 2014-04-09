@@ -152,7 +152,7 @@ package org.interguild.game.level {
 		/***************************
 		 * Game Loop methods below *
 		 ****************************/
-
+		
 		/**
 		 * Called 30 frames per second.
 		 */
@@ -207,7 +207,6 @@ package org.interguild.game.level {
 					remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
 					removeObjects(remove);
 					collisionGrid.resetRemovalList();
-
 				}
 			}
 			
