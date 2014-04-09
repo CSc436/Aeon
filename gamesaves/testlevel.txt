@@ -5,7 +5,7 @@ x=80
 xx      xx                 xxxxx        
 xx     wx                  xxxxx        
 xx  #  s                   xxxxx        
-xxxxxx     xx              xxxxx        
+xxxxxx w   xx              xxxxx        
 xx        xxx             xxxxxx        
 xx                         xxxxx        
 xx  xxxxxxxxxxx   x        xxxxx        
