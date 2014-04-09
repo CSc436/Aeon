@@ -5,6 +5,7 @@ package org.interguild.game.level {
 	import org.interguild.KeyMan;
 	import org.interguild.Page;
 	import org.interguild.loader.LevelLoader;
+	import flexunit.utils.ArrayList;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
@@ -43,30 +44,43 @@ package org.interguild.game.level {
 		}
 		
 		public function playLevelFromCode(code:String):void{
-			loader.loadFromCode(code);
+			loader.loadFromCode(code, "MainMenu");
 		}
 
 		private function onFileLoad(lvl:Level):void {
 			level = lvl;
 			startScreen = new LevelStartScreen(level.title);
 			addChild(startScreen);
-			showPreviewLevel();
+			showPreviewLevel(false);
 			addChild(level);
 		}
 
-		private function onLoadError(e:String):void {
-			trace("Error: " + e);
+		private function onLoadError(e:ArrayList):void {
+			trace(e);
+			returnFromError(e);
 			//TODO display error to user
+		}
+		private function returnFromError(e:ArrayList):void{
+			var aeon:Aeon = Aeon.getMe();
+			aeon.returnFromError(e, "LevelLoader");
 		}
 
 		private function onLoadComplete():void {
 			removeChild(progressBar);
 			startScreen.loadComplete();
 			KeyMan.getMe().addSpacebarListener(showFullLevel);
+			KeyMan.getMe().addEscapeListener(pauseGame);
 		}
 		
-		private function showPreviewLevel():void{
+		private function showPreviewLevel(isPauseMenu:Boolean):void{
 			startScreen.visible = true;
+			
+			// Get rid of the jump to start text if we are pausing the game rather than 
+			// Starting the level for the first time
+			if(isPauseMenu) {
+				startScreen.setJumpText("Paused");
+				startScreen.initButtons();
+			}
 			
 			//scale level preview:
 			var box:Rectangle = startScreen.getPreviewRegion();
@@ -82,7 +96,21 @@ package org.interguild.game.level {
 			level.y = box.y + (box.height / 2) - level.heightInPixels * level.scaleY / 2;
 		}
 		
+		private function pauseGame():void {
+			if(KeyMan.getMe().isKeyEsc && !startScreen.visible) {
+				trace("Trying to pause the game");
+				level.stopGame();
+				showPreviewLevel(true);
+			}
+			else if (!(KeyMan.getMe().isKeyEsc) && startScreen.visible) {
+				trace("Trying to unpause the game");
+				showFullLevel();
+			}
+		}
+		
 		private function showFullLevel():void{
+			if(KeyMan.getMe().spacebarCallback != null)
+				KeyMan.getMe().removeSpacebarListener();
 			if(startScreen.visible){
 				startScreen.visible = false;
 				level.scaleX = level.scaleY = 1;

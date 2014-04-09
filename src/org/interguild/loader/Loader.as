@@ -4,33 +4,35 @@ package org.interguild.loader {
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
-
+	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
-
+	
 	public class Loader {
-
+		
 		private static const LOOPS_PER_TICK:uint = 250;
-
+		
 		private var code:String; //the level encoding in the file
 		private var codeLength:uint;
 		private var timer:Timer;
-
+		
 		private var levelWidth:int;
 		private var levelHeight:int;
-
+		
 		protected var initializedCallback:Function;
 		private var progressCallback:Function;
 		private var errorCallback:Function;
 		private var loadingCompleteCallback:Function;
 		private var levelParsedCallback:Function;
-
+		
 		public function Loader() {
 		}
-
+		
 		/*******************************
 		 * LISTENER/CALLBACK FUNCTIONS *
 		 *******************************/
-
+		
 		/**
 		 * If you want to display the progress of level loading.
 		 *
@@ -43,7 +45,7 @@ package org.interguild.loader {
 		public function addProgressListener(onProgress:Function):void {
 			progressCallback = onProgress;
 		}
-
+		
 		/**
 		 * This function is how we will pass you the Level object.
 		 * This is called when we first initialized the level, which
@@ -64,7 +66,7 @@ package org.interguild.loader {
 		public function addInitializedListener(cb:Function):void {
 			initializedCallback = cb;
 		}
-
+		
 		/**
 		 * If an error happens, we'll pass it to you so that you can
 		 * display it to the user.
@@ -75,7 +77,7 @@ package org.interguild.loader {
 		public function addErrorListener(cb:Function):void {
 			errorCallback = cb;
 		}
-
+		
 		/**
 		 * This is called when the level has finished being parsed
 		 * and constructed.
@@ -86,11 +88,11 @@ package org.interguild.loader {
 		public function addCompletionListener(cb:Function):void {
 			loadingCompleteCallback = cb;
 		}
-
+		
 		/**********************************
 		 * PUBLIC LEVEL LOADING FUNCTIONS *
 		 **********************************/
-
+		
 		/**
 		 * This will first open the file, and then start
 		 * constructing the level. Calls these callbacks:
@@ -104,7 +106,7 @@ package org.interguild.loader {
 			getFile.addEventListener(Event.COMPLETE, onFileLoad);
 			getFile.load(new URLRequest(filename));
 		}
-
+		
 		/**
 		 * If you already have the levelCode, you can have LevelLoader
 		 * parse it for you.
@@ -122,59 +124,79 @@ package org.interguild.loader {
 		 * 		CompletionListener
 		 *
 		 */
-		public function loadFromCode(levelCode:String):void {
+		public function loadFromCode(levelCode:String, src:String):void {
 			var title:String;
-			var lvlWidth:int;
-			var lvlHeight:int;
-
+			var errors:ArrayList = new ArrayList();
+			
 			code = levelCode;
 			codeLength = code.length;
-
+			
+			var length:int = levelCode.split("\n").length;
+			if(length < 3){
+				errors.addItem("Invalid Level Code; title, dimensions, followed by encoding.");
+			}
+			
 			//get title
 			var eol:int = code.indexOf("\n");
 			title = code.substr(0, eol);
+			if(title.length < 1){
+				errors.addItem("Invalid Encoding; first line must be level title.");
+			}
 			code = code.substr(eol + 1);
-
+			
 			//get dimensions
 			eol = code.indexOf("\n");
 			var dimensionsLine:String = code.substr(0, eol);
 			var ix:int = dimensionsLine.indexOf("x");
-			lvlWidth = Number(dimensionsLine.substr(0, ix));
-			lvlHeight = Number(dimensionsLine.substr(ix + 1));
+			if(ix == -1)
+				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
+			
+			if(dimensionsLine.substr(0, ix).length < 1)
+				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
+			levelWidth = Number(dimensionsLine.substr(0, ix));
+			
+			if(dimensionsLine.substr(ix + 1).length < 1)
+				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
+			levelHeight = Number(dimensionsLine.substr(ix + 1));
+			
 			code = code.substr(eol + 1);
-
-			if (lvlWidth <= 0 || lvlHeight <= 0) {
-				errorCallback("Invalid Level Dimensions: '" + dimensionsLine + "'");
+			
+			if (levelWidth <= 0 || levelHeight <= 0) {
+				errors.addItem("Invalid Level Dimensions; must be positive values.");
+			}
+			
+			if (errors.length() > 0){
+				errorCallback(errors);
 				return;
 			}
-
-			setLevelInfo(title, lvlWidth, lvlHeight);
-
+			
+			setLevelInfo(title, levelWidth, levelHeight);
+			
 			timer = new Timer(10);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
 			timer.start();
 		}
-
+		
 		/********************
 		 * HIDDEN FUNCTIONS *
 		 ********************/
-
+		
 		protected function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void {
 			throw new Error("initObject is abstract. Please override it.");
 		}
-
+		
 		/**
 		 * Called after the test level file has been loaded.
 		 */
 		private function onFileLoad(evt:Event):void {
-			loadFromCode(evt.target.data);
+			loadFromCode(evt.target.data,"LevelLoader");
 		}
-
+		
 		private var i:uint = 0;
 		private var px:int = 0;
 		private var py:int = 0;
 		private var prevChar:String;
-
+		
 		/**
 		 * We use a timer so that we can interrupt the loading code every once in
 		 * a while in order to display progress to the screen.
@@ -188,7 +210,7 @@ package org.interguild.loader {
 				var curChar:String = code.charAt(i);
 				parseChar(curChar);
 			}
-
+			
 			//if done loading
 			if (i == codeLength) {
 				timer.stop();
@@ -198,7 +220,7 @@ package org.interguild.loader {
 				progressCallback(i / codeLength);
 			}
 		}
-
+		
 		/**
 		 * This method parses the special characters in the level
 		 * encoding. It passes the other chars to createObject().
@@ -207,7 +229,7 @@ package org.interguild.loader {
 			//this switch only handles special chars
 			switch (curChar) {
 				case " ":
-					px += Aeon.TILE_WIDTH;
+					px += 1;
 					break;
 				/*
 				* Not all operating systems write the end-of-line character
@@ -221,7 +243,7 @@ package org.interguild.loader {
 					} //then treat it as a new line:
 				case "\n":
 					px = 0;
-					py += Aeon.TILE_HEIGHT;
+					py += 1;
 					break;
 				case "=":
 					var number:String = "";
@@ -248,13 +270,16 @@ package org.interguild.loader {
 					}
 					break;
 				default:
-					initObject(curChar, px, py);
-					px += Aeon.TILE_WIDTH;
+					//if off the map, do nothing
+					if (px < levelWidth && py < levelHeight) {
+						initObject(curChar, px, py);
+						px += 1;
+					}
 					break;
 			}
 			prevChar = curChar;
 		}
-
+		
 		/**
 		 * Parses the non-special characters of the level encoding
 		 */

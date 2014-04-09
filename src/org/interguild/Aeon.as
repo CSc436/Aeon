@@ -2,7 +2,6 @@ package org.interguild {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import flash.events.MouseEvent;
 
 	CONFIG::DEBUG {
 		import flash.text.TextField;
@@ -12,7 +11,11 @@ package org.interguild {
 
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
+
 	import org.interguild.editor.EditorGrid;
+	import org.interguild.loader.ErrorDialog;
+	import flexunit.utils.ArrayList;
+
 
 	/**
 	 * Aeon.as initializes the game, but it's also responsible for
@@ -22,7 +25,7 @@ package org.interguild {
 	 * own class or object.
 	 */
 
-	[SWF(backgroundColor = "0x000000", width = "900", height = "500", frameRate = "30")]
+	[SWF(backgroundColor = "0x999999", width = "900", height = "500", frameRate = "30")]
 
 	public class Aeon extends Sprite {
 
@@ -42,7 +45,8 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 900;
 		public static const STAGE_HEIGHT:uint = 500;
 
-		private static const BG_COLOR:uint = 0xFFFFFF; //0x050c0f;
+		private static const BG_COLOR:uint = 0x000b17;
+		private static const BORDER_COLOR:uint = 0x000b17; //no border
 
 		private var currentPage:Page;
 		private var mainMenu:MainMenuPage;
@@ -60,8 +64,11 @@ package org.interguild {
 			scaleX = scaleY = stage.stageWidth / STAGE_WIDTH;
 
 			//init bg
+			graphics.beginFill(BORDER_COLOR);
+			graphics.drawRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+			graphics.endFill();
 			graphics.beginFill(BG_COLOR);
-			graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			graphics.drawRect(1, 1, STAGE_WIDTH-2, STAGE_HEIGHT-2);
 			graphics.endFill();
 
 			//init key man
@@ -74,7 +81,7 @@ package org.interguild {
 			//init debug mode
 			CONFIG::DEBUG {
 				var textField:TextField = new TextField();
-				textField.defaultTextFormat = new TextFormat("Impact", 20, 0xFFFFFF, true);
+				textField.defaultTextFormat = new TextFormat("Impact", 14, 0xFFFFFF);
 				textField.autoSize = TextFieldAutoSize.LEFT;
 				textField.selectable = false;
 				textField.text = "DEBUGGING MODE";
@@ -93,6 +100,17 @@ package org.interguild {
 
 			mainMenu.visible = true;
 			currentPage = mainMenu;
+		}
+		
+		public function returnFromError(e:ArrayList, src:String):void{
+			if(src == "MainMenu" || src.search("Loader") >= 0)
+				gotoMainMenu();
+			if(src == "Editor")
+				gotoEditorPage();
+			var dialog:ErrorDialog = new ErrorDialog(e, src);
+			dialog.y = 120;
+			dialog.x=(Aeon.STAGE_WIDTH / 2) - 150;
+			addChild(dialog);
 		}
 
 		public function playLevelFile(file:String):void {

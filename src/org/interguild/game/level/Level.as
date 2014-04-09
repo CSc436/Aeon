@@ -7,6 +7,7 @@ package org.interguild.game.level {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
+	import org.interguild.KeyMan;
 	import org.interguild.game.Camera;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
@@ -41,8 +42,13 @@ package org.interguild.game.level {
 
 		private var w:uint = 0;
 		private var h:uint = 0;
+		
+		CONFIG::DEBUG{
+			private var debugSprite:Sprite = new Sprite();
+		}
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
+			
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
@@ -127,7 +133,8 @@ package org.interguild.game.level {
 		 */
 		public function startGame():void {
 			CONFIG::DEBUG{
-				addChildAt(collisionGrid, 1);
+				camera.addChildAt(collisionGrid, 1);
+				camera.addChild(debugSprite);
 			}
 
 			player.wasJumping = true;
@@ -137,32 +144,54 @@ package org.interguild.game.level {
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
+		
+		public function stopGame():void {
+			timer.stop();
+		}
 
 		/***************************
 		 * Game Loop methods below *
 		 ****************************/
-
+		
 		/**
 		 * Called 30 frames per second.
 		 */
 		private function onGameLoop(evt:TimerEvent):void {
-		
+			/*
+			 * UPDATE
+			 */
+
 			//update player
 			player.onGameLoop();
 			
-			//update camera
-			camera.updateCamera();
-			
 			// reset isStanding
 			player.reset();
-			
-			collisionGrid.updateObject(player, false);
 
 			//update active objects
 			var len:uint = activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
 				var obj:GameObject = activeObjects[i];
 				obj.onGameLoop();
+			}
+			
+			//draw collision wireframes
+			CONFIG::DEBUG {
+				var s:Sprite = player.drawHitBow(false);
+				if(s)
+					debugSprite.addChild(s);
+			}
+				
+			/*
+			 * COLLISIONS
+			 */
+			
+			//detect collisions for player
+			collisionGrid.updateObject(player, false);
+			
+			//detect collisions for active objects
+			len = activeObjects.length;
+			for (i = 0; i < len; i++) {
+				obj = activeObjects[i];
 				if (obj is CollidableObject) {
 					//TODO if obj is no longer active, pass true below, rather than false
 					collisionGrid.updateObject(CollidableObject(obj), false);
@@ -178,15 +207,31 @@ package org.interguild.game.level {
 					remove = collisionGrid.detectAndHandleCollisions(CollidableObject(activeObjects[i]));
 					removeObjects(remove);
 					collisionGrid.resetRemovalList();
-
 				}
 			}
+			
+			/*
+			 * FINISH GAME LOOP
+			 */
 			
 			//finish game loops
 			player.finishGameLoop();
 			if(activeObjects.length > 0){
 				for (i = 0; i < activeObjects.length; i++) {
 					GameObject(activeObjects[i]).finishGameLoop();
+				}
+			}
+			
+			//update camera
+			camera.updateCamera();
+			
+			//draw collision wireframes
+			CONFIG::DEBUG {
+				s = player.drawHitBow(true);
+				if(s)
+					debugSprite.addChild(s);
+				if(KeyMan.getMe().isClearKey){
+					debugSprite.removeChildren();
 				}
 			}
 		}

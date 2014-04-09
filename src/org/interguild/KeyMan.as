@@ -18,8 +18,16 @@ package org.interguild {
 		public var isKeyLeft:Boolean = false;
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
+		public var isKeyEsc:Boolean = false;
+		CONFIG::DEBUG {
+			public var isDebugKey:Boolean = false;
+			public var isClearKey:Boolean = false;
+		}
 		
-		private var spacebarCallback:Function;
+		public var spacebarCallback:Function;
+		private var escapeCallback:Function;
+		
+		private var menuCallback:Function;
 
 		public function KeyMan(stage:Stage) {
 			instance = this;
@@ -29,6 +37,18 @@ package org.interguild {
 
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
+				case 27: //Esc key
+					if(!isKeyEsc) {
+						isKeyEsc = true;
+						if(escapeCallback)
+							escapeCallback();
+					}
+					else {
+						isKeyEsc = false;
+						if(escapeCallback)
+							escapeCallback();
+					}
+					break;
 				case 39: //right arrow key
 					isKeyRight = true;
 					break;
@@ -47,6 +67,14 @@ package org.interguild {
 						spacebarCallback();
 					break;
 			}
+			CONFIG::DEBUG {
+				if(evt.keyCode == 66)//b key
+					isDebugKey = true;
+				else if(evt.keyCode == 78)//n key
+					isClearKey = true;
+			}
+			if(menuCallback)
+				menuCallback(evt.keyCode);
 		}
 
 		private function onKeyUp(evt:KeyboardEvent):void {
@@ -67,10 +95,28 @@ package org.interguild {
 					isKeySpace = false;
 					break;
 			}
+			CONFIG::DEBUG {
+				if(evt.keyCode == 66) //b key
+					isDebugKey = false;
+				else if(evt.keyCode == 78)//n key
+					isClearKey = false;
+			}
+		}
+		
+		public function addEscapeListener(f:Function):void {
+			escapeCallback = f;
 		}
 		
 		public function addSpacebarListener(cb:Function):void{
 			spacebarCallback = cb;
+		}
+		
+		public function removeSpacebarListener():void {
+			spacebarCallback = null;
+		}
+		
+		public function addMenuCallback(cb:Function):void{
+			menuCallback = cb;
 		}
 	}
 }
