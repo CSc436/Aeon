@@ -1,9 +1,13 @@
 package org.interguild.game.tiles {
+	CONFIG::DEBUG {
+		import flash.display.Sprite;
+	}
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	
+
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.GridTile;
+	import org.interguild.KeyMan;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -36,6 +40,23 @@ package org.interguild.game.tiles {
 			active = false;
 		}
 
+		CONFIG::DEBUG {
+			public function drawHitBow(final:Boolean):Sprite {
+				if (KeyMan.getMe().isDebugKey) {
+					var color:uint;
+					if(final)
+						color = 0xFF0000;
+					else
+						color = 0x0000FF;
+					var s:Sprite = new Sprite();
+					s.graphics.lineStyle(1, color);
+					s.graphics.drawRect(hit_box.x, hit_box.y, hit_box.width, hit_box.height);
+					return s;
+				}
+				return null;
+			}
+		}
+
 		/**
 		 * Remembers which GridTiles the GameObject is
 		 * currently in.
@@ -43,7 +64,7 @@ package org.interguild.game.tiles {
 		public function addGridTile(g:GridTile):void {
 			myGrids.push(g);
 		}
-		
+
 		/**
 		 * Removes the GameObject from all of the collision
 		 * grid tiles that it is currently in.
@@ -55,83 +76,83 @@ package org.interguild.game.tiles {
 			}
 			myGrids.length = 0;
 		}
-		
-		public function get myCollisionGridTiles():Vector.<GridTile>{
+
+		public function get myCollisionGridTiles():Vector.<GridTile> {
 			return this.myGrids;
 		}
-		
-		protected function updateHitBox():void{
+
+		protected function updateHitBox():void {
 			hit_box.x = newX;
 			hit_box.y = newY;
 		}
 
 		/**
 		 * It's dangerous to do collision detection alone.
-		 * Take this. 
+		 * Take this.
 		 */
 		public function get hitbox():Rectangle {
 			return hit_box;
 		}
-		
+
 		/**
 		 * Return what the hitbox used to be during the last frame.
 		 */
-		public function get hitboxPrev():Rectangle{
+		public function get hitboxPrev():Rectangle {
 			return hit_box_prev;
 		}
-		
+
 		/**
 		 * Don't want to check collisions on the same object twice.
 		 */
-		public function setCollidedWith(obj:CollidableObject):void{
+		public function setCollidedWith(obj:CollidableObject):void {
 			justCollided[obj] = true;
 		}
-		
-		public function hasCollidedWith(obj:CollidableObject):Boolean{
+
+		public function hasCollidedWith(obj:CollidableObject):Boolean {
 			return justCollided[obj];
 		}
-		
+
 		/**
 		 * Use the Direction class in the collision package for the parameter.
 		 * Basically, if a tile goes to rest next to this one, tell this one
 		 * about it so that we don't test for collisions on that side of the tile.
 		 */
-		public function setBlocked(direction:uint):void{
+		public function setBlocked(direction:uint):void {
 			sideBlocked[direction] = true;
 		}
-		
-		public function setUnblocked(direction:uint):void{
+
+		public function setUnblocked(direction:uint):void {
 			sideBlocked[direction] = false;
 		}
-		
-		public function isBlocked(direction:uint):Boolean{
+
+		public function isBlocked(direction:uint):Boolean {
 			return sideBlocked[direction];
 		}
-		
-		public function set isActive(b:Boolean):void{
+
+		public function set isActive(b:Boolean):void {
 			//if changing state, reset blocked sides
-			if(b != active)
+			if (b != active)
 				sideBlocked = [false, false, false, false];
 			active = b;
 		}
-		
-		public function get isActive():Boolean{
+
+		public function get isActive():Boolean {
 			return active;
 		}
-		
-		public function removeSelf():void{
+
+		public function removeSelf():void {
 			for (var i:int = 0; i < myGrids.length; i++) {
 				GridTile(myGrids[i]).removeObject(this);
 			}
 		}
 
-		public override function finishGameLoop():void{
+		public override function finishGameLoop():void {
 			super.finishGameLoop();
 			justCollided = new Dictionary(true);
 			updateHitBox();
-			if(this is Player){
-				trace("I am player");
-			}
+//			if (this is Player) {
+//				trace("I am player");
+//			}
 			hit_box_prev = hitbox.clone();
 		}
 	}

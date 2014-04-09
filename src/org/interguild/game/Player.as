@@ -1,12 +1,12 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
 
+	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.KeyMan;
 
 	public class Player extends CollidableObject {
-		
+
 		public static const LEVEL_CODE_CHAR:String = '#';
 
 		private static const HITBOX_WIDTH:uint = 24;
@@ -40,7 +40,7 @@ package org.interguild.game {
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
-		
+
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			drawPlayer();
@@ -56,7 +56,6 @@ package org.interguild.game {
 		}
 
 		private function drawPlayer():void {
-
 			CONFIG::DEBUG {
 				graphics.beginFill(SPRITE_COLOR);
 				graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
@@ -70,12 +69,12 @@ package org.interguild.game {
 		}
 
 		public override function onGameLoop():void {
-			switch(speedY) {
+			switch (speedY) {
 				case -28:
 				case -24:
 				case -20:
 				case -16:
-					if(!(playerClip is PlayerJumpUpAnimation)) {
+					if (!(playerClip is PlayerJumpUpAnimation)) {
 						removeChild(playerClip);
 						playerClip = new PlayerJumpUpAnimation();
 						addChild(playerClip);
@@ -85,7 +84,7 @@ package org.interguild.game {
 				case -12:
 				case -8:
 				case -4:
-					if(!(playerClip is PlayerJumpUpAnimation)) {
+					if (!(playerClip is PlayerJumpUpAnimation)) {
 						removeChild(playerClip);
 						playerClip = new PlayerJumpUpAnimation();
 						addChild(playerClip);
@@ -94,26 +93,24 @@ package org.interguild.game {
 					break;
 				case 0:
 					// If the player is not standing and they were previously rising in the air
-					if(!isStanding && !(playerClip is PlayerJumpPeakThenFallAnimation) && prevSpeedY == -4) {
+					if (!isStanding && !(playerClip is PlayerJumpPeakThenFallAnimation) && prevSpeedY == -4) {
 						removeChild(playerClip);
 						playerClip = new PlayerJumpPeakThenFallAnimation();
 						addChild(playerClip);
 						playerClip.gotoAndStop(0);
-					}
-					else if(isStanding && prevSpeedY == 11 && !(playerClip is PlayerJumpLandAnimation)) {
+					} else if (isStanding && prevSpeedY == 11 && !(playerClip is PlayerJumpLandAnimation)) {
 						removeChild(playerClip);
 						playerClip = new PlayerJumpLandAnimation();
 						addChild(playerClip);
 						playerClip.gotoAndPlay(0);
-					}
-					else if(!(playerClip is PlayerWalkingAnimation)) {
+					} else if (!(playerClip is PlayerWalkingAnimation)) {
 						removeChild(playerClip);
 						playerClip = new PlayerWalkingAnimation();
 						addChild(playerClip);
 					}
 					break;
 				case 4:
-					if(!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+					if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
 						removeChild(playerClip);
 						playerClip = new PlayerJumpPeakThenFallAnimation();
 						addChild(playerClip);
@@ -121,37 +118,32 @@ package org.interguild.game {
 					playerClip.gotoAndStop(3);
 					break;
 				case 7:
-					if(!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+					if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
 						removeChild(playerClip);
 						playerClip = new PlayerJumpPeakThenFallAnimation();
 						addChild(playerClip);
 					}
-					if(prevSpeedY == 4)
+					if (prevSpeedY == 4)
 						playerClip.gotoAndStop(6);
 					else
 						playerClip.gotoAndStop(7);
 					break;
 				default:
-					break;	
+					break;
 			}
 
 			playerClip.scaleX = prevScaleX;
-			if(prevScaleX == -1)
+			if (prevScaleX == -1)
 				playerClip.x = 25;
 			playerClip.y = -8;
-			
+
 			prevSpeedY = speedY;
 			speedY += Level.GRAVITY;
 
-			updateKeys();		
+			updateKeys();
 
 			// reset isStanding
 			reset();
-			
-			//update movement
-			prevSpeedY = speedY;
-			newX += speedX;
-			newY += speedY;
 
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
@@ -163,6 +155,7 @@ package org.interguild.game {
 			}
 
 			//update movement
+			prevSpeedY = speedY;
 			newX += speedX;
 			newY += speedY;
 			updateHitBox();
@@ -177,7 +170,6 @@ package org.interguild.game {
 		}
 
 		private function updateKeys():void {
-
 			if (!keys.isKeyLeft && !keys.isKeyRight && !keys.isKeyDown && isStanding)
 				playerClip.gotoAndStop(0);
 
@@ -192,15 +184,15 @@ package org.interguild.game {
 					//This value might need to be changed, I think it might be off a few pixels
 					playerClip.x = 25;
 				}
-				if(speedY == 4) {
-					if(playerClip.currentFrame != playerClip.totalFrames)
+				if (speedY == 4) {
+					if (playerClip.currentFrame != playerClip.totalFrames)
 						playerClip.nextFrame();
 					else
 						playerClip.gotoAndStop(0);
 				}
 
 				isFacingLeft = true;
-				
+
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
@@ -216,8 +208,8 @@ package org.interguild.game {
 					prevScaleX = 1;
 					playerClip.x = -2;
 				}
-				if(speedY == 4) {
-					if(playerClip.currentFrame != playerClip.totalFrames)
+				if (speedY == 4) {
+					if (playerClip.currentFrame != playerClip.totalFrames)
 						playerClip.nextFrame();
 					else
 						playerClip.gotoAndStop(0);
@@ -230,21 +222,21 @@ package org.interguild.game {
 				if (speedX < 0)
 					speedX = 0;
 			}
-			
+
 			//crawl position
-			if(keys.isKeyDown) {
+			if (keys.isKeyDown) {
 				// Make the frame go to the crawling clip
 			}
 
 			// look up
-			if ( keys.isKeyUp ) {
+			if (keys.isKeyUp) {
 				isFacingUp = true;
 			}
 			// no longer looking up
-			if ( !keys.isKeyUp ) {
+			if (!keys.isKeyUp) {
 				isFacingUp = false;
 			}
-			
+
 			//jump
 			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;

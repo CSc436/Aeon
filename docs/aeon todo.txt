@@ -1,0 +1,59 @@
+NOTES:
+
+collision bugs and stuff
+getting sprites and animations in there, to look more polished
+design the editor GUI and main menu
+
+test game button finished
+	EditorGrid to write level code
+EditorLoader needs to update EditorGrid's cells
+a back to main menu button in levelpage
+
+
+----------
+|   |    |
+|   |    |
+----------
+
+
+TODO THIS SPRINT
+
+definitions: (nice = shippable)
+
+Level Editor: (Justin, Henry)
+	Write the getLevelCode() method to work with new EditorGrid
+	Get scrolling to be nice
+	undo/redo (justin)
+	having multiple levels open, with tabs.
+Graphic/Interface Design work (Livio, Luke, Carlos)
+	Design/Implement the EditorGUI to look nice (Livio, Justin, Henry)
+		buttons, drop down menu, dialogue boxes, input boxes
+	Design/Implement the menus to look nice
+	Error handling and reporting error to user
+		ex: Invalid level code when loading
+		ex: invalid input in editor options
+		ex: file not found, etc.
+	Quit button in levels (go back to main menu from level page)
+	Make a "You won" screen.
+		show "Play Again" button
+		show "Rating" feature
+		"share this level!" Facebooks twittersssss, googlepluses, tumblrs, pinterestss
+		also think about built-in levels, but not a priority
+		"next level"
+Player Controls and Animation (Mike)
+	Implement crawling controls
+	Implement crawling animation
+	Add Sprites to everything (Carlos)
+		everything = tiles, backgrounds
+Collision Detection (Livio, Mike)
+	fix glitch where you can go over/under tiles
+		(probably needs multiple collision passes)
+	fix glitch where you can sometimes fall through that steel crate in the test level
+	Make several tiles fall (active/inactive transition propagation)
+Add more tiles (Carlos, and more!)
+	treasure/collectables and the door! (the win condition) (Henry)
+	arrow crates!
+	dynamite crates!
+	platforms
+Art and Animation (Bernadette)
+	fix white spots in transparent sprites

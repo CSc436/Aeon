@@ -165,8 +165,8 @@ package org.interguild.game.collision {
 				var p:Player = Player(activeObject);
 				if (otherObject is Tile) {
 					var t:Tile = Tile(otherObject);
-					if (otherObject is SteelCrate)
-						trace("I am steel");
+//					if (otherObject is SteelCrate)
+//						trace("I am steel");
 					//player on tile collisions
 
 					//solid collisions!!
@@ -184,9 +184,9 @@ package org.interguild.game.collision {
 							 * |otherObject |
 							 * --------------
 							 */
-							trace("PrevY:", activeObject.newY);
+//							trace("PrevY:", activeObject.newY);
 							activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
-							trace("CurrY:", activeObject.newY);
+//							trace("CurrY:", activeObject.newY);
 							activeObject.speedY = 0;
 							//set player standing
 							p.isStanding = true;
