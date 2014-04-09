@@ -60,8 +60,12 @@ package org.interguild.game.tiles {
 		 * Remembers which GridTiles the GameObject is
 		 * currently in.
 		 */
-		public function addGridTile(g:GridTile):void {
+		public function addGridTile(g:GridTile, index:int = -1):void {
+			if(index == -1){
 			myGrids.push(g);
+			}else{
+				myGrids[index] = g;
+			}
 		}
 
 		/**

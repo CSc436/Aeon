@@ -13,10 +13,10 @@ package org.interguild.game.collision {
 
 		private var level:Level;
 		private var grid:Array;
-		
+
 		private var allObjects:Vector.<GameObject>;
 		public var activeObjects:Vector.<GameObject>;
-		
+
 		private var removalObjects:Array;
 		private var deactivateObjects:Array;
 
@@ -24,7 +24,7 @@ package org.interguild.game.collision {
 			this.level = level;
 			removalObjects = new Array();
 			deactivateObjects = new Array();
-			
+
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
@@ -49,8 +49,8 @@ package org.interguild.game.collision {
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
-		
-		public function addObject(tile:CollidableObject):void{
+
+		public function addObject(tile:CollidableObject):void {
 			allObjects.push(tile);
 			if (tile.isActive)
 				activeObjects.push(tile);
@@ -70,6 +70,8 @@ package org.interguild.game.collision {
 		public function updateObject(o:CollidableObject, blockNeighbors:Boolean):void {
 			var inGrids:Array = new Array();
 			var box:Rectangle = o.hitbox;
+			var row:int, col:int;
+			var gridTile:GridTile;
 
 			var top:int = box.top / Aeon.TILE_HEIGHT;
 			var left:int = box.left / Aeon.TILE_WIDTH;
@@ -79,16 +81,112 @@ package org.interguild.game.collision {
 			//remove old grids
 			o.clearGrids();
 
-			//add new grids
-			for (var row:int = top; row <= bottom; row++) {
-				if (top >= 0 && top < grid.length) {
-					for (var col:int = left; col <= right; col++) {
-						if (col >= 0 && col < grid[0].length) {
-							var gridTile:GridTile = grid[row][col];
-							gridTile.addObject(o);
-							o.addGridTile(gridTile);
-							if (blockNeighbors) {
-								updateBlockedNeighbors(row, col, o);
+			if (o is Player) {
+				var p:Player = Player(o);
+				var yinc:int, xinc:int;
+				var prioX:Boolean = true;
+				
+				top++;
+				left--;
+				bottom++;
+				right++;
+				
+				//figure out which direction to go
+				if(p.speedY < 0){
+					row = top;
+					yinc = 1;
+				}else{
+					row = bottom;
+					yinc = -1;
+				}
+				if(p.speedX < 0){
+					col = left;
+					xinc = 1;
+				}else{
+					col = right;
+					xinc = -1;
+				}
+				
+				//figure out which side to prioritize
+				if(p.speedY < 0 && p.speedX < 0){
+					if(p.speedY < p.speedX){
+						prioX = false;
+					}else{
+						prioX = true;
+					}
+				}else if(p.speedY < 0 && p.speedX > 0){
+					if(-p.speedY > p.speedX){
+						prioX = false;
+					}else{
+						prioX = true;
+					}
+				}else if(p.speedY > 0 && p.speedX > 0){
+					if(p.speedY > p.speedX){
+						prioX = false;
+					}else{
+						prioX = true;
+					}
+				}
+				
+				var numTiles:int = (right - left + 1) * (bottom - top + 1);
+				var i:int = 0;
+				var distance:int = 0;
+				
+			 	
+				
+				
+				//iterate through all of player's grids in special order
+//				while(i < numTiles){
+//					//add that cell to player's grids
+//					if(inBounds(row, col)){
+//						gridTile = grid[row][col];
+//						gridTile.addObject(o);
+//						o.addGridTile(gridTile);
+//						if (blockNeighbors) {
+//							updateBlockedNeighbors(row, col, o);
+//						}
+//						i++;
+//					}
+//					//find next grid to look at
+//					if(yinc > 0 && xinc > 0){
+//						if(prioX){
+//							row--;
+//							col++;
+//							if(row < top){
+//								row++;
+//								distance = col - left;
+//								row -= distance;
+//								col -= distance;
+//							}else if(col > right){
+//								row++;
+//								distance = bottom - row;
+//								row -= distance;
+//								col -= distance;
+//							}
+//						}else{
+//							row++;
+//							col--;
+//							if(col < left){
+//								col++;
+//								distance = row - top;
+//								row -= distance;
+//								col -= distance;
+//							}else if(
+//						}
+//					}
+//				}
+			} else {
+				//add new grids
+				for (row = top; row <= bottom; row++) {
+					if (top >= 0 && top < grid.length) {
+						for (col = left; col <= right; col++) {
+							if (col >= 0 && col < grid[0].length) {
+								gridTile = grid[row][col];
+								gridTile.addObject(o);
+								o.addGridTile(gridTile);
+								if (blockNeighbors) {
+									updateBlockedNeighbors(row, col, o);
+								}
 							}
 						}
 					}
@@ -212,7 +310,7 @@ package org.interguild.game.collision {
 					activeObject.speedY = 0;
 					if (p) {
 						p.isStanding = true;
-					}else{
+					} else {
 						deactivateObjects.push(activeObject);
 					}
 				} else if (direction == Direction.UP) {
@@ -260,16 +358,16 @@ package org.interguild.game.collision {
 //				}
 //			}
 		}
-		
-		public function get deactivationList():Array{
+
+		public function get deactivationList():Array {
 			return deactivateObjects;
 		}
 
 		public function get removalList():Array {
 			return removalObjects;
 		}
-		
-		public function resetDeactivationList():void{
+
+		public function resetDeactivationList():void {
 			deactivateObjects = new Array();
 		}
 
