@@ -28,14 +28,45 @@ package org.interguild.editor {
 		private var TestButton:Class;
 		[Embed(source = "../../../../images/clearAllButton.png")]
 		private var ClearButton:Class;
-		[Embed(source = "../../../../images/wallButton.png")]
-		private var WallButton:Class;
-		[Embed(source = "../../../../images/woodButton.png")]
-		private var WoodButton:Class;
-		[Embed(source = "../../../../images/startButton.png")]
-		private var StartButton:Class;
 		[Embed(source = "../../../../images/resizeButton.png")]
 		private var ResizeButton:Class;
+		
+		[Embed(source = "../../../../images/editorTitles/teleportStart.png")]
+		private var StartButton:Class;
+		[Embed(source = "../../../../images/editorTitles/teleportFinish.png")]
+		private var FinishButton:Class;
+		[Embed(source = "../../../../images/editorTitles/floor.png")]
+		private var WallButton:Class;
+		[Embed(source = "../../../../images/editorTitles/woodBox.png")]
+		private var WoodButton:Class;
+		[Embed(source = "../../../../images/editorTitles/steelBox.png")]
+		private var SteelButton:Class;
+		[Embed(source = "../../../../images/editorTitles/keyCard.png")]
+		private var CollectableButton:Class;
+		[Embed(source = "../../../../images/editorTitles/lightningBlockUp.png")]
+		private var LightningButtonUp:Class;
+		[Embed(source = "../../../../images/editorTitles/lightningBlockDown.png")]
+		private var LightningButtonDown:Class;
+		[Embed(source = "../../../../images/editorTitles/lightningBlockLeft.png")]
+		private var LightningButtonLeft:Class;
+		[Embed(source = "../../../../images/editorTitles/lightningBlockRight.png")]
+		private var LightningButtonRight:Class;
+		//		[Embed(source = "../../../../images/editorTitles/platform.png")]
+		//		private var PlatformButton:Class;
+		
+		/*
+		//TODO new buttons
+		StartButton
+		FinishButton
+		WallButton
+		WoodButton
+		SteelButton
+		CollectableButton
+		LightningButtonUp
+		LightningButtonDown
+		LightningButtonLeft
+		LightningButtonRight
+		*/
 
 		//following are objects on this sprite
 		private var playerSpawnButton:Button;
@@ -274,7 +305,6 @@ package org.interguild.editor {
 			}
 			
 			//switch to check what trigger is active
-			
 		}
 
 		private function startClick(e:MouseEvent):void {
