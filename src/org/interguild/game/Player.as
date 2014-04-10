@@ -178,7 +178,7 @@ package org.interguild.game {
 				speedX -= RUN_ACC;
 
 				// Use scaleX = -1 to flip the direction of movement
-				if (playerClip.scaleX != -1) {
+				if (playerClip.scaleX != -1 && !isCrouching) {
 					playerClip.scaleX = -1;
 					prevScaleX = -1;
 					//This value might need to be changed, I think it might be off a few pixels
@@ -224,9 +224,23 @@ package org.interguild.game {
 			}
 
 			//crawl position
-			if (keys.isKeyDown) {
+			if (keys.isKeyDown && isStanding) {
 				// Make the frame go to the crawling clip
+				isCrouching = true;
+				this.hitbox.height = 32;
+				removeChild(playerClip);
+				playerClip = new PlayerCrawlAnimation();
+				addChild(playerClip);
 			}
+			
+			// finished crawling
+			if (!keys.isKeyDown) {
+				isCrouching = false;
+				this.hitbox.height = 40;
+
+			}
+
+
 
 			// look up
 			if (keys.isKeyUp) {
@@ -247,6 +261,12 @@ package org.interguild.game {
 			else
 				wasJumping = false;
 
+		}
+		
+		public function updateAnimation():void
+		{
+			// TODO Auto Generated method stub
+			
 		}
 	}
 }

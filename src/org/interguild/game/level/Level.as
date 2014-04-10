@@ -164,6 +164,9 @@ package org.interguild.game.level {
 			//update player
 			player.onGameLoop();
 			
+			// update animations
+			player.updateAnimation();
+				
 			// reset isStanding
 			player.reset();
 
