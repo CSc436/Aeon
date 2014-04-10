@@ -6,6 +6,7 @@ package org.interguild.editor {
 	 */
 	public class EditorTab extends Sprite {
 		
+		private var grid:EditorGrid;
 		private static const CELL_WIDTH:uint = 32;
 		
 		public function EditorTab() {
