@@ -24,11 +24,11 @@ package org.interguild.editor {
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 15;
 
 		//Following is code to import images for everything
-		[Embed(source = "../../../../images/testButton.png")]
+		[Embed(source = "../../../../images/editorButtons/test-default.png")]
 		private var TestButton:Class;
-		[Embed(source = "../../../../images/clearAllButton.png")]
+		[Embed(source = "../../../../images/editorButtons/clear-default.png")]
 		private var ClearButton:Class;
-		[Embed(source = "../../../../images/resizeButton.png")]
+		[Embed(source = "../../../../images/editorButtons/resize-default.png")]
 		private var ResizeButton:Class;
 		
 		[Embed(source = "../../../../images/editorTitles/teleportStart.png")]
