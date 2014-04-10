@@ -263,10 +263,8 @@ package org.interguild.editor {
 
 		private function leftClick(e:MouseEvent):void {
 			var cell:EditorCell = EditorCell(e.target);
-			//TODO make undo	
-			trace(undoList.length);
+			//TODO make undo
 			undoList.push(grid.clone());
-			trace(undoList.length);
 			if (e.ctrlKey) {
 				cell.clearTile();
 			}else{
