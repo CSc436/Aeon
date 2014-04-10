@@ -19,9 +19,15 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
+		CONFIG::DEBUG {
+			public var isDebugKey:Boolean = false;
+			public var isClearKey:Boolean = false;
+		}
 		
 		public var spacebarCallback:Function;
-		public var escapeCallback:Function;
+		private var escapeCallback:Function;
+		
+		private var menuCallback:Function;
 
 		public function KeyMan(stage:Stage) {
 			instance = this;
@@ -57,6 +63,14 @@ package org.interguild {
 						spacebarCallback(false);
 					break;
 			}
+			CONFIG::DEBUG {
+				if(evt.keyCode == 66)//b key
+					isDebugKey = true;
+				else if(evt.keyCode == 78)//n key
+					isClearKey = true;
+			}
+			if(menuCallback)
+				menuCallback(evt.keyCode);
 		}
 
 		private function onKeyUp(evt:KeyboardEvent):void {
@@ -76,6 +90,12 @@ package org.interguild {
 				case 32: //spacebar
 					isKeySpace = false;
 					break;
+			}
+			CONFIG::DEBUG {
+				if(evt.keyCode == 66) //b key
+					isDebugKey = false;
+				else if(evt.keyCode == 78)//n key
+					isClearKey = false;
 			}
 		}
 		
@@ -102,6 +122,10 @@ package org.interguild {
 		
 		public function removeSpacebarListener():void {
 			spacebarCallback = null;
+		}
+		
+		public function addMenuCallback(cb:Function):void{
+			menuCallback = cb;
 		}
 	}
 }

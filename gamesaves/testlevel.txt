@@ -5,10 +5,11 @@ x=80
 xx      xx                 xxxxx        
 xx     wx                  xxxxx        
 xx  #  s                   xxxxx        
-xxxxxx w   xx              xxxxx        
+xxxxxx     xx              xxxxx        
 xx        xxx             xxxxxx        
 xx       xxxx              xxxxx        
-xx  xxxxxxxxxxx   a        xxxxx        
+xx  xxxxxxxxxxx   a        xxxxx              
+xx  xxxxxxxxxxx   x        xxxxx        
 xx     xxxxxxxx   x   w wwwxxxxx        
 xx     xxxxxxxx x x xxxxxxxxxxxx        
 xx  xxxxxxxxxxx x x xxxxxxxxxxxx        
