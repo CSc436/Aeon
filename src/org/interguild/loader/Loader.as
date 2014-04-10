@@ -131,6 +131,21 @@ package org.interguild.loader {
 			code = levelCode;
 			codeLength = code.length;
 			
+			if(code == null){
+				errors.addItem("Invalid Level Code; no level encoding.")
+				errorCallback(errors);
+				return;
+			}		
+			else{ //trim leading whitespaces (buggy)
+				var i:int = 0;
+				var ch:String = code.charAt(i);
+				while(ch == "\n" || ch == " " || ch.concat(code.charAt(i+1)) == "\r\n"){
+					i++;
+					code = code.substring(1);
+					ch = code.charAt(i);
+				}
+			}
+			
 			var length:int = levelCode.split("\n").length;
 			if(length < 3){
 				errors.addItem("Invalid Level Code; title, dimensions, followed by encoding.");
@@ -149,14 +164,14 @@ package org.interguild.loader {
 			var dimensionsLine:String = code.substr(0, eol);
 			var ix:int = dimensionsLine.indexOf("x");
 			if(ix == -1)
-				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
+				errors.addItem("Invalid Level Dimensions; input should be in the form #x#.");
 			
 			if(dimensionsLine.substr(0, ix).length < 1)
-				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
+				errors.addItem("Invalid Level Dimensions; input should be in the form #x#.");
 			levelWidth = Number(dimensionsLine.substr(0, ix));
 			
 			if(dimensionsLine.substr(ix + 1).length < 1)
-				errors.addItem("Invalid Level Dimensions; input should be in the form ##x##.");
+				errors.addItem("Invalid Level Dimensions; input should be in the form #x#.");
 			levelHeight = Number(dimensionsLine.substr(ix + 1));
 			
 			code = code.substr(eol + 1);

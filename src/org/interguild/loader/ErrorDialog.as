@@ -29,7 +29,7 @@ package org.interguild.loader
 			//main dialog box
 			var rect:Shape = new Shape();
 			rect.graphics.lineStyle(1);
-			rect.graphics.beginFill(0XB2B2B2,1);
+			rect.graphics.beginFill(0X333333,1);
 			rect.graphics.drawRect(0,0,300,160);
 			addChild(rect);
 			var txt:String = "";
@@ -38,7 +38,7 @@ package org.interguild.loader
 				txt += "\n";
 			}
 			if(source.search("Loader") >= 0){
-				txt += "\nExample level encoding:\n\n" +
+				txt += "\nExample level encoding: (below)\n\n" +
 					"The Name of My Level!\n" +
 					"20x20\n" +
 					"xxxxxxxxxxx...\n" +
@@ -49,7 +49,7 @@ package org.interguild.loader
 					"please correct the error(s) listed above and try again.\n"
 			}
 			var type:String = GradientType.LINEAR;
-			var colors:Array = [0xAE0808, 0xffffff];  //E50808
+			var colors:Array = [0x0097C6, 0xffffff];  //E50808
 			var alphas:Array = [1, 1]; 
 			var ratios:Array = [0, 255]; 
 			var spreadMethod:String = SpreadMethod.PAD; 
@@ -75,16 +75,22 @@ package org.interguild.loader
 				spreadMethod,  
 				interp,  
 				focalPtRatio);
-			headerOutline.graphics.drawRect(0,0, 300, 20);
+			headerOutline.graphics.drawRect(0,0, 300, 22);
 			headerOutline.x = 0;
 			headerOutline.y = 0;
 			addChild(headerOutline);
 			
 			//format header text
 			var headerFormat:TextFormat = new TextFormat();
-			headerFormat.bold = true;
+			headerFormat.bold = false;
 			headerFormat.color = 0x000000;
-			headerFormat.size = 16;
+			headerFormat.size = 14;
+			headerFormat.font = "Verdana";
+			
+			//format dialog text
+			var dialogFormat:TextFormat = new TextFormat();
+			dialogFormat.size = 12;
+			dialogFormat.font = "Verdana";
 			
 			//title of dialog box
 			var headerTxt:String = "Error(s) thrown by ";
@@ -95,7 +101,7 @@ package org.interguild.loader
 			header.x = 5;
 			header.y = 0;
 			header.width = 275;
-			header.height = 20;
+			header.height = 22;
 			header.wordWrap = true;
 			header.multiline = false;
 			addChild(header);
@@ -118,12 +124,13 @@ package org.interguild.loader
 			content.height = 100;
 			content.wordWrap = true;
 			content.multiline = true;
+			content.setTextFormat(dialogFormat);
 			addChild(content);
 			
 			//scroll up button
 			var up:Sprite = new Sprite();
 			var upArrow:Shape = new Shape();
-			upArrow.graphics.beginFill(0X7B0808,1);
+			upArrow.graphics.beginFill(0X0097C6,1);
 			upArrow.graphics.lineStyle(1);
 			upArrow.graphics.moveTo(5,0);
 			upArrow.graphics.lineTo(10,10);
@@ -139,7 +146,7 @@ package org.interguild.loader
 			//scroll down button
 			var down:Sprite = new Sprite();
 			var downArrow:Shape = new Shape();
-			downArrow.graphics.beginFill(0X7B0808,1);
+			downArrow.graphics.beginFill(0X0097C6,1);
 			downArrow.graphics.lineStyle(1);
 			downArrow.graphics.lineTo(10,0);
 			downArrow.graphics.lineTo(5,10);
