@@ -70,6 +70,9 @@ package org.interguild.editor {
 					var c:EditorCell = new EditorCell();
 					c.x = j * c.width;
 					c.y = i * c.height;
+					if(i == 0 || j ==0 || i == rows-1 || j==cols-1){
+						c.setTile("x");	
+					}
 					cells[i][j] = c;
 					this.addChild(c);
 				}
