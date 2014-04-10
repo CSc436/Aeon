@@ -75,7 +75,7 @@ package org.interguild.editor {
 		private var woodButton:Button;
 		private var testButton:Button;
 		private var resizeButton:Button;
-		private var tf:TextArea;
+		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
 		private var heightBox:TextInput;
@@ -117,19 +117,19 @@ package org.interguild.editor {
 			this.mainMenu = mainMenu;
 
 			//playerstart button
-			playerSpawnButton = makeButton("Start", StartButton, 750, 150);
+			playerSpawnButton = makeButton("Start", StartButton, 20, 20);
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 
 			//wallbutton
-			wallButton = makeButton("Wall", WallButton, 750, 200);
+			wallButton = makeButton("Wall", WallButton, 20, 80);
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 
 			//woodbutton:
-			woodButton = makeButton("Wood", WoodButton, 750, 250);
+			woodButton = makeButton("Wood", WoodButton, 20, 120);
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			//clear button:
-			clearButton = makeButton("Clear All", ClearButton, 750, 300);
+			clearButton = makeButton("Clear All", ClearButton, 20, 160);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
@@ -143,10 +143,10 @@ package org.interguild.editor {
 			redoList = new Array();
 
 			//undo button:
-			undoButton = makeButton("Undo",null , 750,350) ;
+			undoButton = makeButton("Undo",null , 20,240) ;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			//redobutton:
-			redoButton = makeButton("Redo", null, 750, 375);
+			redoButton = makeButton("Redo", null, 20, 400);
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
 			//title text field
 			titlef = new TextField();
@@ -183,13 +183,19 @@ package org.interguild.editor {
 			heightBox.x = 700;
 			heightBox.y = 40;
 			//textfield
-			tf = new TextArea();
-			tf.width = 200;
-			tf.height = 400;
-			tf.x = 700;
+			tf = new Sprite();
+			tf.x = 600;
 			tf.y = 100;
-			tf.editable = false;
-
+			tf.graphics.beginFill(0xFFFFFF);
+			tf.graphics.drawRect(0,0, 200,1000);
+			tf.graphics.endFill();
+			var maskTf:Sprite = new Sprite();
+			maskTf.graphics.beginFill(0);
+			maskTf.graphics.drawRect(0,0,200,400);
+			maskTf.graphics.endFill();
+			maskTf.x =600;
+			maskTf.y = 100;
+			tf.mask = maskTf;
 			//add the drop down menu
 			dropDown = new DropDownMenu(this);
 			dropDown.x = 5;
@@ -210,11 +216,14 @@ package org.interguild.editor {
 			addChild(gridMask);
 
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
 			scrollBar.y = 100;
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
 			addChild(scroll);
+			var textScrollBar:FullScreenScrollBar = new FullScreenScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,900);
+			textScrollBar.y = 100
+			addChild(textScrollBar);
 			//grid.addChild(scrollBar);
 			addChild(resizeButton);
 			addChild(heightf);
@@ -225,14 +234,14 @@ package org.interguild.editor {
 			addChild(titlef);
 			addChild(testButton);
 			addChild(tf);
-			addChild(wallButton);
-			addChild(woodButton);
-			addChild(playerSpawnButton);
-			addChild(clearButton);
+			tf.addChild(wallButton);
+			tf.addChild(woodButton);
+			tf.addChild(playerSpawnButton);
+			tf.addChild(clearButton);
 			addChild(grid);
 			addChild(dropDown);
-			addChild(undoButton);
-			addChild(redoButton);
+			tf.addChild(undoButton);
+			tf.addChild(redoButton);
 			loader = new EditorLoader();
 			loader.addInitializedListener(newGridReady);
 		}
@@ -351,7 +360,7 @@ package org.interguild.editor {
 			
 			removeChild(scrollBar);
 			removeChild(scroll);
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
 			scrollBar.y = 100;
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
@@ -369,7 +378,7 @@ package org.interguild.editor {
 			grid.mask = gridMask;
 			removeChild(scrollBar);
 			removeChild(scroll);
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 750);
 			scrollBar.y = 100;
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
