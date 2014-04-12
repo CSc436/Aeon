@@ -5,8 +5,8 @@ package org.interguild.editor {
 
 		private var cells:Array;
 
-		private var cols:uint;
-		private var rows:uint;
+		private var cols:uint=0;
+		private var rows:uint=0;
 
 		public function EditorGrid(numRows:uint, numCols:uint) {
 			cols = numRows;
@@ -19,6 +19,22 @@ package org.interguild.editor {
 			}
 
 			initGridCells();
+		}
+		
+		public function clone():EditorGrid{
+			var temp:EditorGrid = new EditorGrid(rows,cols);
+			for(var i:uint =0; i<temp.rows; i++){
+				for(var j:uint =0; j<temp.cols; j++){
+					var c:EditorCell = new EditorCell();
+					c.x = j * c.width;
+					c.y = i * c.height;
+					temp.cells[i][j] = c;
+					temp.cells[i][j].setTile(cells[i][j].cellName);
+					temp.addChild(c);
+				}
+				
+			}
+			return temp;
 		}
 
 		public function get levelWidth():uint {
@@ -34,6 +50,9 @@ package org.interguild.editor {
 			initGridCells();
 		}
 
+		/**
+		 * place a type on a specific cell
+		 */
 		public function placeTile(char:String, row:uint, col:uint):void {
 			if (row < rows && col < cols) {
 				EditorCell(cells[row][col]).setTile(char);
@@ -42,18 +61,41 @@ package org.interguild.editor {
 			}
 		}
 
+		/**
+		 * create a new grid
+		 */
 		private function initGridCells():void {
 			for (var i:uint = 0; i < rows; i++) {
 				for (var j:uint = 0; j < cols; j++) {
 					var c:EditorCell = new EditorCell();
 					c.x = j * c.width;
 					c.y = i * c.height;
+					if(i == 0 || j ==0 || i == rows-1 || j==cols-1){
+						c.setTile("x");	
+					}
 					cells[i][j] = c;
 					this.addChild(c);
 				}
 			}
 		}
+		
+		/**
+		 * print out the cell types using chars
+		 */
+		public function toStringCells():String {
+			var s:String = "";
+			for (var r:uint = 0; r < rows; r++) {
+				for (var c:uint = 0; c < cols; c++) {
+					s += EditorCell(cells[r][c]).cellName;
+				}
+				s+="\n";
+			}
+			return s;
+		}
 
+		/**
+		 * resize the new grid to the new dimensions
+		 */
 		public function resize(newRows:uint, newCols:uint):void {
 			var i:uint, j:uint;
 			var c:EditorCell;
