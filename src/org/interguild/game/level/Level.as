@@ -44,6 +44,8 @@ package org.interguild.game.level {
 		private var w:uint = 0;
 		private var h:uint = 0;
 		
+		private var hud:LevelHUD;
+		
 		CONFIG::DEBUG{
 			private var debugSprite:Sprite = new Sprite();
 		}
@@ -70,7 +72,7 @@ package org.interguild.game.level {
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 			
-			var hud:LevelHUD = new LevelHUD();
+			hud = new LevelHUD();
 			addChild(hud);
 		}
 
@@ -80,6 +82,14 @@ package org.interguild.game.level {
 
 		public function set title(t:String):void {
 			myTitle = t;
+		}
+		
+		public function showHUD(show:Boolean):void{
+			if(show){
+				hud.show();
+				return;
+			}
+			hud.hide();
 		}
 
 		/**
