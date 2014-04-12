@@ -1,7 +1,8 @@
 package org.interguild.game.collision {
 	import flash.display.Sprite;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
@@ -77,116 +78,26 @@ package org.interguild.game.collision {
 			var left:int = box.left / Aeon.TILE_WIDTH;
 			var bottom:int = (box.bottom - 1) / Aeon.TILE_HEIGHT;
 			var right:int = (box.right - 1) / Aeon.TILE_WIDTH;
+			if(o is Player){
+				top--;
+				left--;
+				bottom++;
+				right++;
+			}
 
 			//remove old grids
 			o.clearGrids();
 
-			if (o is Player) {
-				var p:Player = Player(o);
-				var yinc:int, xinc:int;
-				var prioX:Boolean = true;
-				
-				top++;
-				left--;
-				bottom++;
-				right++;
-				
-				//figure out which direction to go
-				if(p.speedY < 0){
-					row = top;
-					yinc = 1;
-				}else{
-					row = bottom;
-					yinc = -1;
-				}
-				if(p.speedX < 0){
-					col = left;
-					xinc = 1;
-				}else{
-					col = right;
-					xinc = -1;
-				}
-				
-				//figure out which side to prioritize
-				if(p.speedY < 0 && p.speedX < 0){
-					if(p.speedY < p.speedX){
-						prioX = false;
-					}else{
-						prioX = true;
-					}
-				}else if(p.speedY < 0 && p.speedX > 0){
-					if(-p.speedY > p.speedX){
-						prioX = false;
-					}else{
-						prioX = true;
-					}
-				}else if(p.speedY > 0 && p.speedX > 0){
-					if(p.speedY > p.speedX){
-						prioX = false;
-					}else{
-						prioX = true;
-					}
-				}
-				
-				var numTiles:int = (right - left + 1) * (bottom - top + 1);
-				var i:int = 0;
-				var distance:int = 0;
-				
-			 	
-				
-				
-				//iterate through all of player's grids in special order
-//				while(i < numTiles){
-//					//add that cell to player's grids
-//					if(inBounds(row, col)){
-//						gridTile = grid[row][col];
-//						gridTile.addObject(o);
-//						o.addGridTile(gridTile);
-//						if (blockNeighbors) {
-//							updateBlockedNeighbors(row, col, o);
-//						}
-//						i++;
-//					}
-//					//find next grid to look at
-//					if(yinc > 0 && xinc > 0){
-//						if(prioX){
-//							row--;
-//							col++;
-//							if(row < top){
-//								row++;
-//								distance = col - left;
-//								row -= distance;
-//								col -= distance;
-//							}else if(col > right){
-//								row++;
-//								distance = bottom - row;
-//								row -= distance;
-//								col -= distance;
-//							}
-//						}else{
-//							row++;
-//							col--;
-//							if(col < left){
-//								col++;
-//								distance = row - top;
-//								row -= distance;
-//								col -= distance;
-//							}else if(
-//						}
-//					}
-//				}
-			} else {
-				//add new grids
-				for (row = top; row <= bottom; row++) {
-					if (top >= 0 && top < grid.length) {
-						for (col = left; col <= right; col++) {
-							if (col >= 0 && col < grid[0].length) {
-								gridTile = grid[row][col];
-								gridTile.addObject(o);
-								o.addGridTile(gridTile);
-								if (blockNeighbors) {
-									updateBlockedNeighbors(row, col, o);
-								}
+			//add new grids
+			for (row = top; row <= bottom; row++) {
+				if (top >= 0 && top < grid.length) {
+					for (col = left; col <= right; col++) {
+						if (col >= 0 && col < grid[0].length) {
+							gridTile = grid[row][col];
+							gridTile.addObject(o);
+							o.addGridTile(gridTile);
+							if (blockNeighbors) {
+								updateBlockedNeighbors(row, col, o);
 							}
 						}
 					}
@@ -194,65 +105,141 @@ package org.interguild.game.collision {
 			}
 		}
 
+		private function getDistance(obj1:CollidableObject, obj2:CollidableObject):Number {
+			var center1:Point = new Point(obj1.hitbox.x + obj1.hitbox.width / 2, obj1.hitbox.y + obj1.hitbox.height / 2);
+			var center2:Point = new Point(obj2.hitbox.x + obj2.hitbox.width / 2, obj2.hitbox.y + obj2.hitbox.height / 2);
+			var distx:Number = center2.x - center1.x;
+			var disty:Number = center2.y - center2.y;
+
+			return Math.sqrt(distx * distx + disty * disty);
+		}
+
+		private function getSlope(p1:Point, p2:Point):Number {
+			return (p2.y - p1.y) / (p2.x - p1.x);
+		}
+
 		/**
 		 * Handle collisions!
 		 */
 		public function detectAndHandleCollisions(target:CollidableObject):Array {
+			//maintain a list of nearby objects, ordered by proximity
+			var objectsToTest:Array = new Array();
 
-			//iterate through all of the Collision GridTiles that the target is in
 			var gTiles:Vector.<GridTile> = target.myCollisionGridTiles;
 			var len:uint = gTiles.length;
+			//iterate through all of the Collision GridTiles that the target is in
 			for (var i:uint = 0; i < len; i++) {
-				//interate through all of the objects in each GridTile
 				var tile:GridTile = gTiles[i];
 				var gObjs:Vector.<CollidableObject> = tile.myCollisionObjects;
 				var olen:uint = gObjs.length;
+				//interate through all of the objects in each GridTile
 				for (var j:uint = 0; j < olen; j++) {
-					//now we can test collisions between obj and target
 					var obj:CollidableObject = gObjs[j];
+					if (target != obj) {
+						var distance:Number = getDistance(obj, target);
+						var toInsert:Array = new Array(distance, obj);
 
-					if (target != obj && !target.hasCollidedWith(obj) && target.hitbox.intersects(obj.hitboxPrev)) {
-						//if they are colliding:
-						handleCollision(target, obj);
+						//add to list, ordered by proximity to target
+						var alen:uint = objectsToTest.length;
+						var tmp:Array = null;
+						for (var k:uint = 0; k < alen; k++) {
+							//shifting elements down the array
+							if (tmp != null) {
+								var tmp2:Array = objectsToTest[k];
+								objectsToTest[k] = tmp;
+								tmp = tmp2;
+									// if to be inserted at this location
+							} else if (distance < objectsToTest[k][0]) {
+								tmp = objectsToTest[k];
+								objectsToTest[k] = toInsert;
+							}
+						}
+//						//finish shifting elements
+						if (tmp != null) {
+							objectsToTest[objectsToTest.length] = tmp;
+								//or insert element to end
+						} else {
+							objectsToTest[objectsToTest.length] = toInsert;
+						}
 					}
 				}
 			}
+
+			//now we can test collisions between obj and target
+			//iterate
+			var mlen:uint = objectsToTest.length;
+			for (var m:uint = 0; m < mlen; m++) {
+				var other:CollidableObject = objectsToTest[m][1];
+
+				if (!target.hasCollidedWith(other) && target.hitboxWrapper.intersects(other.hitboxWrapper)) {
+					//if they are colliding:
+					handleCollision(target, other);
+				}
+			}
+
 			return removalObjects;
 		}
 
 		private function determineDirection(activeObject:CollidableObject, otherObject:CollidableObject, activeBoxPrev:Rectangle, otherBoxPrev:Rectangle, activeBoxCurr:Rectangle, otherBoxCurr:Rectangle):uint {
-			if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
+			if (activeBoxCurr.intersects(otherBoxPrev)) {
 				/*
-				* --------------
-				* |activeObject|
-				* --------------
-				* |otherObject |
-				* --------------
-				*/
-				return Direction.DOWN;
-			} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
+				 * SIMPLE ONE-DIRECITON CASES
+				 */
+				if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
+					/*
+					* --------------
+					* |activeObject|
+					* --------------
+					* |otherObject |
+					* --------------
+					*/
+					return Direction.DOWN;
+				} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
+					/*
+					* --------------
+					* |otherObject |
+					* --------------
+					* |activeObject|
+					* --------------
+					*/
+					return Direction.UP;
+				} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+					/*
+					* |------------||-----------|
+					* |activeObject||otherObject|
+					* |------------||-----------|
+					*/
+					return Direction.RIGHT;
+				} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+					/*
+					* |-----------||------------|
+					* |otherObject||activeObject|
+					* |-----------||------------|
+					*/
+					return Direction.LEFT;
+				}
+			} else {
 				/*
-				* --------------
-				* |otherObject |
-				* --------------
-				* |activeObject|
-				* --------------
-				*/
-				return Direction.UP;
-			} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
-				/*
-				* |------------||-----------|
-				* |activeObject||otherObject|
-				* |------------||-----------|
-				*/
-				return Direction.RIGHT;
-			} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
-				/*
-				* |-----------||------------|
-				* |otherObject||activeObject|
-				* |-----------||------------|
-				*/
-				return Direction.LEFT;
+				 * COMPLICATED CORNER CASES
+				 */
+				var slopeSelf:Number;
+				var slopeOther:Number
+				var activePoint1:Point;
+				var activePoint2:Point;
+				var otherPoint1:Point;
+				var otherPoint2:Point;
+				//going down-right	//compare top-right point to bottom-left point
+				if (activeObject.speedX > 0 && activeObject.speedY > 0) {
+					activePoint1 = new Point(activeBoxPrev.right, activeBoxPrev.top);
+					activePoint2 = new Point(activeBoxCurr.right, activeBoxCurr.top);
+					otherPoint1 = new Point(otherBoxPrev.right, otherBoxPrev.top);
+					otherPoint2 = new Point(otherBoxCurr.right, otherBoxCurr.top);
+					slopeSelf = getSlope(activePoint2, activePoint1);
+					slopeOther = getSlope(otherPoint2, otherPoint1);
+					if (slopeSelf > slopeOther) {
+						return Direction.RIGHT;
+					}
+				}
 			}
 			return Direction.NONE;
 		}
@@ -266,8 +253,7 @@ package org.interguild.game.collision {
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
 			var otherBoxCurr:Rectangle = otherObject.hitbox;
 
-//			if(otherObject is SteelCrate)
-//				trace("I am steel");
+			//NOTE: just because this method was called, it doesn't mean that there was a collision
 
 			// get dirction of collision
 			var direction:uint = determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
@@ -310,6 +296,9 @@ package org.interguild.game.collision {
 					activeObject.speedY = 0;
 					if (p) {
 						p.isStanding = true;
+					} else if (otherObject is Player) { //player got crushed by falling solid object
+						Player(otherObject).die();
+						return;
 					} else {
 						deactivateObjects.push(activeObject);
 					}

@@ -40,7 +40,7 @@ package org.interguild.game.tiles {
 		}
 
 		CONFIG::DEBUG {
-			public function drawHitBow(final:Boolean):Sprite {
+			public function drawHitBox(final:Boolean):Sprite {
 				if (KeyMan.getMe().isDebugKey) {
 					var color:uint;
 					if(final)
@@ -50,6 +50,18 @@ package org.interguild.game.tiles {
 					var s:Sprite = new Sprite();
 					s.graphics.lineStyle(1, color);
 					s.graphics.drawRect(hit_box.x, hit_box.y, hit_box.width, hit_box.height);
+					return s;
+				}
+				return null;
+			}
+			
+			public function drawHitBoxWrapper(final:Boolean):Sprite {
+				if (KeyMan.getMe().isDebugKey) {
+					var color:uint = 0x00FF00;
+					var s:Sprite = new Sprite();
+					s.graphics.lineStyle(1, color);
+					var r:Rectangle = hitboxWrapper;
+					s.graphics.drawRect(r.x, r.y, r.width, r.height);
 					return s;
 				}
 				return null;
@@ -102,6 +114,15 @@ package org.interguild.game.tiles {
 		 */
 		public function get hitboxPrev():Rectangle {
 			return hit_box_prev;
+		}
+		
+		public function get hitboxWrapper():Rectangle {
+			var r:Rectangle = new Rectangle();
+			r.left = Math.min(hit_box.left, hit_box_prev.left);
+			r.top = Math.min(hit_box.top, hit_box_prev.top);
+			r.right = Math.max(hit_box.right, hit_box_prev.right);
+			r.bottom = Math.max(hit_box.bottom, hit_box_prev.bottom);
+			return r;
 		}
 
 		/**

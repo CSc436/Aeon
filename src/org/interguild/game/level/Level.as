@@ -167,9 +167,12 @@ package org.interguild.game.level {
 
 		private function collisions():void {
 			CONFIG::DEBUG { //draw collision wireframes
-				var s:Sprite = player.drawHitBow(false);
+				var s:Sprite = player.drawHitBox(false);
 				if (s)
 					debugSprite.addChild(s);
+//				s = player.drawHitBoxWrapper(false);
+//				if (s)
+//					debugSprite.addChild(s);
 			}
 
 			//detect collisions for player
@@ -240,7 +243,7 @@ package org.interguild.game.level {
 				}
 			}
 			CONFIG::DEBUG { //draw collision wireframes
-				var s:Sprite = player.drawHitBow(true);
+				var s:Sprite = player.drawHitBox(true);
 				if (s)
 					debugSprite.addChild(s);
 				if (KeyMan.getMe().isClearKey) {
