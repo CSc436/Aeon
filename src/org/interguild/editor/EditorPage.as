@@ -129,25 +129,37 @@ package org.interguild.editor {
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			//clear button:
+			//TODO button from assets
+//			clearButton = new ClearAllButton();
 			clearButton = makeButton("Clear All", ClearButton, 20, 160);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
+			//TODO we got a new button from assets
+			testButton = new TestButton();
 			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
+			//TODO button from assets
+			resizeButton = new ResizeButton();
 			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
+			
 			undoList = new Array();
 			redoList = new Array();
 
 			//undo button:
+			//TODO button from assets
+//			undoButton = new UndoButton();
 			undoButton = makeButton("Undo",null , 20,240) ;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			//redobutton:
+			//TODO button from assets
+//			redoButton = new RedoButton();
 			redoButton = makeButton("Redo", null, 20, 400);
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
+			
 			//title text field
 			titlef = new TextField();
 			titlef.text = "Title:";

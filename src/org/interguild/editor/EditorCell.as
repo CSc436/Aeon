@@ -35,11 +35,21 @@ package org.interguild.editor {
 				removeChildren();
 				
 				switch(currentTitleName){
+					//TODO add classes for
+					/*
+					FinishLineSprite
+					CollectableSprite
+					LightningUpSprite
+					LightningDownSprite
+					LightningLeftSprite
+					LightningRightSprite
+					*/
+					
 					case Terrain.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new TerrainSprite()));
 						break;
 					case Player.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new StartingPointSprite()));
+						addChild(new Bitmap(new StartLineSprite()));
 						break;
 					case WoodCrate.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new WoodenCrateSprite()));
