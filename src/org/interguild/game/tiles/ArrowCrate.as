@@ -1,42 +1,29 @@
-package org.interguild.game.tiles {
-	
+package org.interguild.game.tiles
+{
 	import flash.display.Bitmap;
 	import org.interguild.Aeon;
 	
-	public class WoodCrate extends CollidableObject implements Tile {
-		
-		public static const LEVEL_CODE_CHAR:String = 'w';
+	public class ArrowCrate extends CollidableObject implements Tile {
+		public static const LEVEL_CODE_CHAR:String = 'a';
 		
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 6;
-		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		
-		private static const SPRITE_COLOR:uint = 0x723207;
+		private static const SPRITE_COLOR:uint = 0xFF6600;
 		private static const SPRITE_WIDTH:uint = 32;
 		private static const SPRITE_HEIGHT:uint = 32;
-		private static const TILE_ENCODING:String = 'w';
 		
-		public var destructibility:int = 2;
+		public var destructibility:int = 1;
 		public var solidity:Boolean = true;
 		public var gravible:Boolean = false;
-		public var knocksback:int = 5;
-		public var buoyancy:Boolean = true;
+		public var knocksback:int = 0;
+		public var buoyancy:Boolean = false;
 		
-		public function WoodCrate(x:int, y:int) {
+		public function ArrowCrate(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			graphics.beginFill(SPRITE_COLOR);
 			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
-			
-			// Wood crate image is not working for some reason, even though steel crate is
-			/*
-			addChild(new Bitmap(new WoodenCrateSprite()));
-			var a:BitmapData = new WoodenCrateSprite();
-			var b:BitmapData = new SteelCrateSprite();
-			trace("wood crate height is: " + a.height);
-			trace("steel crate height is " + b.height);
-			*/
-			
 		}
 		
 		public function getDestructibility():int {
@@ -63,23 +50,18 @@ package org.interguild.game.tiles {
 			return buoyancy;
 		}
 		
-		public override function onGameLoop():void{
+		public override function onGameLoop():void {
 			//gravity
 			speedY += GRAVITY;
-			
-			//update movement
-			newX += speedX;
-			newY += speedY;
 			
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
 			}
 			
-			//commit location change:
-			x = newX;
-			y = newY;
+			//update movement
+			newX += speedX;
+			newY += speedY;
 			updateHitBox();
 		}
 	}
 }
-
