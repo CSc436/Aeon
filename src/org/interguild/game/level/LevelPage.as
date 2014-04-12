@@ -53,6 +53,8 @@ package org.interguild.game.level {
 			addChild(startScreen);
 			showPreviewLevel(false);
 			addChild(level);
+			startScreen.initButtons();
+			startScreen.hideButtons();
 		}
 
 		private function onLoadError(e:ArrayList):void {
@@ -79,7 +81,7 @@ package org.interguild.game.level {
 			// Starting the level for the first time
 			if(isPauseMenu) {
 				startScreen.setJumpText("Paused");
-				startScreen.initButtons();
+				startScreen.showButtons();
 			}
 			
 			//scale level preview:
@@ -104,14 +106,17 @@ package org.interguild.game.level {
 			}
 			else if (!(KeyMan.getMe().isKeyEsc) && startScreen.visible) {
 				trace("Trying to unpause the game");
-				showFullLevel();
+				showFullLevel(true);
 			}
 		}
 		
-		private function showFullLevel():void{
+		private function showFullLevel(wasPaused:Boolean):void{
 			if(KeyMan.getMe().spacebarCallback != null)
 				KeyMan.getMe().removeSpacebarListener();
 			if(startScreen.visible){
+				if(wasPaused) {
+					startScreen.hideButtons();
+				}
 				startScreen.visible = false;
 				level.scaleX = level.scaleY = 1;
 				level.x = level.y = 0;

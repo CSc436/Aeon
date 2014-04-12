@@ -44,3 +44,9 @@ Main Menu Sprites{
 	MenuButtonSelectBG
 	MenuButtonClickBG
 }
+Pause Menu Sprites{
+	ResumeButton
+	RestartButton
+	LevelEditorButton
+	QuitButton
+}
