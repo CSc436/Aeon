@@ -1,5 +1,6 @@
 package org.interguild.game.level {
 	import flash.display.DisplayObject;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -68,6 +69,9 @@ package org.interguild.game.level {
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
+			
+			var hud:LevelHUD = new LevelHUD();
+			addChild(hud);
 		}
 
 		public function get title():String {
