@@ -51,8 +51,9 @@ package org.interguild.loader {
 					level.createCollidableObject(tile, false);
 					break;
 				case ArrowCrate.LEVEL_CODE_CHAR:
-					tile = new ArrowCrate(px, py);
+					tile = new ArrowCrate(px, py, 1);
 					level.createCollidableObject(tile, false);
+					level.createCollidableObject(ArrowCrate(tile).arrow, true);
 					break;
 				default:
 					trace("LevelLoader: Unknown level code character: '" + curChar + "'");

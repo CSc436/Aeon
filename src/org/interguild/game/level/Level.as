@@ -231,7 +231,7 @@ package org.interguild.game.level {
 				if(s)
 					debugSprite.addChild(s);
 				if(KeyMan.getMe().isClearKey){
-					debugSprite.removeChildren();
+					Aeon.removeChildren(debugSprite);
 				}
 			}
 		}
@@ -258,6 +258,8 @@ package org.interguild.game.level {
 				//remove from grid tiles
 				if (r is CollidableObject)
 					CollidableObject(r).removeSelf();
+				
+				r.onKill();
 			}
 		}
 

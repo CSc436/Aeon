@@ -11,6 +11,7 @@ package org.interguild {
 
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
+	import flash.display.DisplayObjectContainer;
 
 	/**
 	 * Aeon.as initializes the game, but it's also responsible for
@@ -130,6 +131,12 @@ package org.interguild {
 			editorPage = new EditorPage(this);
 			this.addChild(editorPage);
 			currentPage = editorPage;
+		}
+		
+		public static function removeChildren(obj:DisplayObjectContainer):void {
+			while(obj.numChildren != 0) {
+				obj.removeChildAt(0);
+			}
 		}
 	}
 }

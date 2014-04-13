@@ -6,6 +6,7 @@ package org.interguild.editor {
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.Aeon;
 
 	public class EditorCell extends Sprite {
 		
@@ -32,7 +33,7 @@ package org.interguild.editor {
 		public function setTile(char:String):void{
 			if(currentTile != char){
 				currentTile = char;
-				removeChildren();
+				Aeon.removeChildren(this);
 				
 				switch(currentTile){
 					case Terrain.LEVEL_CODE_CHAR:
@@ -55,7 +56,7 @@ package org.interguild.editor {
 		
 		public function clearTile():void{
 			currentTile = "";
-			removeChildren();
+			Aeon.removeChildren(this);
 		}
 	}
 }

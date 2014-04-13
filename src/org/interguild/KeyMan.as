@@ -100,10 +100,7 @@ package org.interguild {
 		}
 		
 		public function resumeFromButton():void {
-			if(!isKeyEsc)
-				isKeyEsc = true;
-			else
-				isKeyEsc = false;
+			resetEscKey();
 			if(escapeCallback)
 				escapeCallback();
 		}

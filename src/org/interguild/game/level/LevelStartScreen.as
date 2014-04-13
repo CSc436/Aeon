@@ -1,4 +1,5 @@
 package org.interguild.game.level {
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -46,11 +47,12 @@ package org.interguild.game.level {
 		private var jumpText:TextField;
 		
 		// Buttons for the pause menu
-		private var resumeButton:Button;
-		private var restartCheckpointButton:Button;
-		private var restartGameButton:Button;
-		private var editorButton:Button;
-		private var quitButton:Button;
+		private var buttonContainer:Sprite;
+		private var resumeButton:MovieClip;
+		//private var restartCheckpointButton:Button;
+		private var restartGameButton:MovieClip;
+		private var editorButton:MovieClip;
+		private var quitButton:MovieClip;
 
 		public function LevelStartScreen(title:String) {
 			initTitle(title);
@@ -110,56 +112,55 @@ package org.interguild.game.level {
 		
 		public function initButtons():void {
 			
+			buttonContainer = new Sprite();
+			buttonContainer.graphics.beginFill(0xC0C0C0, 0.75);
+			buttonContainer.graphics.drawRoundRect(Aeon.STAGE_WIDTH/2 - 100, 100, 200, 350, 10);
+			buttonContainer.graphics.endFill();
+			
 			// Make button for resuming the game
-			resumeButton = new Button();
-			resumeButton.label = "Resume (Esc)";
-			resumeButton.x = 350;
-			resumeButton.y = 125;
-			resumeButton.height = 25;
-			resumeButton.width = 150;
+			resumeButton = new ResumeButton();
+			resumeButton.buttonMode = true;
+			resumeButton.x = Aeon.STAGE_WIDTH/2 - 50;
+			resumeButton.y = 175;
 			resumeButton.addEventListener(MouseEvent.CLICK, resumeGame);
-			this.parent.addChild(resumeButton);
+			buttonContainer.addChild(resumeButton);
 			
 			// Make button for restarting from a checkpoint
-			restartCheckpointButton = new Button();
-			restartCheckpointButton.label = "Restart from Checkpoint";
-			restartCheckpointButton.x = 350;
-			restartCheckpointButton.y = 175;
-			restartCheckpointButton.height = 25;
-			restartCheckpointButton.width = 150;
-			// Make this work once we actually have checkpoints in the game
-			//restartCheckpointButton.addEventListener(MouseEvent.CLICK, restartFromCheckpoint);
-			this.parent.addChild(restartCheckpointButton);
+//			restartCheckpointButton = new Button();
+//			restartCheckpointButton.label = "Restart from Checkpoint";
+//			restartCheckpointButton.x = 350;
+//			restartCheckpointButton.y = 175;
+//			restartCheckpointButton.height = 25;
+//			restartCheckpointButton.width = 150;
+//			// Make this work once we actually have checkpoints in the game
+//			//restartCheckpointButton.addEventListener(MouseEvent.CLICK, restartFromCheckpoint);
+//			this.parent.addChild(restartCheckpointButton);
 			
 			// Make button for restarting from the beginning of a level
-			restartGameButton = new Button();
-			restartGameButton.label = "Restart from Beginning";
-			restartGameButton.x = 350;
+			restartGameButton = new RestartButton();
+			restartGameButton.buttonMode = true;
+			restartGameButton.x = Aeon.STAGE_WIDTH/2 - 50;
 			restartGameButton.y = 225;
-			restartGameButton.height = 25;
-			restartGameButton.width = 150;
 			restartGameButton.addEventListener(MouseEvent.CLICK, restartFromBeginning);
-			this.parent.addChild(restartGameButton);
+			buttonContainer.addChild(restartGameButton);
 			
 			// Make button for going to the level editor
-			editorButton = new Button();
-			editorButton.label = "Level Editor";
-			editorButton.x = 350;
+			editorButton = new LevelEditorButton();
+			editorButton.buttonMode = true;
+			editorButton.x = Aeon.STAGE_WIDTH/2 - 50;
 			editorButton.y = 275;
-			editorButton.height = 25;
-			editorButton.width = 150;
 			editorButton.addEventListener(MouseEvent.CLICK, goToEditor);
-			this.parent.addChild(editorButton);
+			buttonContainer.addChild(editorButton);
 			
 			// Make button for quitting the game
-			quitButton = new Button();
-			quitButton.label = "Quit Game";
-			quitButton.x = 350;
+			quitButton = new QuitButton();
+			quitButton.buttonMode = true;
+			quitButton.x = Aeon.STAGE_WIDTH/2 - 50;
 			quitButton.y = 325;
-			quitButton.height = 25;
-			quitButton.width = 150;
 			quitButton.addEventListener(MouseEvent.CLICK, quitGame);
-			this.parent.addChild(quitButton);
+			buttonContainer.addChild(quitButton);
+			
+			this.parent.addChild(buttonContainer)
 		}
 		
 		protected function quitGame(event:MouseEvent):void {
@@ -176,11 +177,13 @@ package org.interguild.game.level {
 		}
 		
 		protected function restartFromBeginning(event:MouseEvent):void {
+			this.stage.focus = stage;
 			KeyMan.getMe().resetEscKey();
 			// This is hardcoded right now, but we probably want some kind of
 			// global reference to the current file so that we know what level
 			// needs to be restarted
 			Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+			
 		}
 		
 		protected function resumeGame(event:MouseEvent):void {
@@ -188,19 +191,11 @@ package org.interguild.game.level {
 		}
 		
 		public function showButtons():void {
-			resumeButton.visible = true;
-			restartCheckpointButton.visible = true;
-			restartGameButton.visible = true;
-			editorButton.visible = true;
-			quitButton.visible = true;
+			buttonContainer.visible = true;
 		}
 		
 		public function hideButtons():void {
-			resumeButton.visible = false;
-			restartCheckpointButton.visible = false;
-			restartGameButton.visible = false;
-			editorButton.visible = false;
-			quitButton.visible = false;
+			buttonContainer.visible = false;
 		}
 		
 		public function setJumpText(str:String):void {
