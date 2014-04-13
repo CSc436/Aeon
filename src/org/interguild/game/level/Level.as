@@ -12,6 +12,7 @@ package org.interguild.game.level {
 	import org.interguild.game.Camera;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 
@@ -45,6 +46,7 @@ package org.interguild.game.level {
 		private var h:uint = 0;
 		
 		private var hud:LevelHUD;
+		private var collectableCount;
 		
 		CONFIG::DEBUG{
 			private var debugSprite:Sprite = new Sprite();
@@ -52,6 +54,7 @@ package org.interguild.game.level {
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
 			
+			collectableCount = 0;
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
@@ -72,16 +75,23 @@ package org.interguild.game.level {
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 			
-			hud = new LevelHUD();
+			hud = new LevelHUD(collectableCount);
 			addChild(hud);
 		}
 
+		public function getHUD():LevelHUD{
+			return hud;
+		}
 		public function get title():String {
 			return myTitle;
 		}
 
 		public function set title(t:String):void {
 			myTitle = t;
+		}
+		
+		public function setMaxCollectable():void{
+			hud.updateMax(collectableCount);
 		}
 		
 		public function showHUD(show:Boolean):void{
@@ -136,6 +146,9 @@ package org.interguild.game.level {
 
 		public function createCollidableObject(tile:CollidableObject, isActive:Boolean):void {
 			allObjects.push(tile);
+			if(tile is Collectable){
+				collectableCount++;
+			}
 			if (isActive)
 				activeObjects.push(tile);
 			collisionGrid.updateObject(tile, !isActive);

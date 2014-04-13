@@ -71,6 +71,7 @@ package org.interguild.game.level {
 		private function onLoadComplete():void {
 			removeChild(progressBar);
 			startScreen.loadComplete();
+			level.setMaxCollectable();
 			KeyMan.getMe().addSpacebarListener(showFullLevel);
 			KeyMan.getMe().addEscapeListener(pauseGame);
 		}
