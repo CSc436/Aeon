@@ -3,14 +3,19 @@ package org.interguild.game.level {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	
+
+	CONFIG::DEBUG {
+		import org.interguild.KeyMan;
+	}
 	import org.interguild.Aeon;
-	import org.interguild.KeyMan;
 	import org.interguild.game.Camera;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -40,7 +45,10 @@ package org.interguild.game.level {
 		private var h:uint = 0;
 
 		CONFIG::DEBUG {
+			private var isDebuggingMode:Boolean = false;
 			private var debugSprite:Sprite = new Sprite();
+			private var isSlowdown:Boolean = false;
+			private var slowDownText:TextField;
 		}
 
 		public function Level(lvlWidth:Number, lvlHeight:Number) {
@@ -60,6 +68,24 @@ package org.interguild.game.level {
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
+
+			CONFIG::DEBUG {
+				var keys:KeyMan = KeyMan.getMe();
+				keys.addSlowdownListeners(onSlowdownToggle, onSlowdownNext);
+				keys.addDebugListeners(onDebugToggle);
+
+				slowDownText = new TextField();
+				slowDownText.defaultTextFormat = new TextFormat("Impact", 14, 0xFFFFFF);
+				slowDownText.autoSize = TextFieldAutoSize.LEFT;
+				slowDownText.selectable = false;
+				slowDownText.background = true;
+				slowDownText.backgroundColor = 0;
+				slowDownText.text = "SLOWDOWN MODE";
+				slowDownText.x = 5;
+				slowDownText.y = Aeon.STAGE_HEIGHT - slowDownText.height - 5;
+				slowDownText.visible = false;
+				addChild(slowDownText);
+			}
 		}
 
 		public function get title():String {
@@ -138,6 +164,34 @@ package org.interguild.game.level {
 			timer.stop();
 		}
 
+		CONFIG::DEBUG {
+			private function onSlowdownToggle():void {
+				isSlowdown = !isSlowdown;
+				if (isSlowdown) {
+					timer.stop();
+					slowDownText.visible = true;
+				} else {
+					timer.start();
+					slowDownText.visible = false;
+				}
+			}
+
+			private function onSlowdownNext():void {
+				if (isSlowdown)
+					onGameLoop(null);
+			}
+
+			private function onDebugToggle():void {
+				isDebuggingMode = !isDebuggingMode;
+				if (isDebuggingMode) {
+					debugSprite.visible = true;
+				} else {
+					debugSprite.visible = false;
+					debugSprite.removeChildren();
+				}
+			}
+		}
+
 		/***************************
 		 * Game Loop methods below *
 		 ****************************/
@@ -167,12 +221,14 @@ package org.interguild.game.level {
 
 		private function collisions():void {
 			CONFIG::DEBUG { //draw collision wireframes
-				var s:Sprite = player.drawHitBox(false);
-				if (s)
-					debugSprite.addChild(s);
-//				s = player.drawHitBoxWrapper(false);
-//				if (s)
-//					debugSprite.addChild(s);
+				if (isDebuggingMode) {
+					var s:Sprite = player.drawHitBox(false);
+					if (s)
+						debugSprite.addChild(s);
+//					s = player.drawHitBoxWrapper(false);
+//					if (s)
+//						debugSprite.addChild(s);
+				}
 			}
 
 			//detect collisions for player
@@ -201,7 +257,7 @@ package org.interguild.game.level {
 			var remove:Array = collisionGrid.removalList;
 			for (var i:int = 0; i < remove.length; i++) {
 				var r:GameObject = GameObject(remove[i]);
-				
+
 				//remove from active objects
 				var index:int = collisionGrid.activeObjects.indexOf(r);
 				if (index != -1) {
@@ -217,16 +273,16 @@ package org.interguild.game.level {
 				}
 			}
 			collisionGrid.resetRemovalList();
-			
+
 			remove = collisionGrid.deactivationList;
-			for(i = 0; i < remove.length; i++){
+			for (i = 0; i < remove.length; i++) {
 				r = GameObject(remove[i]);
-				
+
 				index = collisionGrid.activeObjects.indexOf(r);
 				if (index != -1) {
 					collisionGrid.activeObjects.splice(index, 1);
 				}
-				
+
 				if (r is CollidableObject) {
 					CollidableObject(r).isActive = false;
 				}
@@ -243,11 +299,10 @@ package org.interguild.game.level {
 				}
 			}
 			CONFIG::DEBUG { //draw collision wireframes
-				var s:Sprite = player.drawHitBox(true);
-				if (s)
-					debugSprite.addChild(s);
-				if (KeyMan.getMe().isClearKey) {
-					debugSprite.removeChildren();
+				if (isDebuggingMode) {
+					var s:Sprite = player.drawHitBox(true);
+					if (s)
+						debugSprite.addChild(s);
 				}
 			}
 

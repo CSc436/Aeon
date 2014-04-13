@@ -3,11 +3,11 @@ package org.interguild {
 	import flash.events.KeyboardEvent;
 
 	public class KeyMan {
-		
+
 		private static var instance:KeyMan;
-		
-		public static function getMe():KeyMan{
-			if(instance==null){
+
+		public static function getMe():KeyMan {
+			if (instance == null) {
 				throw new Error("You somehow called KeyMan.getMe() before Aeon.as did. How did you do that??");
 			}
 			return instance;
@@ -19,15 +19,15 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
-		CONFIG::DEBUG {
-			public var isDebugKey:Boolean = false;
-			public var isClearKey:Boolean = false;
-		}
-		
+
 		public var spacebarCallback:Function;
 		private var escapeCallback:Function;
-		
 		private var menuCallback:Function;
+		CONFIG::DEBUG{
+			private var debugToggleCallback:Function;
+			private var slowDownToggleCallback:Function;
+			private var slowDownNextCallback:Function;
+		}
 
 		public function KeyMan(stage:Stage) {
 			instance = this;
@@ -38,14 +38,13 @@ package org.interguild {
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key
-					if(!isKeyEsc) {
+					if (!isKeyEsc) {
 						isKeyEsc = true;
-						if(escapeCallback)
+						if (escapeCallback)
 							escapeCallback();
-					}
-					else {
+					} else {
 						isKeyEsc = false;
-						if(escapeCallback)
+						if (escapeCallback)
 							escapeCallback();
 					}
 					break;
@@ -63,17 +62,27 @@ package org.interguild {
 					break;
 				case 32: //spacebar
 					isKeySpace = true;
-					if(spacebarCallback)
+					if (spacebarCallback)
 						spacebarCallback();
 					break;
 			}
 			CONFIG::DEBUG {
-				if(evt.keyCode == 66)//b key
-					isDebugKey = true;
-				else if(evt.keyCode == 78)//n key
-					isClearKey = true;
+				switch(evt.keyCode){
+					case 66: //b key
+						if(debugToggleCallback)
+							debugToggleCallback();
+						break;
+					case 191: // "/" or "?" key
+						if(slowDownToggleCallback)
+							slowDownToggleCallback();
+						break;
+					case 190: // "." or ">" key
+						if(slowDownNextCallback)
+							slowDownNextCallback();
+						break;
+				}
 			}
-			if(menuCallback)
+			if (menuCallback)
 				menuCallback(evt.keyCode);
 		}
 
@@ -95,28 +104,33 @@ package org.interguild {
 					isKeySpace = false;
 					break;
 			}
-			CONFIG::DEBUG {
-				if(evt.keyCode == 66) //b key
-					isDebugKey = false;
-				else if(evt.keyCode == 78)//n key
-					isClearKey = false;
-			}
 		}
-		
+
 		public function addEscapeListener(f:Function):void {
 			escapeCallback = f;
 		}
-		
-		public function addSpacebarListener(cb:Function):void{
+
+		public function addSpacebarListener(cb:Function):void {
 			spacebarCallback = cb;
 		}
-		
+
 		public function removeSpacebarListener():void {
 			spacebarCallback = null;
 		}
-		
-		public function addMenuCallback(cb:Function):void{
+
+		public function addMenuCallback(cb:Function):void {
 			menuCallback = cb;
+		}
+
+		CONFIG::DEBUG{
+			public function addSlowdownListeners(onToggle:Function, onNext:Function):void {
+				slowDownToggleCallback = onToggle;
+				slowDownNextCallback = onNext;
+			}
+			
+			public function addDebugListeners(onToggle:Function):void {
+				debugToggleCallback = onToggle;
+			}
 		}
 	}
 }

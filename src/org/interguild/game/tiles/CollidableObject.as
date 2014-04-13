@@ -41,30 +41,24 @@ package org.interguild.game.tiles {
 
 		CONFIG::DEBUG {
 			public function drawHitBox(final:Boolean):Sprite {
-				if (KeyMan.getMe().isDebugKey) {
-					var color:uint;
-					if(final)
-						color = 0xFF0000;
-					else
-						color = 0x0000FF;
-					var s:Sprite = new Sprite();
-					s.graphics.lineStyle(1, color);
-					s.graphics.drawRect(hit_box.x, hit_box.y, hit_box.width, hit_box.height);
-					return s;
-				}
-				return null;
+				var color:uint;
+				if (final)
+					color = 0xFF0000;
+				else
+					color = 0x0000FF;
+				var s:Sprite = new Sprite();
+				s.graphics.lineStyle(1, color);
+				s.graphics.drawRect(hit_box.x, hit_box.y, hit_box.width, hit_box.height);
+				return s;
 			}
-			
+
 			public function drawHitBoxWrapper(final:Boolean):Sprite {
-				if (KeyMan.getMe().isDebugKey) {
-					var color:uint = 0x00FF00;
-					var s:Sprite = new Sprite();
-					s.graphics.lineStyle(1, color);
-					var r:Rectangle = hitboxWrapper;
-					s.graphics.drawRect(r.x, r.y, r.width, r.height);
-					return s;
-				}
-				return null;
+				var color:uint = 0x00FF00;
+				var s:Sprite = new Sprite();
+				s.graphics.lineStyle(1, color);
+				var r:Rectangle = hitboxWrapper;
+				s.graphics.drawRect(r.x, r.y, r.width, r.height);
+				return s;
 			}
 		}
 
@@ -73,9 +67,9 @@ package org.interguild.game.tiles {
 		 * currently in.
 		 */
 		public function addGridTile(g:GridTile, index:int = -1):void {
-			if(index == -1){
-			myGrids.push(g);
-			}else{
+			if (index == -1) {
+				myGrids.push(g);
+			} else {
 				myGrids[index] = g;
 			}
 		}
@@ -115,7 +109,7 @@ package org.interguild.game.tiles {
 		public function get hitboxPrev():Rectangle {
 			return hit_box_prev;
 		}
-		
+
 		public function get hitboxWrapper():Rectangle {
 			var r:Rectangle = new Rectangle();
 			r.left = Math.min(hit_box.left, hit_box_prev.left);
