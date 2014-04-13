@@ -45,7 +45,7 @@ package org.interguild.game.level {
 		private var h:uint = 0;
 
 		CONFIG::DEBUG {
-			private var isDebuggingMode:Boolean = false;
+			public var isDebuggingMode:Boolean = false;
 			private var debugSprite:Sprite = new Sprite();
 			private var isSlowdown:Boolean = false;
 			private var slowDownText:TextField;

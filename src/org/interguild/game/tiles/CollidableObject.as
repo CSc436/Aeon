@@ -90,7 +90,7 @@ package org.interguild.game.tiles {
 			return this.myGrids;
 		}
 
-		protected function updateHitBox():void {
+		public function updateHitBox():void {
 			hit_box.x = newX;
 			hit_box.y = newY;
 		}

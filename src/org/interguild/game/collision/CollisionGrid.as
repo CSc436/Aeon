@@ -78,7 +78,7 @@ package org.interguild.game.collision {
 			var left:int = box.left / Aeon.TILE_WIDTH;
 			var bottom:int = (box.bottom - 1) / Aeon.TILE_HEIGHT;
 			var right:int = (box.right - 1) / Aeon.TILE_WIDTH;
-			if(o is Player){
+			if (o is Player) {
 				top--;
 				left--;
 				bottom++;
@@ -106,12 +106,12 @@ package org.interguild.game.collision {
 		}
 
 		private function getDistance(obj1:CollidableObject, obj2:CollidableObject):Number {
-			var center1:Point = new Point(obj1.hitbox.x + obj1.hitbox.width / 2, obj1.hitbox.y + obj1.hitbox.height / 2);
-			var center2:Point = new Point(obj2.hitbox.x + obj2.hitbox.width / 2, obj2.hitbox.y + obj2.hitbox.height / 2);
+			var center1:Point = new Point(obj1.hitboxPrev.x + obj1.hitboxPrev.width / 2, obj1.hitboxPrev.y + obj1.hitboxPrev.height / 2);
+			var center2:Point = new Point(obj2.hitboxPrev.x + obj2.hitboxPrev.width / 2, obj2.hitboxPrev.y + obj2.hitboxPrev.height / 2);
 			var distx:Number = center2.x - center1.x;
-			var disty:Number = center2.y - center2.y;
+			var disty:Number = center2.y - center1.y;
 
-			return Math.sqrt(distx * distx + disty * disty);
+			return Math.sqrt((distx * distx) + (disty * disty));
 		}
 
 		private function getSlope(p1:Point, p2:Point):Number {
@@ -137,6 +137,11 @@ package org.interguild.game.collision {
 					var obj:CollidableObject = gObjs[j];
 					if (target != obj) {
 						var distance:Number = getDistance(obj, target);
+						//if potential corner collision
+						if (!target.hitbox.intersects(obj.hitbox)) {
+							distance = 0;
+						}
+
 						var toInsert:Array = new Array(distance, obj);
 
 						//add to list, ordered by proximity to target
@@ -170,13 +175,29 @@ package org.interguild.game.collision {
 			var mlen:uint = objectsToTest.length;
 			for (var m:uint = 0; m < mlen; m++) {
 				var other:CollidableObject = objectsToTest[m][1];
+				CONFIG::DEBUG {
+					if (level.isDebuggingMode)
+						trace(other, "x: " + other.x, "y: " + other.y, "dist: " + objectsToTest[m][0]);
+				}
 
 				if (!target.hasCollidedWith(other) && target.hitboxWrapper.intersects(other.hitboxWrapper)) {
+					CONFIG::DEBUG {
+						if (level.isDebuggingMode)
+							trace("	handling collision");
+					}
 					//if they are colliding:
 					handleCollision(target, other);
+				} else {
+					CONFIG::DEBUG {
+						if (level.isDebuggingMode)
+							trace("	nogo");
+					}
 				}
 			}
-
+			CONFIG::DEBUG {
+				if (level.isDebuggingMode)
+					trace("-----------------------");
+			}
 			return removalObjects;
 		}
 
@@ -224,19 +245,51 @@ package org.interguild.game.collision {
 				 */
 				var slopeSelf:Number;
 				var slopeOther:Number
-				var activePoint1:Point;
-				var activePoint2:Point;
-				var otherPoint1:Point;
-				var otherPoint2:Point;
+				var basePoint:Point;
+				var selfPoint:Point;
+				var otherPoint:Point;
 				//going down-right	//compare top-right point to bottom-left point
-				if (activeObject.speedX > 0 && activeObject.speedY > 0) {
-					activePoint1 = new Point(activeBoxPrev.right, activeBoxPrev.top);
-					activePoint2 = new Point(activeBoxCurr.right, activeBoxCurr.top);
-					otherPoint1 = new Point(otherBoxPrev.right, otherBoxPrev.top);
-					otherPoint2 = new Point(otherBoxCurr.right, otherBoxCurr.top);
-					slopeSelf = getSlope(activePoint2, activePoint1);
-					slopeOther = getSlope(otherPoint2, otherPoint1);
-					if (slopeSelf > slopeOther) {
+				if (activeBoxPrev.top <= otherBoxPrev.bottom && activeBoxCurr.top >= otherBoxCurr.bottom && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.top);
+					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.top);
+					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.bottom);
+					slopeSelf = getSlope(basePoint, selfPoint); 
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf <= slopeOther) {
+//						trace("CORNER CASE: on down-right");
+						return Direction.RIGHT;
+					}
+						//going down-left //compare top-left point to bottom-right point
+				} else if (activeBoxPrev.top <= otherBoxPrev.bottom && activeBoxCurr.top >= otherBoxCurr.bottom && activeBoxPrev.left <= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.top);
+					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.top);
+					otherPoint = new Point(otherBoxCurr.right, otherBoxCurr.bottom);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf <= slopeOther) {
+//						trace("CORNER CASE: on down-left");
+						return Direction.LEFT;
+					}
+					//going up-left //compare bottom-left point to top-right point
+				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.bottom);
+					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.bottom);
+					otherPoint = new Point(otherBoxCurr.right, otherBoxCurr.top);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf >= slopeOther) {
+//						trace("CORNER CASE: on up-left");
+						return Direction.LEFT;
+					}
+					//going up-right //compare bottom-right point to top-left point
+				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.bottom);
+					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.bottom);
+					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.top);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf >= slopeOther) {
+//						trace("CORNER CASE: on up-right");
 						return Direction.RIGHT;
 					}
 				}
@@ -257,6 +310,8 @@ package org.interguild.game.collision {
 
 			// get dirction of collision
 			var direction:uint = determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
+			if (direction == Direction.NONE)
+				return;
 
 			if (activeObject is Player) {
 				p = Player(activeObject);
@@ -322,6 +377,7 @@ package org.interguild.game.collision {
 					activeObject.speedX = 0;
 				}
 			}
+			activeObject.updateHitBox();
 		}
 
 		public function destroyObject(obj:CollidableObject):void {

@@ -14,6 +14,7 @@ package org.interguild.game.collision {
 			row = r;
 			col = c;
 			grid = g;
+			mouseEnabled = false;
 			myStuff = new Vector.<CollidableObject>();
 			CONFIG::DEBUG {
 				graphics.beginFill(0xCCCCCC, 0.5);
