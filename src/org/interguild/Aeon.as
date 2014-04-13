@@ -25,6 +25,8 @@ package org.interguild {
 
 	public class Aeon extends Sprite {
 
+		
+		
 		private static var instance:Aeon;
 
 		/**

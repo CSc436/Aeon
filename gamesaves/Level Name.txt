@@ -1,18 +1,17 @@
-[object TextInput]
+Level Name
 15x15
-xxxxxxxxxxxxxxx
-x xxx xxxxxxx x
-x x xxx  xx x x
-x xxxx    x x x
-xxxxxxxxx xx  x
-xxx xxxxxxx   x
-xxxx   xxxx   x
-xxxxx xxx x   x
-x xxxxxxxx x xx
-x xx     xxxxxx
-xx x x  x  x xx
-x x    x    x x
-x      x      x
-x             x
-xxxxxxxxxxxxxxx
- 
+          w    
+         w     
+        w      
+        w     
+     xx w      
+   wwxwwwww    
+     xxxxxwww  
+             w 
+               
+               
+               
+               
+               
+               
+               
