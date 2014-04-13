@@ -138,13 +138,13 @@ package org.interguild.editor {
 
 			//Test button:
 			//TODO we got a new button from assets
-			testButton = new TestButton();
+//			testButton = new TestButton();
 			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
-			resizeButton = new ResizeButton();
+//			resizeButton = new ResizeButton();
 			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			
