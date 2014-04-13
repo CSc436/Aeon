@@ -135,10 +135,5 @@ package org.interguild {
 			currentPage = editorPage;
 		}
 		
-		public static function removeChildren(obj:DisplayObjectContainer):void {
-			while(obj.numChildren != 0) {
-				obj.removeChildAt(0);
-			}
-		}
 	}
 }

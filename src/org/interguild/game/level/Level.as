@@ -231,7 +231,7 @@ package org.interguild.game.level {
 				if(s)
 					debugSprite.addChild(s);
 				if(KeyMan.getMe().isClearKey){
-					Aeon.removeChildren(debugSprite);
+					debugSprite.removeChildren();
 				}
 			}
 		}

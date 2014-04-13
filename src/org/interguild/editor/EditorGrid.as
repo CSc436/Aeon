@@ -1,6 +1,5 @@
 package org.interguild.editor {
 	import flash.display.Sprite;
-	import org.interguild.Aeon;
 	
 	public class EditorGrid extends Sprite {
 
@@ -47,7 +46,7 @@ package org.interguild.editor {
 		}
 
 		public function clearGrid():void {
-			Aeon.removeChildren(this);
+			removeChildren();
 			initGridCells();
 		}
 
