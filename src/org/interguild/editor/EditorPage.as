@@ -1,6 +1,7 @@
 package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	import flash.events.Event;
 	import flash.text.TextField;
 	
 	import fl.controls.Button;
@@ -138,13 +139,13 @@ package org.interguild.editor {
 
 			//Test button:
 			//TODO we got a new button from assets
-			testButton = new TestButton();
+			testButton = new Button();
 			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
-			resizeButton = new ResizeButton();
+			resizeButton = new Button();
 			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			
@@ -294,6 +295,8 @@ package org.interguild.editor {
 		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
 			var b:Button = new Button();
 			b.label = label;
+			b.width = 50;
+			b.height = 50;
 			b.setStyle("icon", image);
 			b.x = xpixel;
 			b.y = ypixel;
