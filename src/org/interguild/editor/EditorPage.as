@@ -1,7 +1,8 @@
 package org.interguild.editor {
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
-	import flash.events.MouseEvent;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
 	import fl.controls.Button;
@@ -17,7 +18,6 @@ package org.interguild.editor {
 	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-	import flash.display.Bitmap;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
@@ -72,11 +72,11 @@ package org.interguild.editor {
 
 		//following are objects on this sprite
 		private var playerSpawnButton:Button;
-		private var wallButton:WallButton;
+		//private var wallButton:WallButton;
 		private var clearButton:ClearAllButton;
-		private var woodButton:WoodBoxButton;
-		private var testButton:TestButton;
-		private var resizeButton:ResizeButton;
+		//private var woodButton:WoodBoxButton;
+		//private var testButton:TestButton;
+		//private var resizeButton:ResizeButton;
 		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
@@ -91,7 +91,7 @@ package org.interguild.editor {
 		private var gridContainer:Sprite;
 		private var gridMask:Sprite;
 		private var grid:EditorGrid;
-
+		private var tab:EditorTab;
 		private var dropDown:DropDownMenu;
 
 		private var mainMenu:Aeon;
@@ -124,29 +124,29 @@ package org.interguild.editor {
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 
 			//wallbutton
-			wallButton = new WallButton();
-			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
+			//wallButton = new WallButton();
+			//wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 
 			//woodbutton:
-			woodButton = new WoodBoxButton();
-			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
+			//woodButton = new WoodBoxButton();
+			//woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			//clear button:
 			//TODO button from assets
-			clearButton = new ClearAllButton();
+			clearButton = new ClearAllButton
 			clearButton.x = 80;
 			clearButton.y = 200;
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
 			//TODO we got a new button from assets
-			testButton = new TestButton();
-			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
+			//testButton = new TestButton();
+		//testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
-			resizeButton = new ResizeButton();
-			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
+			//resizeButton = new ResizeButton();
+			//resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			
 			undoList = new Array();
 			redoList = new Array();
@@ -217,7 +217,10 @@ package org.interguild.editor {
 			dropDown.x = 5;
 			dropDown.y = 5;
 
-			grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
+			tab = new EditorTab();
+			grid = tab.getCurrentGrid();
+			
+			//grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
 			grid.x = 20;
 			grid.y = 100;
 			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
@@ -230,7 +233,7 @@ package org.interguild.editor {
 			gridMask.y = 100;
 			grid.mask = gridMask;
 			addChild(gridMask);
-
+			addChild(grid);
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
 			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
 			scrollBar.y = 100;
@@ -241,20 +244,20 @@ package org.interguild.editor {
 			textScrollBar.y = 100
 			addChild(textScrollBar);
 			//grid.addChild(scrollBar);
-			addChild(resizeButton);
+			//addChild(resizeButton);
 			addChild(heightf);
 			addChild(widthf);
 			addChild(widthBox);
 			addChild(heightBox);
 			addChild(title);
 			addChild(titlef);
-			addChild(testButton);
+			//addChild(testButton);
 			addChild(tf);
-			tf.addChild(wallButton);
-			tf.addChild(woodButton);
+			//tf.addChild(wallButton);
+			//tf.addChild(woodButton);
 			tf.addChild(playerSpawnButton);
 			tf.addChild(clearButton);
-			addChild(grid);
+			//addChild(grid);
 			addChild(dropDown);
 			tf.addChild(undoButton);
 			tf.addChild(redoButton);
