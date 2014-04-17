@@ -72,11 +72,11 @@ package org.interguild.editor {
 
 		//following are objects on this sprite
 		private var playerSpawnButton:Button;
-		//private var wallButton:WallButton;
+		private var wallButton:WallButton;
 		private var clearButton:ClearAllButton;
-		//private var woodButton:WoodBoxButton;
-		//private var testButton:TestButton;
-		//private var resizeButton:ResizeButton;
+		private var woodButton:WoodBoxButton;
+		private var testButton:TestButton;
+		private var resizeButton:ResizeButton;
 		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
@@ -133,15 +133,18 @@ package org.interguild.editor {
 
 			//clear button:
 			//TODO button from assets
-			clearButton = new ClearAllButton
-			clearButton.x = 80;
+			clearButton = new ClearAllButton();
+			clearButton.x = 110;
 			clearButton.y = 200;
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
-
+			var arrowDown:ArrowDownButton = new ArrowDownButton();
+			arrowDown.x = 100;
+			arrowDown.y = 180
+			addChild(arrowDown);
 			//Test button:
 			//TODO we got a new button from assets
-			//testButton = new TestButton();
-		//testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
+			testButton = new TestButton();
+			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
@@ -154,13 +157,13 @@ package org.interguild.editor {
 			//undo button:
 			//TODO button from assets
 			undoButton = new UndoButton();
-			undoButton.x = 80;
+			undoButton.x = 110;
 			undoButton.y = 250;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			//redobutton:
 			//TODO button from assets
 			redoButton = new RedoButton();
-			redoButton.x = 80;
+			redoButton.x = 110;
 			redoButton.y = 300;
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
 			
@@ -200,16 +203,16 @@ package org.interguild.editor {
 			heightBox.y = 40;
 			//textfield
 			tf = new Sprite();
-			tf.x = 600;
+			tf.x = 625;
 			tf.y = 100;
 			tf.graphics.beginFill(0xFFFFFF);
 			tf.graphics.drawRect(0,0, 200,1000);
 			tf.graphics.endFill();
 			var maskTf:Sprite = new Sprite();
 			maskTf.graphics.beginFill(0);
-			maskTf.graphics.drawRect(0,0,200,400);
+			maskTf.graphics.drawRect(0,0,200,375);
 			maskTf.graphics.endFill();
-			maskTf.x =600;
+			maskTf.x =625;
 			maskTf.y = 100;
 			tf.mask = maskTf;
 			//add the drop down menu
@@ -240,8 +243,9 @@ package org.interguild.editor {
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
 			addChild(scroll);
-			var textScrollBar:FullScreenScrollBar = new FullScreenScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,900);
-			textScrollBar.y = 100
+			
+			var textScrollBar:FullScreenScrollBar = new FullScreenScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,845);
+			textScrollBar.y = 100;
 			addChild(textScrollBar);
 			//grid.addChild(scrollBar);
 			//addChild(resizeButton);
@@ -253,8 +257,8 @@ package org.interguild.editor {
 			addChild(titlef);
 			//addChild(testButton);
 			addChild(tf);
-			//tf.addChild(wallButton);
-			//tf.addChild(woodButton);
+			tf.addChild(wallButton);
+			tf.addChild(woodButton);
 			tf.addChild(playerSpawnButton);
 			tf.addChild(clearButton);
 			//addChild(grid);
@@ -434,6 +438,34 @@ package org.interguild.editor {
 //			this.addChild(new LevelPage());
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
+		}
+		
+		public function addTabListener(e:MouseEvent):void{
+			var b:Button = new Button();
+			tab.addTab();
+			grid = tab.getCurrentGrid();
+			
+			//grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
+			grid.x = 20;
+			grid.y = 100;
+			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
+			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
+			addChild(gridMask);
+			addChild(grid);
+			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			scrollBar.y = 100;
+			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
+			
 		}
 
 //		/**

@@ -75,7 +75,7 @@ package org.interguild.editor {
 		 * return the current tabbed grid 
 		 */
 		public function getCurrentGrid():EditorGrid{
-			return gridState[currTab];
+			return gridState[tabsActive-1];
 		}
 	}
 }
