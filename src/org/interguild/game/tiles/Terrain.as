@@ -9,10 +9,6 @@ package org.interguild.game.tiles {
 
 		public static const LEVEL_CODE_CHAR:String = 'x';
 
-		private static const SPRITE_COLOR:uint = 0x9EDB00;
-		private static const SPRITE_WIDTH:uint = 32;
-		private static const SPRITE_HEIGHT:uint = 32;
-
 		public var destructibility:int = 0;
 		public var solidity:Boolean = true;
 		public var gravible:Boolean = false;
@@ -21,9 +17,6 @@ package org.interguild.game.tiles {
 
 		public function Terrain(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
 
 			CONFIG::DEBUG {
 				var tf:TextField = new TextField();
@@ -33,27 +26,9 @@ package org.interguild.game.tiles {
 				tf.text = "(" + x + ", " + y + ")";
 				addChild(tf);
 			}
-		}
 
-//		/*
-//		 * DEBUG
-//		 */
-//		public function makeBlue():void{
-//			graphics.clear();
-//			graphics.beginFill(0x003399);
-//			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-//			graphics.endFill();
-//		}
-//		
-//		public function makeGray():void{
-//			graphics.clear();
-//			graphics.beginFill(0x333333);
-//			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-//			graphics.endFill();
-//		}
-//		/*
-//		 * END DEBUG
-//		 */
+			TerrainView.getMe().drawTerrainAt(x, y);
+		}
 
 		public function getDestructibility():int {
 			return destructibility;
