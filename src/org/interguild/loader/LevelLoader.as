@@ -40,20 +40,21 @@ package org.interguild.loader {
 					break;
 				case Terrain.LEVEL_CODE_CHAR:
 					tile = new Terrain(px, py);
-					level.createCollidableObject(tile, false);
+					level.createCollidableObject(tile);
 					break;
 				case WoodCrate.LEVEL_CODE_CHAR:
 					tile = new WoodCrate(px, py);
-					level.createCollidableObject(tile, false);
+					level.createCollidableObject(tile);
 					break;
 				case SteelCrate.LEVEL_CODE_CHAR:
 					tile = new SteelCrate(px, py);
-					level.createCollidableObject(tile, false);
+					level.createCollidableObject(tile);
 					break;
 
 				case ArrowCrate.LEVEL_CODE_CHAR:
-					tile = new ArrowCrate(px, py);
-					level.createCollidableObject(tile, false);
+					tile = new ArrowCrate(px, py, 1);
+					level.createCollidableObject(tile);
+					level.createCollidableObject(ArrowCrate(tile).arrow);
 					break;
 
 				default:

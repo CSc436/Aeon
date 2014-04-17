@@ -11,6 +11,7 @@ package org.interguild {
 
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
+	import flash.display.DisplayObjectContainer;
 
 	import org.interguild.editor.EditorGrid;
 	import org.interguild.loader.ErrorDialog;
@@ -29,6 +30,8 @@ package org.interguild {
 
 	public class Aeon extends Sprite {
 
+		
+		
 		private static var instance:Aeon;
 
 		/**
@@ -147,5 +150,6 @@ package org.interguild {
 			this.addChild(editorPage);
 			currentPage = editorPage;
 		}
+		
 	}
 }
