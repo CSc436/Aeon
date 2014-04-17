@@ -267,6 +267,7 @@ package org.interguild.editor {
 		}
 
 		public function openLevel(data:String):void {
+
 			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
 			resetComponents();
