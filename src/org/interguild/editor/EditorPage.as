@@ -1,12 +1,9 @@
 package org.interguild.editor {
-	import flash.display.Bitmap;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
 	import fl.controls.Button;
-	import fl.controls.TextArea;
 	import fl.controls.TextInput;
 	
 	import org.interguild.Aeon;
@@ -72,11 +69,11 @@ package org.interguild.editor {
 
 		//following are objects on this sprite
 		private var playerSpawnButton:Button;
-		private var wallButton:WallButton;
+		private var wallButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
-		private var testButton:TestButton;
-		private var resizeButton:ResizeButton;
+		private var testButton;
+		private var resizeButton;
 		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
@@ -122,14 +119,17 @@ package org.interguild.editor {
 			//playerSpawnButton =
 			playerSpawnButton = makeButton("Start", StartButton, 20, 20);
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
-
+			
 			//wallbutton
-			//wallButton = new WallButton();
-			//wallButton.addEventListener(MouseEvent.CLICK, wallClick);
-
+			wallButton = new WallButton();
+			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
+			wallButton.x = 90;
+			wallButton.y = 100;
 			//woodbutton:
-			//woodButton = new WoodBoxButton();
-			//woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
+			woodButton = new WoodBoxButton();
+			woodButton.x = 90;
+			woodButton.y = 120;
+			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			//clear button:
 			//TODO button from assets
@@ -144,12 +144,15 @@ package org.interguild.editor {
 			//Test button:
 			//TODO we got a new button from assets
 			testButton = new TestButton();
+			testButton.x = 20;
+			testButton.y = 50;
+			
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
-			//resizeButton = new ResizeButton();
-			//resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
+			resizeButton = new ResizeButton();
+			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			
 			undoList = new Array();
 			redoList = new Array();
