@@ -56,9 +56,13 @@ package org.interguild.loader {
 					level.createCollidableObject(ArrowCrate(tile).arrow);
 					break;
 				default:
-					trace("LevelLoader: Unknown level code character: '" + curChar + "'");
+					//trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;
 			}
+		}
+		
+		protected override function finishLoading():void{
+			level.finishLoading();
 		}
 	}
 }
