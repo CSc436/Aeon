@@ -7,7 +7,6 @@ package org.interguild.game.collision {
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
 	import flash.display.Sprite;
 

@@ -13,6 +13,7 @@ package org.interguild.game.level {
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.tiles.TerrainView;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -59,8 +60,8 @@ package org.interguild.game.level {
 
 			//initialize camera
 			camera = new Camera(player = new Player());
-			camera.setLevelX( Aeon.TILE_WIDTH * lvlWidth ); // need to send to camera so it knows level width
-			camera.setLevelY( Aeon.TILE_HEIGHT * lvlHeight ); // need to send to camera so it knows level height
+			camera.setLevelX( widthInPixels ); // need to send to camera so it knows level width
+			camera.setLevelY( heightInPixels ); // need to send to camera so it knows level height
 			addChild(camera);
 
 			//init player
@@ -68,6 +69,10 @@ package org.interguild.game.level {
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
+			
+			//init Terrain view
+			var tv:TerrainView = TerrainView.init(widthInPixels, heightInPixels);
+			camera.addChild(tv);
 		}
 
 		public function get title():String {
