@@ -2,15 +2,14 @@ The Test Level of Doom
 100x30
 x=100
 x=80    
-xx      xx                 xxxxx        
-xx     wx                  xxxxx        
-xx  #  s                   xxxxx        
-xxxxxx     xx              xxxxx        
-xx        xxx             xxxxxx        
-xx       xxxx              xxxxx        
-xx  xxxxxxxxxxx            xxxxx              
-xx  xxxxxxxxxxx   x        xxxxx        
-xx     xxxxxxxx   x  a w wwxxxxx        
+xx    w                    xxxxx        
+xx    s                    xxxxx        
+xx    w x                  xxxxx        
+xxxx        x       xx     xxxxx        
+xx   #  x  xx       xx    xxxxxx        
+xx   x  x     a            xxxxx        
+xx  xxxxxxxxxxx    xxx  x  xxxxx        
+xx     xxxxxxxx       w wwwxxxxx        
 xx     xxxxxxxx x x xxxxxxxxxxxx        
 xx  xxxxxxxxxxx x x xxxxxxxxxxxx        
 xx      xxxxxxxxxxxxxxxxxxxxxxxx        
@@ -18,26 +17,4 @@ xx      xxxxxxxxxxxxxxxxxxxxxxxx
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
 x

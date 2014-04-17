@@ -5,7 +5,6 @@ package org.interguild.game.tiles {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
-	import org.interguild.game.Player;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.KeyMan;
 
@@ -41,19 +40,25 @@ package org.interguild.game.tiles {
 		}
 
 		CONFIG::DEBUG {
-			public function drawHitBow(final:Boolean):Sprite {
-				if (KeyMan.getMe().isDebugKey) {
-					var color:uint;
-					if(final)
-						color = 0xFF0000;
-					else
-						color = 0x0000FF;
-					var s:Sprite = new Sprite();
-					s.graphics.lineStyle(1, color);
-					s.graphics.drawRect(hit_box.x, hit_box.y, hit_box.width, hit_box.height);
-					return s;
-				}
-				return null;
+			public function drawHitBox(final:Boolean):Sprite {
+				var color:uint;
+				if (final)
+					color = 0xFF0000;
+				else
+					color = 0x0000FF;
+				var s:Sprite = new Sprite();
+				s.graphics.lineStyle(1, color);
+				s.graphics.drawRect(hit_box.x, hit_box.y, hit_box.width, hit_box.height);
+				return s;
+			}
+
+			public function drawHitBoxWrapper(final:Boolean):Sprite {
+				var color:uint = 0x00FF00;
+				var s:Sprite = new Sprite();
+				s.graphics.lineStyle(1, color);
+				var r:Rectangle = hitboxWrapper;
+				s.graphics.drawRect(r.x, r.y, r.width, r.height);
+				return s;
 			}
 		}
 
@@ -61,8 +66,12 @@ package org.interguild.game.tiles {
 		 * Remembers which GridTiles the GameObject is
 		 * currently in.
 		 */
-		public function addGridTile(g:GridTile):void {
-			myGrids.push(g);
+		public function addGridTile(g:GridTile, index:int = -1):void {
+			if (index == -1) {
+				myGrids.push(g);
+			} else {
+				myGrids[index] = g;
+			}
 		}
 
 		/**
@@ -81,7 +90,7 @@ package org.interguild.game.tiles {
 			return this.myGrids;
 		}
 
-		protected function updateHitBox():void {
+		public function updateHitBox():void {
 			hit_box.x = newX;
 			hit_box.y = newY;
 		}
@@ -99,6 +108,15 @@ package org.interguild.game.tiles {
 		 */
 		public function get hitboxPrev():Rectangle {
 			return hit_box_prev;
+		}
+
+		public function get hitboxWrapper():Rectangle {
+			var r:Rectangle = new Rectangle();
+			r.left = Math.min(hit_box.left, hit_box_prev.left);
+			r.top = Math.min(hit_box.top, hit_box_prev.top);
+			r.right = Math.max(hit_box.right, hit_box_prev.right);
+			r.bottom = Math.max(hit_box.bottom, hit_box_prev.bottom);
+			return r;
 		}
 
 		/**
@@ -138,12 +156,6 @@ package org.interguild.game.tiles {
 
 		public function get isActive():Boolean {
 			return active;
-		}
-
-		public function removeSelf():void {
-			for (var i:int = 0; i < myGrids.length; i++) {
-				GridTile(myGrids[i]).removeObject(this);
-			}
 		}
 
 		public override function finishGameLoop():void {
