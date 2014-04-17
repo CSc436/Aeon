@@ -72,17 +72,17 @@ package org.interguild.editor {
 
 		//following are objects on this sprite
 		private var playerSpawnButton:Button;
-		private var wallButton:Button;
-		private var clearButton:Button;
-		private var woodButton:Button;
-		private var testButton:Button;
-		private var resizeButton:Button;
+		private var wallButton:WallButton;
+		private var clearButton:ClearAllButton;
+		private var woodButton:WoodBoxButton;
+		private var testButton:TestButton;
+		private var resizeButton:ResizeButton;
 		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
 		private var heightBox:TextInput;
-		private var undoButton:Button;
-		private var redoButton:Button;
+		private var undoButton:UndoButton;
+		private var redoButton:RedoButton;
 		private var titlef:TextField;
 		private var widthf:TextField;
 		private var heightf:TextField;
@@ -119,34 +119,33 @@ package org.interguild.editor {
 			this.mainMenu = mainMenu;
 
 			//playerstart button
+			//playerSpawnButton =
 			playerSpawnButton = makeButton("Start", StartButton, 20, 20);
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 
 			//wallbutton
-			wallButton = makeButton("Wall", WallButton, 20, 80);
+			wallButton = new WallButton();
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 
 			//woodbutton:
-			woodButton = makeButton("Wood", WoodButton, 20, 120);
+			woodButton = new WoodBoxButton();
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			//clear button:
 			//TODO button from assets
-//			clearButton = new ClearAllButton();
-//			clearButton = makeButton("Clear All", new Bitmap(new ClearAllButton()), 20, 160);
-			clearButton = makeButton("Clear All", ClearButton, 20, 160);
+			clearButton = new ClearAllButton();
+			clearButton.x = 80;
+			clearButton.y = 200;
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
 			//TODO we got a new button from assets
-			testButton = new Button();
-			testButton = makeButton("Test Game", TestButton, 350, 50);
+			testButton = new TestButton();
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
-			resizeButton = new Button();
-			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
+			resizeButton = new ResizeButton();
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			
 			undoList = new Array();
@@ -154,13 +153,15 @@ package org.interguild.editor {
 
 			//undo button:
 			//TODO button from assets
-//			undoButton = new UndoButton();
-			undoButton = makeButton("Undo",null , 20,240) ;
+			undoButton = new UndoButton();
+			undoButton.x = 80;
+			undoButton.y = 250;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			//redobutton:
 			//TODO button from assets
-//			redoButton = new RedoButton();
-			redoButton = makeButton("Redo", null, 20, 400);
+			redoButton = new RedoButton();
+			redoButton.x = 80;
+			redoButton.y = 300;
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
 			
 			//title text field
@@ -292,7 +293,7 @@ package org.interguild.editor {
 		 * @param   row
 		 * @param   column
 		 */
-		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
+		private function makeButton(label:String, image:Class,xpixel:int, ypixel:int):Button {
 			var b:Button = new Button();
 			b.label = label;
 			b.width = 50;

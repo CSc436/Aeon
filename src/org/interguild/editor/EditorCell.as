@@ -43,8 +43,7 @@ package org.interguild.editor {
 					LightningDownSprite
 					LightningLeftSprite
 					LightningRightSprite
-					*/
-					
+					*/ 
 					case Terrain.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new TerrainSprite()));
 						break;
