@@ -28,7 +28,7 @@ package org.interguild.game.level {
 
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
-
+		
 		private var myTitle:String;
 
 		private var camera:Camera;
@@ -166,7 +166,8 @@ package org.interguild.game.level {
 			
 			// update animations
 			player.updateAnimation();
-				
+			player.frameCounter++; // updated counter for game frames
+			
 			// reset isStanding
 			player.reset();
 
