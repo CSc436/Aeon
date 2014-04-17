@@ -11,7 +11,6 @@ package org.interguild {
 
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
-	import flash.display.DisplayObjectContainer;
 
 	import org.interguild.editor.EditorGrid;
 	import org.interguild.loader.ErrorDialog;

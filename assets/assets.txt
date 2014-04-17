@@ -1,5 +1,5 @@
 Player Animations{
-//ALL ARE MovieClip OBJECTS
+//ALL ARE "MovieClip" OBJECTS
 
 	Walking Animations{
 		new PlayerWalkingAnimation();
@@ -17,10 +17,25 @@ Player Animations{
 }
 
 Tile Sprites{
-//ALL ARE BitmapData OBJECTS
+//ALL ARE "BitmapData" OBJECTS
 
 	new WoodenCrateSprite();
 	new SteelCrateSprite();
+}
+
+Terrain Sprites{
+	//terrain patterns
+	new TerrainSteelSprite();
+	
+	//terrain borders
+	new TerrainTopLayerThin();
+	new TerrainTopLayerThick();
+}
+
+Background Sprites{
+	new BackgroundGreen();
+	new BackgroundTeal();
+	new BackgroundPurple();
 }
 
 Embedded Fonts{

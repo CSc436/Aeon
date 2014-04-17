@@ -7,6 +7,9 @@ package org.interguild.game.level {
 
 	CONFIG::DEBUG {
 		import org.interguild.KeyMan;
+		import flash.text.TextField;
+		import flash.text.TextFieldAutoSize;
+		import flash.text.TextFormat;
 	}
 	import org.interguild.Aeon;
 	import org.interguild.game.Camera;
@@ -15,9 +18,7 @@ package org.interguild.game.level {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	import org.interguild.game.tiles.TerrainView;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -65,8 +66,8 @@ package org.interguild.game.level {
 
 			//initialize camera
 			camera = new Camera(player = new Player());
-			camera.setLevelX(Aeon.TILE_WIDTH * lvlWidth); // need to send to camera so it knows level width
-			camera.setLevelY(Aeon.TILE_HEIGHT * lvlHeight); // need to send to camera so it knows level height
+			camera.setLevelX( widthInPixels ); // need to send to camera so it knows level width
+			camera.setLevelY( heightInPixels ); // need to send to camera so it knows level height
 			addChild(camera);
 
 			//init player
@@ -95,6 +96,10 @@ package org.interguild.game.level {
 				slowDownText.visible = false;
 				addChild(slowDownText);
 			}
+			
+			//init Terrain view
+			var tv:TerrainView = TerrainView.init(widthInPixels, heightInPixels);
+			camera.addChild(tv);
 		}
 
 		public function getHUD():LevelHUD{
