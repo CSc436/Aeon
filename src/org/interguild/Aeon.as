@@ -133,5 +133,6 @@ package org.interguild {
 			this.addChild(editorPage);
 			currentPage = editorPage;
 		}
+		
 	}
 }
