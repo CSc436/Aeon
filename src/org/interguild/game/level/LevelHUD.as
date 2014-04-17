@@ -34,7 +34,7 @@ package org.interguild.game.level
 			drawContainer();
 			container.addChild(rect);
 
-			var icon:CollectableSprite = new CollectableSprite();
+			var icon:CollectibleSprite = new CollectibleSprite();
 			iconBM = new Bitmap(icon);
 			iconBM.x = XCOORD + XCOORDICON;
 			iconBM.y = YCOORD + YCOORDICON;

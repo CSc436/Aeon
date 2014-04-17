@@ -21,9 +21,7 @@ package org.interguild.game.tiles {
 		
 		public function Collectable(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
+			addChild(new Bitmap(new CollectibleSprite()));
 			
 			// Wood crate image is not working for some reason, even though steel crate is
 			/*
