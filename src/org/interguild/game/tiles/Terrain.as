@@ -1,4 +1,8 @@
 package org.interguild.game.tiles {
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
+
 	import org.interguild.Aeon;
 
 	public class Terrain extends CollidableObject implements Tile {
@@ -21,6 +25,14 @@ package org.interguild.game.tiles {
 			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
 			graphics.endFill();
 
+			CONFIG::DEBUG {
+				var tf:TextField = new TextField();
+				tf.defaultTextFormat = new TextFormat("Arial", 5, 0x000000);
+				tf.autoSize = TextFieldAutoSize.LEFT;
+				tf.selectable = false;
+				tf.text = "(" + x + ", " + y + ")";
+				addChild(tf);
+			}
 		}
 
 //		/*

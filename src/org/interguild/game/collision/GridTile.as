@@ -14,6 +14,7 @@ package org.interguild.game.collision {
 			row = r;
 			col = c;
 			grid = g;
+			mouseEnabled = false;
 			myStuff = new Vector.<CollidableObject>();
 			CONFIG::DEBUG {
 				graphics.beginFill(0xCCCCCC, 0.5);
@@ -46,7 +47,7 @@ package org.interguild.game.collision {
 			if (i != -1)
 				myStuff.splice(i, 1);
 			if (!o.isActive && !isBlocking()) {
-				grid.unblockNeighbors(this);
+				grid.updateBlockedNeighbors(row, col);
 			}
 			CONFIG::DEBUG {
 				graphics.clear();
@@ -96,6 +97,21 @@ package org.interguild.game.collision {
 					return true;
 			}
 			return false;
+		}
+
+		/**
+		 * Wakes up the inActive objects in this grid. This method
+		 * is called when a nearby object does something like move
+		 */
+		public function activate():void {
+			var len:uint = myStuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = myStuff[i];
+				if (!o.isActive) {
+					o.isActive = true;
+					grid.activeObjects.push(o);
+				}
+			}
 		}
 	}
 }
