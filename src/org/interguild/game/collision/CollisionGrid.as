@@ -90,7 +90,7 @@ package org.interguild.game.collision {
 
 			//add new grids
 			for (row = top; row <= bottom; row++) {
-				if (top >= 0 && top < grid.length) {
+				if (row >= 0 && row < grid.length) {
 					for (col = left; col <= right; col++) {
 						if (col >= 0 && col < grid[0].length) {
 							gridTile = grid[row][col];

@@ -90,6 +90,8 @@ package org.interguild.game.level {
 			//position level preview:
 			level.x = Aeon.STAGE_WIDTH / 2 - level.widthInPixels * level.scaleX / 2;
 			level.y = box.y + (box.height / 2) - level.heightInPixels * level.scaleY / 2;
+			
+			level.hideBackground();
 		}
 		
 		private function pauseGame():void {
@@ -112,6 +114,7 @@ package org.interguild.game.level {
 					startScreen.hideButtons();
 				}
 				startScreen.visible = false;
+				level.showBackground();
 				level.scaleX = level.scaleY = 1;
 				level.x = level.y = 0;
 				level.startGame();

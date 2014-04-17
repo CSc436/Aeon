@@ -37,6 +37,8 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
+		private var tv:TerrainView;
+		private var bg:LevelBackground;
 
 		private var collisionGrid:CollisionGrid;
 
@@ -57,15 +59,20 @@ package org.interguild.game.level {
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
-
-			//initialize camera
-			camera = new Camera(player = new Player());
-			camera.setLevelX( widthInPixels ); // need to send to camera so it knows level width
-			camera.setLevelY( heightInPixels ); // need to send to camera so it knows level height
+			
+			//init background
+			bg = new LevelBackground(widthInPixels, heightInPixels);
+			addChild(bg);
+			
+			//init player and camera
+			player = new Player()
+			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
-
-			//init player
 			camera.addChild(player);
+			
+			//init Terrain view
+			tv = TerrainView.init(widthInPixels, heightInPixels);
+			camera.addChild(tv);
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
@@ -87,10 +94,18 @@ package org.interguild.game.level {
 				slowDownText.visible = false;
 				addChild(slowDownText);
 			}
-			
-			//init Terrain view
-			var tv:TerrainView = TerrainView.init(widthInPixels, heightInPixels);
-			camera.addChild(tv);
+		}
+		
+		public function finishLoading():void{
+			tv.finishTerrain();
+		}
+		
+		public function hideBackground():void{
+			bg.visible = false;
+		}
+		
+		public function showBackground():void{
+			bg.visible = true;
 		}
 
 		public function get title():String {

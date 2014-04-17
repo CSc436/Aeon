@@ -188,6 +188,7 @@ package org.interguild.loader {
 			//if done loading
 			if (i == codeLength) {
 				timer.stop();
+				finishLoading();
 				if (loadingCompleteCallback)
 					loadingCompleteCallback();
 			} else if (progressCallback) {
@@ -259,6 +260,14 @@ package org.interguild.loader {
 		 */
 		protected function initObject(curChar:String, px:int, py:int):void {
 			throw new Error("initObject is abstract. Please override it.");
+		}
+		
+		/**
+		 * Called when loading complete. Supposed to be overridden
+		 * by subclasses, but optional.
+		 */
+		protected function finishLoading():void{
+			//nothing, until subclasses override this
 		}
 	}
 }
