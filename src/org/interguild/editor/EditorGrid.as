@@ -1,6 +1,6 @@
 package org.interguild.editor {
 	import flash.display.Sprite;
-
+	
 	public class EditorGrid extends Sprite {
 
 		private var cells:Array;

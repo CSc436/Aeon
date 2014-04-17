@@ -19,6 +19,7 @@ package org.interguild.editor {
 	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
+	import flash.display.Bitmap;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
@@ -136,18 +137,19 @@ package org.interguild.editor {
 			//clear button:
 			//TODO button from assets
 //			clearButton = new ClearAllButton();
+//			clearButton = makeButton("Clear All", new Bitmap(new ClearAllButton()), 20, 160);
 			clearButton = makeButton("Clear All", ClearButton, 20, 160);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 
 			//Test button:
 			//TODO we got a new button from assets
-			testButton = new TestButton();
+//			testButton = new TestButton();
 			testButton = makeButton("Test Game", TestButton, 350, 50);
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
 			//TODO button from assets
-			resizeButton = new ResizeButton();
+//			resizeButton = new ResizeButton();
 			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			

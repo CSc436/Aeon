@@ -6,6 +6,7 @@ package org.interguild.editor {
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.Aeon;
 
 	public class EditorCell extends Sprite {
 		
@@ -30,6 +31,7 @@ package org.interguild.editor {
 		}
 		
 		public function setTile(char:String):void{
+
 			if(currentTitleName != char){
 				currentTitleName = char;
 				removeChildren();
@@ -67,6 +69,7 @@ package org.interguild.editor {
 			currentTitleName = "";
 			removeChildren();
 		}
+		
 		public function get cellName():String {
 			return currentTitleName;
 		}
