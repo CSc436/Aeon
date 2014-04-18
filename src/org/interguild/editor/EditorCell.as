@@ -36,10 +36,10 @@ package org.interguild.editor {
 				
 				switch(currentTile){
 					case Terrain.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new TerrainSprite()));
+						addChild(new Bitmap(new TerrainSteelSprite()));
 						break;
 					case Player.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new StartingPointSprite()));
+						addChild(new Bitmap(new StartLineSprite()));
 						break;
 					case WoodCrate.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new WoodenCrateSprite()));
