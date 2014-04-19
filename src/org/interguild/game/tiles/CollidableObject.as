@@ -6,7 +6,7 @@ package org.interguild.game.tiles {
 	import flash.utils.Dictionary;
 
 	import org.interguild.game.collision.GridTile;
-	import org.interguild.KeyMan;
+	import org.interguild.game.level.Level;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -17,6 +17,9 @@ package org.interguild.game.tiles {
 	 * it is no longer inside of.
 	 */
 	public class CollidableObject extends GameObject {
+
+		private static const GRAVITY:Number = Level.GRAVITY;
+		private static const MAX_FALL_SPEED:Number = 6;
 
 		private var myGrids:Vector.<GridTile>;
 		private var hit_box:Rectangle;
@@ -166,6 +169,26 @@ package org.interguild.game.tiles {
 //				trace("I am player");
 //			}
 			hit_box_prev = hitbox.clone();
+		}
+
+		public override function onGameLoop():void {
+			if (this is Tile) {
+				var t:Tile = Tile(this);
+
+				//gravity
+				if (t.isGravible()) {
+					speedY += GRAVITY;
+
+					if (speedY > MAX_FALL_SPEED) {
+						speedY = MAX_FALL_SPEED;
+					}
+				}
+			}
+
+			//update movement
+			newX += speedX;
+			newY += speedY;
+			updateHitBox();
 		}
 	}
 }

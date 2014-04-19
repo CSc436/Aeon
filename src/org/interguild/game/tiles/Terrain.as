@@ -1,7 +1,9 @@
 package org.interguild.game.tiles {
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	CONFIG::DEBUG {
+		import flash.text.TextField;
+		import flash.text.TextFieldAutoSize;
+		import flash.text.TextFormat;
+	}
 
 	import org.interguild.Aeon;
 

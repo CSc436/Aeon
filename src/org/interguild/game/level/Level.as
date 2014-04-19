@@ -223,7 +223,7 @@ package org.interguild.game.level {
 			update();
 			collisions();
 			cleanup();
-			remove();
+			collisionGrid.handleRemovals(camera);
 		}
 
 		private function update():void {
@@ -273,44 +273,6 @@ package org.interguild.game.level {
 			}
 		}
 
-		public function remove():void {
-			var remove:Array = collisionGrid.removalList;
-			for (var i:int = 0; i < remove.length; i++) {
-				var r:GameObject = GameObject(remove[i]);
-
-				//remove from active objects
-				var index:int = collisionGrid.activeObjects.indexOf(r);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
-
-				//remove from display list
-				camera.removeChild(DisplayObject(r));
-
-				//remove from grid tiles
-				if (r is CollidableObject) {
-					collisionGrid.destroyObject(CollidableObject(r));
-					r.onKill();
-				}
-			}
-			collisionGrid.resetRemovalList();
-
-			remove = collisionGrid.deactivationList;
-			for (i = 0; i < remove.length; i++) {
-				r = GameObject(remove[i]);
-
-				index = collisionGrid.activeObjects.indexOf(r);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
-
-				if (r is CollidableObject) {
-					CollidableObject(r).isActive = false;
-				}
-			}
-			collisionGrid.resetDeactivationList();
-		}
-
 		private function cleanup():void {
 			//finish game loops
 			player.finishGameLoop();
@@ -330,18 +292,18 @@ package org.interguild.game.level {
 			//update camera
 			camera.updateCamera();
 		}
-
-		public function activateObject(obj:CollidableObject):void {
-			obj.isActive = true;
-			collisionGrid.activeObjects.push(obj);
-		}
-
-		public function deactivateObject(obj:CollidableObject):void {
-			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
-
-			obj.isActive = false;
-			collisionGrid.activeObjects.splice(index, 1);
-			obj.finishGameLoop;
-		}
+		
+//		public function activateObject(obj:CollidableObject):void {
+//			obj.isActive = true;
+//			collisionGrid.activeObjects.push(obj);
+//		}
+//		
+//		public function deactivateObject(obj:CollidableObject):void {
+//			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
+//			
+//			obj.isActive = false;
+//			collisionGrid.activeObjects.splice(index, 1);
+//			obj.finishGameLoop;
+//		}
 	}
 }

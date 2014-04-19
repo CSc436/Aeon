@@ -77,7 +77,7 @@ package org.interguild.game.tiles
 			updateHitBox();
 		}
 		
-		public override function onKill(): void {
+		public override function onKillEvent(): void {
 			this.arrow.parentDestroyed = true;
 		}
 	}
