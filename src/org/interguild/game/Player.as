@@ -106,7 +106,7 @@ package org.interguild.game {
 		}
 
 		public function reset():void {
-//			isStanding = false;
+			isStanding = false;
 			isCrouching = false;
 //			isFalling = false;
 //			isJumping = false;
