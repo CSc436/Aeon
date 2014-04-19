@@ -3,9 +3,13 @@ package org.interguild.game.tiles
 	import flash.display.Bitmap;
 	
 	import org.interguild.Aeon;
+	import org.interguild.game.level.Level;
 	
 	public class ArrowCrate extends CollidableObject implements Tile {
-		public static const LEVEL_CODE_CHAR:String = 'a';
+		public static const LEVEL_CODE_CHAR_RIGHT:String = '>';
+		public static const LEVEL_CODE_CHAR_DOWN:String = 'v';
+		public static const LEVEL_CODE_CHAR_LEFT:String = '<'
+		public static const LEVEL_CODE_CHAR_UP:String = '^'
 
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 6;
@@ -18,6 +22,8 @@ package org.interguild.game.tiles
 		// Arrow stuff
 		public var arrow:Arrow;
 		public var direction:int;
+		public var xPos:int;
+		public var yPos:int;
 		
 		public var destructibility:int = 2;
 		public var solidity:Boolean = true;
@@ -27,12 +33,23 @@ package org.interguild.game.tiles
 		
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			arrow = new Arrow(x, y, direction);
+			this.xPos = x;
+			this.yPos = y;
 			this.direction = direction;
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
-			addChild(arrow);
+			switch (direction) {
+				case 1:
+					addChild(new Bitmap(new LightningBoxRight()));
+					break;
+				case 2:
+					addChild(new Bitmap(new LightningBoxDown()));
+					break;
+				case 3:
+					addChild(new Bitmap(new LightningBoxLeft()));
+					break;
+				case 4:
+					addChild(new Bitmap(new LightningBoxUp()));
+					break;
+			}
 		}
 		
 		public function getDestructibility():int {
@@ -77,7 +94,9 @@ package org.interguild.game.tiles
 			updateHitBox();
 		}
 		
-		public override function onKillEvent(): void {
+		public override function onKillEvent(level:Level): void {
+			arrow = new Arrow(xPos, yPos, direction);
+			level.createCollidableObject(arrow);
 			this.arrow.parentDestroyed = true;
 		}
 	}
