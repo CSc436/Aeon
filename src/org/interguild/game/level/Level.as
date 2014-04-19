@@ -6,6 +6,9 @@ package org.interguild.game.level {
 
 	CONFIG::DEBUG {
 		import org.interguild.KeyMan;
+		import flash.text.TextField;
+		import flash.text.TextFieldAutoSize;
+		import flash.text.TextFormat;
 	}
 	import org.interguild.Aeon;
 	import org.interguild.game.Camera;
@@ -13,9 +16,7 @@ package org.interguild.game.level {
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	import org.interguild.game.tiles.TerrainView;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -36,6 +37,8 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
+		private var tv:TerrainView;
+		private var bg:LevelBackground;
 
 		private var collisionGrid:CollisionGrid;
 
@@ -56,15 +59,20 @@ package org.interguild.game.level {
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
-
-			//initialize camera
-			camera = new Camera(player = new Player());
-			camera.setLevelX(Aeon.TILE_WIDTH * lvlWidth); // need to send to camera so it knows level width
-			camera.setLevelY(Aeon.TILE_HEIGHT * lvlHeight); // need to send to camera so it knows level height
+			
+			//init background
+			bg = new LevelBackground(widthInPixels, heightInPixels);
+			addChild(bg);
+			
+			//init player and camera
+			player = new Player()
+			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
-
-			//init player
 			camera.addChild(player);
+			
+			//init Terrain view
+			tv = TerrainView.init(widthInPixels, heightInPixels);
+			camera.addChild(tv);
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
@@ -86,6 +94,18 @@ package org.interguild.game.level {
 				slowDownText.visible = false;
 				addChild(slowDownText);
 			}
+		}
+		
+		public function finishLoading():void{
+			tv.finishTerrain();
+		}
+		
+		public function hideBackground():void{
+			bg.visible = false;
+		}
+		
+		public function showBackground():void{
+			bg.visible = true;
 		}
 
 		public function get title():String {
@@ -203,7 +223,7 @@ package org.interguild.game.level {
 			update();
 			collisions();
 			cleanup();
-			remove();
+			collisionGrid.handleRemovals(camera);
 		}
 
 		private function update():void {
@@ -253,44 +273,6 @@ package org.interguild.game.level {
 			}
 		}
 
-		public function remove():void {
-			var remove:Array = collisionGrid.removalList;
-			for (var i:int = 0; i < remove.length; i++) {
-				var r:GameObject = GameObject(remove[i]);
-
-				//remove from active objects
-				var index:int = collisionGrid.activeObjects.indexOf(r);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
-
-				//remove from display list
-				camera.removeChild(DisplayObject(r));
-
-				//remove from grid tiles
-				if (r is CollidableObject) {
-					collisionGrid.destroyObject(CollidableObject(r));
-					r.onKill();
-				}
-			}
-			collisionGrid.resetRemovalList();
-
-			remove = collisionGrid.deactivationList;
-			for (i = 0; i < remove.length; i++) {
-				r = GameObject(remove[i]);
-
-				index = collisionGrid.activeObjects.indexOf(r);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
-
-				if (r is CollidableObject) {
-					CollidableObject(r).isActive = false;
-				}
-			}
-			collisionGrid.resetDeactivationList();
-		}
-
 		private function cleanup():void {
 			//finish game loops
 			player.finishGameLoop();
@@ -310,18 +292,18 @@ package org.interguild.game.level {
 			//update camera
 			camera.updateCamera();
 		}
-
-		public function activateObject(obj:CollidableObject):void {
-			obj.isActive = true;
-			collisionGrid.activeObjects.push(obj);
-		}
-
-		public function deactivateObject(obj:CollidableObject):void {
-			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
-
-			obj.isActive = false;
-			collisionGrid.activeObjects.splice(index, 1);
-			obj.finishGameLoop;
-		}
+		
+//		public function activateObject(obj:CollidableObject):void {
+//			obj.isActive = true;
+//			collisionGrid.activeObjects.push(obj);
+//		}
+//		
+//		public function deactivateObject(obj:CollidableObject):void {
+//			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
+//			
+//			obj.isActive = false;
+//			collisionGrid.activeObjects.splice(index, 1);
+//			obj.finishGameLoop;
+//		}
 	}
 }

@@ -32,7 +32,7 @@ package org.interguild.game.tiles {
 			
 		}
 		
-		public function onKill():void {
+		public function onKillEvent():void {
 			
 		}
 		

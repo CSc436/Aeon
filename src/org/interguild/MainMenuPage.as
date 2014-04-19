@@ -9,8 +9,13 @@ package org.interguild {
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	import flash.utils.Timer;
-	
-	import org.interguild.game.level.LevelPage;
+
+	CONFIG::DEPLOY {
+		import org.interguild.game.level.TestLevel;
+	}
+	CONFIG::NODEPLOY {
+		import org.interguild.game.level.LevelPage;
+	}
 
 	public class MainMenuPage extends Page {
 
@@ -61,7 +66,7 @@ package org.interguild {
 
 		private var creditText:TextField;
 		private var logoutText:TextField;
-		
+
 		private var isEnabled:Boolean = true;
 
 		public function MainMenuPage() {
@@ -161,7 +166,7 @@ package org.interguild {
 			copyText.x = creditText.x - copyText.width;
 			copyText.y = creditText.y;
 			addChild(copyText);
-			
+
 			//init logout
 			logoutText = new TextField();
 			logoutText.defaultTextFormat = new TextFormat("Verdana", 12, LINK_NORMAL_COLOR);
@@ -230,7 +235,12 @@ package org.interguild {
 			buttonClick.visible = false;
 			switch (selectedButton) {
 				case TODO_PLAY_GAME:
+					CONFIG::DEPLOY {
+					Aeon.getMe().playLevelCode(TestLevel.getCode());
+				}
+					CONFIG::NODEPLOY {
 					Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+				}
 					break;
 				case TODO_PLAY_LEVELS:
 					break;
@@ -249,7 +259,7 @@ package org.interguild {
 		}
 
 		private function onKeyDown(keyCode:uint):void {
-			if(!isEnabled)
+			if (!isEnabled)
 				return;
 			switch (keyCode) {
 				case 40: //down arrow key
@@ -309,8 +319,8 @@ package org.interguild {
 			f.underline = true;
 			t.setTextFormat(f);
 		}
-		
-		public override function set visible(b:Boolean):void{
+
+		public override function set visible(b:Boolean):void {
 			super.visible = b;
 			isEnabled = b;
 		}

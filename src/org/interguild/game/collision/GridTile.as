@@ -1,7 +1,9 @@
 package org.interguild.game.collision {
 
-	import org.interguild.game.tiles.CollidableObject;
 	import flash.display.Sprite;
+	
+	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.Tile;
 
 	public class GridTile extends Sprite {
 
@@ -112,6 +114,17 @@ package org.interguild.game.collision {
 					grid.activeObjects.push(o);
 				}
 			}
+			grid.updateBlockedNeighbors(row, col);
+		}
+		
+		public function isGravible():Boolean{
+			var len:uint = myStuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = myStuff[i];
+				if(o is Tile && Tile(o).isGravible())
+					return true;
+			}
+			return false;
 		}
 	}
 }
