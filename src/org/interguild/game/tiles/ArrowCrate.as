@@ -36,19 +36,18 @@ package org.interguild.game.tiles
 			this.xPos = x;
 			this.yPos = y;
 			this.direction = direction;
-			addChild(new Bitmap(new WoodenCrateSprite()));
 			switch (direction) {
 				case 1:
-					addChild(new Bitmap(new LightningRightSprite()));
+					addChild(new Bitmap(new LightningBoxRight()));
 					break;
 				case 2:
-					addChild(new Bitmap(new LightningBlockDownSprite()));
+					addChild(new Bitmap(new LightningBoxDown()));
 					break;
 				case 3:
-					addChild(new Bitmap(new LightningBlockLeftSprite()));
+					addChild(new Bitmap(new LightningBoxLeft()));
 					break;
 				case 4:
-					addChild(new Bitmap(new LightningBlockUpSprite()));
+					addChild(new Bitmap(new LightningBoxUp()));
 					break;
 			}
 		}

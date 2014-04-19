@@ -28,13 +28,13 @@ package org.interguild.game.tiles
 					addChild(new Bitmap(new LightningRightSprite()));
 					break;
 				case 2:
-					addChild(new Bitmap(new LightningBlockDownSprite()));
+					addChild(new Bitmap(new LightningDownSprite()));
 					break;
 				case 3:
-					addChild(new Bitmap(new LightningBlockLeftSprite()));
+					addChild(new Bitmap(new LightningLeftSprite()));
 					break;
 				case 4:
-					addChild(new Bitmap(new LightningBlockUpSprite()));
+					addChild(new Bitmap(new LightningUpSprite()));
 					break;
 			}
 		}
