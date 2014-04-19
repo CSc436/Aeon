@@ -1,4 +1,7 @@
 package org.interguild.editor {
+	import flash.display.Bitmap;
+	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
@@ -68,8 +71,8 @@ package org.interguild.editor {
 		*/
 
 		//following are objects on this sprite
-		private var playerSpawnButton:Button;
-		private var wallButton;
+		private var playerSpawnButton:StartLineButton;
+		private var wallButton:TerrainButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
 		private var testButton;
@@ -83,7 +86,7 @@ package org.interguild.editor {
 		private var titlef:TextField;
 		private var widthf:TextField;
 		private var heightf:TextField;
-
+		
 		private var loader:Loader;
 		private var gridContainer:Sprite;
 		private var gridMask:Sprite;
@@ -116,37 +119,67 @@ package org.interguild.editor {
 			this.mainMenu = mainMenu;
 
 			//playerstart button
-			//playerSpawnButton =
-			playerSpawnButton = makeButton("Start", StartButton, 20, 20);
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var playerBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			playerBackground.width = 200;
+			playerBackground.y = 60;
+			playerSpawnButton = new StartLineButton();
+			playerSpawnButton.y = 60;
+			playerSpawnButton.x = 15;
+			playerSpawnButton.width = 170;
+			playerSpawnButton.height = 50;
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 			
 			//wallbutton
-			wallButton = new WallButton();
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var wallBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			wallBackground.width = 200; 
+			wallBackground.y = 120;
+			wallButton = new TerrainButton();
+			wallButton.y = 120;
+			wallButton.x = 15;
+			wallButton.width = 170;
+			wallButton.height = 50;
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
-			wallButton.x = 90;
-			wallButton.y = 100;
 			//woodbutton:
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes			
+			var woodBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			woodBackground.width = 200; 
+			woodBackground.y = 180;
 			woodButton = new WoodBoxButton();
-			woodButton.x = 90;
-			woodButton.y = 120;
+			woodButton.y = 180;
+			woodButton.x = 15;
+			woodButton.width = 170;
+			woodButton.height = 50;
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 
 			//clear button:
-			//TODO button from assets
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var clearBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			clearBackground.width = 200; 
+			clearBackground.y = 240
 			clearButton = new ClearAllButton();
-			clearButton.x = 110;
-			clearButton.y = 200;
+			clearButton.x = 5;
+			clearButton.y = 245;
+			clearButton.width = 200;
+			clearButton.height = 25;
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			var arrowDown:ArrowDownButton = new ArrowDownButton();
 			arrowDown.x = 100;
 			arrowDown.y = 180
 			addChild(arrowDown);
 			//Test button:
-			//TODO we got a new button from assets
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
 			testButton = new TestButton();
-			testButton.x = 20;
-			testButton.y = 50;
-			
+			testButton.x = 340;
+			testButton.y = 40;
+			testButton.width = 180;
+			testButton.height = 50;
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
@@ -258,11 +291,15 @@ package org.interguild.editor {
 			addChild(heightBox);
 			addChild(title);
 			addChild(titlef);
-			//addChild(testButton);
+			addChild(testButton);
 			addChild(tf);
+			tf.addChild(wallBackground);
 			tf.addChild(wallButton);
+			tf.addChild(woodBackground);
 			tf.addChild(woodButton);
+			tf.addChild(playerBackground);
 			tf.addChild(playerSpawnButton);
+			tf.addChild(clearBackground);
 			tf.addChild(clearButton);
 			//addChild(grid);
 			addChild(dropDown);
@@ -271,6 +308,9 @@ package org.interguild.editor {
 			loader = new EditorLoader();
 			loader.addInitializedListener(newGridReady);
 		}
+		/**
+		 * Method is called when making a button to put background on then the button
+		 */
 
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data);
@@ -343,17 +383,17 @@ package org.interguild.editor {
 		}
 
 		private function startClick(e:MouseEvent):void {
-			var button:Button = Button(e.target);
+			var button:StartLineButton = StartLineButton(e.target);
 			activeButton = Player.LEVEL_CODE_CHAR;
 		}
 
 		private function wallClick(e:MouseEvent):void {
-			var button:Button = Button(e.target);
+			var button:TerrainButton = TerrainButton(e.target);
 			activeButton = Terrain.LEVEL_CODE_CHAR;
 		}
 
 		private function woodBoxClick(e:MouseEvent):void {
-			var button:Button = Button(e.target); // focus mouse event
+			var button:WoodBoxButton = WoodBoxButton(e.target); // focus mouse event
 			activeButton = WoodCrate.LEVEL_CODE_CHAR;
 		}
 
