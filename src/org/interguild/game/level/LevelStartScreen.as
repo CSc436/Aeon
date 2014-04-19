@@ -1,7 +1,6 @@
 package org.interguild.game.level {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.text.AntiAliasType;
@@ -9,9 +8,7 @@ package org.interguild.game.level {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
-	
-	import fl.controls.Button;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
 
@@ -45,7 +42,7 @@ package org.interguild.game.level {
 		private var titleText:TextField;
 		private var jumpToStart:Sprite;
 		private var jumpText:TextField;
-		
+
 		// Buttons for the pause menu
 		private var buttonContainer:Sprite;
 		private var resumeButton:MovieClip;
@@ -109,22 +106,22 @@ package org.interguild.game.level {
 			jumpToStart.addChild(jumpText);
 			addChild(jumpToStart);
 		}
-		
+
 		public function initButtons():void {
-			
+
 			buttonContainer = new Sprite();
 			buttonContainer.graphics.beginFill(0xC0C0C0, 0.75);
-			buttonContainer.graphics.drawRoundRect(Aeon.STAGE_WIDTH/2 - 100, 100, 200, 350, 10);
+			buttonContainer.graphics.drawRoundRect(Aeon.STAGE_WIDTH / 2 - 100, 100, 200, 350, 10);
 			buttonContainer.graphics.endFill();
-			
+
 			// Make button for resuming the game
 			resumeButton = new ResumeButton();
 			resumeButton.buttonMode = true;
-			resumeButton.x = Aeon.STAGE_WIDTH/2 - 50;
+			resumeButton.x = Aeon.STAGE_WIDTH / 2 - 50;
 			resumeButton.y = 175;
 			resumeButton.addEventListener(MouseEvent.CLICK, resumeGame);
 			buttonContainer.addChild(resumeButton);
-			
+
 			// Make button for restarting from a checkpoint
 //			restartCheckpointButton = new Button();
 //			restartCheckpointButton.label = "Restart from Checkpoint";
@@ -135,39 +132,39 @@ package org.interguild.game.level {
 //			// Make this work once we actually have checkpoints in the game
 //			//restartCheckpointButton.addEventListener(MouseEvent.CLICK, restartFromCheckpoint);
 //			this.parent.addChild(restartCheckpointButton);
-			
+
 			// Make button for restarting from the beginning of a level
 			restartGameButton = new RestartButton();
 			restartGameButton.buttonMode = true;
-			restartGameButton.x = Aeon.STAGE_WIDTH/2 - 50;
+			restartGameButton.x = Aeon.STAGE_WIDTH / 2 - 50;
 			restartGameButton.y = 225;
 			restartGameButton.addEventListener(MouseEvent.CLICK, restartFromBeginning);
 			buttonContainer.addChild(restartGameButton);
-			
+
 			// Make button for going to the level editor
 			editorButton = new LevelEditorButton();
 			editorButton.buttonMode = true;
-			editorButton.x = Aeon.STAGE_WIDTH/2 - 50;
+			editorButton.x = Aeon.STAGE_WIDTH / 2 - 50;
 			editorButton.y = 275;
 			editorButton.addEventListener(MouseEvent.CLICK, goToEditor);
 			buttonContainer.addChild(editorButton);
-			
+
 			// Make button for quitting the game
 			quitButton = new QuitButton();
 			quitButton.buttonMode = true;
-			quitButton.x = Aeon.STAGE_WIDTH/2 - 50;
+			quitButton.x = Aeon.STAGE_WIDTH / 2 - 50;
 			quitButton.y = 325;
 			quitButton.addEventListener(MouseEvent.CLICK, quitGame);
 			buttonContainer.addChild(quitButton);
-			
+
 			this.parent.addChild(buttonContainer)
 		}
-		
+
 		protected function quitGame(event:MouseEvent):void {
 			KeyMan.getMe().resetEscKey();
 			Aeon.getMe().gotoMainMenu();
 		}
-		
+
 		protected function goToEditor(event:MouseEvent):void {
 			KeyMan.getMe().resetEscKey();
 			// Probably want to give the user some kind of dialog warning them
@@ -175,29 +172,34 @@ package org.interguild.game.level {
 			// in the current level
 			Aeon.getMe().gotoEditorPage();
 		}
-		
+
 		protected function restartFromBeginning(event:MouseEvent):void {
 			this.stage.focus = stage;
 			KeyMan.getMe().resetEscKey();
 			// This is hardcoded right now, but we probably want some kind of
 			// global reference to the current file so that we know what level
 			// needs to be restarted
-			Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
-			
+			CONFIG::DEPLOY {
+				Aeon.getMe().playLevelCode(TestLevel.getCode());
+			}
+			CONFIG::NODEPLOY {
+				Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+			}
+
 		}
-		
+
 		protected function resumeGame(event:MouseEvent):void {
 			KeyMan.getMe().resumeFromButton();
 		}
-		
+
 		public function showButtons():void {
 			buttonContainer.visible = true;
 		}
-		
+
 		public function hideButtons():void {
 			buttonContainer.visible = false;
 		}
-		
+
 		public function setJumpText(str:String):void {
 			jumpText.text = str;
 		}
@@ -207,7 +209,7 @@ package org.interguild.game.level {
 		}
 
 		public function getPreviewRegion():Rectangle {
-			var rect:Rectangle =  new Rectangle(PREVIEW_PADDING_X, titleText.y + titleText.height, Aeon.STAGE_WIDTH - PREVIEW_PADDING_X * 2, Aeon.STAGE_HEIGHT - titleText.y - titleText.height - jumpToStart.height);
+			var rect:Rectangle = new Rectangle(PREVIEW_PADDING_X, titleText.y + titleText.height, Aeon.STAGE_WIDTH - PREVIEW_PADDING_X * 2, Aeon.STAGE_HEIGHT - titleText.y - titleText.height - jumpToStart.height);
 			return rect;
 		}
 	}
