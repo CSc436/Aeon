@@ -6,9 +6,7 @@ package org.interguild.game.level {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 
-	public class LevelHUD extends Sprite
-
-	{
+	public class LevelHUD extends Sprite {
 		public static const XCOORD:uint = 10;
 		public static const YCOORD:uint = 7;
 		public static const XCOORDICON:uint = 5;
