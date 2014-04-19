@@ -73,7 +73,7 @@ package org.interguild.game {
 				TweenLite.to(this, TWEEN_SPEED, {x: cameraX - RIGHT_DISTANCE, y: cameraY});
 			}
 			// camera will be to the right of the player for view
-			else if (player.isFacingLeft && player.isStanding) {
+			else if (!player.isFacingRight && player.isStanding) {
 				TweenLite.to(this, TWEEN_SPEED, {x: cameraX + LEFT_DISTANCE, y: cameraY});
 			}
 			// camera will scroll downwards
