@@ -177,12 +177,11 @@ package org.interguild.game {
 				isJumping = true;
 				frameJumpCounter = frameCounter;
 			}
-			
+
 			if (keys.isKeySpace) {
 				wasJumping = true;
-			}
-			else wasJumping = false;
-			trace("The frame count is = ", frameCounter);
+			} else
+				wasJumping = false;
 		}
 
 		public function updateAnimation():void {
@@ -227,8 +226,8 @@ package org.interguild.game {
 					playerClip.nextFrame();
 				else
 					playerClip.gotoAndStop(0);
-			}
-
+			} else
+				playerClip.gotoAndStop(0);
 		}
 
 		private function handleCrawlLeft():void {
@@ -251,8 +250,8 @@ package org.interguild.game {
 					playerClip.nextFrame();
 				else
 					playerClip.gotoAndStop(0);
-			}
-
+			} else
+				playerClip.gotoAndStop(0);
 		}
 
 		private function handleWalkRight():void {
@@ -275,7 +274,8 @@ package org.interguild.game {
 					playerClip.nextFrame();
 				else
 					playerClip.gotoAndStop(0);
-			}
+			} else
+				playerClip.gotoAndStop(0);
 
 
 		}
@@ -299,7 +299,8 @@ package org.interguild.game {
 					playerClip.nextFrame();
 				else
 					playerClip.gotoAndStop(0);
-			}
+			} else
+				playerClip.gotoAndStop(0);
 		}
 
 		private function handleJumping():void {
