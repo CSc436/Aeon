@@ -360,7 +360,7 @@ package org.interguild.game.collision {
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
-			if (otherObject is Collectable) {
+			if (p && otherObject is Collectable) {
 				removalObjects.push(otherObject);
 				level.grabbedCollectable();
 				/*

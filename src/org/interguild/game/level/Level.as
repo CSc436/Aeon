@@ -46,10 +46,10 @@ package org.interguild.game.level {
 
 		private var w:uint = 0;
 		private var h:uint = 0;
-		
+
 		private var hud:LevelHUD;
 		private var collectableCount:int;
-	
+
 
 		CONFIG::DEBUG {
 			public var isDebuggingMode:Boolean = false;
@@ -58,29 +58,29 @@ package org.interguild.game.level {
 			private var slowDownText:TextField;
 		}
 
-		public function Level(lvlWidth:Number, lvlHeight:Number) {	
+		public function Level(lvlWidth:Number, lvlHeight:Number) {
 			collectableCount = 0;
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
-			
+
 			//init background
 			bg = new LevelBackground(widthInPixels, heightInPixels);
 			addChild(bg);
-			
+
 			//init player and camera
 			player = new Player()
 			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
 			camera.addChild(player);
-			
+
 			//init Terrain view
 			tv = TerrainView.init(widthInPixels, heightInPixels);
 			camera.addChild(tv);
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
-			
+
 			hud = new LevelHUD();
 			addChild(hud);
 
@@ -102,27 +102,28 @@ package org.interguild.game.level {
 				addChild(slowDownText);
 			}
 		}
-		
-		public function finishLoading():void{
+
+		public function finishLoading():void {
 			tv.finishTerrain();
 			hud.updateMax(collectableCount);
 		}
-		
-		public function grabbedCollectable():void{
+
+		public function grabbedCollectable():void {
 			hud.increaseCollected();
 		}
-		
-		public function hideBackground():void{
+
+		public function hideBackground():void {
 			bg.visible = false;
 		}
-		
-		public function showBackground():void{
+
+		public function showBackground():void {
 			bg.visible = true;
 		}
 
-		public function getHUD():LevelHUD{
+		public function getHUD():LevelHUD {
 			return hud;
 		}
+
 		public function get title():String {
 			return myTitle;
 		}
@@ -130,9 +131,9 @@ package org.interguild.game.level {
 		public function set title(t:String):void {
 			myTitle = t;
 		}
-		
-		public function showHUD(show:Boolean):void{
-			if(show){
+
+		public function showHUD(show:Boolean):void {
+			if (show) {
 				hud.show();
 				return;
 			}
@@ -184,7 +185,7 @@ package org.interguild.game.level {
 		public function createCollidableObject(tile:CollidableObject):void {
 			collisionGrid.addObject(tile);
 			camera.addChild(tile);
-			if(tile is Collectable)
+			if (tile is Collectable)
 				collectableCount++;
 		}
 
@@ -256,6 +257,11 @@ package org.interguild.game.level {
 			player.onGameLoop();
 			player.reset();
 
+			// update animations
+			player.updateAnimation();
+			player.frameCounter++; // updated counter for game frames
+
+
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
@@ -317,7 +323,7 @@ package org.interguild.game.level {
 			//update camera
 			camera.updateCamera();
 		}
-		
+
 //		public function activateObject(obj:CollidableObject):void {
 //			obj.isActive = true;
 //			collisionGrid.activeObjects.push(obj);
