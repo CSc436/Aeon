@@ -1,6 +1,4 @@
 package org.interguild.game.level {
-	import flash.display.DisplayObject;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -15,10 +13,10 @@ package org.interguild.game.level {
 	import org.interguild.game.Camera;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
-	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
+	import org.interguild.game.tiles.Collectable;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -50,7 +48,7 @@ package org.interguild.game.level {
 		private var h:uint = 0;
 		
 		private var hud:LevelHUD;
-		private var collectableCount;
+		private var collectableCount:int;
 	
 
 		CONFIG::DEBUG {
@@ -83,7 +81,7 @@ package org.interguild.game.level {
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 			
-			hud = new LevelHUD(collectableCount);
+			hud = new LevelHUD();
 			addChild(hud);
 
 			CONFIG::DEBUG {
@@ -107,6 +105,11 @@ package org.interguild.game.level {
 		
 		public function finishLoading():void{
 			tv.finishTerrain();
+			hud.updateMax(collectableCount);
+		}
+		
+		public function grabbedCollectable():void{
+			hud.increaseCollected();
 		}
 		
 		public function hideBackground():void{
@@ -126,10 +129,6 @@ package org.interguild.game.level {
 
 		public function set title(t:String):void {
 			myTitle = t;
-		}
-		
-		public function setMaxCollectable():void{
-			hud.updateMax(collectableCount);
 		}
 		
 		public function showHUD(show:Boolean):void{
@@ -185,6 +184,8 @@ package org.interguild.game.level {
 		public function createCollidableObject(tile:CollidableObject):void {
 			collisionGrid.addObject(tile);
 			camera.addChild(tile);
+			if(tile is Collectable)
+				collectableCount++;
 		}
 
 		/**
