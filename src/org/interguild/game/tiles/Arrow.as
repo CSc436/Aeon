@@ -2,6 +2,8 @@ package org.interguild.game.tiles
 {
 	import com.greensock.motionPaths.Direction;
 	
+	import flash.display.Bitmap;
+	
 	import org.interguild.game.Player;
 	
 	public class Arrow extends CollidableObject implements Tile
@@ -17,13 +19,24 @@ package org.interguild.game.tiles
 		
 		public function Arrow(x:int, y:int, direction:int)
 		{
-			super(x, y+4, 1, 1);
+			super(x, y, 1, 1);
 			this.direction = direction;
 			parentDestroyed = false;
-			graphics.beginFill(0x000000);
-			graphics.drawRect(8, 8, 20, 10);
-			graphics.endFill();
 			this.isActive = true;
+			switch (direction) {
+				case 1:
+					addChild(new Bitmap(new LightningRightSprite()));
+					break;
+				case 2:
+					addChild(new Bitmap(new LightningBlockDownSprite()));
+					break;
+				case 3:
+					addChild(new Bitmap(new LightningBlockLeftSprite()));
+					break;
+				case 4:
+					addChild(new Bitmap(new LightningBlockUpSprite()));
+					break;
+			}
 		}
 		
 		public override function onGameLoop():void {

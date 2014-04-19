@@ -3,7 +3,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
@@ -11,6 +11,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
 
 	public class CollisionGrid extends Sprite {
@@ -341,8 +342,8 @@ package org.interguild.game.collision {
 				throw new Error("Please handle non-Tile collisions in special cases before this line.");
 			}
 			
-			trace(activeObject.toString());
-			trace(otherObject.toString());
+			trace("Object 1: "+activeObject.toString());
+			trace("Object 2: "+otherObject.toString());
 
 			var activeTile:Tile = Tile(activeObject);
 			var otherTile:Tile = Tile(otherObject);
@@ -350,10 +351,12 @@ package org.interguild.game.collision {
 			/*
 			* ARROW HITS CRATE
 			*/
-			if (a && otherTile.getDestructibility() == 2) {
+			if ((a && otherTile.getDestructibility() == 2) || (a && otherTile is SteelCrate)) {
 				removalObjects.push(otherObject);
 				removalObjects.push(activeObject);
 			}
+			else if (a && otherTile.getDestructibility() == 0) 
+				removalObjects.push(activeObject);
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
@@ -475,7 +478,7 @@ package org.interguild.game.collision {
 				}
 			}
 			obj.clearGrids();
-			obj.onKillEvent();
+			obj.onKillEvent(level);
 
 //			var tile:GridTile = toDestroy.myCollisionGridTiles[0];
 //			unblockNeighbors(tile.gridRow, tile.gridCol);
