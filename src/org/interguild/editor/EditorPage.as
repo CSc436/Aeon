@@ -1,7 +1,5 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
-	import flash.display.DisplayObject;
-	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
@@ -28,37 +26,6 @@ package org.interguild.editor {
 		private static const DEFAULT_LEVEL_WIDTH:uint = 15;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 15;
 
-		//Following is code to import images for everything
-		[Embed(source = "../../../../images/editorButtons/test-default.png")]
-		private var TestButton:Class;
-		[Embed(source = "../../../../images/editorButtons/clear-default.png")]
-		private var ClearButton:Class;
-		[Embed(source = "../../../../images/editorButtons/resize-default.png")]
-		private var ResizeButton:Class;
-		
-		[Embed(source = "../../../../images/editorTitles/teleportStart.png")]
-		private var StartButton:Class;
-		[Embed(source = "../../../../images/editorTitles/teleportFinish.png")]
-		private var FinishButton:Class;
-		[Embed(source = "../../../../images/editorTitles/floor.png")]
-		private var WallButton:Class;
-		[Embed(source = "../../../../images/editorTitles/woodBox.png")]
-		private var WoodButton:Class;
-		[Embed(source = "../../../../images/editorTitles/steelBox.png")]
-		private var SteelButton:Class;
-		[Embed(source = "../../../../images/editorTitles/keyCard.png")]
-		private var CollectableButton:Class;
-		[Embed(source = "../../../../images/editorTitles/lightningBlockUp.png")]
-		private var LightningButtonUp:Class;
-		[Embed(source = "../../../../images/editorTitles/lightningBlockDown.png")]
-		private var LightningButtonDown:Class;
-		[Embed(source = "../../../../images/editorTitles/lightningBlockLeft.png")]
-		private var LightningButtonLeft:Class;
-		[Embed(source = "../../../../images/editorTitles/lightningBlockRight.png")]
-		private var LightningButtonRight:Class;
-		//		[Embed(source = "../../../../images/editorTitles/platform.png")]
-		//		private var PlatformButton:Class;
-		
 		/*
 		//TODO new buttons
 		StartButton
@@ -79,9 +46,9 @@ package org.interguild.editor {
 		private var wallButton:TerrainButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
-		private var collectButton;
-		private var testButton;
-		private var resizeButton;
+		private var collectButton:CollectableButton;
+		private var testButton:TestButton;
+		private var resizeButton:ResizeButton;
 		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
@@ -185,8 +152,8 @@ package org.interguild.editor {
 			collectButton = new CollectableButton();
 			collectButton.y = 240;
 			collectButton.x = 5;
-			collectButton.width = 75;
-			collectButton.height = 45;
+			collectButton.width = 180;
+			collectButton.height = 50;
 			collectButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
 			//four arrow directions
@@ -262,11 +229,15 @@ package org.interguild.editor {
 			//Test button:
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes
+			var testBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			testBackground.width = 200; 
+			testBackground.x = 330;
+			testBackground.y = 40;
 			testButton = new TestButton();
 			testButton.x = 340;
 			testButton.y = 40;
 			testButton.width = 160;
-			testButton.height = 50;	
+			testButton.height = 25;	
 			/* Buttons to add to the branch
 			ClearAllButton
 			RedoButton
@@ -288,11 +259,15 @@ package org.interguild.editor {
 			*/
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 			//change size button:
+			var resizeBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			resizeBackground.width = 150; 
+			resizeBackground.x = 735;
+			resizeBackground.y = 37;
 			resizeButton = new ResizeButton();
 			resizeButton.y = 37;
 			resizeButton.x = 740;
-			resizeButton.width = 140;
-			resizeButton.height = 50;
+			resizeButton.width = 120;
+			resizeButton.height = 35;
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			undoList = new Array();
 			redoList = new Array();
@@ -380,7 +355,7 @@ package org.interguild.editor {
 			var textScrollBar:FullScreenScrollBar = new FullScreenScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,845);
 			textScrollBar.y = 100;
 			addChild(textScrollBar);
-			//grid.addChild(scrollBar);
+			addChild(resizeBackground);
 			addChild(resizeButton);
 			addChild(heightf);
 			addChild(widthf);
@@ -388,6 +363,7 @@ package org.interguild.editor {
 			addChild(heightBox);
 			addChild(title);
 			addChild(titlef);
+			addChild(testBackground);
 			addChild(testButton);
 			addChild(tf);
 			tf.addChild(arrowDownBackground);
