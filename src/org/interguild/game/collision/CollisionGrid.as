@@ -418,7 +418,9 @@ package org.interguild.game.collision {
 				}
 
 				if (r is CollidableObject) {
-					CollidableObject(r).isActive = false;
+					var c:CollidableObject = CollidableObject(r);
+					c.isActive = false;
+					updateObject(c, true);
 				}
 			}
 			deactivateObjects = new Array();
