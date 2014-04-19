@@ -1,6 +1,6 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
-	
+
 	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
@@ -16,6 +16,12 @@ package org.interguild.game {
 		private static const SPRITE_COLOR:uint = 0xFF0000;
 		private static const SPRITE_WIDTH:uint = 24;
 		private static const SPRITE_HEIGHT:uint = 40;
+
+		private static const CRAWLING_HEIGHT:uint = 32;
+		private static const STANDING_HEIGHT:uint = 40;
+
+		public var frameCounter:int = 0;
+		public var frameJumpCounter:int;
 
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
@@ -35,10 +41,11 @@ package org.interguild.game {
 		public var wasJumping:Boolean;
 
 		public var isStanding:Boolean;
-		public var isFacingLeft:Boolean;
 		public var isFacingRight:Boolean;
 		public var isFacingUp:Boolean;
 		public var isCrouching:Boolean;
+		public var isFalling:Boolean;
+		public var isJumping:Boolean;
 
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
@@ -69,78 +76,13 @@ package org.interguild.game {
 			playerClip.x = -2;
 			playerClip.y = -8;
 			addChild(playerClip);
+			isFacingRight = true; // player always starts out facing right
 		}
 
 		public override function onGameLoop():void {
-			switch (speedY) {
-				case -28:
-				case -24:
-				case -20:
-				case -16:
-					if (!(playerClip is PlayerJumpUpAnimation)) {
-						removeChild(playerClip);
-						playerClip = new PlayerJumpUpAnimation();
-						addChild(playerClip);
-					}
-					playerClip.gotoAndStop(0);
-					break;
-				case -12:
-				case -8:
-				case -4:
-					if (!(playerClip is PlayerJumpUpAnimation)) {
-						removeChild(playerClip);
-						playerClip = new PlayerJumpUpAnimation();
-						addChild(playerClip);
-					}
-					playerClip.gotoAndStop(1);
-					break;
-				case 0:
-					// If the player is not standing and they were previously rising in the air
-					if (!isStanding && !(playerClip is PlayerJumpPeakThenFallAnimation) && prevSpeedY == -4) {
-						removeChild(playerClip);
-						playerClip = new PlayerJumpPeakThenFallAnimation();
-						addChild(playerClip);
-						playerClip.gotoAndStop(0);
-					} else if (isStanding && prevSpeedY == 11 && !(playerClip is PlayerJumpLandAnimation)) {
-						removeChild(playerClip);
-						playerClip = new PlayerJumpLandAnimation();
-						addChild(playerClip);
-						playerClip.gotoAndPlay(0);
-					} else if (!(playerClip is PlayerWalkingAnimation)) {
-						removeChild(playerClip);
-						playerClip = new PlayerWalkingAnimation();
-						addChild(playerClip);
-					}
-					break;
-				case 4:
-					if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
-						removeChild(playerClip);
-						playerClip = new PlayerJumpPeakThenFallAnimation();
-						addChild(playerClip);
-					}
-					playerClip.gotoAndStop(3);
-					break;
-				case 7:
-					if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
-						removeChild(playerClip);
-						playerClip = new PlayerJumpPeakThenFallAnimation();
-						addChild(playerClip);
-					}
-					if (prevSpeedY == 4)
-						playerClip.gotoAndStop(6);
-					else
-						playerClip.gotoAndStop(7);
-					break;
-				default:
-					break;
-			}
-
-			playerClip.scaleX = prevScaleX;
-			if (prevScaleX == -1)
-				playerClip.x = 25;
-			playerClip.y = -8;
-
 			speedY += Level.GRAVITY;
+//			trace("speedY =", speedY);
+//			trace("speedX =", speedX);
 
 			updateKeys();
 
@@ -165,10 +107,9 @@ package org.interguild.game {
 
 		public function reset():void {
 			isStanding = false;
-			isFacingLeft = false;
-			isFacingRight = false;
-			isFacingUp = false;
 			isCrouching = false;
+//			isFalling = false;
+//			isJumping = false;
 		}
 
 		private function updateKeys():void {
@@ -178,23 +119,7 @@ package org.interguild.game {
 			//moving to the left
 			if (keys.isKeyLeft) {
 				speedX -= RUN_ACC;
-
-				// Use scaleX = -1 to flip the direction of movement
-				if (playerClip.scaleX != -1) {
-					playerClip.scaleX = -1;
-					prevScaleX = -1;
-					//This value might need to be changed, I think it might be off a few pixels
-					playerClip.x = 25;
-				}
-				if (speedY == 4) {
-					if (playerClip.currentFrame != playerClip.totalFrames)
-						playerClip.nextFrame();
-					else
-						playerClip.gotoAndStop(0);
-				}
-
-				isFacingLeft = true;
-
+				isFacingRight= false;
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
@@ -203,33 +128,32 @@ package org.interguild.game {
 			//moving to the right
 			if (keys.isKeyRight) {
 				speedX += RUN_ACC;
-
-				//animate moving to the right
-				if (playerClip.scaleX != 1) {
-					playerClip.scaleX = 1;
-					prevScaleX = 1;
-					playerClip.x = -2;
-				}
-				if (speedY == 4) {
-					if (playerClip.currentFrame != playerClip.totalFrames)
-						playerClip.nextFrame();
-					else
-						playerClip.gotoAndStop(0);
-				}
-
 				isFacingRight = true;
-
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
 					speedX = 0;
 			}
 
-			//crawl position
-			if (keys.isKeyDown) {
-				// Make the frame go to the crawling clip
+			if (keys.isKeyDown && isStanding) {
+				isCrouching = true;
+				this.hitbox.height = CRAWLING_HEIGHT;
+				this.hitbox.y = this.hitbox.y + (STANDING_HEIGHT - CRAWLING_HEIGHT);
+				updateHitBox();
 			}
 
+			// finished crawling
+			if (!keys.isKeyDown) {
+				isCrouching = false;
+				this.hitbox.height = STANDING_HEIGHT;
+			}
+
+			
+			// if player pushes both right and left stop them
+			if (keys.isKeyRight && keys.isKeyLeft && isStanding) {
+				speedX = 0;
+			}
+			
 			// look up
 			if (keys.isKeyUp) {
 				isFacingUp = true;
@@ -242,12 +166,237 @@ package org.interguild.game {
 			//jump
 			if (keys.isKeySpace && isStanding && !wasJumping) {
 				speedY = JUMP_SPEED;
+				isStanding = false;
+				isJumping = true;
+				frameJumpCounter = frameCounter;
 			}
 
 			if (keys.isKeySpace)
 				wasJumping = true;
 			else
 				wasJumping = false;
+
+		}
+
+
+		public function updateAnimation():void {
+			if (isJumping) {
+				handleJumping();
+			} else if (isFalling) {
+				handleFalling();
+			} else if (keys.isKeyDown && isFacingRight && isStanding) {
+				handleCrawlRight();
+			} else if (keys.isKeyDown && !isFacingRight && isStanding) {
+				handleCrawlLeft();
+			} else if (keys.isKeyRight && !keys.isKeyDown) {
+				handleWalkRight();
+			} else if (keys.isKeyLeft && !keys.isKeyDown) {
+				handleWalkLeft();
+			}
+			// reset the animation to walking left
+			else if (!keys.isKeyDown && !isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
+				handleWalkLeft();
+					// reset the animation to walking right
+			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
+				handleWalkRight();
+			}
+
+		}
+
+		private function handleCrawlRight():void {
+			if (!(playerClip is PlayerCrawlAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerCrawlAnimation();
+				addChild(playerClip);
+				playerClip.gotoAndStop(0);
+			}
+			//animate moving to the right
+			playerClip.scaleX = 1;
+			prevScaleX = 1;
+			playerClip.x = -20;
+			playerClip.y = -15;
+
+			if (speedX > 0) {
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				else
+					playerClip.gotoAndStop(0);
+			}
+
+		}
+
+		private function handleCrawlLeft():void {
+			if (!(playerClip is PlayerCrawlAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerCrawlAnimation();
+				addChild(playerClip);
+				playerClip.gotoAndStop(0);
+			}
+			// Use scaleX = -1 to flip the direction of movement
+
+			playerClip.scaleX = -1;
+			prevScaleX = -1;
+			//This value might need to be changed, I think it might be off a few pixels
+			playerClip.x = 45;
+			playerClip.y = -15;
+
+			if (speedX < 0) {
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				else
+					playerClip.gotoAndStop(0);
+			}
+
+		}
+
+		private function handleWalkRight():void {
+			if (!(playerClip is PlayerWalkingAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerWalkingAnimation();
+				playerClip.stop();
+				addChild(playerClip);
+				playerClip.gotoAndStop(0);
+			}
+			
+			//animate moving to the right
+			playerClip.scaleX = 1;
+			prevScaleX = 1;
+			playerClip.x = -2;
+			playerClip.y = -8;
+
+			if (speedX > 0) {
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				else
+					playerClip.gotoAndStop(0);
+			}
+
+
+		}
+
+		private function handleWalkLeft():void {
+			if (!(playerClip is PlayerWalkingAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerWalkingAnimation();
+				addChild(playerClip);
+				playerClip.gotoAndStop(0);
+			}
+			// Use scaleX = -1 to flip the direction of movement
+			playerClip.scaleX = -1;
+			prevScaleX = -1;
+			//This value might need to be changed, I think it might be off a few pixels
+			playerClip.x = 25;
+			playerClip.y = -8;
+
+			if (speedX < 0) {
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				else
+					playerClip.gotoAndStop(0);
+			}
+		}
+
+		private function handleJumping():void {
+			if (frameCounter - frameJumpCounter <= 6) {
+				if (!(playerClip is PlayerJumpUpAnimation)) {
+					removeChild(playerClip);
+					playerClip = new PlayerJumpUpAnimation();
+					addChild(playerClip);
+				}
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				// make sure the animation is facing the correct direction if the player changes it in mid air
+				if (isFacingRight) {
+					playerClip.scaleX = 1;
+					prevScaleX = 1;
+					playerClip.x = -2;
+					playerClip.y = -8;
+				} else {
+					playerClip.scaleX = -1;
+					prevScaleX = -1;
+					//This value might need to be changed, I think it might be off a few pixels
+					playerClip.x = 25;
+					playerClip.y = -8;
+				}
+			} else if (frameCounter - frameJumpCounter <= 12) {
+				if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+					removeChild(playerClip);
+					playerClip = new PlayerJumpPeakThenFallAnimation();
+					addChild(playerClip);
+				}
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				// make sure the animation is facing the correct direction if the player changes it in mid air
+				if (isFacingRight) {
+					playerClip.scaleX = 1;
+					prevScaleX = 1;
+					playerClip.x = -2;
+					playerClip.y = -8;
+				} else {
+					playerClip.scaleX = -1;
+					prevScaleX = -1;
+					//This value might need to be changed, I think it might be off a few pixels
+					playerClip.x = 25;
+					playerClip.y = -8;
+				}
+			} else if (frameCounter - frameJumpCounter < 18) {
+				if (!(playerClip is PlayerJumpLandAnimation)) {
+					removeChild(playerClip);
+					playerClip = new PlayerJumpLandAnimation();
+					addChild(playerClip);
+				}
+				if (playerClip.currentFrame != playerClip.totalFrames)
+					playerClip.nextFrame();
+				// make sure the animation is facing the correct direction if the player changes it in mid air
+				if (isFacingRight) {
+					playerClip.scaleX = 1;
+					prevScaleX = 1;
+					playerClip.x = -2;
+					playerClip.y = -8;
+				} else {
+					playerClip.scaleX = -1;
+					prevScaleX = -1;
+					//This value might need to be changed, I think it might be off a few pixels
+					playerClip.x = 25;
+					playerClip.y = -8;
+				}
+			} else {
+				isJumping = false;
+			}
+
+
+
+
+		}
+
+
+		private function handleFalling():void {
+			trace("Made it inside falling");
+			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerJumpPeakThenFallAnimation();
+				addChild(playerClip);
+			}
+
+
+			if (playerClip.currentFrame != playerClip.totalFrames)
+				playerClip.nextFrame();
+
+
+			// make sure the animation is facing the correct direction if the player changes it in mid air
+			if (isFacingRight) {
+				playerClip.scaleX = 1;
+				prevScaleX = 1;
+				playerClip.x = -2;
+				playerClip.y = -8;
+
+			} else {
+				playerClip.scaleX = -1;
+				prevScaleX = -1;
+				//This value might need to be changed, I think it might be off a few pixels
+				playerClip.x = 25;
+				playerClip.y = -8;
+			}
 
 		}
 

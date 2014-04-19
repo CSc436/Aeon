@@ -1,6 +1,8 @@
 package org.interguild.game.level {
 	import flash.geom.Rectangle;
-
+	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
 	import org.interguild.Page;
@@ -43,9 +45,9 @@ package org.interguild.game.level {
 		public function playLevelFromFile(file:String):void {
 			loader.loadFromFile(file);
 		}
-
-		public function playLevelFromCode(code:String):void {
-			loader.loadFromCode(code);
+		
+		public function playLevelFromCode(code:String):void{
+			loader.loadFromCode(code, "MainMenu");
 		}
 
 		private function onFileLoad(lvl:Level):void {
@@ -58,9 +60,14 @@ package org.interguild.game.level {
 			startScreen.hideButtons();
 		}
 
-		private function onLoadError(e:String):void {
-			trace("Error: " + e);
+		private function onLoadError(e:ArrayList):void {
+			trace(e);
+			returnFromError(e);
 			//TODO display error to user
+		}
+		private function returnFromError(e:ArrayList):void{
+			var aeon:Aeon = Aeon.getMe();
+			aeon.returnFromError(e, "LevelLoader");
 		}
 
 		private function onLoadComplete():void {
@@ -73,6 +80,8 @@ package org.interguild.game.level {
 		private function showPreviewLevel(isPauseMenu:Boolean):void {
 			startScreen.visible = true;
 
+			level.showHUD(false);
+			
 			// Get rid of the jump to start text if we are pausing the game rather than 
 			// Starting the level for the first time
 			if (isPauseMenu) {
@@ -94,6 +103,10 @@ package org.interguild.game.level {
 			level.y = box.y + (box.height / 2) - level.heightInPixels * level.scaleY / 2;
 
 			level.hideBackground();
+		}
+		
+		private function showHUD(show:Boolean):void{
+			level.showHUD(show);
 		}
 
 		private function pauseGame():void {
@@ -120,6 +133,7 @@ package org.interguild.game.level {
 				level.x = level.y = 0;
 				level.startGame();
 			}
+			showHUD(true);
 		}
 	}
 }
