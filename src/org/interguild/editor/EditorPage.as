@@ -147,6 +147,26 @@ package org.interguild.editor {
 			testButton.x = 20;
 			testButton.y = 50;
 			
+			/* Buttons to add to the branch
+			ClearAllButton
+			RedoButton
+			ResizeButton
+			TestButton
+			UndoButton
+			
+			//editor tiles
+			ArrowDownButton
+			ArrowUpBotton
+			ArrowRightButton
+			ArrowLeftButton
+			CollectableButton
+			FinishLineButton
+			StartLineButton
+			SteelBoxButton
+			WoodBoxButton
+			TerrainButton
+			*/
+			
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
