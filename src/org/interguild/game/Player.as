@@ -79,8 +79,8 @@ package org.interguild.game {
 		public override function onGameLoop():void {
 			prevSpeedY = speedY;
 			speedY += Level.GRAVITY;
-			trace("speedY =", speedY);
-			trace("speedX =", speedX);
+//			trace("speedY =", speedY);
+//			trace("speedX =", speedX);
 			updateKeys();
 
 			if (speedY > MAX_FALL_SPEED) {
