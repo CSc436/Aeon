@@ -5,6 +5,7 @@ package org.interguild.game.level {
 	import org.interguild.KeyMan;
 	import org.interguild.Page;
 	import org.interguild.loader.LevelLoader;
+	import flexunit.utils.ArrayList;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
@@ -43,9 +44,9 @@ package org.interguild.game.level {
 		public function playLevelFromFile(file:String):void {
 			loader.loadFromFile(file);
 		}
-
-		public function playLevelFromCode(code:String):void {
-			loader.loadFromCode(code);
+		
+		public function playLevelFromCode(code:String):void{
+			loader.loadFromCode(code, "MainMenu");
 		}
 
 		private function onFileLoad(lvl:Level):void {
@@ -58,9 +59,14 @@ package org.interguild.game.level {
 			startScreen.hideButtons();
 		}
 
-		private function onLoadError(e:String):void {
-			trace("Error: " + e);
+		private function onLoadError(e:ArrayList):void {
+			trace(e);
+			returnFromError(e);
 			//TODO display error to user
+		}
+		private function returnFromError(e:ArrayList):void{
+			var aeon:Aeon = Aeon.getMe();
+			aeon.returnFromError(e, "LevelLoader");
 		}
 
 		private function onLoadComplete():void {
