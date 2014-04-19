@@ -1,4 +1,5 @@
 package org.interguild.game.collision {
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -6,6 +7,7 @@ package org.interguild.game.collision {
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Tile;
@@ -90,7 +92,7 @@ package org.interguild.game.collision {
 
 			//add new grids
 			for (row = top; row <= bottom; row++) {
-				if (top >= 0 && top < grid.length) {
+				if (row >= 0 && row < grid.length) {
 					for (col = left; col <= right; col++) {
 						if (col >= 0 && col < grid[0].length) {
 							gridTile = grid[row][col];
@@ -142,7 +144,7 @@ package org.interguild.game.collision {
 							distance = 0;
 						}
 
-						var toInsert:Array = new Array(distance, obj);
+						var toInsert:Array = new Array(distance, obj, obj.isActive);
 
 						//add to list, ordered by proximity to target
 						var alen:uint = objectsToTest.length;
@@ -154,7 +156,7 @@ package org.interguild.game.collision {
 								objectsToTest[k] = tmp;
 								tmp = tmp2;
 									// if to be inserted at this location
-							} else if (distance < objectsToTest[k][0]) {
+							} else if ((!obj.isActive && objectsToTest[k][2]) || (distance < objectsToTest[k][0] && obj.isActive == objectsToTest[k][2])) {
 								tmp = objectsToTest[k];
 								objectsToTest[k] = toInsert;
 							}
@@ -187,11 +189,6 @@ package org.interguild.game.collision {
 					}
 					//if they are colliding:
 					handleCollision(target, other);
-				} else {
-					CONFIG::DEBUG {
-						if (level.isDebuggingMode)
-							trace("	nogo");
-					}
 				}
 			}
 			CONFIG::DEBUG {
@@ -202,7 +199,7 @@ package org.interguild.game.collision {
 		}
 
 		private function determineDirection(activeObject:CollidableObject, otherObject:CollidableObject, activeBoxPrev:Rectangle, otherBoxPrev:Rectangle, activeBoxCurr:Rectangle, otherBoxCurr:Rectangle):uint {
-			if (activeBoxCurr.intersects(otherBoxPrev)) {
+			if (activeBoxCurr.intersects(otherBoxPrev) || otherBoxCurr.intersects(activeBoxPrev)) {
 				/*
 				 * SIMPLE ONE-DIRECITON CASES
 				 */
@@ -239,6 +236,23 @@ package org.interguild.game.collision {
 					*/
 					return Direction.LEFT;
 				}
+				// backup testing
+				var intsec:Rectangle;
+				if (activeBoxCurr.intersects(otherBoxPrev))
+					intsec = activeBoxCurr.intersection(otherBoxPrev);
+				else
+					intsec = otherBoxCurr.intersection(activeBoxPrev);
+				if (intsec.width > intsec.height) {
+					if (intsec.y > activeBoxCurr.y + activeBoxCurr.height / 2)
+						return Direction.DOWN;
+					else
+						return Direction.UP;
+				} else {
+					if (intsec.x > activeBoxCurr.x + activeBoxCurr.width / 2)
+						return Direction.RIGHT;
+					else
+						return Direction.LEFT;
+				}
 			} else {
 				/*
 				 * COMPLICATED CORNER CASES
@@ -253,7 +267,7 @@ package org.interguild.game.collision {
 					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.top);
 					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.top);
 					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.bottom);
-					slopeSelf = getSlope(basePoint, selfPoint); 
+					slopeSelf = getSlope(basePoint, selfPoint);
 					slopeOther = getSlope(basePoint, otherPoint);
 					if (slopeSelf <= slopeOther) {
 //						trace("CORNER CASE: on down-right");
@@ -270,7 +284,7 @@ package org.interguild.game.collision {
 //						trace("CORNER CASE: on down-left");
 						return Direction.LEFT;
 					}
-					//going up-left //compare bottom-left point to top-right point
+						//going up-left //compare bottom-left point to top-right point
 				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
 					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.bottom);
 					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.bottom);
@@ -281,7 +295,7 @@ package org.interguild.game.collision {
 //						trace("CORNER CASE: on up-left");
 						return Direction.LEFT;
 					}
-					//going up-right //compare bottom-right point to top-left point
+						//going up-right //compare bottom-right point to top-left point
 				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
 					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.bottom);
 					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.bottom);
@@ -325,9 +339,15 @@ package org.interguild.game.collision {
 			var otherTile:Tile = Tile(otherObject);
 
 			/*
-			 * PLAYER HITS CRATE
-			 */
-			if (p && otherTile.getDestructibility() == 2) {
+			* PLAYER GRABS COLLECTABLE
+			*/
+			if (otherObject is Collectable) {
+				removalObjects.push(otherObject);
+				level.grabbedCollectable();
+				/*
+				* PLAYER HITS CRATE
+				*/
+			} else if (p && otherTile.getDestructibility() == 2) {
 				// knockback stuff:
 				if (otherTile.doesKnockback() > 0) {
 					if (direction == Direction.DOWN) {
@@ -352,19 +372,21 @@ package org.interguild.game.collision {
 					if (p) {
 						p.isStanding = true;
 					} else if (otherObject is Player) { //player got crushed by falling solid object
+						trace("p = other");
 						Player(otherObject).die();
-						return;
+							//return;
 					} else {
 						deactivateObjects.push(activeObject);
 					}
 				} else if (direction == Direction.UP) {
 					if (otherTile.isActive) {
-						if (p) { //player got crushed by falling solid object
-							p.die();
-							return;
-						}
-						otherObject.newY = activeBoxCurr.bottom;
+						otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
 						otherObject.speedY = 0;
+						if (p) { //player got crushed by falling solid object
+							trace("p = active");
+							p.die();
+								//return;
+						}
 					} else {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
@@ -380,16 +402,61 @@ package org.interguild.game.collision {
 			activeObject.updateHitBox();
 		}
 
+		public function handleRemovals(camera:Sprite):void {
+			for (var i:int = 0; i < removalObjects.length; i++) {
+				var r:GameObject = GameObject(removalObjects[i]);
+
+				//remove from display list
+				camera.removeChild(DisplayObject(r));
+
+				//remove from grid tiles
+				if (r is CollidableObject) {
+					destroyObject(CollidableObject(r));
+				}
+			}
+			removalObjects = new Array();
+
+			for (i = 0; i < deactivateObjects.length; i++) {
+				r = GameObject(deactivateObjects[i]);
+
+				var index:int = activeObjects.indexOf(r);
+				if (index != -1) {
+					activeObjects.splice(index, 1);
+				}
+
+				if (r is CollidableObject) {
+					var c:CollidableObject = CollidableObject(r);
+					c.isActive = false;
+					updateObject(c, true);
+				}
+			}
+			deactivateObjects = new Array();
+		}
+
 		public function destroyObject(obj:CollidableObject):void {
-			//remove from activeObjects list
-			if (!obj.isActive) {
+			if (obj.isActive) {
+				//remove from active objects
+				var index:int = activeObjects.indexOf(obj);
+				if (index != -1) {
+					activeObjects.splice(index, 1);
+				}
+			} else {
+				//unblock neighbors
 				var tile:GridTile = obj.myCollisionGridTiles[0];
-				if (inBounds(tile.gridRow - 1, tile.gridCol)) {
-					tile = grid[tile.gridRow - 1][tile.gridCol];
-					tile.activate();
+				updateBlockedNeighbors(tile.gridRow, tile.gridCol);
+
+				//activate all above tiles
+				while (true) {
+					if (inBounds(tile.gridRow - 1, tile.gridCol)) {
+						tile = grid[tile.gridRow - 1][tile.gridCol];
+						tile.activate();
+						if (!tile.isGravible())
+							break;
+					}
 				}
 			}
 			obj.clearGrids();
+			obj.onKillEvent();
 
 //			var tile:GridTile = toDestroy.myCollisionGridTiles[0];
 //			unblockNeighbors(tile.gridRow, tile.gridCol);
@@ -402,22 +469,6 @@ package org.interguild.game.collision {
 //					}
 //				}
 //			}
-		}
-
-		public function get deactivationList():Array {
-			return deactivateObjects;
-		}
-
-		public function get removalList():Array {
-			return removalObjects;
-		}
-
-		public function resetDeactivationList():void {
-			deactivateObjects = new Array();
-		}
-
-		public function resetRemovalList():void {
-			removalObjects = new Array();
 		}
 
 		public function getGrid():Array {

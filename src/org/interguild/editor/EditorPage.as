@@ -9,11 +9,14 @@ package org.interguild.editor {
 	import fl.controls.Button;
 	import fl.controls.TextInput;
 	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
 	import org.interguild.Page;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.Player;
+	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
@@ -96,6 +99,8 @@ package org.interguild.editor {
 
 		private var mainMenu:Aeon;
 
+		private var progressBar:LevelProgressBar;
+		
 		private var scrollBar:FullScreenScrollBar;
 		private var scroll:HorizontalBar;
 		// UNDO REDO ACTIONS ARRAYLIST
@@ -179,7 +184,27 @@ package org.interguild.editor {
 			testButton.x = 340;
 			testButton.y = 40;
 			testButton.width = 180;
-			testButton.height = 50;
+			testButton.height = 50;	
+			/* Buttons to add to the branch
+			ClearAllButton
+			RedoButton
+			ResizeButton
+			TestButton
+			UndoButton
+			
+			//editor tiles
+			ArrowDownButton
+			ArrowUpBotton
+			ArrowRightButton
+			ArrowLeftButton
+			CollectableButton
+			FinishLineButton
+			StartLineButton
+			SteelBoxButton
+			WoodBoxButton
+			TerrainButton
+			*/
+			
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 
 			//change size button:
@@ -307,13 +332,14 @@ package org.interguild.editor {
 			tf.addChild(redoButton);
 			loader = new EditorLoader();
 			loader.addInitializedListener(newGridReady);
+			loader.addErrorListener(onLoadError);
 		}
 		/**
 		 * Method is called when making a button to put background on then the button
 		 */
 
 		public function openLevel(data:String):void {
-			loader.loadFromCode(data);
+			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
 			resetComponents();
 		}
@@ -336,6 +362,16 @@ package org.interguild.editor {
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
 		}
 
+		private function onLoadError(e:ArrayList):void {
+			trace(e);
+			returnFromError(e);
+			//TODO display error to user
+		}
+		private function returnFromError(e:ArrayList):void{
+			var aeon:Aeon = Aeon.getMe();
+			aeon.returnFromError(e, "Editor");
+		}
+		
 		/**
 		 * Helps populate the sprite by setting up buttons
 		 *

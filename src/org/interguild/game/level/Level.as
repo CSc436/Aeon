@@ -1,5 +1,4 @@
 package org.interguild.game.level {
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -17,6 +16,7 @@ package org.interguild.game.level {
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
+	import org.interguild.game.tiles.Collectable;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -37,6 +37,8 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
+		private var tv:TerrainView;
+		private var bg:LevelBackground;
 
 		private var collisionGrid:CollisionGrid;
 
@@ -44,6 +46,10 @@ package org.interguild.game.level {
 
 		private var w:uint = 0;
 		private var h:uint = 0;
+		
+		private var hud:LevelHUD;
+		private var collectableCount:int;
+	
 
 		CONFIG::DEBUG {
 			public var isDebuggingMode:Boolean = false;
@@ -52,23 +58,31 @@ package org.interguild.game.level {
 			private var slowDownText:TextField;
 		}
 
-		public function Level(lvlWidth:Number, lvlHeight:Number) {
-
+		public function Level(lvlWidth:Number, lvlHeight:Number) {	
+			collectableCount = 0;
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
-
-			//initialize camera
-			camera = new Camera(player = new Player());
-			camera.setLevelX( widthInPixels ); // need to send to camera so it knows level width
-			camera.setLevelY( heightInPixels ); // need to send to camera so it knows level height
+			
+			//init background
+			bg = new LevelBackground(widthInPixels, heightInPixels);
+			addChild(bg);
+			
+			//init player and camera
+			player = new Player()
+			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
-
-			//init player
 			camera.addChild(player);
+			
+			//init Terrain view
+			tv = TerrainView.init(widthInPixels, heightInPixels);
+			camera.addChild(tv);
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
+			
+			hud = new LevelHUD();
+			addChild(hud);
 
 			CONFIG::DEBUG {
 				var keys:KeyMan = KeyMan.getMe();
@@ -87,18 +101,42 @@ package org.interguild.game.level {
 				slowDownText.visible = false;
 				addChild(slowDownText);
 			}
-			
-			//init Terrain view
-			var tv:TerrainView = TerrainView.init(widthInPixels, heightInPixels);
-			camera.addChild(tv);
+		}
+		
+		public function finishLoading():void{
+			tv.finishTerrain();
+			hud.updateMax(collectableCount);
+		}
+		
+		public function grabbedCollectable():void{
+			hud.increaseCollected();
+		}
+		
+		public function hideBackground():void{
+			bg.visible = false;
+		}
+		
+		public function showBackground():void{
+			bg.visible = true;
 		}
 
+		public function getHUD():LevelHUD{
+			return hud;
+		}
 		public function get title():String {
 			return myTitle;
 		}
 
 		public function set title(t:String):void {
 			myTitle = t;
+		}
+		
+		public function showHUD(show:Boolean):void{
+			if(show){
+				hud.show();
+				return;
+			}
+			hud.hide();
 		}
 
 		/**
@@ -146,6 +184,8 @@ package org.interguild.game.level {
 		public function createCollidableObject(tile:CollidableObject):void {
 			collisionGrid.addObject(tile);
 			camera.addChild(tile);
+			if(tile is Collectable)
+				collectableCount++;
 		}
 
 		/**
@@ -208,7 +248,7 @@ package org.interguild.game.level {
 			update();
 			collisions();
 			cleanup();
-			remove();
+			collisionGrid.handleRemovals(camera);
 		}
 
 		private function update():void {
@@ -258,44 +298,6 @@ package org.interguild.game.level {
 			}
 		}
 
-		public function remove():void {
-			var remove:Array = collisionGrid.removalList;
-			for (var i:int = 0; i < remove.length; i++) {
-				var r:GameObject = GameObject(remove[i]);
-
-				//remove from active objects
-				var index:int = collisionGrid.activeObjects.indexOf(r);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
-
-				//remove from display list
-				camera.removeChild(DisplayObject(r));
-
-				//remove from grid tiles
-				if (r is CollidableObject) {
-					collisionGrid.destroyObject(CollidableObject(r));
-					r.onKill();
-				}
-			}
-			collisionGrid.resetRemovalList();
-
-			remove = collisionGrid.deactivationList;
-			for (i = 0; i < remove.length; i++) {
-				r = GameObject(remove[i]);
-
-				index = collisionGrid.activeObjects.indexOf(r);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
-
-				if (r is CollidableObject) {
-					CollidableObject(r).isActive = false;
-				}
-			}
-			collisionGrid.resetDeactivationList();
-		}
-
 		private function cleanup():void {
 			//finish game loops
 			player.finishGameLoop();
@@ -315,18 +317,18 @@ package org.interguild.game.level {
 			//update camera
 			camera.updateCamera();
 		}
-
-		public function activateObject(obj:CollidableObject):void {
-			obj.isActive = true;
-			collisionGrid.activeObjects.push(obj);
-		}
-
-		public function deactivateObject(obj:CollidableObject):void {
-			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
-
-			obj.isActive = false;
-			collisionGrid.activeObjects.splice(index, 1);
-			obj.finishGameLoop;
-		}
+		
+//		public function activateObject(obj:CollidableObject):void {
+//			obj.isActive = true;
+//			collisionGrid.activeObjects.push(obj);
+//		}
+//		
+//		public function deactivateObject(obj:CollidableObject):void {
+//			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
+//			
+//			obj.isActive = false;
+//			collisionGrid.activeObjects.splice(index, 1);
+//			obj.finishGameLoop;
+//		}
 	}
 }

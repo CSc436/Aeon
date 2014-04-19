@@ -8,6 +8,7 @@ package org.interguild.loader {
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.Collectable;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -50,15 +51,23 @@ package org.interguild.loader {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile);
 					break;
+
 				case ArrowCrate.LEVEL_CODE_CHAR:
 					tile = new ArrowCrate(px, py, 1);
 					level.createCollidableObject(tile);
 					level.createCollidableObject(ArrowCrate(tile).arrow);
 					break;
+				case Collectable.LEVEL_CODE_CHAR:
+					tile = new Collectable(px, py);
+					level.createCollidableObject(tile);
 				default:
-					trace("LevelLoader: Unknown level code character: '" + curChar + "'");
+					//trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;
 			}
+		}
+		
+		protected override function finishLoading():void{
+			level.finishLoading();
 		}
 	}
 }
