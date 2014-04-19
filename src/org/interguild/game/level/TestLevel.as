@@ -2,7 +2,7 @@ package org.interguild.game.level {
 
 	public class TestLevel {
 		public static function getCode():String{
-			return "The Test Level of Doom\n80x30\nx=80\nx=80\nxx    w                    xxxxx        \nxx    s                    xxxxx        \nxx #  w                    xxxxx        \nxxxx        x       xx     xxxxx        \nxx         xx             xxxxxx        \nxx   x               a  w  xxxxx        \nxx  xxxxxxxxxxx    xxx  x  xxxxx        \nxx     xxxxxxxx         wwwxxxxx        \nxx     xxxxxxxx x x xxxxxxxxxxxx        \nxx  xxxxxxxxxxx x x xxxxxxxxxxxx        \nxx      xxxxxxxxxxxxxxxxxxxxxxxx        \nxx      xxxxxxxxxxxxxxxxxxxxxxxx        \nxxxxx     xxxxxxxxxxxxxxxxxxxxxx        \nxxxxxx      xxxxxxxxxxxxxxxxxxxx        \nxxxxxxx      xxxxxxxxxxxxxxxxxxx        \nxxxxxxxx\nxxxxxxxxx\nxxxxxxxxxx\nx=80;";
+			return "The Test Level of Doom\n80x30\nx=80\nx=80\nxx    wx                   xxxxx        \nxx    sx                   xxxxx        \nxx #  wx                   xxxxx        \nxxxx        x       xx     xxxxx        \nxx         xx             xxxxxx        \nxx   x                  w  xxxxx        \nxx  xxxxsssxxxx    xxx  x  xxxxx        \nxx    xxsssxxxx         wwwxxxxx        \nxx    xxsssxssx x x xxxxxxxxxxxx        \nxx  xxx sssxssx x x xxxxxxxxxxxx        \nxx      sssxxxxxxxxxxxxxxxxxxxxx        \nxx      wwsxxxxxxxxxxxxxxxxxxxxx        \nxxxxx     wxxxxxxxxxxxxxxxxxxxxx        \nxxxxxx      xxxxxxxxxxxxxxxxxxxx        \nxxxxxxx      xxxxxxxxxxxxxxxxxxx        \nxxxxxxxx\nxxxxxxxxx\nxxxxxxxxxx\nx=80;";
 		}
 	}
 }
