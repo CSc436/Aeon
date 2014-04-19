@@ -44,7 +44,7 @@ package org.interguild.editor {
 		//following are objects on this sprite
 		private var finishButton:FinishLineButton;
 		private var playerSpawnButton:StartLineButton;
-		private var wallButton:TerrainButton;
+		private var wallButton:TerrainBoxButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
 		private var steelButton:SteelBoxButton;
@@ -103,7 +103,7 @@ package org.interguild.editor {
 			finishButton.y = 5;
 			finishButton.x = 15;
 			finishButton.width = 170;
-			finishButton.height = 50;
+			finishButton.height = 40;
 			finishButton.addEventListener(MouseEvent.CLICK, finishClick);
 			
 			//playerstart button
@@ -113,10 +113,10 @@ package org.interguild.editor {
 			playerBackground.width = 200;
 			playerBackground.y = 60;
 			playerSpawnButton = new StartLineButton();
-			playerSpawnButton.y = 60;
+			playerSpawnButton.y = 63;
 			playerSpawnButton.x = 15;
 			playerSpawnButton.width = 170;
-			playerSpawnButton.height = 50;
+			playerSpawnButton.height = 35;
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 			
 			//wallbutton
@@ -125,11 +125,11 @@ package org.interguild.editor {
 			var wallBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			wallBackground.width = 200; 
 			wallBackground.y = 120;
-			wallButton = new TerrainButton();
-			wallButton.y = 120;
+			wallButton = new TerrainBoxButton();
+			wallButton.y = 123;
 			wallButton.x = 15;
 			wallButton.width = 170;
-			wallButton.height = 50;
+			wallButton.height = 35;
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 			//woodbutton:
 			//adding in the background to the images, all x,y are positioning and 
@@ -138,10 +138,10 @@ package org.interguild.editor {
 			woodBackground.width = 200; 
 			woodBackground.y = 180;
 			woodButton = new WoodBoxButton();
-			woodButton.y = 180;
+			woodButton.y = 183;
 			woodButton.x = 15;
 			woodButton.width = 170;
-			woodButton.height = 50;
+			woodButton.height = 40;
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
 			//steelbutton:
@@ -151,10 +151,10 @@ package org.interguild.editor {
 			steelBackground.width = 200; 
 			steelBackground.y = 240;
 			steelButton = new SteelBoxButton();
-			steelButton.y = 240;
+			steelButton.y = 243;
 			steelButton.x = 15;
 			steelButton.width = 170;
-			steelButton.height = 50;
+			steelButton.height = 40;
 			steelButton.addEventListener(MouseEvent.CLICK, steelBoxClick);
 			
 			//collectablebutton:
@@ -165,10 +165,10 @@ package org.interguild.editor {
 			collectBackground.width = 200; 
 			collectBackground.y = 300;
 			collectButton = new CollectableButton();
-			collectButton.y = 300;
+			collectButton.y = 303;
 			collectButton.x = 5;
 			collectButton.width = 180;
-			collectButton.height = 50;
+			collectButton.height = 35;
 			collectButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
 			//four arrow directions
@@ -179,8 +179,8 @@ package org.interguild.editor {
 			var arrowDown:ArrowDownButton = new ArrowDownButton();
 			arrowDown.x = 5;
 			arrowDown.y = 360;
-			arrowDown.width = 200;
-			arrowDown.height = 50;
+			arrowDown.width = 180;
+			arrowDown.height = 40;
 				
 			var arrowUpBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowUpBackground.width = 200; 
@@ -188,8 +188,8 @@ package org.interguild.editor {
 			var arrowUp:ArrowUpButton = new ArrowUpButton();
 			arrowUp.x = 5;
 			arrowUp.y = 420;
-			arrowUp.width = 200;
-			arrowUp.height = 50;
+			arrowUp.width = 180;
+			arrowUp.height = 40;
 			
 			var arrowLeftBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowLeftBackground.width = 200; 
@@ -197,8 +197,8 @@ package org.interguild.editor {
 			var arrowLeft:ArrowLeftButton = new ArrowLeftButton();
 			arrowLeft.x = 5;
 			arrowLeft.y = 480;
-			arrowLeft.width = 200;
-			arrowLeft.height = 50;
+			arrowLeft.width = 180;
+			arrowLeft.height = 40;
 			
 			var arrowRightBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowRightBackground.width = 200; 
@@ -206,8 +206,8 @@ package org.interguild.editor {
 			var arrowRight:ArrowRightButton = new ArrowRightButton();
 			arrowRight.x = 5;
 			arrowRight.y = 540;
-			arrowRight.width = 200;
-			arrowRight.height = 50;
+			arrowRight.width = 180;
+			arrowRight.height = 40;
 			//clear button:
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes
@@ -249,8 +249,8 @@ package org.interguild.editor {
 			testBackground.x = 330;
 			testBackground.y = 40;
 			testButton = new TestButton();
-			testButton.x = 340;
-			testButton.y = 40;
+			testButton.x = 345;
+			testButton.y = 42;
 			testButton.width = 160;
 			testButton.height = 25;	
 			/* Buttons to add to the branch
@@ -280,7 +280,7 @@ package org.interguild.editor {
 			resizeBackground.y = 37;
 			resizeButton = new ResizeButton();
 			resizeButton.y = 37;
-			resizeButton.x = 740;
+			resizeButton.x = 745;
 			resizeButton.width = 120;
 			resizeButton.height = 35;
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
@@ -507,7 +507,7 @@ package org.interguild.editor {
 		}
 
 		private function wallClick(e:MouseEvent):void {
-			var button:TerrainButton = TerrainButton(e.target);
+			var button:TerrainBoxButton = TerrainBoxButton(e.target);
 			activeButton = Terrain.LEVEL_CODE_CHAR;
 		}
 
