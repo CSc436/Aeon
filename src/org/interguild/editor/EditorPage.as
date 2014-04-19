@@ -17,6 +17,7 @@ package org.interguild.editor {
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
 
@@ -46,6 +47,7 @@ package org.interguild.editor {
 		private var wallButton:TerrainButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
+		private var steelButton:SteelBoxButton;
 		private var collectButton:CollectableButton;
 		private var testButton:TestButton;
 		private var resizeButton:ResizeButton;
@@ -142,15 +144,28 @@ package org.interguild.editor {
 			woodButton.height = 50;
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
+			//steelbutton:
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes			
+			var steelBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			steelBackground.width = 200; 
+			steelBackground.y = 240;
+			steelButton = new SteelBoxButton();
+			steelButton.y = 240;
+			steelButton.x = 15;
+			steelButton.width = 170;
+			steelButton.height = 50;
+			steelButton.addEventListener(MouseEvent.CLICK, steelBoxClick);
+			
 			//collectablebutton:
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes	
 			//TODO:ADD COLLECTABLE LISTENER
 			var collectBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			collectBackground.width = 200; 
-			collectBackground.y = 240;
+			collectBackground.y = 300;
 			collectButton = new CollectableButton();
-			collectButton.y = 240;
+			collectButton.y = 300;
 			collectButton.x = 5;
 			collectButton.width = 180;
 			collectButton.height = 50;
@@ -160,37 +175,37 @@ package org.interguild.editor {
 			//TODO: ADD ARROW LISTENERS
 			var arrowDownBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowDownBackground.width = 200; 
-			arrowDownBackground.y = 300; 
+			arrowDownBackground.y = 360; 
 			var arrowDown:ArrowDownButton = new ArrowDownButton();
 			arrowDown.x = 5;
-			arrowDown.y = 300;
+			arrowDown.y = 360;
 			arrowDown.width = 200;
 			arrowDown.height = 50;
 				
 			var arrowUpBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowUpBackground.width = 200; 
-			arrowUpBackground.y = 360; 
+			arrowUpBackground.y = 420; 
 			var arrowUp:ArrowUpButton = new ArrowUpButton();
 			arrowUp.x = 5;
-			arrowUp.y = 360;
+			arrowUp.y = 420;
 			arrowUp.width = 200;
 			arrowUp.height = 50;
 			
 			var arrowLeftBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowLeftBackground.width = 200; 
-			arrowLeftBackground.y = 420; 
+			arrowLeftBackground.y = 480; 
 			var arrowLeft:ArrowLeftButton = new ArrowLeftButton();
 			arrowLeft.x = 5;
-			arrowLeft.y = 420;
+			arrowLeft.y = 480;
 			arrowLeft.width = 200;
 			arrowLeft.height = 50;
 			
 			var arrowRightBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowRightBackground.width = 200; 
-			arrowRightBackground.y = 480; 
+			arrowRightBackground.y = 540; 
 			var arrowRight:ArrowRightButton = new ArrowRightButton();
 			arrowRight.x = 5;
-			arrowRight.y = 480;
+			arrowRight.y = 540;
 			arrowRight.width = 200;
 			arrowRight.height = 50;
 			//clear button:
@@ -198,30 +213,30 @@ package org.interguild.editor {
 			// width/height are sizes
 			var clearBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			clearBackground.width = 200; 
-			clearBackground.y = 540
+			clearBackground.y = 600
 			clearButton = new ClearAllButton();
 			clearButton.x = 5;
-			clearButton.y = 545;
+			clearButton.y = 605;
 			clearButton.width = 200;
 			clearButton.height = 25;
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			//undo button:
 			var undoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			undoBackground.width = 200; 
-			undoBackground.y = 600;
+			undoBackground.y = 660;
 			undoButton = new UndoButton();
 			undoButton.x = 55;
-			undoButton.y = 605;
+			undoButton.y = 665;
 			undoButton.width = 100;
 			undoButton.height = 25;
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			//redobutton:
 			var redoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			redoBackground.width = 200; 
-			redoBackground.y = 665;
+			redoBackground.y = 725;
 			redoButton = new RedoButton();
 			redoButton.x = 57;
-			redoButton.y = 665;
+			redoButton.y = 725;
 			redoButton.width = 100;
 			redoButton.height = 25;
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
@@ -378,6 +393,8 @@ package org.interguild.editor {
 			tf.addChild(wallButton);
 			tf.addChild(woodBackground);
 			tf.addChild(woodButton);
+			tf.addChild(steelBackground);
+			tf.addChild(steelButton);
 			tf.addChild(collectBackground);
 			tf.addChild(collectButton);
 			tf.addChild(finishBackground);
@@ -498,7 +515,10 @@ package org.interguild.editor {
 			var button:WoodBoxButton = WoodBoxButton(e.target); // focus mouse event
 			activeButton = WoodCrate.LEVEL_CODE_CHAR;
 		}
-
+		private function steelBoxClick(e:MouseEvent):void {
+			var button:SteelBoxButton = SteelBoxButton(e.target); // focus mouse event
+			activeButton = SteelCrate.LEVEL_CODE_CHAR;
+		}
 		private function clearClick(e:MouseEvent):void {
 			grid.clearGrid();
 		}
