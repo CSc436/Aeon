@@ -1,5 +1,6 @@
 package org.interguild.game.level {
 	import flash.display.DisplayObject;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -14,6 +15,7 @@ package org.interguild.game.level {
 	import org.interguild.game.Camera;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
@@ -46,6 +48,10 @@ package org.interguild.game.level {
 
 		private var w:uint = 0;
 		private var h:uint = 0;
+		
+		private var hud:LevelHUD;
+		private var collectableCount;
+	
 
 		CONFIG::DEBUG {
 			public var isDebuggingMode:Boolean = false;
@@ -54,8 +60,8 @@ package org.interguild.game.level {
 			private var slowDownText:TextField;
 		}
 
-		public function Level(lvlWidth:Number, lvlHeight:Number) {
-
+		public function Level(lvlWidth:Number, lvlHeight:Number) {	
+			collectableCount = 0;
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
@@ -76,6 +82,9 @@ package org.interguild.game.level {
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
+			
+			hud = new LevelHUD(collectableCount);
+			addChild(hud);
 
 			CONFIG::DEBUG {
 				var keys:KeyMan = KeyMan.getMe();
@@ -108,12 +117,27 @@ package org.interguild.game.level {
 			bg.visible = true;
 		}
 
+		public function getHUD():LevelHUD{
+			return hud;
+		}
 		public function get title():String {
 			return myTitle;
 		}
 
 		public function set title(t:String):void {
 			myTitle = t;
+		}
+		
+		public function setMaxCollectable():void{
+			hud.updateMax(collectableCount);
+		}
+		
+		public function showHUD(show:Boolean):void{
+			if(show){
+				hud.show();
+				return;
+			}
+			hud.hide();
 		}
 
 		/**
