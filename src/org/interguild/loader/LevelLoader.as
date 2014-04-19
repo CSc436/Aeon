@@ -55,7 +55,7 @@ package org.interguild.loader {
 				case ArrowCrate.LEVEL_CODE_CHAR:
 					tile = new ArrowCrate(px, py, 1);
 					level.createCollidableObject(tile);
-					level.createCollidableObject(ArrowCrate(tile).arrow);
+				//	level.createCollidableObject(ArrowCrate(tile).arrow);
 					break;
 				case Collectable.LEVEL_CODE_CHAR:
 					tile = new Collectable(px, py);

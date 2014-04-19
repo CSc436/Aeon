@@ -25,13 +25,14 @@ package org.interguild.game.tiles
 		public var knocksback:int = 5;
 		public var buoyancy:Boolean = true;
 		
+		//LightningBlockUpSprite
+		//LightningLeftSprite
+		
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			arrow = new Arrow(x, y, direction);
 			this.direction = direction;
-			graphics.beginFill(SPRITE_COLOR);
-			graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-			graphics.endFill();
+			addChild(new Bitmap(new WoodenCrateSprite()));
 			addChild(arrow);
 		}
 		

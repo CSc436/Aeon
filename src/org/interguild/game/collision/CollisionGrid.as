@@ -3,11 +3,12 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.Arrow;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Tile;
@@ -155,7 +156,7 @@ package org.interguild.game.collision {
 								var tmp2:Array = objectsToTest[k];
 								objectsToTest[k] = tmp;
 								tmp = tmp2;
-								// if to be inserted at this location
+									// if to be inserted at this location
 							} else if ((!obj.isActive && objectsToTest[k][2]) || (distance < objectsToTest[k][0] && obj.isActive == objectsToTest[k][2])) {
 								tmp = objectsToTest[k];
 								objectsToTest[k] = toInsert;
@@ -164,7 +165,7 @@ package org.interguild.game.collision {
 //						//finish shifting elements
 						if (tmp != null) {
 							objectsToTest[objectsToTest.length] = tmp;
-							//or insert element to end
+								//or insert element to end
 						} else {
 							objectsToTest[objectsToTest.length] = toInsert;
 						}
@@ -238,17 +239,17 @@ package org.interguild.game.collision {
 				}
 				// backup testing
 				var intsec:Rectangle;
-				if(activeBoxCurr.intersects(otherBoxPrev))
+				if (activeBoxCurr.intersects(otherBoxPrev))
 					intsec = activeBoxCurr.intersection(otherBoxPrev);
 				else
 					intsec = otherBoxCurr.intersection(activeBoxPrev);
-				if(intsec.width > intsec.height){
-					if(intsec.y > activeBoxCurr.y + activeBoxCurr.height / 2)
+				if (intsec.width > intsec.height) {
+					if (intsec.y > activeBoxCurr.y + activeBoxCurr.height / 2)
 						return Direction.DOWN;
 					else
 						return Direction.UP;
-				}else{
-					if(intsec.x > activeBoxCurr.x + activeBoxCurr.width / 2)
+				} else {
+					if (intsec.x > activeBoxCurr.x + activeBoxCurr.width / 2)
 						return Direction.RIGHT;
 					else
 						return Direction.LEFT;
@@ -354,9 +355,15 @@ package org.interguild.game.collision {
 				removalObjects.push(activeObject);
 			}
 			/*
-			 * PLAYER HITS CRATE
-			 */
-			if (p && otherTile.getDestructibility() == 2) {
+			* PLAYER GRABS COLLECTABLE
+			*/
+			if (otherObject is Collectable) {
+				removalObjects.push(otherObject);
+				level.grabbedCollectable();
+				/*
+				* PLAYER HITS CRATE
+				*/
+			} else if (p && otherTile.getDestructibility() == 2) {
 				// knockback stuff:
 				if (otherTile.doesKnockback() > 0) {
 					if (direction == Direction.DOWN) {

@@ -20,7 +20,7 @@ package org.interguild.game.tiles
 			super(x, y+4, 1, 1);
 			this.direction = direction;
 			parentDestroyed = false;
-			graphics.beginFill(0xFFFFFF);
+			graphics.beginFill(0x000000);
 			graphics.drawRect(8, 8, 20, 10);
 			graphics.endFill();
 			this.isActive = true;
