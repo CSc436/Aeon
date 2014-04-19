@@ -220,7 +220,7 @@ package org.interguild.game {
 			playerClip.scaleX = 1;
 			prevScaleX = 1;
 			playerClip.x = -20;
-			playerClip.y = -4.5;
+			playerClip.y = -15;
 
 			if (speedX > 0) {
 				if (playerClip.currentFrame != playerClip.totalFrames)
@@ -244,7 +244,7 @@ package org.interguild.game {
 			prevScaleX = -1;
 			//This value might need to be changed, I think it might be off a few pixels
 			playerClip.x = 45;
-			playerClip.y = -4.5;
+			playerClip.y = -15;
 
 			if (speedX < 0) {
 				if (playerClip.currentFrame != playerClip.totalFrames)
