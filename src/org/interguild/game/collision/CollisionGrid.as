@@ -1,27 +1,40 @@
 package org.interguild.game.collision {
+	import flash.display.DisplayObject;
+	import flash.display.Sprite;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
-	import flexunit.utils.ArrayList;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.Arrow;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
-	import flash.display.Sprite;
-
 
 	public class CollisionGrid extends Sprite {
 
 		private var level:Level;
 		private var grid:Array;
-		private var removalObjects:ArrayList;
+
+		private var allObjects:Vector.<GameObject>;
+		public var activeObjects:Vector.<GameObject>;
+
+		private var removalObjects:Array;
+		private var deactivateObjects:Array;
 
 		public function CollisionGrid(width:int, height:int, level:Level) {
-			//init 2D array
 			this.level = level;
-			removalObjects = new ArrayList;
+			removalObjects = new Array();
+			deactivateObjects = new Array();
+
+			//init lists
+			allObjects = new Vector.<GameObject>();
+			activeObjects = new Vector.<GameObject>();
+
+			//init 2D array
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
@@ -38,6 +51,17 @@ package org.interguild.game.collision {
 			}
 		}
 
+		private function inBounds(row:int, col:int):Boolean {
+			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
+		}
+		
+		public function addObject(tile:CollidableObject):void {
+			allObjects.push(tile);
+			if (tile.isActive)
+				activeObjects.push(tile);
+			updateObject(tile, !tile.isActive);
+		}
+
 		/**
 		 * To be called during initialization. Adds the
 		 * object to its correct GridTile.
@@ -51,336 +75,489 @@ package org.interguild.game.collision {
 		public function updateObject(o:CollidableObject, blockNeighbors:Boolean):void {
 			var inGrids:Array = new Array();
 			var box:Rectangle = o.hitbox;
-			var gx:int;
-			var gy:int;
-			var gy0:int;
+			var row:int, col:int;
 			var gridTile:GridTile;
 
-			//top left
-			gx = box.left / Aeon.TILE_WIDTH;
-			gy = gy0 = box.top / Aeon.TILE_HEIGHT;
-			if (inBounds(gy, gx)) {
-				gridTile = grid[gy][gx];
-				inGrids.push(gridTile);
-
-				//naively handle blockNeighbors for only one gridTile case
-				if (blockNeighbors) {
-					updateBlockedNeighbors(gx, gy, o);
-				}
-			}
-
-			//top right
-			gx = (box.right - 1) / Aeon.TILE_WIDTH;
-			if (inBounds(gy, gx)) {
-				gridTile = grid[gy][gx];
-				if (inGrids.indexOf(gridTile) == -1)
-					inGrids.push(gridTile);
-			}
-
-			//bottom right
-			gy = (box.bottom - 1) / Aeon.TILE_HEIGHT;
-			if (inBounds(gy, gx)) {
-				gridTile = grid[gy][gx];
-				if (inGrids.indexOf(gridTile) == -1)
-					inGrids.push(gridTile);
-			}
-
-			//bottom left
-			gx = box.left / Aeon.TILE_WIDTH;
-			if (inBounds(gy, gx)) {
-				gridTile = grid[gy][gx];
-				if (inGrids.indexOf(gridTile) == -1)
-					inGrids.push(gridTile);
-			}
-
-			//middle cases if player
-			if (gy - gy0 > 1) {
-				gy -= 1;
-
-				//middle left
-				if (inBounds(gy, gx)) {
-					gridTile = grid[gy][gx];
-					if (inGrids.indexOf(gridTile) == -1)
-						inGrids.push(gridTile);
-				}
-
-				//middle right
-				gx = (box.right - 1) / Aeon.TILE_WIDTH;
-				if (inBounds(gy, gx)) {
-					gridTile = grid[gy][gx];
-					if (inGrids.indexOf(gridTile) == -1)
-						inGrids.push(gridTile);
-				}
+			var top:int = box.top / Aeon.TILE_HEIGHT;
+			var left:int = box.left / Aeon.TILE_WIDTH;
+			var bottom:int = (box.bottom - 1) / Aeon.TILE_HEIGHT;
+			var right:int = (box.right - 1) / Aeon.TILE_WIDTH;
+			if (o is Player) {
+				top--;
+				left--;
+				bottom++;
+				right++;
 			}
 
 			//remove old grids
 			o.clearGrids();
 
-			//add current grids
-			for (var i:uint = 0; i < inGrids.length; i++) {
-				var g:GridTile = inGrids[i];
-				g.addObject(o);
-				o.addGridTile(g);
+			//add new grids
+			for (row = top; row <= bottom; row++) {
+				if (row >= 0 && row < grid.length) {
+					for (col = left; col <= right; col++) {
+						if (col >= 0 && col < grid[0].length) {
+							gridTile = grid[row][col];
+							gridTile.addObject(o);
+							o.addGridTile(gridTile);
+							if (blockNeighbors) {
+								updateBlockedNeighbors(row, col, o);
+							}
+						}
+					}
+				}
 			}
 		}
 
+		private function getDistance(obj1:CollidableObject, obj2:CollidableObject):Number {
+			var center1:Point = new Point(obj1.hitboxPrev.x + obj1.hitboxPrev.width / 2, obj1.hitboxPrev.y + obj1.hitboxPrev.height / 2);
+			var center2:Point = new Point(obj2.hitboxPrev.x + obj2.hitboxPrev.width / 2, obj2.hitboxPrev.y + obj2.hitboxPrev.height / 2);
+			var distx:Number = center2.x - center1.x;
+			var disty:Number = center2.y - center1.y;
 
-		private function inBounds(row:int, col:int):Boolean {
-			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
+			return Math.sqrt((distx * distx) + (disty * disty));
+		}
+
+		private function getSlope(p1:Point, p2:Point):Number {
+			return (p2.y - p1.y) / (p2.x - p1.x);
 		}
 
 		/**
 		 * Handle collisions!
 		 */
-		public function detectAndHandleCollisions(target:CollidableObject):ArrayList {
+		public function detectAndHandleCollisions(target:CollidableObject):Array {
+			//maintain a list of nearby objects, ordered by proximity
+			var objectsToTest:Array = new Array();
 
-			//iterate through all of the Collision GridTiles that the target is in
 			var gTiles:Vector.<GridTile> = target.myCollisionGridTiles;
 			var len:uint = gTiles.length;
+			//iterate through all of the Collision GridTiles that the target is in
 			for (var i:uint = 0; i < len; i++) {
-				//interate through all of the objects in each GridTile
 				var tile:GridTile = gTiles[i];
 				var gObjs:Vector.<CollidableObject> = tile.myCollisionObjects;
 				var olen:uint = gObjs.length;
+				//interate through all of the objects in each GridTile
 				for (var j:uint = 0; j < olen; j++) {
-					//now we can test collisions between obj and target
 					var obj:CollidableObject = gObjs[j];
+					if (target != obj) {
+						var distance:Number = getDistance(obj, target);
+						//if potential corner collision
+						if (!target.hitbox.intersects(obj.hitbox)) {
+							distance = 0;
+						}
 
-					if (target != obj && !target.hasCollidedWith(obj) && target.hitbox.intersects(obj.hitboxPrev)) {
-						//if they are colliding:
-						handleCollision(target, obj);
+						var toInsert:Array = new Array(distance, obj, obj.isActive);
+
+						//add to list, ordered by proximity to target
+						var alen:uint = objectsToTest.length;
+						var tmp:Array = null;
+						for (var k:uint = 0; k < alen; k++) {
+							//shifting elements down the array
+							if (tmp != null) {
+								var tmp2:Array = objectsToTest[k];
+								objectsToTest[k] = tmp;
+								tmp = tmp2;
+									// if to be inserted at this location
+							} else if ((!obj.isActive && objectsToTest[k][2]) || (distance < objectsToTest[k][0] && obj.isActive == objectsToTest[k][2])) {
+								tmp = objectsToTest[k];
+								objectsToTest[k] = toInsert;
+							}
+						}
+//						//finish shifting elements
+						if (tmp != null) {
+							objectsToTest[objectsToTest.length] = tmp;
+								//or insert element to end
+						} else {
+							objectsToTest[objectsToTest.length] = toInsert;
+						}
 					}
 				}
 			}
+
+			//now we can test collisions between obj and target
+			//iterate
+			var mlen:uint = objectsToTest.length;
+			for (var m:uint = 0; m < mlen; m++) {
+				var other:CollidableObject = objectsToTest[m][1];
+				CONFIG::DEBUG {
+					if (level.isDebuggingMode)
+						trace(other, "x: " + other.x, "y: " + other.y, "dist: " + objectsToTest[m][0]);
+				}
+
+				if (!target.hasCollidedWith(other) && target.hitboxWrapper.intersects(other.hitboxWrapper)) {
+					CONFIG::DEBUG {
+						if (level.isDebuggingMode)
+							trace("	handling collision");
+					}
+					//if they are colliding:
+					handleCollision(target, other);
+				}
+			}
+			CONFIG::DEBUG {
+				if (level.isDebuggingMode)
+					trace("-----------------------");
+			}
 			return removalObjects;
+		}
+
+		private function determineDirection(activeObject:CollidableObject, otherObject:CollidableObject, activeBoxPrev:Rectangle, otherBoxPrev:Rectangle, activeBoxCurr:Rectangle, otherBoxCurr:Rectangle):uint {
+			if (activeBoxCurr.intersects(otherBoxPrev) || otherBoxCurr.intersects(activeBoxPrev)) {
+				/*
+				 * SIMPLE ONE-DIRECITON CASES
+				 */
+				if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
+					/*
+					* --------------
+					* |activeObject|
+					* --------------
+					* |otherObject |
+					* --------------
+					*/
+					return Direction.DOWN;
+				} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
+					/*
+					* --------------
+					* |otherObject |
+					* --------------
+					* |activeObject|
+					* --------------
+					*/
+					return Direction.UP;
+				} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+					/*
+					* |------------||-----------|
+					* |activeObject||otherObject|
+					* |------------||-----------|
+					*/
+					return Direction.RIGHT;
+				} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+					/*
+					* |-----------||------------|
+					* |otherObject||activeObject|
+					* |-----------||------------|
+					*/
+					return Direction.LEFT;
+				}
+				// backup testing
+				var intsec:Rectangle;
+				if (activeBoxCurr.intersects(otherBoxPrev))
+					intsec = activeBoxCurr.intersection(otherBoxPrev);
+				else
+					intsec = otherBoxCurr.intersection(activeBoxPrev);
+				if (intsec.width > intsec.height) {
+					if (intsec.y > activeBoxCurr.y + activeBoxCurr.height / 2)
+						return Direction.DOWN;
+					else
+						return Direction.UP;
+				} else {
+					if (intsec.x > activeBoxCurr.x + activeBoxCurr.width / 2)
+						return Direction.RIGHT;
+					else
+						return Direction.LEFT;
+				}
+			} else {
+				/*
+				 * COMPLICATED CORNER CASES
+				 */
+				var slopeSelf:Number;
+				var slopeOther:Number
+				var basePoint:Point;
+				var selfPoint:Point;
+				var otherPoint:Point;
+				//going down-right	//compare top-right point to bottom-left point
+				if (activeBoxPrev.top <= otherBoxPrev.bottom && activeBoxCurr.top >= otherBoxCurr.bottom && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.top);
+					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.top);
+					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.bottom);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf <= slopeOther) {
+//						trace("CORNER CASE: on down-right");
+						return Direction.RIGHT;
+					}
+						//going down-left //compare top-left point to bottom-right point
+				} else if (activeBoxPrev.top <= otherBoxPrev.bottom && activeBoxCurr.top >= otherBoxCurr.bottom && activeBoxPrev.left <= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.top);
+					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.top);
+					otherPoint = new Point(otherBoxCurr.right, otherBoxCurr.bottom);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf <= slopeOther) {
+//						trace("CORNER CASE: on down-left");
+						return Direction.LEFT;
+					}
+						//going up-left //compare bottom-left point to top-right point
+				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
+					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.bottom);
+					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.bottom);
+					otherPoint = new Point(otherBoxCurr.right, otherBoxCurr.top);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf >= slopeOther) {
+//						trace("CORNER CASE: on up-left");
+						return Direction.LEFT;
+					}
+						//going up-right //compare bottom-right point to top-left point
+				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
+					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.bottom);
+					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.bottom);
+					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.top);
+					slopeSelf = getSlope(basePoint, selfPoint);
+					slopeOther = getSlope(basePoint, otherPoint);
+					if (slopeSelf >= slopeOther) {
+//						trace("CORNER CASE: on up-right");
+						return Direction.RIGHT;
+					}
+				}
+			}
+			return Direction.NONE;
 		}
 
 		public function handleCollision(activeObject:CollidableObject, otherObject:CollidableObject):void {
 			activeObject.setCollidedWith(otherObject);
 			otherObject.setCollidedWith(activeObject);
-			var side:String = "";
-			var tile:GridTile;
+			var p:Player = null;
+			var a:Arrow = null;
+			var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
+			var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
+			var activeBoxCurr:Rectangle = activeObject.hitbox;
+			var otherBoxCurr:Rectangle = otherObject.hitbox;
+
+			//NOTE: just because this method was called, it doesn't mean that there was a collision
+
+			// get dirction of collision
+			var direction:uint = determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
+			if (direction == Direction.NONE)
+				return;
 
 			if (activeObject is Player) {
-				var p:Player = Player(activeObject);
-				if (otherObject is Tile) {
-					var t:Tile = Tile(otherObject);
-					if (otherObject is SteelCrate)
-						trace("I am steel");
-					//player on tile collisions
+				p = Player(activeObject);
+			}
+			// Check to see if arrow is the culprit
+			if (activeObject is Arrow) {
+				a = Arrow(activeObject);
+			}
+			if (!(otherObject is Tile) || !(activeObject is Tile)) {
+				//will never ever happen
+				throw new Error("Please handle non-Tile collisions in special cases before this line.");
+			}
+			
+			trace("Object 1: "+activeObject.toString());
+			trace("Object 2: "+otherObject.toString());
 
-					//solid collisions!!
-					if (t.isSolid()) {
-						var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
-						var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
-						var activeBoxCurr:Rectangle = activeObject.hitbox;
-						var otherBoxCurr:Rectangle = otherObject.hitbox;
-
-						if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
-							/*
-							 * --------------
-							 * |activeObject|
-							 * --------------
-							 * |otherObject |
-							 * --------------
-							 */
-							trace("PrevY:", activeObject.newY);
-							activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
-							trace("CurrY:", activeObject.newY);
-							activeObject.speedY = 0;
-							//set player standing
-							p.isStanding = true;
-							side = "top";
-						} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
-							/*
-							 * --------------
-							 * |otherObject |
-							 * --------------
-							 * |activeObject|
-							 * --------------
-							 */
-							activeObject.newY = otherBoxCurr.bottom;
-							activeObject.speedY = 0;
-							side = "bottom";
-						} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
-							/*
-							* |------------||-----------|
-							* |activeObject||otherObject|
-							* |------------||-----------|
-							*/
-							activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
-							activeObject.speedX = 0;
-							side = "left";
-						} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
-							/*
-							* |-----------||------------|
-							* |otherObject||activeObject|
-							* |-----------||------------|
-							*/
-							activeObject.newX = otherBoxCurr.right;
-							activeObject.speedX = 0;
-							side = "right";
-						}
-
-						//destructible
-						if (t.getDestructibility() == 2) {
-							//doesn't knockback ie wood crate
-							if (t.doesKnockback() > 0) {
-								switch (side) {
-									case "top":
-										activeObject.newY = activeObject.newY - ((Aeon.TILE_HEIGHT * 2) - activeBoxCurr.height);
-										break;
-									case "bottom":
-										break;
-									case "left":
-										activeObject.newX = activeObject.newX - (Aeon.TILE_WIDTH - activeBoxCurr.width);
-										break;
-									case "right":
-										activeObject.newX = activeObject.newX + (Aeon.TILE_WIDTH - activeBoxCurr.width);
-										break;
-								}
-								tile = otherObject.myCollisionGridTiles[0];
-								unblockNeighbors(tile);
-								if (inBounds(tile.gridRow - 1, tile.gridCol)) {
-									for (var i:int = 0; i < grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length; i++) {
-										if (!(grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[i] is Player)) {
-											var obj:CollidableObject = grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[0];
-											level.activateObject(obj);
-											obj.setUnblocked(Direction.UP);
-										}
-									}
-								}
-								removalObjects.addItem(otherObject);
-							}
-						}
-					}
-				} else {
-					//other Object is nothing (yet)
-					//will never ever happen
-					trace("CollisionGrid says: How did this happen!?");
-				}
-			} else {
-				var a:Tile = Tile(otherObject);
-
-				//solid collisions!!
-				if (a.isSolid()) {
-					activeBoxPrev = activeObject.hitboxPrev;
-					otherBoxPrev = otherObject.hitboxPrev;
-					activeBoxCurr = activeObject.hitbox;
-					otherBoxCurr = otherObject.hitbox;
-
-					tile = activeObject.myCollisionGridTiles[0];
-
-					if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
-						activeObject.newY = otherBoxCurr.top - activeBoxCurr.height;
+			var activeTile:Tile = Tile(activeObject);
+			var otherTile:Tile = Tile(otherObject);
+			
+			/*
+			* ARROW HITS CRATE
+			*/
+			if ((a && otherTile.getDestructibility() == 2) || (a && otherTile is SteelCrate)) {
+				removalObjects.push(otherObject);
+				removalObjects.push(activeObject);
+			}
+			else if (a && otherTile.getDestructibility() == 0) 
+				removalObjects.push(activeObject);
+			/*
+			* PLAYER GRABS COLLECTABLE
+			*/
+			if (p && otherObject is Collectable) {
+				removalObjects.push(otherObject);
+				level.grabbedCollectable();
+				/*
+				* PLAYER HITS CRATE
+				*/
+			} else if (p && otherTile.getDestructibility() == 2) {
+				// knockback stuff:
+				if (otherTile.doesKnockback() > 0) {
+					if (direction == Direction.DOWN) {
+						p.speedY = Player.KNOCKBACK_JUMP_SPEED;
+					} else if (direction == Direction.UP) {
 						activeObject.speedY = 0;
-						activeObject.isActive = false;
-							//level.deactivateObject(activeObject);
-					} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
+					} else if (direction == Direction.RIGHT) {
+						activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
+					} else if (direction == Direction.LEFT) {
+						activeObject.speedX = Player.KNOCKBACK_HORIZONTAL;
+					}
+				}
+				removalObjects.push(otherObject);
+			}
+		
+			/*
+			* SOLID COLLISIONS
+			*/
+			else if (activeTile.isSolid() && otherTile.isSolid()) {
+				if (direction == Direction.DOWN) {
+					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
+					activeObject.speedY = 0;
+					if (p) {
+						p.isStanding = true;
+					} else if (otherObject is Player) { //player got crushed by falling solid object
+						trace("p = other");
+						Player(otherObject).die();
+							//return;
+					} else {
+						deactivateObjects.push(activeObject);
+					}
+				} else if (direction == Direction.UP) {
+					if (otherTile.isActive) {
+						otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
+						otherObject.speedY = 0;
+						if (p) { //player got crushed by falling solid object
+							trace("p = active");
+							p.die();
+								//return;
+						}
+					} else {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
-						activeObject.isActive = false;
-							//level.deactivateObject(activeObject);
-					} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
-						activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
-						activeObject.speedX = 0;
-					} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
-						activeObject.newX = otherBoxCurr.right;
-						activeObject.speedX = 0;
 					}
+				} else if (direction == Direction.RIGHT) {
+					activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
+					activeObject.speedX = 0;
+				} else if (direction == Direction.LEFT) {
+					activeObject.newX = otherBoxCurr.right;
+					activeObject.speedX = 0;
+				}
+			}
+			
+			
+			activeObject.updateHitBox();
+		}
 
-					if (!(activeObject.isActive)) {
-						updateBlockedNeighbors(tile.gridCol, tile.gridRow, activeObject);
-						tile.unblock(Direction.UP);
+		public function handleRemovals(camera:Sprite):void {
+			for (var i:int = 0; i < removalObjects.length; i++) {
+				var r:GameObject = GameObject(removalObjects[i]);
+
+				//remove from display list
+				camera.removeChild(DisplayObject(r));
+
+				//remove from grid tiles
+				if (r is CollidableObject) {
+					destroyObject(CollidableObject(r));
+				}
+			}
+			removalObjects = new Array();
+
+			for (i = 0; i < deactivateObjects.length; i++) {
+				r = GameObject(deactivateObjects[i]);
+
+				var index:int = activeObjects.indexOf(r);
+				if (index != -1) {
+					activeObjects.splice(index, 1);
+				}
+
+				if (r is CollidableObject) {
+					var c:CollidableObject = CollidableObject(r);
+					c.isActive = false;
+					updateObject(c, true);
+				}
+			}
+			deactivateObjects = new Array();
+		}
+
+		public function destroyObject(obj:CollidableObject):void {
+			if (obj.isActive) {
+				//remove from active objects
+				var index:int = activeObjects.indexOf(obj);
+				if (index != -1) {
+					activeObjects.splice(index, 1);
+				}
+			} else {
+				//unblock neighbors
+				var tile:GridTile = obj.myCollisionGridTiles[0];
+				updateBlockedNeighbors(tile.gridRow, tile.gridCol);
+
+				//activate all above tiles
+				while (true) {
+					if (inBounds(tile.gridRow - 1, tile.gridCol)) {
+						tile = grid[tile.gridRow - 1][tile.gridCol];
+						tile.activate();
+						if (!tile.isGravible())
+							break;
 					}
 				}
 			}
-		}
+			obj.clearGrids();
+			obj.onKillEvent(level);
 
-		public function resetRemovalList():void {
-			removalObjects = new ArrayList;
-		}
-
-		public function unblockNeighbors(g:GridTile):void {
-			var gridTile:GridTile;
-
-			//top
-			var bx:int = g.gridCol;
-			var by:int = g.gridRow - 1;
-			if (inBounds(bx, by)) {
-				gridTile = grid[by][bx]
-				gridTile.unblock(Direction.DOWN);
-			}
-
-			//down
-			by = g.gridRow + 1;
-			if (inBounds(bx, by)) {
-				gridTile = grid[by][bx]
-				gridTile.unblock(Direction.UP);
-			}
-
-			//right
-			bx = g.gridCol + 1;
-			by = g.gridRow;
-			if (inBounds(bx, by)) {
-				gridTile = grid[by][bx]
-				gridTile.unblock(Direction.LEFT);
-			}
-
-			//left
-			bx = g.gridCol - 1;
-			if (inBounds(bx, by)) {
-				gridTile = grid[by][bx]
-				gridTile.unblock(Direction.RIGHT);
-			}
+//			var tile:GridTile = toDestroy.myCollisionGridTiles[0];
+//			unblockNeighbors(tile.gridRow, tile.gridCol);
+//			if (inBounds(tile.gridRow - 1, tile.gridCol) && grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length > 0) {
+//				for (var i:int = 0; i < grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length; i++) {
+//					if (!(grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[i] is Player)) {
+//						var obj:CollidableObject = grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[0];
+//						level.activateObject(obj);
+//						obj.setUnblocked(Direction.UP);
+//					}
+//				}
+//			}
 		}
 
 		public function getGrid():Array {
 			return grid;
 		}
 
-		public function updateBlockedNeighbors(gx:int, gy:int, o:CollidableObject):void {
+		/**
+		 * Leave the third parameter null to unblock, rather than block
+		 */
+		public function updateBlockedNeighbors(row:int, col:int, o:CollidableObject = null):void {
 			var gridTile:GridTile;
 
 			//top
-			var bx:int = gx;
-			var by:int = gy - 1;
+			var bx:int = col;
+			var by:int = row - 1;
 			if (inBounds(by, bx)) {
-				gridTile = grid[by][bx]
-				gridTile.block(Direction.DOWN);
-				if (gridTile.isBlocking()) {
-					o.setBlocked(Direction.UP);
+				gridTile = grid[by][bx];
+				if (o) {
+					gridTile.block(Direction.DOWN);
+					if (gridTile.isBlocking()) {
+						o.setBlocked(Direction.UP);
+					}
+				} else {
+					gridTile.unblock(Direction.DOWN);
 				}
 			}
 
 			//down
-			by = gy + 1;
+			by = row + 1;
 			if (inBounds(by, bx)) {
-				gridTile = grid[by][bx]
-				gridTile.block(Direction.UP);
-				if (gridTile.isBlocking()) {
-					o.setBlocked(Direction.DOWN);
+				gridTile = grid[by][bx];
+				if (o) {
+					gridTile.block(Direction.UP);
+					if (gridTile.isBlocking()) {
+						o.setBlocked(Direction.DOWN);
+					}
+				} else {
+					gridTile.unblock(Direction.UP);
 				}
 			}
 
 			//right
-			bx = gx + 1;
-			by = gy;
+			bx = col + 1;
+			by = row;
 			if (inBounds(by, bx)) {
-				gridTile = grid[by][bx]
-				gridTile.block(Direction.LEFT);
-				if (gridTile.isBlocking()) {
-					o.setBlocked(Direction.RIGHT);
+				gridTile = grid[by][bx];
+				if (o) {
+					gridTile.block(Direction.LEFT);
+					if (gridTile.isBlocking()) {
+						o.setBlocked(Direction.RIGHT);
+					}
+				} else {
+					gridTile.unblock(Direction.LEFT);
 				}
 			}
 
 			//left
-			bx = gx - 1;
+			bx = col - 1;
 			if (inBounds(by, bx)) {
-				gridTile = grid[by][bx]
-				gridTile.block(Direction.RIGHT);
-				if (gridTile.isBlocking()) {
-					o.setBlocked(Direction.LEFT);
+				gridTile = grid[by][bx];
+				if (o) {
+					gridTile.block(Direction.RIGHT);
+					if (gridTile.isBlocking()) {
+						o.setBlocked(Direction.LEFT);
+					}
+				} else {
+					gridTile.unblock(Direction.RIGHT);
 				}
 			}
 		}

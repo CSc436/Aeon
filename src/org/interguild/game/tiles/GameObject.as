@@ -1,5 +1,6 @@
 package org.interguild.game.tiles {
 	import flash.display.Sprite;
+	import org.interguild.game.level.Level;
 
 	/**
 	 * Treat this like an abstract class. Defines general
@@ -29,7 +30,11 @@ package org.interguild.game.tiles {
 		 * Updates the object for the current frame
 		 */
 		public function onGameLoop():void {
-
+			
+		}
+		
+		public function onKillEvent(level:Level):void {
+			
 		}
 		
 		public function finishGameLoop():void{

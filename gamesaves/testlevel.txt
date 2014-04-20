@@ -1,42 +1,23 @@
 The Test Level of Doom
-100x30
-x=100
-x=80    
-xx      xx                 xxxxx        
-xx     wx                  xxxxx        
-xx  #  s                   xxxxx        
-xxxxxx w   xx              xxxxx        
-xx        xxx             xxxxxx        
-xx       xxxx              xxxxx        
-xx  xxxxxxxxxxx   x        xxxxx        
-xx     xxxxxxxx   x   w wwwxxxxx        
-xx     xxxxxxxx x x xxxxxxxxxxxx        
-xx  xxxxxxxxxxx x x xxxxxxxxxxxx        
-xx      xxxxxxxxxxxxxxxxxxxxxxxx        
-xx      xxxxxxxxxxxxxxxxxxxxxxxx        
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx        
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
-x
+80x30
+x=80
+x=80
+xx    wx                   xxxxx        
+xx    sx                   xxxxx        
+xx #  wx                   xxxxx        
+xxxx        x       xx     xxxxx        
+xx         xx             xxxxxx        
+xx   x>   s c       cc  w  xxxxx        
+xx  xxxxsssxxxx    xxx  x  xxxxx        
+xx    xxsssxxxx >       wwwxxxxx        
+xx    xxsssxssx x x xxxxxxxxxxxx        
+xx  xxx sssxssx x x xxxxxxxxxxxx        
+xx      sssxxxxxxxxxxxxxxxxxxxxx        
+xx <    wwsxxxxxxxxxxxxxxxxxxxxx        
+xxxxx     wxxxxxxxxxxxxxxxxxxxxx        
+xxxxxx      xxxxxxxxxxxxxxxxxxxx        
+xxxxxxx      xxxxxxxxxxxxxxxxxxx        
+xxxxxxxx
+xxxxxxxxx
+xxxxxxxxxx
+x=80;

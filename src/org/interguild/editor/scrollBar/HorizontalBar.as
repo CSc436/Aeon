@@ -17,6 +17,7 @@ package org.interguild.editor.scrollBar
 	import com.greensock.gs.OverwriteManager;
 	import com.greensock.gs.TweenFilterLite;
 	
+	import org.interguild.Aeon;
 	public class HorizontalBar extends Sprite
 	{
 		private var _content:DisplayObjectContainer;
@@ -386,7 +387,7 @@ package org.interguild.editor.scrollBar
 			_track.addEventListener(MouseEvent.CLICK, onTrackClick, false, 0, true);
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			_stageW = 565;
-			_stageH = stage.stageHeight;
+			_stageH =  Aeon.STAGE_HEIGHT;
 			adjustSize();
 		}
 		
@@ -395,7 +396,7 @@ package org.interguild.editor.scrollBar
 		//============================================================================================================================
 		{
 			_stageW = 565;
-			_stageH = stage.stageHeight;
+			_stageH =  Aeon.STAGE_HEIGHT;
 			adjustSize();
 		}
 		

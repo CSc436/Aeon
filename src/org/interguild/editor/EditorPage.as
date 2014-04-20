@@ -1,16 +1,22 @@
 package org.interguild.editor {
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-
+	
 	import fl.controls.Button;
-	import fl.controls.TextArea;
 	import fl.controls.TextInput;
-
+	
+	import flexunit.utils.ArrayList;
+	
 	import org.interguild.Aeon;
 	import org.interguild.Page;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
+	import org.interguild.game.Player;
+	import org.interguild.game.level.LevelProgressBar;
+	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
 
@@ -20,54 +26,50 @@ package org.interguild.editor {
 		private static const DEFAULT_LEVEL_WIDTH:uint = 15;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 15;
 
-		//Following is code to import images for everything
-		[Embed(source = "../../../../images/testButton.png")]
-		private var TestButton:Class;
-		[Embed(source = "../../../../images/clearAllButton.png")]
-		private var ClearButton:Class;
-		[Embed(source = "../../../../images/wallButton.png")]
-		private var WallButton:Class;
-		[Embed(source = "../../../../images/woodButton.png")]
-		private var WoodButton:Class;
-		[Embed(source = "../../../../images/startButton.png")]
-		private var StartButton:Class;
-		[Embed(source = "../../../../images/resizeButton.png")]
-		private var ResizeButton:Class;
-		[Embed(source = "../../../../images/woodBox.png")]
-		private var woodImg:Class;
-		//TODO update picture
-		[Embed(source = "../../../../images/wall.png")]
-		private var wallImg:Class;
-		//TODO update picture
-		[Embed(source = "../../../../images/flag.jpg")]
-		private var flagImg:Class;
+		/*
+		//TODO new buttons
+		StartButton
+		FinishButton
+		WallButton
+		WoodButton
+		SteelButton
+		CollectableButton
+		LightningButtonUp
+		LightningButtonDown
+		LightningButtonLeft
+		LightningButtonRight
+		*/
 
 		//following are objects on this sprite
-		private var playerSpawnButton:Button;
-		private var wallButton:Button;
-		private var clearButton:Button;
-		private var woodButton:Button;
-		private var testButton:Button;
-		private var resizeButton:Button;
-		private var tf:TextArea;
+		private var finishButton:FinishLineButton;
+		private var playerSpawnButton:StartLineButton;
+		private var wallButton:TerrainBoxButton;
+		private var clearButton:ClearAllButton;
+		private var woodButton:WoodBoxButton;
+		private var collectButton:CollectableButton;
+		private var testButton:TestButton;
+		private var resizeButton:ResizeButton;
+		private var tf:Sprite;
 		public var title:TextInput;
 		private var widthBox:TextInput;
 		private var heightBox:TextInput;
-		private var undoButton:Button;
-		private var redoButton:Button;
+		private var undoButton:UndoButton;
+		private var redoButton:RedoButton;
 		private var titlef:TextField;
 		private var widthf:TextField;
 		private var heightf:TextField;
-
+		
 		private var loader:Loader;
 		private var gridContainer:Sprite;
 		private var gridMask:Sprite;
 		private var grid:EditorGrid;
-
+		private var tab:EditorTab;
 		private var dropDown:DropDownMenu;
 
 		private var mainMenu:Aeon;
 
+		private var progressBar:LevelProgressBar;
+		
 		private var scrollBar:FullScreenScrollBar;
 		private var scroll:HorizontalBar;
 		// UNDO REDO ACTIONS ARRAYLIST
@@ -79,12 +81,7 @@ package org.interguild.editor {
 		private var isSteelBox:Boolean = false;
 		private var isStart:Boolean = false;
 
-		private static var activeButton:int = 0;
-		private static const air:int = 0;
-		private static const wall:int = 1;
-		private static const wood:int = 2;
-		private static const steel:int = 3;
-		private static const playerspawn:int = 4;
+		private static var activeButton:String = "";
 
 		//size of level
 //		private var levelColumns:int, levelRows:int;
@@ -94,56 +91,205 @@ package org.interguild.editor {
 		 */
 		public function EditorPage(mainMenu:Aeon):void {
 			this.mainMenu = mainMenu;
-
+			//Finish line button
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var finishBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			finishBackground.width = 200;
+			finishBackground.y = 5;
+			finishButton = new FinishLineButton();
+			finishButton.y = 5;
+			finishButton.x = 15;
+			finishButton.width = 170;
+			finishButton.height = 50;
+			finishButton.addEventListener(MouseEvent.CLICK, finishClick);
+			
 			//playerstart button
-			playerSpawnButton = makeButton("Start", StartButton, 750, 150);
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var playerBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			playerBackground.width = 200;
+			playerBackground.y = 60;
+			playerSpawnButton = new StartLineButton();
+			playerSpawnButton.y = 60;
+			playerSpawnButton.x = 15;
+			playerSpawnButton.width = 170;
+			playerSpawnButton.height = 50;
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
-
+			
 			//wallbutton
-			wallButton = makeButton("Wall", WallButton, 750, 200);
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var wallBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			wallBackground.width = 200; 
+			wallBackground.y = 120;
+			wallButton = new TerrainBoxButton();
+			wallButton.y = 120;
+			wallButton.x = 15;
+			wallButton.width = 170;
+			wallButton.height = 50;
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
-
 			//woodbutton:
-			woodButton = makeButton("Wood", WoodButton, 750, 250);
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes			
+			var woodBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			woodBackground.width = 200; 
+			woodBackground.y = 180;
+			woodButton = new WoodBoxButton();
+			woodButton.y = 180;
+			woodButton.x = 15;
+			woodButton.width = 170;
+			woodButton.height = 50;
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
-
+			
+			//collectablebutton:
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes	
+			//TODO:ADD COLLECTABLE LISTENER
+			var collectBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			collectBackground.width = 200; 
+			collectBackground.y = 240;
+			collectButton = new CollectableButton();
+			collectButton.y = 240;
+			collectButton.x = 5;
+			collectButton.width = 180;
+			collectButton.height = 50;
+			collectButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
+			
+			//four arrow directions
+			//TODO: ADD ARROW LISTENERS
+			var arrowDownBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			arrowDownBackground.width = 200; 
+			arrowDownBackground.y = 300; 
+			var arrowDown:ArrowDownButton = new ArrowDownButton();
+			arrowDown.x = 5;
+			arrowDown.y = 300;
+			arrowDown.width = 200;
+			arrowDown.height = 50;
+				
+			var arrowUpBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			arrowUpBackground.width = 200; 
+			arrowUpBackground.y = 360; 
+			var arrowUp:ArrowUpButton = new ArrowUpButton();
+			arrowUp.x = 5;
+			arrowUp.y = 360;
+			arrowUp.width = 200;
+			arrowUp.height = 50;
+			
+			var arrowLeftBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			arrowLeftBackground.width = 200; 
+			arrowLeftBackground.y = 420; 
+			var arrowLeft:ArrowLeftButton = new ArrowLeftButton();
+			arrowLeft.x = 5;
+			arrowLeft.y = 420;
+			arrowLeft.width = 200;
+			arrowLeft.height = 50;
+			
+			var arrowRightBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			arrowRightBackground.width = 200; 
+			arrowRightBackground.y = 480; 
+			var arrowRight:ArrowRightButton = new ArrowRightButton();
+			arrowRight.x = 5;
+			arrowRight.y = 480;
+			arrowRight.width = 200;
+			arrowRight.height = 50;
 			//clear button:
-			clearButton = makeButton("Clear All", ClearButton, 750, 300);
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var clearBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			clearBackground.width = 200; 
+			clearBackground.y = 540
+			clearButton = new ClearAllButton();
+			clearButton.x = 5;
+			clearButton.y = 545;
+			clearButton.width = 200;
+			clearButton.height = 25;
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
-
+			//undo button:
+			var undoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			undoBackground.width = 200; 
+			undoBackground.y = 600;
+			undoButton = new UndoButton();
+			undoButton.x = 55;
+			undoButton.y = 605;
+			undoButton.width = 100;
+			undoButton.height = 25;
+			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
+			//redobutton:
+			var redoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			redoBackground.width = 200; 
+			redoBackground.y = 665;
+			redoButton = new RedoButton();
+			redoButton.x = 57;
+			redoButton.y = 665;
+			redoButton.width = 100;
+			redoButton.height = 25;
+			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
+			
 			//Test button:
-			testButton = makeButton("Test Game", TestButton, 350, 50);
+			//adding in the background to the images, all x,y are positioning and 
+			// width/height are sizes
+			var testBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			testBackground.width = 200; 
+			testBackground.x = 330;
+			testBackground.y = 40;
+			testButton = new TestButton();
+			testButton.x = 340;
+			testButton.y = 40;
+			testButton.width = 160;
+			testButton.height = 25;	
+			/* Buttons to add to the branch
+			ClearAllButton
+			RedoButton
+			ResizeButton
+			TestButton
+			UndoButton
+			
+			//editor tiles
+			ArrowDownButton
+			ArrowUpBotton
+			ArrowRightButton
+			ArrowLeftButton
+			CollectableButton
+			FinishLineButton
+			StartLineButton
+			SteelBoxButton
+			WoodBoxButton
+			TerrainBoxButton
+			*/
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
-
 			//change size button:
-			resizeButton = makeButton("Resize", ResizeButton, 800, 50);
+			var resizeBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			resizeBackground.width = 150; 
+			resizeBackground.x = 735;
+			resizeBackground.y = 37;
+			resizeButton = new ResizeButton();
+			resizeButton.y = 37;
+			resizeButton.x = 740;
+			resizeButton.width = 120;
+			resizeButton.height = 35;
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			undoList = new Array();
 			redoList = new Array();
 
-			//undo button:
-			undoButton = new Button();
-			undoButton.label = "Undo";
-			undoButton.x = 750;
-			undoButton.y = 350;
-			undoButton.useHandCursor = true;
-			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
-
 			//title text field
 			titlef = new TextField();
 			titlef.text = "Title:";
+			titlef.textColor = 0xFFFFFF;
 			titlef.x = 25;
 			titlef.y = 50;
 			//width text field
 			widthf = new TextField();
 			widthf.text = "Width:";
-			widthf.x = 655;
-			widthf.y = 15;
+			widthf.textColor = 0xFFFFFF;
+			widthf.x = 625;
+			widthf.y = 35;
 			//height text field
 			heightf = new TextField();
 			heightf.text = "Height:";
-			heightf.x = 655;
-			heightf.y = 40;
+			heightf.textColor = 0xFFFFFF;
+			heightf.x = 625;
+			heightf.y = 60;
 			//for entering a title name
 			title = new TextInput();
 			title.width = 250;
@@ -156,36 +302,60 @@ package org.interguild.editor {
 			widthBox = new TextInput();
 			widthBox.width = 50;
 			widthBox.height = 25;
-			widthBox.x = 700;
-			widthBox.y = 15;
+			widthBox.x = 680;
+			widthBox.y = 35;
 			heightBox = new TextInput();
 			heightBox.width = 50;
 			heightBox.height = 25;
-			heightBox.x = 700;
-			heightBox.y = 40;
+			heightBox.x = 680;
+			heightBox.y = 60;
 			//textfield
-			tf = new TextArea();
-			tf.width = 200;
-			tf.height = 400;
-			tf.x = 700;
+			tf = new Sprite();
+			tf.x = 625;
 			tf.y = 100;
-			tf.editable = false;
-
+			tf.graphics.beginFill(0xFFFFFF);
+			tf.graphics.drawRect(0,0, 200,1000);
+			tf.graphics.endFill();
+			var maskTf:Sprite = new Sprite();
+			maskTf.graphics.beginFill(0);
+			maskTf.graphics.drawRect(0,0,200,375);
+			maskTf.graphics.endFill();
+			maskTf.x =625;
+			maskTf.y = 100;
+			tf.mask = maskTf;
 			//add the drop down menu
-			dropDown = new DropDownMenu(grid, this);
+			dropDown = new DropDownMenu(this);
 			dropDown.x = 5;
 			dropDown.y = 5;
 
-			grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
+			tab = new EditorTab();
+			grid = tab.getCurrentGrid();
+			
+			//grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
+			grid.x = 20;
 			grid.y = 100;
-
+			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
+			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
+			addChild(gridMask);
+			addChild(grid);
 			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
 			scrollBar.y = 100;
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
 			addChild(scroll);
-			//grid.addChild(scrollBar);
+			
+			var textScrollBar:FullScreenScrollBar = new FullScreenScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,845);
+			textScrollBar.y = 100;
+			addChild(textScrollBar);
+			addChild(resizeBackground);
 			addChild(resizeButton);
 			addChild(heightf);
 			addChild(widthf);
@@ -193,38 +363,77 @@ package org.interguild.editor {
 			addChild(heightBox);
 			addChild(title);
 			addChild(titlef);
+			addChild(testBackground);
 			addChild(testButton);
 			addChild(tf);
-			addChild(wallButton);
-			addChild(woodButton);
-			addChild(playerSpawnButton);
-			addChild(clearButton);
-			addChild(grid);
+			tf.addChild(arrowDownBackground);
+			tf.addChild(arrowDown);
+			tf.addChild(arrowUpBackground);
+			tf.addChild(arrowUp);
+			tf.addChild(arrowLeftBackground);
+			tf.addChild(arrowLeft);
+			tf.addChild(arrowRightBackground);
+			tf.addChild(arrowRight);
+			tf.addChild(wallBackground);
+			tf.addChild(wallButton);
+			tf.addChild(woodBackground);
+			tf.addChild(woodButton);
+			tf.addChild(collectBackground);
+			tf.addChild(collectButton);
+			tf.addChild(finishBackground);
+			tf.addChild(finishButton);
+			tf.addChild(playerBackground);
+			tf.addChild(playerSpawnButton);
+			tf.addChild(clearBackground);
+			tf.addChild(clearButton);
+			//addChild(grid);
 			addChild(dropDown);
-			addChild(undoButton);
-
-
+			tf.addChild(undoBackground);
+			tf.addChild(undoButton);
+			tf.addChild(redoBackground);
+			tf.addChild(redoButton);
 			loader = new EditorLoader();
-			loader.addInitializedListener(loadLevelCode);
+			loader.addInitializedListener(newGridReady);
+			loader.addErrorListener(onLoadError);
 		}
+		/**
+		 * Method is called when making a button to put background on then the button
+		 */
 
 		public function openLevel(data:String):void {
-			loader.loadFromCode(data);
+			loader.loadFromCode(data,"Editor");
+			//adding in mask and new scrollbar
+			resetComponents();
 		}
 
 		/**
 		 * Called by EditorLoader
 		 */
-		public function loadLevelCode(title:String, newGrid:EditorGrid):void {
+		
+		public function newGridReady(title:String, newGrid:EditorGrid):void {
 			this.title.text = title;
 			if (grid) {
 				removeChild(grid);
 			}
 			grid = newGrid;
+			grid.x = 20;
 			grid.y = 100;
 			addChild(grid);
+			resetComponents();
+			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
+			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
 		}
 
+		private function onLoadError(e:ArrayList):void {
+			trace(e);
+			returnFromError(e);
+			//TODO display error to user
+		}
+		private function returnFromError(e:ArrayList):void{
+			var aeon:Aeon = Aeon.getMe();
+			aeon.returnFromError(e, "Editor");
+		}
+		
 		/**
 		 * Helps populate the sprite by setting up buttons
 		 *
@@ -232,9 +441,11 @@ package org.interguild.editor {
 		 * @param   row
 		 * @param   column
 		 */
-		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
+		private function makeButton(label:String, image:Class,xpixel:int, ypixel:int):Button {
 			var b:Button = new Button();
 			b.label = label;
+			b.width = 50;
+			b.height = 50;
 			b.setStyle("icon", image);
 			b.x = xpixel;
 			b.y = ypixel;
@@ -247,85 +458,45 @@ package org.interguild.editor {
 		 *
 		 */
 		private function altClick(e:MouseEvent):void {
-			var sprite:Sprite = Sprite(e.target);
+			var cell:EditorCell = EditorCell(e.target);
+			
 			if (e.altKey) {
+				undoList.push(grid.clone());
 				//switch to check what trigger is active
-				switch (activeButton) {
-					case wall:
-						sprite.name = "x";
-						sprite.addChild(new wallImg());
-						break;
-					case wood:
-						sprite.addChild(new woodImg());
-						sprite.name = "w";
-						break;
-					case steel:
-						sprite.addChild(new woodImg()); //TODO change this to steel
-						sprite.name = "s";
-						break;
-					case playerspawn:
-						sprite.addChild(new flagImg());
-						sprite.name = "#";
-						break;
-					default:
-				}
+				cell.setTile(activeButton);
 			}
 		}
 
 		private function leftClick(e:MouseEvent):void {
-			var gridChild:Sprite = Sprite(e.target)
-
+			var cell:EditorCell = EditorCell(e.target);
 			//TODO make undo
-			var undoAction:Object = new Object;
-			undoAction.oldsprite = gridChild;
-			//switch to check what trigger is active
-			switch (activeButton) {
-				case wall:
-					gridChild.name = "x";
-					gridChild.addChild(new wallImg());
-					break;
-				case wood:
-					gridChild.addChild(new woodImg());
-					gridChild.name = "w";
-					break;
-				case steel:
-					gridChild.addChild(new woodImg()); //TODO change this to steel
-					gridChild.name = "s";
-					break;
-				case playerspawn:
-					gridChild.addChild(new flagImg());
-					gridChild.name = "#";
-					break;
-				default:
-			}
-			undoAction.newsprite = gridChild;
-			undoList.push(undoAction);
-		}
-
-		private function ctrlClick(e:MouseEvent):void {
-			var gridChild:Sprite = Sprite(e.target)
+			undoList.push(grid.clone());
 			if (e.ctrlKey) {
-				var i:int;
-				while (gridChild.numChildren > 0) {
-					gridChild.removeChildAt(0);
-				}
-				gridChild.name = " ";
+				cell.clearTile();
+			}else{
+				cell.setTile(activeButton);
 			}
+			
+			//switch to check what trigger is active
 		}
-
+		private function finishClick(e:MouseEvent):void {
+			var button:FinishLineButton = FinishLineButton(e.target);
+			//TODO: change this to finish line once done
+			activeButton = Player.LEVEL_CODE_CHAR;
+		}
 		private function startClick(e:MouseEvent):void {
-			var button:Button = Button(e.target);
-			activeButton = playerspawn;
+			var button:StartLineButton = StartLineButton(e.target);
+			activeButton = Player.LEVEL_CODE_CHAR;
 		}
 
 		private function wallClick(e:MouseEvent):void {
-			var button:Button = Button(e.target);
-			activeButton = wall;
+			var button:TerrainBoxButton = TerrainBoxButton(e.target);
+			activeButton = Terrain.LEVEL_CODE_CHAR;
 		}
 
 		private function woodBoxClick(e:MouseEvent):void {
-			var button:Button = Button(e.target); // focus mouse event
-			activeButton = wood;
+			var button:WoodBoxButton = WoodBoxButton(e.target); // focus mouse event
+			activeButton = WoodCrate.LEVEL_CODE_CHAR;
 		}
 
 		private function clearClick(e:MouseEvent):void {
@@ -333,13 +504,19 @@ package org.interguild.editor {
 		}
 
 		private function undoClick(e:MouseEvent):void {
-			//TODO
-			var button:Button = Button(e.target);
+			//this function takes from the undo stack and puts it back on the grid
 			if (undoList.length > 0) {
-				var lastAction:Object = undoList.pop;
-				undoList.newsprite = undoList.oldsprite;
+				var popped:EditorGrid = undoList.pop();
+				redoList.push(grid.clone());
+				newGridReady(this.title.text , popped);
 			}
-
+		}
+		private function redoClick(e:MouseEvent):void{
+			if(redoList.length >0){
+				var popped:EditorGrid = redoList.pop();
+				undoList.push(grid.clone());
+				newGridReady(this.title.text , popped);
+			}
 		}
 
 		private function resizeClick(e:MouseEvent):void {
@@ -350,14 +527,33 @@ package org.interguild.editor {
 			grid.resize(h, w);
 
 			//reset scrollbar
+			
 			removeChild(scrollBar);
 			removeChild(scroll);
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			scrollBar.y = 100;
 			addChild(scrollBar);
 			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
 			addChild(scroll);
 		}
 
+		private function resetComponents():void{
+			//adding back mask, scrollbar, and listeners for undo grid
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
+			removeChild(scrollBar);
+			removeChild(scroll);
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			scrollBar.y = 100;
+			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
+		}
 		/**
 		 * This function returns to the title menu
 		 */
@@ -367,27 +563,16 @@ package org.interguild.editor {
 			Aeon.getMe().gotoMainMenu();
 		}
 
+		/**
+		 * This function ask the grid for the code of the level so we may
+		 * save this code
+		 */
 		public function getLevelCode():String {
-//			var i:int;
-//			var row:int;
-//			var col:int;
-//			var string:String = title.text + "\n" + this.levelColumns + "x" + this.levelRows + "\n";
-//			for (i = 0; i < grid.numChildren; i++) {
-//				row = i / this.levelColumns;
-//				col = i % this.levelColumns;
-//				if (grid.getChildAt(i) != null) {
-//					if (grid.getChildAt(i).name.length == 1) {
-//						string += grid.getChildAt(i).name;
-//					} else {
-//						string += " ";
-//					}
-//					if (col == levelColumns - 1) {
-//						string += "\n";
-//					}
-//				}
-//			}
-//			return string;
-			return "";
+			var string:String = "";
+			string += this.title.text+"\n";
+			string += this.grid.levelHeight+"x"+grid.levelWidth+"\n";
+			string += this.grid.toStringCells();
+			return string;
 		}
 
 		/**
@@ -398,7 +583,34 @@ package org.interguild.editor {
 //			this.addChild(new LevelPage());
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
-			trace(s);
+		}
+		
+		public function addTabListener(e:MouseEvent):void{
+			var b:Button = new Button();
+			tab.addTab();
+			grid = tab.getCurrentGrid();
+			
+			//grid = new EditorGrid(DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT);
+			grid.x = 20;
+			grid.y = 100;
+			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
+			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
+			gridMask = new Sprite();
+			gridMask.graphics.beginFill(0);
+			gridMask.graphics.drawRect(0,0,550,370);
+			gridMask.graphics.endFill();
+			gridMask.x = 20;
+			gridMask.y = 100;
+			grid.mask = gridMask;
+			addChild(gridMask);
+			addChild(grid);
+			// Arguments: Content to scroll, track color, grabber color, grabber press color, grip color, track thickness, grabber thickness, ease amount, whether grabber is “shiny”
+			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			scrollBar.y = 100;
+			addChild(scrollBar);
+			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(scroll);
+			
 		}
 
 //		/**

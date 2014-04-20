@@ -1,5 +1,5 @@
 Player Animations{
-//ALL ARE MovieClip OBJECTS
+//ALL ARE "MovieClip" OBJECTS
 
 	Walking Animations{
 		new PlayerWalkingAnimation();
@@ -11,13 +11,31 @@ Player Animations{
 		new PlayerJumpPeakThenFallAnimation();
 		new PlayerJumpLandAnimation();		
 	}
+	Crawling Animation{
+		new PlayerCrawlAnimation();
+	}
 }
 
 Tile Sprites{
-//ALL ARE BitmapData OBJECTS
+//ALL ARE "BitmapData" OBJECTS
 
 	new WoodenCrateSprite();
 	new SteelCrateSprite();
+}
+
+Terrain Sprites{
+	//terrain patterns
+	new TerrainSteelSprite();
+	
+	//terrain borders
+	new TerrainTopLayerThin();
+	new TerrainTopLayerThick();
+}
+
+Background Sprites{
+	new BackgroundGreen();
+	new BackgroundTeal();
+	new BackgroundPurple();
 }
 
 Embedded Fonts{
@@ -32,4 +50,18 @@ GUI Components{
 	new UIScrollBar();
 	new TextArea(); //large text box
 	new TextInput(); //single-line text box
+}
+Main Menu Sprites{
+	LevelEditorButton
+	OptionsButton
+	PlayGameButton
+	PlayUserLevelsButton
+	MenuButtonSelectBG
+	MenuButtonClickBG
+}
+Pause Menu Sprites{
+	ResumeButton
+	RestartButton
+	LevelEditorButton
+	QuitButton
 }

@@ -3,11 +3,11 @@ package org.interguild {
 	import flash.events.KeyboardEvent;
 
 	public class KeyMan {
-		
+
 		private static var instance:KeyMan;
-		
-		public static function getMe():KeyMan{
-			if(instance==null){
+
+		public static function getMe():KeyMan {
+			if (instance == null) {
 				throw new Error("You somehow called KeyMan.getMe() before Aeon.as did. How did you do that??");
 			}
 			return instance;
@@ -18,8 +18,16 @@ package org.interguild {
 		public var isKeyLeft:Boolean = false;
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
-		
-		private var spacebarCallback:Function;
+		public var isKeyEsc:Boolean = false;
+
+		public var spacebarCallback:Function;
+		private var escapeCallback:Function;
+		private var menuCallback:Function;
+		CONFIG::DEBUG{
+			private var debugToggleCallback:Function;
+			private var slowDownToggleCallback:Function;
+			private var slowDownNextCallback:Function;
+		}
 
 		public function KeyMan(stage:Stage) {
 			instance = this;
@@ -29,6 +37,14 @@ package org.interguild {
 
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
+				case 27: //Esc key
+					if(!isKeyEsc)
+						isKeyEsc = true;
+					else
+						isKeyEsc = false;
+					if(escapeCallback)
+						escapeCallback();
+					break;
 				case 39: //right arrow key
 					isKeyRight = true;
 					break;
@@ -44,9 +60,27 @@ package org.interguild {
 				case 32: //spacebar
 					isKeySpace = true;
 					if(spacebarCallback)
-						spacebarCallback();
+						spacebarCallback(false);
 					break;
 			}
+			CONFIG::DEBUG {
+				switch(evt.keyCode){
+					case 66: //b key
+						if(debugToggleCallback)
+							debugToggleCallback();
+						break;
+					case 191: // "/" or "?" key
+						if(slowDownToggleCallback)
+							slowDownToggleCallback();
+						break;
+					case 190: // "." or ">" key
+						if(slowDownNextCallback)
+							slowDownNextCallback();
+						break;
+				}
+			}
+			if (menuCallback)
+				menuCallback(evt.keyCode);
 		}
 
 		private function onKeyUp(evt:KeyboardEvent):void {
@@ -68,9 +102,41 @@ package org.interguild {
 					break;
 			}
 		}
+		public function resumeFromButton():void {
+			resetEscKey();
+			if(escapeCallback)
+				escapeCallback();
+		}
 		
-		public function addSpacebarListener(cb:Function):void{
+		public function resetEscKey():void {
+			isKeyEsc = false;
+		}
+
+		public function addEscapeListener(f:Function):void {
+			escapeCallback = f;
+		}
+
+		public function addSpacebarListener(cb:Function):void {
 			spacebarCallback = cb;
+		}
+
+		public function removeSpacebarListener():void {
+			spacebarCallback = null;
+		}
+
+		public function addMenuCallback(cb:Function):void {
+			menuCallback = cb;
+		}
+
+		CONFIG::DEBUG{
+			public function addSlowdownListeners(onToggle:Function, onNext:Function):void {
+				slowDownToggleCallback = onToggle;
+				slowDownNextCallback = onNext;
+			}
+			
+			public function addDebugListeners(onToggle:Function):void {
+				debugToggleCallback = onToggle;
+			}
 		}
 	}
 }

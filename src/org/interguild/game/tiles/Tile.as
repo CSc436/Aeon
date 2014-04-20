@@ -1,7 +1,6 @@
-package org.interguild.game.tiles
-{
-	public interface Tile
-	{
+package org.interguild.game.tiles {
+
+	public interface Tile {
 		/*
 		function: getDestructibility()
 		description: returns value indicating whether or not
@@ -13,7 +12,7 @@ package org.interguild.game.tiles
 			2 = destructible by arrows, dynamite and touch (wooden)
 		*/
 		function getDestructibility():int;
-		
+
 		/*
 		function: isSolid()
 		description: returns whether or not the tile is solid
@@ -22,6 +21,9 @@ package org.interguild.game.tiles
 		return: Boolean
 		*/
 		function isSolid():Boolean;
+		
+		function get isActive():Boolean;
+		
 		/*
 		function: isGravible()
 		description: returns whether or not the tile is affected
@@ -30,7 +32,7 @@ package org.interguild.game.tiles
 		return: Boolean
 		*/
 		function isGravible():Boolean;
-		
+
 		/*
 		function: doesKnockback()
 		description: returns whether or not the tile knocks back
@@ -41,7 +43,7 @@ package org.interguild.game.tiles
 			>0 = amount to knockback
 		*/
 		function doesKnockback():int;
-		
+
 		/*
 		function: isBuoyant()
 		description: returns whether or not the tile can float.
@@ -49,6 +51,6 @@ package org.interguild.game.tiles
 		return: Boolean
 		*/
 		function isBuoyant():Boolean;
-		
+
 	}
 }
