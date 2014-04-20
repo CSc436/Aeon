@@ -4,11 +4,11 @@ package org.interguild.loader {
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.ArrowCrate;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
-	import org.interguild.game.tiles.Collectable;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -51,11 +51,21 @@ package org.interguild.loader {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile);
 					break;
-
-				case ArrowCrate.LEVEL_CODE_CHAR:
+				case ArrowCrate.LEVEL_CODE_CHAR_RIGHT:
 					tile = new ArrowCrate(px, py, 1);
 					level.createCollidableObject(tile);
-					level.createCollidableObject(ArrowCrate(tile).arrow);
+					break;
+				case ArrowCrate.LEVEL_CODE_CHAR_DOWN:
+					tile = new ArrowCrate(px, py, 2);
+					level.createCollidableObject(tile);
+					break;
+				case ArrowCrate.LEVEL_CODE_CHAR_LEFT:
+					tile = new ArrowCrate(px, py, 3);
+					level.createCollidableObject(tile);
+					break;
+				case ArrowCrate.LEVEL_CODE_CHAR_UP:
+					tile = new ArrowCrate(px, py, 4);
+					level.createCollidableObject(tile);
 					break;
 				case Collectable.LEVEL_CODE_CHAR:
 					tile = new Collectable(px, py);
