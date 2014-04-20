@@ -43,7 +43,7 @@ package org.interguild.editor {
 		//following are objects on this sprite
 		private var finishButton:FinishLineButton;
 		private var playerSpawnButton:StartLineButton;
-		private var wallButton:TerrainButton;
+		private var wallButton:TerrainBoxButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
 		private var collectButton:CollectableButton;
@@ -123,7 +123,7 @@ package org.interguild.editor {
 			var wallBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			wallBackground.width = 200; 
 			wallBackground.y = 120;
-			wallButton = new TerrainButton();
+			wallButton = new TerrainBoxButton();
 			wallButton.y = 120;
 			wallButton.x = 15;
 			wallButton.width = 170;
@@ -255,7 +255,7 @@ package org.interguild.editor {
 			StartLineButton
 			SteelBoxButton
 			WoodBoxButton
-			TerrainButton
+			TerrainBoxButton
 			*/
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 			//change size button:
@@ -490,7 +490,7 @@ package org.interguild.editor {
 		}
 
 		private function wallClick(e:MouseEvent):void {
-			var button:TerrainButton = TerrainButton(e.target);
+			var button:TerrainBoxButton = TerrainBoxButton(e.target);
 			activeButton = Terrain.LEVEL_CODE_CHAR;
 		}
 
