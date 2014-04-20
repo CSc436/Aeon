@@ -15,9 +15,7 @@ package org.interguild.editor {
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.LevelProgressBar;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
-	import org.interguild.game.tiles.SteelCrate;
+	import org.interguild.game.tiles.*;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
 
@@ -169,7 +167,7 @@ package org.interguild.editor {
 			collectButton.x = 5;
 			collectButton.width = 180;
 			collectButton.height = 35;
-			collectButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
+			collectButton.addEventListener(MouseEvent.CLICK, collectClick);
 			
 			//four arrow directions
 			//TODO: ADD ARROW LISTENERS
@@ -181,7 +179,7 @@ package org.interguild.editor {
 			arrowDown.y = 360;
 			arrowDown.width = 180;
 			arrowDown.height = 40;
-				
+			arrowDown.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			var arrowUpBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowUpBackground.width = 200; 
 			arrowUpBackground.y = 420; 
@@ -191,6 +189,7 @@ package org.interguild.editor {
 			arrowUp.width = 180;
 			arrowUp.height = 40;
 			
+			arrowUp.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			var arrowLeftBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowLeftBackground.width = 200; 
 			arrowLeftBackground.y = 480; 
@@ -200,6 +199,7 @@ package org.interguild.editor {
 			arrowLeft.width = 180;
 			arrowLeft.height = 40;
 			
+			arrowLeft.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			var arrowRightBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			arrowRightBackground.width = 200; 
 			arrowRightBackground.y = 540; 
@@ -208,6 +208,8 @@ package org.interguild.editor {
 			arrowRight.y = 540;
 			arrowRight.width = 180;
 			arrowRight.height = 40;
+			
+			arrowRight.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			//clear button:
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes
@@ -515,9 +517,17 @@ package org.interguild.editor {
 			var button:WoodBoxButton = WoodBoxButton(e.target); // focus mouse event
 			activeButton = WoodCrate.LEVEL_CODE_CHAR;
 		}
+		private function collectClick(e:MouseEvent):void {
+			var button:CollectableButton = CollectableButton(e.target); // focus mouse event
+			activeButton = Collectable.LEVEL_CODE_CHAR;
+		}
 		private function steelBoxClick(e:MouseEvent):void {
 			var button:SteelBoxButton = SteelBoxButton(e.target); // focus mouse event
 			activeButton = SteelCrate.LEVEL_CODE_CHAR;
+		}
+		private function arrowDownClick(e:MouseEvent):void {
+			var button:ArrowDownButton = ArrowDownButton(e.target); // focus mouse event
+			activeButton = ArrowCrate.LEVEL_CODE_CHAR;
 		}
 		private function clearClick(e:MouseEvent):void {
 			grid.clearGrid();
