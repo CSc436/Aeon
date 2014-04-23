@@ -527,7 +527,7 @@ package org.interguild.editor {
 		}
 		private function arrowDownClick(e:MouseEvent):void {
 			var button:ArrowDownButton = ArrowDownButton(e.target); // focus mouse event
-			activeButton = ArrowCrate.LEVEL_CODE_CHAR;
+//			activeButton = ArrowCrate.LEVEL_CODE_CHAR;
 		}
 		private function clearClick(e:MouseEvent):void {
 			grid.clearGrid();

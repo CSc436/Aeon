@@ -3,13 +3,15 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
+	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
 
 	public class CollisionGrid extends Sprite {
@@ -52,7 +54,7 @@ package org.interguild.game.collision {
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
-
+		
 		public function addObject(tile:CollidableObject):void {
 			allObjects.push(tile);
 			if (tile.isActive)
@@ -315,6 +317,7 @@ package org.interguild.game.collision {
 			activeObject.setCollidedWith(otherObject);
 			otherObject.setCollidedWith(activeObject);
 			var p:Player = null;
+			var a:Arrow = null;
 			var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
 			var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
@@ -330,14 +333,30 @@ package org.interguild.game.collision {
 			if (activeObject is Player) {
 				p = Player(activeObject);
 			}
+			// Check to see if arrow is the culprit
+			if (activeObject is Arrow) {
+				a = Arrow(activeObject);
+			}
 			if (!(otherObject is Tile) || !(activeObject is Tile)) {
 				//will never ever happen
 				throw new Error("Please handle non-Tile collisions in special cases before this line.");
 			}
+			
+			trace("Object 1: "+activeObject.toString());
+			trace("Object 2: "+otherObject.toString());
 
 			var activeTile:Tile = Tile(activeObject);
 			var otherTile:Tile = Tile(otherObject);
-
+			
+			/*
+			* ARROW HITS CRATE
+			*/
+			if ((a && otherTile.getDestructibility() == 2) || (a && otherTile is SteelCrate)) {
+				removalObjects.push(otherObject);
+				removalObjects.push(activeObject);
+			}
+			else if (a && otherTile.getDestructibility() == 0) 
+				removalObjects.push(activeObject);
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
@@ -361,11 +380,12 @@ package org.interguild.game.collision {
 					}
 				}
 				removalObjects.push(otherObject);
-
-				/*
-				 * SOLID COLLISIONS
-				 */
-			} else if (activeTile.isSolid() && otherTile.isSolid()) {
+			}
+		
+			/*
+			* SOLID COLLISIONS
+			*/
+			else if (activeTile.isSolid() && otherTile.isSolid()) {
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
@@ -399,6 +419,8 @@ package org.interguild.game.collision {
 					activeObject.speedX = 0;
 				}
 			}
+			
+			
 			activeObject.updateHitBox();
 		}
 
@@ -456,7 +478,7 @@ package org.interguild.game.collision {
 				}
 			}
 			obj.clearGrids();
-			obj.onKillEvent();
+			obj.onKillEvent(level);
 
 //			var tile:GridTile = toDestroy.myCollisionGridTiles[0];
 //			unblockNeighbors(tile.gridRow, tile.gridCol);

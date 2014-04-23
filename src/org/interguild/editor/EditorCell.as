@@ -58,9 +58,9 @@ package org.interguild.editor {
 					case Collectable.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new CollectibleSprite()));
 						break;
-					case ArrowCrate.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new LightningBoxLeft()));		
-						break;
+//					case ArrowCrate.LEVEL_CODE_CHAR:
+//						addChild(new Bitmap(new LightningBoxLeft()));		
+//						break;
 					default:
 						trace("EditorCell: Unknown level code character: '" + char + "'");
 						break;

@@ -255,13 +255,14 @@ package org.interguild.game.level {
 		private function update():void {
 			//update player
 			player.onGameLoop();
-			player.reset();
+			
 
 			// update animations
 			player.updateAnimation();
 			player.frameCounter++; // updated counter for game frames
 
-
+			player.reset();
+			
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
