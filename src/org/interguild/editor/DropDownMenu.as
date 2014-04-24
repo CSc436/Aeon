@@ -145,11 +145,10 @@ package org.interguild.editor {
 
 			var file:FileReference = new FileReference();
 
-			var titlename:String = currEditor.title.text;
+			var levelcode:String = currEditor.getLevelCode();
 			
-			//TODO save file
-			
-			file.save(currEditor.getLevelCode(), titlename + ".txt");
+			file.save(levelcode);
+//			file.save(levelcode, levelcode+ ".txt");
 		}
 
 		//Return to main menu

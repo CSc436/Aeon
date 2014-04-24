@@ -50,7 +50,7 @@ package org.interguild.editor {
 		private var testButton:TestButton;
 		private var resizeButton:ResizeButton;
 		private var tf:Sprite;
-		public var title:TextInput;
+		private var title:TextInput;
 		private var widthBox:TextInput;
 		private var heightBox:TextInput;
 		private var undoButton:UndoButton;
@@ -75,16 +75,8 @@ package org.interguild.editor {
 		// UNDO REDO ACTIONS ARRAYLIST
 		private var undoList:Array;
 		private var redoList:Array;
-		//Following variables are toggles for when adding items to GUI
-		private var isWall:Boolean = false;
-		private var isWoodBox:Boolean = false;
-		private var isSteelBox:Boolean = false;
-		private var isStart:Boolean = false;
 
 		private static var activeButton:String = "";
-
-		//size of level
-//		private var levelColumns:int, levelRows:int;
 
 		/**
 		 * Creates grid holder and populates it with objects.
@@ -415,10 +407,11 @@ package org.interguild.editor {
 			loader.addInitializedListener(newGridReady);
 			loader.addErrorListener(onLoadError);
 		}
+		
 		/**
 		 * Method is called when making a button to put background on then the button
+		 * 
 		 */
-
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
@@ -427,8 +420,8 @@ package org.interguild.editor {
 
 		/**
 		 * Called by EditorLoader
+		 * 
 		 */
-		
 		public function newGridReady(title:String, newGrid:EditorGrid):void {
 			this.title.text = title;
 			if (grid) {
@@ -443,14 +436,20 @@ package org.interguild.editor {
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
 		}
 
+		/**
+		 * error message for when file loading failed
+		 */
 		private function onLoadError(e:ArrayList):void {
 			trace(e);
 			returnFromError(e);
 			//TODO display error to user
 		}
+		
+		/**
+		 * recover from error loaded
+		 */
 		private function returnFromError(e:ArrayList):void{
-			var aeon:Aeon = Aeon.getMe();
-			aeon.returnFromError(e, "Editor");
+			Aeon.getMe().returnFromError(e, "Editor");
 		}
 		
 		/**
@@ -498,6 +497,10 @@ package org.interguild.editor {
 			
 			//switch to check what trigger is active
 		}
+		
+		/**
+		 * user clicked on an editor button make it the active button
+		 */
 		private function finishClick(e:MouseEvent):void {
 			var button:FinishLineButton = FinishLineButton(e.target);
 			//TODO: change this to finish line once done
