@@ -2,14 +2,16 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	
 	import org.interguild.editor.EditorGrid;
+	import flash.text.TextField;
 	
 	//TODO get a list of EditorPages working with tabs
 	/**
 	 * Store mltiple instances of Editor Page such that the user
 	 */
 	public class EditorTab extends Sprite {
-		
 		private var gridState:Array;// of EditorGrids
+		private var tabState:Array;// of TabSprites
+		private var textState:Array;// of textFields
 		private var currTab:int;
 		private var tabsActive:int = 0;
 		private static const MAX_ARRAY_SIZE:uint = 5;
@@ -19,6 +21,15 @@ package org.interguild.editor {
 			addTab();
 			tabsActive = 1;
 			currTab = 0;
+			
+			//create 5 pictures and 5 text fields for each button
+			tabState = new Array(MAX_ARRAY_SIZE);
+			textState = new Array(MAX_ARRAY_SIZE);
+			for(var i:int = 0; i < MAX_ARRAY_SIZE; i++){
+				textState[i] = new TextField();
+				textState[i].text = "Grid " + i;
+				tabState[i] = new TabSprite();
+			}
 		}
 		
 		/**
@@ -29,6 +40,8 @@ package org.interguild.editor {
 				return; // cannot add more than 5 tabs
 			gridState[tabsActive] = new EditorGrid(15,15); //default 15x15
 			tabsActive++;
+			
+			//update gui with more tabs
 		}
 		
 		/**
@@ -69,6 +82,9 @@ package org.interguild.editor {
 			var eg2:EditorGrid = gridState[tabNumber];
 			// TODO hide eg1 and show eg2
 			
+			currTab = tabNumber;
+			
+			this.gridState;
 		}
 		
 		/**

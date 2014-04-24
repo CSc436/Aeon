@@ -1,21 +1,18 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
-
 	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.Tile;
 
-	public class Player extends CollidableObject implements Tile {
-
-		public static const LEVEL_CODE_CHAR:String = '#';
+	public class Player extends CollidableObject {
+		CONFIG::DEBUG {
+			private static const SPRITE_COLOR:uint = 0xFF0000;
+			private static const SPRITE_WIDTH:uint = 24;
+			private static const SPRITE_HEIGHT:uint = 40;
+		}
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
-
-		private static const SPRITE_COLOR:uint = 0xFF0000;
-		private static const SPRITE_WIDTH:uint = 24;
-		private static const SPRITE_HEIGHT:uint = 40;
 
 		private static const CRAWLING_HEIGHT:uint = 32;
 		private static const STANDING_HEIGHT:uint = 40;
@@ -51,8 +48,16 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
+		//TODO are these values correct? Henry
+		public static const LEVEL_CODE_CHAR:String = '#';
+		public static const DESTRUCTIBILITY:int=2;
+		public static const IS_SOLID:Boolean=true;
+		public static const HAS_GRAVITY:Boolean=true;
+		public static const KNOCKBACK_AMOUNT:int=5;
+		public static const IS_BUOYANT:Boolean=false;
+		
 		public function Player() {
-			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
@@ -400,65 +405,6 @@ package org.interguild.game {
 				playerClip.y = -8;
 			}
 
-		}
-
-		/*
-		function: getDestructibility()
-		description: returns value indicating whether or not
-		a tile should be destroyed and by what.
-		param: None
-		return: int
-		0 = indestructible (terrain)
-		1 = destructible by arrows and dynamite (steel)
-		2 = destructible by arrows, dynamite and touch (wooden)
-		*/
-		public function getDestructibility():int {
-			return 1;
-		}
-
-		/*
-		function: isSolid()
-		description: returns whether or not the tile is solid
-		i.e. player/tiles can pass through it.
-		param: None
-		return: Boolean
-		*/
-		public function isSolid():Boolean {
-			return true;
-		}
-
-		/*
-		function: isGravible()
-		description: returns whether or not the tile is affected
-		by simulated game gravity.
-		param: None
-		return: Boolean
-		*/
-		public function isGravible():Boolean {
-			return true;
-		}
-
-		/*
-		function: doesKnockback()
-		description: returns whether or not the tile knocks back
-		the character/tile that has collided with it.
-		param: None
-		return: int
-		0 = does not knockback
-		>0 = amount to knockback
-		*/
-		public function doesKnockback():int {
-			return 0;
-		}
-
-		/*
-		function: isBuoyant()
-		description: returns whether or not the tile can float.
-		param: None
-		return: Boolean
-		*/
-		public function isBuoyant():Boolean {
-			return false;
 		}
 
 		public function die():void {

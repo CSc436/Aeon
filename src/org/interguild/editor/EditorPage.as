@@ -1,5 +1,6 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
@@ -15,6 +16,8 @@ package org.interguild.editor {
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.LevelProgressBar;
+	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
 	import org.interguild.loader.EditorLoader;
@@ -46,6 +49,7 @@ package org.interguild.editor {
 		private var wallButton:TerrainBoxButton;
 		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
+		private var steelButton:SteelBoxButton;
 		private var collectButton:CollectableButton;
 		private var testButton:TestButton;
 		private var resizeButton:ResizeButton;
@@ -95,149 +99,100 @@ package org.interguild.editor {
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes
 			var finishBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			finishBackground.width = 200;
-			finishBackground.y = 5;
+			setBackgroundSize(finishBackground, 0, 5,200);
 			finishButton = new FinishLineButton();
-			finishButton.y = 5;
-			finishButton.x = 15;
-			finishButton.width = 170;
-			finishButton.height = 50;
+			setButtonSize(finishButton, 40,5,120,40);
 			finishButton.addEventListener(MouseEvent.CLICK, finishClick);
 			
 			//playerstart button
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes
 			var playerBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			playerBackground.width = 200;
-			playerBackground.y = 60;
+			setBackgroundSize(playerBackground, 0, 60, 200);
 			playerSpawnButton = new StartLineButton();
-			playerSpawnButton.y = 60;
-			playerSpawnButton.x = 15;
-			playerSpawnButton.width = 170;
-			playerSpawnButton.height = 50;
+			setButtonSize(playerSpawnButton, 35,60,160,35);
 			playerSpawnButton.addEventListener(MouseEvent.CLICK, startClick);
 			
 			//wallbutton
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes
 			var wallBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			wallBackground.width = 200; 
-			wallBackground.y = 120;
+			setBackgroundSize(wallBackground, 0, 120,200);
 			wallButton = new TerrainBoxButton();
-			wallButton.y = 120;
-			wallButton.x = 15;
-			wallButton.width = 170;
-			wallButton.height = 50;
+			setButtonSize(wallButton, 25,126, 170,35);
 			wallButton.addEventListener(MouseEvent.CLICK, wallClick);
 			//woodbutton:
 			//adding in the background to the images, all x,y are positioning and 
 			// width/height are sizes			
 			var woodBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			woodBackground.width = 200; 
-			woodBackground.y = 180;
+			setBackgroundSize(woodBackground, 0, 180,200);
 			woodButton = new WoodBoxButton();
-			woodButton.y = 180;
-			woodButton.x = 15;
-			woodButton.width = 170;
-			woodButton.height = 50;
+			setButtonSize(woodButton, 25,190, 160,35);
 			woodButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
 			
-			//collectablebutton:
+			//steelbutton:
 			//adding in the background to the images, all x,y are positioning and 
-			// width/height are sizes	
+			// width/height are sizes			
+			var steelBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
+			setBackgroundSize(steelBackground, 0 , 240, 200);
+			steelButton = new SteelBoxButton();
+			setButtonSize(steelButton, 25,243, 150,35);
+			steelButton.addEventListener(MouseEvent.CLICK, steelBoxClick);
+						//collectablebutton:
 			//TODO:ADD COLLECTABLE LISTENER
 			var collectBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			collectBackground.width = 200; 
-			collectBackground.y = 240;
+			setBackgroundSize(collectBackground, 0 , 300, 200);
 			collectButton = new CollectableButton();
-			collectButton.y = 240;
-			collectButton.x = 5;
-			collectButton.width = 180;
-			collectButton.height = 50;
-			collectButton.addEventListener(MouseEvent.CLICK, woodBoxClick);
+			setButtonSize(collectButton, 10, 306, 180,35);
+			collectButton.addEventListener(MouseEvent.CLICK, collectClick);
 			
 			//four arrow directions
 			//TODO: ADD ARROW LISTENERS
 			var arrowDownBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			arrowDownBackground.width = 200; 
-			arrowDownBackground.y = 300; 
+			setBackgroundSize(arrowDownBackground, 0, 360, 200);
 			var arrowDown:ArrowDownButton = new ArrowDownButton();
-			arrowDown.x = 5;
-			arrowDown.y = 300;
-			arrowDown.width = 200;
-			arrowDown.height = 50;
-				
+			setButtonSize(arrowDown, 25, 360, 160, 40);
+			arrowDown.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			var arrowUpBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			arrowUpBackground.width = 200; 
-			arrowUpBackground.y = 360; 
+			setBackgroundSize(arrowUpBackground, 0, 420, 200);
 			var arrowUp:ArrowUpButton = new ArrowUpButton();
-			arrowUp.x = 5;
-			arrowUp.y = 360;
-			arrowUp.width = 200;
-			arrowUp.height = 50;
-			
+			setButtonSize(arrowUp, 25, 420, 160, 40);
+			arrowUp.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			var arrowLeftBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			arrowLeftBackground.width = 200; 
-			arrowLeftBackground.y = 420; 
+			setBackgroundSize(arrowLeftBackground, 0, 480, 200);
 			var arrowLeft:ArrowLeftButton = new ArrowLeftButton();
-			arrowLeft.x = 5;
-			arrowLeft.y = 420;
-			arrowLeft.width = 200;
-			arrowLeft.height = 50;
-			
+			setButtonSize(arrowLeft, 25, 480, 160, 40);
+			arrowLeft.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			var arrowRightBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			arrowRightBackground.width = 200; 
-			arrowRightBackground.y = 480; 
+			setBackgroundSize(arrowRightBackground,0,540,200);
 			var arrowRight:ArrowRightButton = new ArrowRightButton();
-			arrowRight.x = 5;
-			arrowRight.y = 480;
-			arrowRight.width = 200;
-			arrowRight.height = 50;
+			setButtonSize(arrowRight, 25, 540,160,40);
+			arrowRight.addEventListener(MouseEvent.CLICK, arrowDownClick);
 			//clear button:
-			//adding in the background to the images, all x,y are positioning and 
-			// width/height are sizes
 			var clearBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			clearBackground.width = 200; 
-			clearBackground.y = 540
+			setBackgroundSize(clearBackground, 0, 600, 200);
 			clearButton = new ClearAllButton();
-			clearButton.x = 5;
-			clearButton.y = 545;
-			clearButton.width = 200;
-			clearButton.height = 25;
+			setButtonSize(clearButton, 5, 605, 200,25);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			//undo button:
 			var undoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			undoBackground.width = 200; 
-			undoBackground.y = 600;
+			setBackgroundSize(undoBackground, 0, 660, 200);
 			undoButton = new UndoButton();
-			undoButton.x = 55;
-			undoButton.y = 605;
-			undoButton.width = 100;
-			undoButton.height = 25;
+			setButtonSize(undoButton, 55,665,100,25);
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
 			//redobutton:
 			var redoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			redoBackground.width = 200; 
-			redoBackground.y = 665;
+			setBackgroundSize(redoBackground, 0, 725, 200);
 			redoButton = new RedoButton();
-			redoButton.x = 57;
-			redoButton.y = 665;
-			redoButton.width = 100;
-			redoButton.height = 25;
+			setButtonSize(redoButton, 57,725, 100,25);
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
-			
+		
 			//Test button:
-			//adding in the background to the images, all x,y are positioning and 
-			// width/height are sizes
 			var testBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			testBackground.width = 200; 
-			testBackground.x = 330;
-			testBackground.y = 40;
+			setBackgroundSize(testBackground, 330,40, 200);
 			testButton = new TestButton();
-			testButton.x = 340;
-			testButton.y = 40;
-			testButton.width = 160;
-			testButton.height = 25;	
+			setButtonSize(testButton, 345,42,160,25);
+			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 			/* Buttons to add to the branch
 			ClearAllButton
 			RedoButton
@@ -257,17 +212,11 @@ package org.interguild.editor {
 			WoodBoxButton
 			TerrainBoxButton
 			*/
-			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
 			//change size button:
 			var resizeBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			resizeBackground.width = 150; 
-			resizeBackground.x = 735;
-			resizeBackground.y = 37;
+			setBackgroundSize(resizeBackground, 735,37,150);
 			resizeButton = new ResizeButton();
-			resizeButton.y = 37;
-			resizeButton.x = 740;
-			resizeButton.width = 120;
-			resizeButton.height = 35;
+			setButtonSize(resizeButton, 745,37, 120, 35);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			undoList = new Array();
 			redoList = new Array();
@@ -318,7 +267,7 @@ package org.interguild.editor {
 			tf.graphics.endFill();
 			var maskTf:Sprite = new Sprite();
 			maskTf.graphics.beginFill(0);
-			maskTf.graphics.drawRect(0,0,200,375);
+			maskTf.graphics.drawRect(0,0,Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT-75);
 			maskTf.graphics.endFill();
 			maskTf.x =625;
 			maskTf.y = 100;
@@ -378,6 +327,8 @@ package org.interguild.editor {
 			tf.addChild(wallButton);
 			tf.addChild(woodBackground);
 			tf.addChild(woodButton);
+			tf.addChild(steelBackground);
+			tf.addChild(steelButton);
 			tf.addChild(collectBackground);
 			tf.addChild(collectButton);
 			tf.addChild(finishBackground);
@@ -399,7 +350,17 @@ package org.interguild.editor {
 		/**
 		 * Method is called when making a button to put background on then the button
 		 */
-
+		public function setBackgroundSize(background:Bitmap, x:int, y:int, width:int):void{
+			background.x = x;
+			background.y = y;
+			background.width = width;
+		}
+		public function setButtonSize(button:MovieClip,x:int, y:int, width:int, height:int):void{
+			button.x = x;
+			button.y = y;
+			button.width = width;
+			button.height = height;			
+		}
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
@@ -498,7 +459,18 @@ package org.interguild.editor {
 			var button:WoodBoxButton = WoodBoxButton(e.target); // focus mouse event
 			activeButton = WoodCrate.LEVEL_CODE_CHAR;
 		}
-
+		private function collectClick(e:MouseEvent):void {
+			var button:CollectableButton = CollectableButton(e.target); // focus mouse event
+			activeButton = Collectable.LEVEL_CODE_CHAR;
+		}
+		private function steelBoxClick(e:MouseEvent):void {
+			var button:SteelBoxButton = SteelBoxButton(e.target); // focus mouse event
+			activeButton = SteelCrate.LEVEL_CODE_CHAR;
+		}
+		private function arrowDownClick(e:MouseEvent):void {
+			var button:ArrowDownButton = ArrowDownButton(e.target); // focus mouse event
+//			activeButton = ArrowCrate.LEVEL_CODE_CHAR;
+		}
 		private function clearClick(e:MouseEvent):void {
 			grid.clearGrid();
 		}

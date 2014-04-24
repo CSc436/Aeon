@@ -337,16 +337,16 @@ package org.interguild.game.collision {
 			if (activeObject is Arrow) {
 				a = Arrow(activeObject);
 			}
-			if (!(otherObject is Tile) || !(activeObject is Tile)) {
+			if (!(otherObject is CollidableObject) || !(activeObject is CollidableObject)) {
 				//will never ever happen
-				throw new Error("Please handle non-Tile collisions in special cases before this line.");
+				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
 			}
 			
 			trace("Object 1: "+activeObject.toString());
 			trace("Object 2: "+otherObject.toString());
 
-			var activeTile:Tile = Tile(activeObject);
-			var otherTile:Tile = Tile(otherObject);
+			var activeTile:CollidableObject = CollidableObject(activeObject);
+			var otherTile:CollidableObject = CollidableObject(otherObject);
 			
 			/*
 			* ARROW HITS CRATE
