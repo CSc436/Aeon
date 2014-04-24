@@ -9,7 +9,7 @@ package org.interguild.editor {
 	public class DropDownMenu extends Sprite {
 
 		private var fileLabel:Button;
-		private var editLabel:Button;
+//		private var editLabel:Button;
 
 		private var openButton:Button;
 		private var saveButton:Button;
@@ -26,6 +26,7 @@ package org.interguild.editor {
 
 		private var currEditor:EditorPage;
 
+		//constructor
 		public function DropDownMenu(editPage:EditorPage):void {
 			currEditor = editPage;
 			fileSprite = new Sprite();
@@ -39,40 +40,42 @@ package org.interguild.editor {
 			fileLabel.y = 0;
 			fileSprite.addChild(fileLabel);
 			fileLabel.label = "File";
-			fileSprite.addEventListener(MouseEvent.ROLL_OVER, rollOverListener1);
-			fileSprite.addEventListener(MouseEvent.ROLL_OUT, rollOutListener1);
+			fileSprite.addEventListener(MouseEvent.ROLL_OVER, fileRollOverListener);
+			fileSprite.addEventListener(MouseEvent.ROLL_OUT, fileRollOutListener);
 
-			editLabel = new Button();
-			editLabel.x = 0;
-			editLabel.y = 0;
+//			editLabel = new Button();
+//			editLabel.x = 0;
+//			editLabel.y = 0;
+//			editLabel.label = "Edit";
+//			editSprite.addEventListener(MouseEvent.ROLL_OVER, rollOverListener2);
+//			editSprite.addEventListener(MouseEvent.ROLL_OUT, rollOutListener2);
 			//TODO find a use for edit
-			//			editSprite.addChild(editLabel);
-			editLabel.label = "Edit";
-			editSprite.addEventListener(MouseEvent.ROLL_OVER, rollOverListener2);
-			editSprite.addEventListener(MouseEvent.ROLL_OUT, rollOutListener2);
-
+			//editSprite.addChild(editLabel);
 		}
 
-		public function rollOverListener2(event:MouseEvent):void {
-			editButton1 = new Button();
-			editButton1.x = 0;
-			editButton1.y = 20;
-			editButton1.label = "Dummy button";
-			editSprite.addChild(editButton1);
+//		public function rollOverListener2(event:MouseEvent):void {
+//			editButton1 = new Button();
+//			editButton1.x = 0;
+//			editButton1.y = 20;
+//			editButton1.label = "Dummy button";
+//			editSprite.addChild(editButton1);
+//
+//			editButton2 = new Button();
+//			editButton2.x = 0;
+//			editButton2.y = 40;
+//			editButton2.label = "Other button";
+//			editSprite.addChild(editButton2);
+//		}
+//
+//		public function rollOutListener2(event:MouseEvent):void {
+//			editSprite.removeChild(editButton1);
+//			editSprite.removeChild(editButton2);
+//		}
 
-			editButton2 = new Button();
-			editButton2.x = 0;
-			editButton2.y = 40;
-			editButton2.label = "Other button";
-			editSprite.addChild(editButton2);
-		}
-
-		public function rollOutListener2(event:MouseEvent):void {
-			editSprite.removeChild(editButton1);
-			editSprite.removeChild(editButton2);
-		}
-
-		public function rollOverListener1(event:MouseEvent):void {
+		/**
+		 * listener for file dropDown
+		 */
+		public function fileRollOverListener(event:MouseEvent):void {
 			openButton = new Button();
 			openButton.x = 0;
 			openButton.y = 20;
@@ -96,7 +99,9 @@ package org.interguild.editor {
 		}
 
 		private var filereader:FileReference;
-
+		/**
+		 * listener for open Button
+		 */
 		public function openGameListener(event:MouseEvent):void {
 			//open the game
 			filereader = new FileReference();
@@ -117,29 +122,13 @@ package org.interguild.editor {
 
 		//data from file and length
 		public function onFileLoad(data:String):void {
-//			//get the data
-////			trace("textFile: \n"+data);
-//			var code:String = data;
-//			//parse the first line to get title name
-//			var eol:int = code.indexOf("\n");
-//			var title:String = code.substr(0, eol);
-//			code = code.substr(eol + 1); // skip this line
-//			
-//			//parse second line to get length and width
-//			eol = code.indexOf("\n");
-//			var line:String = code.substr(0, eol);
-//			var ix:int = line.indexOf("x");
-//			var lvlHeight:Number = Number(line.substr(0, ix));
-//			var lvlWidth:Number = Number(line.substr(ix + 1));
-//			code = code.substr(eol + 1); // skip this line
-//			
-
-//			currEditor.setLevelSize(title, code, lvlHeight, lvlWidth);
-
 			currEditor.openLevel(data);
 		}
 
-		//Save whatever is in the grid
+		/**
+		 * listener for save button
+		 * Grabs the current data code to save from the editorPage
+		 */
 		private function saveGameListener(e:MouseEvent):void {
 			var button:Button = Button(e.target);
 
@@ -147,20 +136,24 @@ package org.interguild.editor {
 
 			var levelcode:String = currEditor.getLevelCode();
 			
-			file.save(levelcode);
+			file.save(levelcode, levelcode.substring(0,levelcode.indexOf("\n")) + ".txt");
 //			file.save(levelcode, levelcode+ ".txt");
 		}
 
-		//Return to main menu
+		/**
+		 * main menu Button
+		 * return to the main menu and forget the current menu
+		 */
 		public function mainMenuListener(event:MouseEvent):void {
-			//Return to main menu
-			//prompt to save data?
-			this.removeChild(fileSprite);
+			//TODO prompt to save data
 			currEditor.gotoMainMenu();
 		}
 
-
-		public function rollOutListener1(event:MouseEvent):void {
+		/**
+		 * when the cursor moves out of the drop down menu remove all
+		 * the buttons that went with the dropdown menu
+		 */
+		public function fileRollOutListener(event:MouseEvent):void {
 			fileSprite.removeChild(openButton);
 			fileSprite.removeChild(saveButton);
 			fileSprite.removeChild(menuButton);
