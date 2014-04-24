@@ -335,7 +335,7 @@ package org.interguild.editor {
 			tf.graphics.endFill();
 			var maskTf:Sprite = new Sprite();
 			maskTf.graphics.beginFill(0);
-			maskTf.graphics.drawRect(0,0,200,375);
+			maskTf.graphics.drawRect(0,0,Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT-75);
 			maskTf.graphics.endFill();
 			maskTf.x =625;
 			maskTf.y = 100;

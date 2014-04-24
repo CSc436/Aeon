@@ -474,6 +474,8 @@ package org.interguild.game.collision {
 						tile.activate();
 						if (!tile.isGravible())
 							break;
+					}else{
+						break;
 					}
 				}
 			}
