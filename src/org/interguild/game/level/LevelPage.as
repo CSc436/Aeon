@@ -1,12 +1,12 @@
 package org.interguild.game.level {
 	import flash.geom.Rectangle;
-	
+
 	import flexunit.utils.ArrayList;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
-	import org.interguild.Page;
 	import org.interguild.loader.LevelLoader;
+	import flash.display.Sprite;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.
@@ -16,7 +16,7 @@ package org.interguild.game.level {
 	 * 		-The win screen?
 	 * 		-The level itself
 	 */
-	public class LevelPage extends Page {
+	public class LevelPage extends Sprite {
 
 		CONFIG::NODEPLOY {
 			public static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
@@ -26,6 +26,7 @@ package org.interguild.game.level {
 		private var loader:LevelLoader;
 		private var progressBar:LevelProgressBar;
 		private var startScreen:LevelStartScreen;
+		private var pauseMenu:LevelPauseMenu;
 
 		public function LevelPage() {
 			//init progress bar
@@ -45,49 +46,44 @@ package org.interguild.game.level {
 		public function playLevelFromFile(file:String):void {
 			loader.loadFromFile(file);
 		}
-		
-		public function playLevelFromCode(code:String):void{
+
+		public function playLevelFromCode(code:String):void {
 			loader.loadFromCode(code, "MainMenu");
 		}
 
 		private function onFileLoad(lvl:Level):void {
 			level = lvl;
+
+			//init start screen
 			startScreen = new LevelStartScreen(level.title);
 			addChild(startScreen);
-			showPreviewLevel(false);
+			showPreviewLevel();
+
+			//add level to display list on top of start screen
 			addChild(level);
-			startScreen.initButtons();
-			startScreen.hideButtons();
+
+			//init pause menu on top of level
+			pauseMenu = new LevelPauseMenu();
+			pauseMenu.visible = false;
+			addChild(pauseMenu);
 		}
 
 		private function onLoadError(e:ArrayList):void {
-			trace(e);
-			returnFromError(e);
-			//TODO display error to user
-		}
-		private function returnFromError(e:ArrayList):void{
-			var aeon:Aeon = Aeon.getMe();
-			aeon.returnFromError(e, "LevelLoader");
+			Aeon.getMe().returnFromError(e, "LevelLoader");
 		}
 
 		private function onLoadComplete():void {
 			removeChild(progressBar);
 			startScreen.loadComplete();
-			KeyMan.getMe().addSpacebarListener(showFullLevel);
-			KeyMan.getMe().addEscapeListener(pauseGame);
+
+			var keys:KeyMan = KeyMan.getMe();
+			keys.addSpacebarListener(onSpacebar);
+			keys.addEscapeListener(onPauseGame);
 		}
 
-		private function showPreviewLevel(isPauseMenu:Boolean):void {
+		private function showPreviewLevel():void {
 			startScreen.visible = true;
-
-			level.showHUD(false);
-			
-			// Get rid of the jump to start text if we are pausing the game rather than 
-			// Starting the level for the first time
-			if (isPauseMenu) {
-				startScreen.setJumpText("Paused");
-				startScreen.showButtons();
-			}
+			level.hudVisibility = false;
 
 			//scale level preview:
 			var box:Rectangle = startScreen.getPreviewRegion();
@@ -104,36 +100,36 @@ package org.interguild.game.level {
 
 			level.hideBackground();
 		}
-		
-		private function showHUD(show:Boolean):void{
-			level.showHUD(show);
-		}
 
-		private function pauseGame():void {
-			if (KeyMan.getMe().isKeyEsc && !startScreen.visible) {
-				trace("Trying to pause the game");
-				level.stopGame();
-				showPreviewLevel(true);
-			} else if (!(KeyMan.getMe().isKeyEsc) && startScreen.visible) {
-				trace("Trying to unpause the game");
-				showFullLevel(true);
+		private function onPauseGame():void {
+			if (!pauseMenu.visible) { //pause
+				if (!startScreen.visible) {
+					level.pauseGame();
+				}
+				pauseMenu.visible = true;
+			} else {
+				if (!startScreen.visible) {
+					level.continueGame(); //unpause
+				}
+				pauseMenu.visible = false;
+			}
+		}
+		
+		private function onSpacebar():void{
+			if(!pauseMenu.visible && !level.isRunning){
+				showFullLevel();
 			}
 		}
 
-		private function showFullLevel(wasPaused:Boolean):void {
-			if (KeyMan.getMe().spacebarCallback != null)
-				KeyMan.getMe().removeSpacebarListener();
+		private function showFullLevel():void {
 			if (startScreen.visible) {
-				if (wasPaused) {
-					startScreen.hideButtons();
-				}
 				startScreen.visible = false;
 				level.showBackground();
 				level.scaleX = level.scaleY = 1;
 				level.x = level.y = 0;
 				level.startGame();
 			}
-			showHUD(true);
+			level.hudVisibility = true;
 		}
 	}
 }

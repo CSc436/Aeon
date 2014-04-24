@@ -38,12 +38,9 @@ package org.interguild {
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key
-					if(!isKeyEsc)
-						isKeyEsc = true;
-					else
-						isKeyEsc = false;
-					if(escapeCallback)
+					if(escapeCallback && !isKeyEsc)
 						escapeCallback();
+					isKeyEsc = true;
 					break;
 				case 39: //right arrow key
 					isKeyRight = true;
@@ -60,7 +57,7 @@ package org.interguild {
 				case 32: //spacebar
 					isKeySpace = true;
 					if(spacebarCallback)
-						spacebarCallback(false);
+						spacebarCallback();
 					break;
 			}
 			CONFIG::DEBUG {
@@ -85,6 +82,9 @@ package org.interguild {
 
 		private function onKeyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
+				case 27: //Esc key
+					isKeyEsc = false;
+					break;
 				case 39: //right arrow key
 					isKeyRight = false;
 					break;
@@ -102,14 +102,10 @@ package org.interguild {
 					break;
 			}
 		}
+		
 		public function resumeFromButton():void {
-			resetEscKey();
 			if(escapeCallback)
 				escapeCallback();
-		}
-		
-		public function resetEscKey():void {
-			isKeyEsc = false;
 		}
 
 		public function addEscapeListener(f:Function):void {
@@ -118,10 +114,6 @@ package org.interguild {
 
 		public function addSpacebarListener(cb:Function):void {
 			spacebarCallback = cb;
-		}
-
-		public function removeSpacebarListener():void {
-			spacebarCallback = null;
 		}
 
 		public function addMenuCallback(cb:Function):void {
