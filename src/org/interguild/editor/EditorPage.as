@@ -11,7 +11,6 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
-	import org.interguild.Page;
 	import org.interguild.editor.scrollBar.FullScreenScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.Player;
@@ -24,7 +23,7 @@ package org.interguild.editor {
 	import org.interguild.loader.Loader;
 
 	// EditorPage handles all the initialization for the level editor gui and more
-	public class EditorPage extends Page {
+	public class EditorPage extends Sprite {
 
 		private static const DEFAULT_LEVEL_WIDTH:uint = 15;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 15;
