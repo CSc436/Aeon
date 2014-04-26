@@ -9,12 +9,15 @@ package org.interguild.editor {
 	 * Store mltiple instances of Editor Page such that the user
 	 */
 	public class EditorTab extends Sprite {
+		private static const DEFAULT_LEVEL_WIDTH:uint = 15;
+		private static const DEFAULT_LEVEL_HEIGHT:uint = 15;
+		private static const MAX_ARRAY_SIZE:uint = 5;
+		
 		private var gridState:Array;// of EditorGrids
 		private var tabState:Array;// of TabSprites
 		private var textState:Array;// of textFields
 		private var currTab:int;
 		private var tabsActive:int = 0;
-		private static const MAX_ARRAY_SIZE:uint = 5;
 		
 		public function EditorTab() {
 			gridState = new Array(MAX_ARRAY_SIZE);
@@ -38,7 +41,7 @@ package org.interguild.editor {
 		public function addTab():void{
 			if(tabsActive == MAX_ARRAY_SIZE)
 				return; // cannot add more than 5 tabs
-			gridState[tabsActive] = new EditorGrid(15,15); //default 15x15
+			gridState[tabsActive] = new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH); //default 15x15
 			tabsActive++;
 			
 			//update gui with more tabs

@@ -14,6 +14,7 @@ package org.interguild {
 
 	import org.interguild.loader.ErrorDialog;
 	import flexunit.utils.ArrayList;
+	import org.interguild.editor.Page;
 
 
 	/**
