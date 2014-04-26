@@ -13,6 +13,8 @@ package org.interguild.editor {
 
 	public class EditorButtonContainer extends Page {
 		//following are objects on this sprite
+		
+		private var activeButton:String="";
 		private var finishButton:FinishLineButton;
 		private var playerSpawnButton:StartLineButton;
 		private var wallButton:TerrainBoxButton;
@@ -22,22 +24,13 @@ package org.interguild.editor {
 		private var collectButton:CollectableButton;
 		
 		private var tf:Sprite;
-
-
-		/*
-		//TODO add new buttons
-		StartButton
-		FinishButton
-		WallButton
-		WoodButton
-		SteelButton
-		CollectableButton
-		LightningButtonUp
-		LightningButtonDown
-		LightningButtonLeft
-		LightningButtonRight
-		*/
-
+		
+		public function getActiveButton():String{
+			return activeButton;
+		}
+		public function setActiveButton(tileCode:String):void{
+			activeButton = tileCode;
+		}
 		public function EditorButtonContainer() {
 			super();
 		
@@ -141,60 +134,60 @@ package org.interguild.editor {
 			textScrollBar.y = 100;
 			addChild(textScrollBar);
 
-			addChild(arrowDownBackground);
-			addChild(arrowDown);
-			addChild(arrowUpBackground);
-			addChild(arrowUp);
-			addChild(arrowLeftBackground);
-			addChild(arrowLeft);
-			addChild(arrowRightBackground);
-			addChild(arrowRight);
-			addChild(wallBackground);
-			addChild(wallButton);
-			addChild(woodBackground);
-			addChild(woodButton);
-			addChild(steelBackground);
-			addChild(steelButton);
-			addChild(collectBackground);
-			addChild(collectButton);
-			addChild(finishBackground);
-			addChild(finishButton);
-			addChild(playerBackground);
-			addChild(playerSpawnButton);
-			addChild(clearBackground);
-			addChild(clearButton);
+			tf.addChild(arrowDownBackground);
+			tf.addChild(arrowDown);
+			tf.addChild(arrowUpBackground);
+			tf.addChild(arrowUp);
+			tf.addChild(arrowLeftBackground);
+			tf.addChild(arrowLeft);
+			tf.addChild(arrowRightBackground);
+			tf.addChild(arrowRight);
+			tf.addChild(wallBackground);
+			tf.addChild(wallButton);
+			tf.addChild(woodBackground);
+			tf.addChild(woodButton);
+			tf.addChild(steelBackground);
+			tf.addChild(steelButton);
+			tf.addChild(collectBackground);
+			tf.addChild(collectButton);
+			tf.addChild(finishBackground);
+			tf.addChild(finishButton);
+			tf.addChild(playerBackground);
+			tf.addChild(playerSpawnButton);
+			tf.addChild(clearBackground);
+			tf.addChild(clearButton);
 			addChild(tf);
 		}
 
 		private function finishClick(e:MouseEvent):void {
 			var button:FinishLineButton=FinishLineButton(e.target);
 			//TODO: change this to finish line once done
-			activeButton=Player.LEVEL_CODE_CHAR;
+			setActiveButton(Player.LEVEL_CODE_CHAR);
 		}
 
 		private function startClick(e:MouseEvent):void {
 			var button:StartLineButton=StartLineButton(e.target);
-			activeButton=Player.LEVEL_CODE_CHAR;
+			setActiveButton(Player.LEVEL_CODE_CHAR);
 		}
 
 		private function wallClick(e:MouseEvent):void {
 			var button:TerrainBoxButton=TerrainBoxButton(e.target);
-			activeButton=Terrain.LEVEL_CODE_CHAR;
+			setActiveButton(Terrain.LEVEL_CODE_CHAR);
 		}
 
 		private function woodBoxClick(e:MouseEvent):void {
 			var button:WoodBoxButton=WoodBoxButton(e.target); // focus mouse event
-			activeButton=WoodCrate.LEVEL_CODE_CHAR;
+			setActiveButton(WoodCrate.LEVEL_CODE_CHAR);
 		}
 
 		private function collectClick(e:MouseEvent):void {
 			var button:CollectableButton=CollectableButton(e.target); // focus mouse event
-			activeButton=Collectable.LEVEL_CODE_CHAR;
+			setActiveButton(Collectable.LEVEL_CODE_CHAR);
 		}
 
 		private function steelBoxClick(e:MouseEvent):void {
 			var button:SteelBoxButton=SteelBoxButton(e.target); // focus mouse event
-			activeButton=SteelCrate.LEVEL_CODE_CHAR;
+			setActiveButton(SteelCrate.LEVEL_CODE_CHAR);
 		}
 
 		private function arrowDownClick(e:MouseEvent):void {
@@ -206,5 +199,6 @@ package org.interguild.editor {
 			grid.clearGrid();
 		}
 	}
+	
 
 }

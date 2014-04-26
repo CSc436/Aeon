@@ -13,7 +13,6 @@ package org.interguild.editor {
 	 */
 	public class Page extends Sprite {
 		protected var grid:EditorGrid;
-		protected var activeButton:String="";
 		
 		/**
 		 * Method is called when placing a background for an editorButton

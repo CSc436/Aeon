@@ -29,8 +29,6 @@ package org.interguild.editor {
 					c.x = j * c.width;
 					c.y = i * c.height;
 					temp.cells[i][j] = c;
-					
-					trace(temp.cols);
 					temp.cells[i][j].setTile(cells[i][j].cellName);
 					temp.addChild(c);
 				}

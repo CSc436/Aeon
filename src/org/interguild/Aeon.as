@@ -144,9 +144,16 @@ package org.interguild {
 				removeChild(levelPage);
 				levelPage = null;
 			}
-
+			if(editorPage != null){
+				var currentLevel:String = editorPage.fromTestGame();
+			}
 			editorPage = new EditorPage(this);
 			this.addChild(editorPage);
+			// if coming back from test game, will be true
+			if(currentLevel != null){
+				trace(currentLevel);
+				editorPage.openLevel(currentLevel);
+			}
 			currentPage = editorPage;
 		}
 		

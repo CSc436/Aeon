@@ -10,6 +10,8 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
+	
+	import org.interguild.editor.EditorButtonContainer;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.level.LevelProgressBar;
@@ -47,7 +49,8 @@ package org.interguild.editor {
 		
 		private var gridVerticalScrollBar:VerticalScrollBar;
 		private var gridHorizontalScrollBar:HorizontalBar;
-
+		//variable to hold level code if coming back from test level
+		private var currentLevel:String;
 
 		/**
 		 * Creates grid holder and populates it with objects.
@@ -182,7 +185,12 @@ package org.interguild.editor {
 			//adding in mask and new scrollbar
 			resetComponents();
 		}
-
+		public function setUpEditorPage(title:String, newGrid:EditorGrid):void{
+			
+			this.title.text = title;
+			createNewGird(newGrid);
+			
+		}
 		/**
 		 * Creates a new grid for the gui
 		 */
@@ -299,7 +307,19 @@ package org.interguild.editor {
 		 */
 		private function testGameButtonClick(e:MouseEvent):void {
 			var s:String = getLevelCode();
+			currentLevel = s;
 			Aeon.getMe().playLevelCode(s);
+		}
+		
+		/**
+		 * This function will return  true if the current level exists.
+		 *  if the player is coming back from the test game
+		 */
+		public function fromTestGame():String{
+			if(currentLevel == null){
+				return null;
+			}
+			return currentLevel;
 		}
 		
 		public function addTabListener(e:MouseEvent):void{
@@ -341,7 +361,7 @@ package org.interguild.editor {
 			if (e.altKey) {
 				undoList.push(grid.clone());
 				//switch to check what trigger is active
-				cell.setTile(activeButton);
+				cell.setTile(editorButtons.getActiveButton());
 			}
 		}
 		
@@ -352,7 +372,7 @@ package org.interguild.editor {
 			if (e.ctrlKey) {
 				cell.clearTile();
 			} else {
-				cell.setTile(activeButton);
+				cell.setTile(editorButtons.getActiveButton());
 			}
 			
 			//switch to check what trigger is active
