@@ -15,6 +15,7 @@ package org.interguild {
 	import org.interguild.editor.EditorGrid;
 	import org.interguild.loader.ErrorDialog;
 	import flexunit.utils.ArrayList;
+	import org.interguild.editor.Page;
 
 
 	/**

@@ -5,7 +5,7 @@ package org.interguild.game.level {
 	
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
-	import org.interguild.Page;
+	import org.interguild.editor.Page;
 	import org.interguild.loader.LevelLoader;
 
 	/**

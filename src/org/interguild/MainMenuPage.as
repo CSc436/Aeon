@@ -9,6 +9,7 @@ package org.interguild {
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	import flash.utils.Timer;
+	import org.interguild.editor.Page;
 
 	CONFIG::DEPLOY {
 		import org.interguild.game.level.TestLevel;
