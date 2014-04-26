@@ -32,7 +32,7 @@ package org.interguild.game.tiles {
 
 				//TODO understand this function Henry
 			TerrainView.getMe().drawTerrainAt(x, y);
-			addChild(new Bitmap(new TerrainSprite()));
+//			addChild(new Bitmap(new TerrainSprite()));
 		}
 	}
 }
