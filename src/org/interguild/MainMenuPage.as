@@ -1,14 +1,11 @@
 package org.interguild {
-	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
-	import flash.events.TimerEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-	import flash.utils.Timer;
 
 	CONFIG::DEPLOY {
 		import org.interguild.game.level.TestLevel;
@@ -17,17 +14,15 @@ package org.interguild {
 		import org.interguild.game.level.LevelPage;
 	}
 
-	public class MainMenuPage extends Page {
-
-		private static const ANIMATION_TIMER_DELAY:uint = 75;
+	public class MainMenuPage extends ListBasedMenu {
 
 		//logo offset from top left
 		private static const LOGO_X:uint = 70;
 		private static const LOGO_Y:uint = 65;
 
 		//selector offset from buttons
-		private static const SELECTOR_X:int = -20;
-		private static const SELECTOR_Y:int = -10;
+		private static const SELECTOR_X:int = -16;
+		private static const SELECTOR_Y:int = -7;
 
 		//button positions
 		private static const BUTTONS_X:uint = 90;
@@ -56,92 +51,51 @@ package org.interguild {
 		private static const LINK_DOWN_COLOR:uint = 0x97ffed;
 		private static const COPYRIGHT:String = "© 2014 Interguild.org";
 
-		private var buttonSelect:Bitmap;
-		private var buttonClick:Bitmap;
-
-		private var animTimer:Timer;
-
-		private var selectedButton:int = 0;
-		private var listOfButtons:Array;
-
 		private var creditText:TextField;
 		private var logoutText:TextField;
 
-		private var isEnabled:Boolean = true;
-
 		public function MainMenuPage() {
+			super(SELECTOR_X, SELECTOR_Y);
+			
 			//init logo image
 			var logo:MovieClip = new AeonLogo();
 			logo.x = LOGO_X;
 			logo.y = LOGO_Y;
 			this.addChild(logo);
 
-			//init selectors
-			buttonSelect = new Bitmap(new MenuButtonSelectBG());
-			buttonClick = new Bitmap(new MenuButtonClickBG());
-			buttonSelect.visible = false;
-			buttonClick.visible = false;
-			addChild(buttonSelect);
-			addChild(buttonClick);
-
-			listOfButtons = new Array();
-
 			//int play game button
 			var playButton:MovieClip = new PlayGameButton();
 			playButton.buttonMode = true;
 			playButton.x = BUTTONS_X;
 			playButton.y = PLAY_GAME_Y;
-			playButton.addEventListener(MouseEvent.CLICK, gotoGame);
-			playButton.addEventListener(MouseEvent.CLICK, onMouseClick);
-			playButton.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			playButton.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this.addChild(playButton);
-			listOfButtons.push(playButton);
+			addButton(playButton);
 
 			//int play user levels button
 			var playLevels:MovieClip = new PlayUserLevelsButton();
 			playLevels.buttonMode = true;
 			playLevels.x = BUTTONS_X;
 			playLevels.y = PLAY_USER_LEVELS_Y;
-			playLevels.addEventListener(MouseEvent.CLICK, gotoLevels);
-			playLevels.addEventListener(MouseEvent.CLICK, onMouseClick);
-			playLevels.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			playLevels.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this.addChild(playLevels);
-			listOfButtons.push(playLevels);
+			addButton(playLevels);
 
 			//init editor button
 			var editorButton:MovieClip = new LevelEditorButton();
 			editorButton.buttonMode = true;
 			editorButton.x = BUTTONS_X;
 			editorButton.y = LEVEL_EDITOR_Y;
-			editorButton.addEventListener(MouseEvent.CLICK, gotoEditor);
-			editorButton.addEventListener(MouseEvent.CLICK, onMouseClick);
-			editorButton.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			editorButton.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this.addChild(editorButton);
-			listOfButtons.push(editorButton);
+			addButton(editorButton);
 
 			//int play user levels button
 			var optionsButton:MovieClip = new OptionsButton();
 			optionsButton.buttonMode = true;
 			optionsButton.x = BUTTONS_X;
 			optionsButton.y = OPTIONS_Y;
-			optionsButton.addEventListener(MouseEvent.CLICK, gotoOptions);
-			optionsButton.addEventListener(MouseEvent.CLICK, onMouseClick);
-			optionsButton.addEventListener(MouseEvent.MOUSE_DOWN, onMouseDown);
-			optionsButton.addEventListener(MouseEvent.MOUSE_OVER, onMouseOver);
 			this.addChild(optionsButton);
-			listOfButtons.push(optionsButton);
+			addButton(optionsButton);
 
-			animTimer = new Timer(ANIMATION_TIMER_DELAY);
-			animTimer.addEventListener(TimerEvent.TIMER, handleClick);
-
-			buttonSelect.x = playButton.x + SELECTOR_X;
-			buttonSelect.y = playButton.y + SELECTOR_Y;
-			buttonSelect.visible = true;
-
-			KeyMan.getMe().addMenuCallback(onKeyDown);
+			selectItem(playButton);
 
 			//init credits
 			creditText = new TextField();
@@ -193,46 +147,7 @@ package org.interguild {
 			addChild(loginText);
 		}
 
-		private function gotoGame(event:MouseEvent):void {
-			selectedButton = TODO_PLAY_GAME;
-		}
-
-		private function gotoLevels(event:MouseEvent):void {
-			selectedButton = TODO_PLAY_LEVELS;
-		}
-
-		private function gotoEditor(evt:MouseEvent):void {
-			selectedButton = TODO_LEVEL_EDITOR;
-		}
-
-		private function gotoOptions(event:MouseEvent):void {
-			selectedButton = TODO_OPTIONS;
-		}
-
-		private function onMouseClick(evt:MouseEvent):void {
-			handleClick();
-		}
-
-		private function onMouseDown(evt:MouseEvent):void {
-			simMouseDown(MovieClip(evt.target));
-		}
-
-		private function simMouseDown(t:MovieClip):void {
-			buttonClick.x = t.x + SELECTOR_X;
-			buttonClick.y = t.y + SELECTOR_Y;
-			buttonClick.visible = true;
-			buttonSelect.visible = false;
-		}
-
-		private function pressItem(t:MovieClip):void {
-			simMouseDown(t);
-			animTimer.start();
-		}
-
-		private function handleClick(evt:TimerEvent = null):void {
-			animTimer.stop();
-			buttonSelect.visible = true;
-			buttonClick.visible = false;
+		protected override function onItemClicked(selectedButton:uint):void{
 			switch (selectedButton) {
 				case TODO_PLAY_GAME:
 					CONFIG::DEPLOY {
@@ -250,42 +165,6 @@ package org.interguild {
 				case TODO_OPTIONS:
 					break;
 			}
-		}
-
-		private function onMouseOver(evt:MouseEvent):void {
-			var t:MovieClip = MovieClip(evt.target);
-			selectedButton = listOfButtons.indexOf(t);
-			selectItem(MovieClip(evt.target));
-		}
-
-		private function onKeyDown(keyCode:uint):void {
-			if (!isEnabled)
-				return;
-			switch (keyCode) {
-				case 40: //down arrow key
-					selectedButton++;
-					if (selectedButton >= NUMBER_OF_MENU_BUTTONS)
-						selectedButton = 0;
-					selectItem(MovieClip(listOfButtons[selectedButton]));
-					break;
-				case 38: //up arrow key
-					selectedButton--;
-					if (selectedButton < 0)
-						selectedButton = NUMBER_OF_MENU_BUTTONS - 1;
-					selectItem(MovieClip(listOfButtons[selectedButton]));
-					break;
-				case 32: //spacebar
-				case 13: //enter
-					pressItem(MovieClip(listOfButtons[selectedButton]));
-					break;
-			}
-		}
-
-		private function selectItem(t:MovieClip):void {
-			buttonSelect.x = t.x + SELECTOR_X;
-			buttonSelect.y = t.y + SELECTOR_Y;
-			buttonSelect.visible = true;
-			buttonClick.visible = false;
 		}
 
 		private function onLinkOver(evt:MouseEvent):void {
@@ -318,11 +197,6 @@ package org.interguild {
 			f.color = LINK_NORMAL_COLOR;
 			f.underline = true;
 			t.setTextFormat(f);
-		}
-
-		public override function set visible(b:Boolean):void {
-			super.visible = b;
-			isEnabled = b;
 		}
 	}
 }

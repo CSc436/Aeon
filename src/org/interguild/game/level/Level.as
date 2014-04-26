@@ -81,8 +81,13 @@ package org.interguild.game.level {
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 
+			//init level hud
 			hud = new LevelHUD();
 			addChild(hud);
+			
+			//init game loop
+			timer = new Timer(PERIOD);
+			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 
 			CONFIG::DEBUG {
 				var keys:KeyMan = KeyMan.getMe();
@@ -132,12 +137,12 @@ package org.interguild.game.level {
 			myTitle = t;
 		}
 
-		public function showHUD(show:Boolean):void {
+		public function set hudVisibility(show:Boolean):void {
 			if (show) {
 				hud.show();
-				return;
+			} else {
+				hud.hide();
 			}
-			hud.hide();
 		}
 
 		/**
@@ -200,14 +205,20 @@ package org.interguild.game.level {
 
 			player.wasJumping = true;
 
-			//init game loop
-			timer = new Timer(PERIOD);
-			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
 
-		public function stopGame():void {
+		public function pauseGame():void {
 			timer.stop();
+		}
+		
+		public function continueGame():void{
+			player.wasJumping = true;
+			timer.start();
+		}
+		
+		public function get isRunning():Boolean{
+			return timer.running;
 		}
 
 		CONFIG::DEBUG {
@@ -255,12 +266,13 @@ package org.interguild.game.level {
 		private function update():void {
 			//update player
 			player.onGameLoop();
-			player.reset();
+
 
 			// update animations
 			player.updateAnimation();
 			player.frameCounter++; // updated counter for game frames
 
+			player.reset();
 
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;

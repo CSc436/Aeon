@@ -12,7 +12,6 @@ package org.interguild {
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.level.LevelPage;
 
-	import org.interguild.editor.EditorGrid;
 	import org.interguild.loader.ErrorDialog;
 	import flexunit.utils.ArrayList;
 
@@ -50,7 +49,7 @@ package org.interguild {
 		private static const BG_COLOR:uint = 0x000b17;
 		private static const BORDER_COLOR:uint = 0x000b17; //no border
 
-		private var currentPage:Page;
+		private var currentPage:Sprite;
 		private var mainMenu:MainMenuPage;
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;

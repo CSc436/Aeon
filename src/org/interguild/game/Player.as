@@ -1,21 +1,18 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
-
 	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.Tile;
 
-	public class Player extends CollidableObject implements Tile {
-
-		public static const LEVEL_CODE_CHAR:String = '#';
+	public class Player extends CollidableObject {
+		CONFIG::DEBUG {
+			private static const SPRITE_COLOR:uint = 0xFF0000;
+			private static const SPRITE_WIDTH:uint = 24;
+			private static const SPRITE_HEIGHT:uint = 40;
+		}
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
-
-		private static const SPRITE_COLOR:uint = 0xFF0000;
-		private static const SPRITE_WIDTH:uint = 24;
-		private static const SPRITE_HEIGHT:uint = 40;
 
 		private static const CRAWLING_HEIGHT:uint = 32;
 		private static const STANDING_HEIGHT:uint = 40;
@@ -51,8 +48,16 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
+		//TODO are these values correct? Henry
+		public static const LEVEL_CODE_CHAR:String = '#';
+		public static const DESTRUCTIBILITY:int=2;
+		public static const IS_SOLID:Boolean=true;
+		public static const HAS_GRAVITY:Boolean=true;
+		public static const KNOCKBACK_AMOUNT:int=5;
+		public static const IS_BUOYANT:Boolean=false;
+		
 		public function Player() {
-			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
@@ -86,9 +91,6 @@ package org.interguild.game {
 
 			updateKeys();
 
-			// reset isStanding
-			reset();
-
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
 			}
@@ -103,12 +105,17 @@ package org.interguild.game {
 			newX += speedX;
 			newY += speedY;
 			updateHitBox();
+			
+			trace( "speedY = ", speedY );
+			if ( speedY > 2 && !isJumping ) {
+				isFalling = true;
+			}
 		}
 
 		public function reset():void {
 			isStanding = false;
 			isCrouching = false;
-//			isFalling = false;
+			isFalling = false;
 //			isJumping = false;
 		}
 
@@ -117,16 +124,16 @@ package org.interguild.game {
 				playerClip.gotoAndStop(0);
 
 			//moving to the left
-			if (keys.isKeyLeft) {
+			if (keys.isKeyLeft && !keys.isKeyRight) {
 				speedX -= RUN_ACC;
-				isFacingRight= false;
+				isFacingRight = false;
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
 					speedX = 0;
 			}
 			//moving to the right
-			if (keys.isKeyRight) {
+			if (keys.isKeyRight && !keys.isKeyLeft) {
 				speedX += RUN_ACC;
 				isFacingRight = true;
 			} else if (speedX > 0) {
@@ -148,12 +155,13 @@ package org.interguild.game {
 				this.hitbox.height = STANDING_HEIGHT;
 			}
 
-			
+
 			// if player pushes both right and left stop them
 			if (keys.isKeyRight && keys.isKeyLeft && isStanding) {
 				speedX = 0;
+				playerClip.gotoAndStop(0); // reset animation
 			}
-			
+
 			// look up
 			if (keys.isKeyUp) {
 				isFacingUp = true;
@@ -175,9 +183,7 @@ package org.interguild.game {
 				wasJumping = true;
 			else
 				wasJumping = false;
-
 		}
-
 
 		public function updateAnimation():void {
 			if (isJumping) {
@@ -196,7 +202,7 @@ package org.interguild.game {
 			// reset the animation to walking left
 			else if (!keys.isKeyDown && !isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkLeft();
-					// reset the animation to walking right
+			// reset the animation to walking right
 			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkRight();
 			}
@@ -257,7 +263,7 @@ package org.interguild.game {
 				addChild(playerClip);
 				playerClip.gotoAndStop(0);
 			}
-			
+
 			//animate moving to the right
 			playerClip.scaleX = 1;
 			prevScaleX = 1;
@@ -318,7 +324,7 @@ package org.interguild.game {
 					playerClip.x = 25;
 					playerClip.y = -8;
 				}
-			} else if (frameCounter - frameJumpCounter <= 12) {
+			} else if (7 <= frameCounter - frameJumpCounter && frameCounter - frameJumpCounter <= 16 ) {
 				if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
 					removeChild(playerClip);
 					playerClip = new PlayerJumpPeakThenFallAnimation();
@@ -376,11 +382,12 @@ package org.interguild.game {
 				removeChild(playerClip);
 				playerClip = new PlayerJumpPeakThenFallAnimation();
 				addChild(playerClip);
+				playerClip.gotoAndStop(15)
 			}
 
 
-			if (playerClip.currentFrame != playerClip.totalFrames)
-				playerClip.nextFrame();
+//			if (playerClip.currentFrame != playerClip.totalFrames)
+//				playerClip.nextFrame();
 
 
 			// make sure the animation is facing the correct direction if the player changes it in mid air
@@ -398,65 +405,6 @@ package org.interguild.game {
 				playerClip.y = -8;
 			}
 
-		}
-
-		/*
-		function: getDestructibility()
-		description: returns value indicating whether or not
-		a tile should be destroyed and by what.
-		param: None
-		return: int
-		0 = indestructible (terrain)
-		1 = destructible by arrows and dynamite (steel)
-		2 = destructible by arrows, dynamite and touch (wooden)
-		*/
-		public function getDestructibility():int {
-			return 1;
-		}
-
-		/*
-		function: isSolid()
-		description: returns whether or not the tile is solid
-		i.e. player/tiles can pass through it.
-		param: None
-		return: Boolean
-		*/
-		public function isSolid():Boolean {
-			return true;
-		}
-
-		/*
-		function: isGravible()
-		description: returns whether or not the tile is affected
-		by simulated game gravity.
-		param: None
-		return: Boolean
-		*/
-		public function isGravible():Boolean {
-			return true;
-		}
-
-		/*
-		function: doesKnockback()
-		description: returns whether or not the tile knocks back
-		the character/tile that has collided with it.
-		param: None
-		return: int
-		0 = does not knockback
-		>0 = amount to knockback
-		*/
-		public function doesKnockback():int {
-			return 0;
-		}
-
-		/*
-		function: isBuoyant()
-		description: returns whether or not the tile can float.
-		param: None
-		return: Boolean
-		*/
-		public function isBuoyant():Boolean {
-			return false;
 		}
 
 		public function die():void {
