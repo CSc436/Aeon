@@ -10,7 +10,7 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
-	import org.interguild.editor.scrollBar.FullScreenScrollBar;
+	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
@@ -21,7 +21,6 @@ package org.interguild.editor {
 		//following are objects on this sprite
 		private var testButton:TestButton;
 		private var resizeButton:ResizeButton;
-		private var tf:Sprite;
 		private var widthBox:TextInput;
 		private var heightBox:TextInput;
 		private var titlef:TextField;
@@ -46,8 +45,8 @@ package org.interguild.editor {
 
 		private var progressBar:LevelProgressBar;
 		
-		private var scrollBar:FullScreenScrollBar;
-		private var scroll:HorizontalBar;
+		private var gridVerticalScrollBar:VerticalScrollBar;
+		private var gridHorizontalScrollBar:HorizontalBar;
 
 
 		/**
@@ -103,7 +102,7 @@ package org.interguild.editor {
 			resizeButton = new ResizeButton();
 			setButtonSize(resizeButton, 745,37, 120, 35);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
-
+			
 			//title text field
 			titlef = new TextField();
 			titlef.text = "Title:";
@@ -141,32 +140,15 @@ package org.interguild.editor {
 			heightBox.height = 25;
 			heightBox.x = 680;
 			heightBox.y = 60;
-			//textfield
-			tf = new Sprite();
-			tf.x = 625;
-			tf.y = 100;
-			tf.graphics.beginFill(0xFFFFFF);
-			tf.graphics.drawRect(0,0, 200,1000);
-			tf.graphics.endFill();
-			var maskTf:Sprite = new Sprite();
-			maskTf.graphics.beginFill(0);
-			maskTf.graphics.drawRect(0,0,Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT-75);
-			maskTf.graphics.endFill();
-			maskTf.x =625;
-			maskTf.y = 100;
-			tf.mask = maskTf;
+			
 			//add the drop down menu
 			dropDown = new DropDownMenu(this);
 			dropDown.x = 5;
 			dropDown.y = 5;
 
 			tab = new EditorTab();
-			newGridReady(tab.getCurrentGrid());
+			createNewGird(tab.getCurrentGrid());
 			
-			
-			var textScrollBar:FullScreenScrollBar = new FullScreenScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,845);
-			textScrollBar.y = 100;
-			addChild(textScrollBar);
 			addChild(resizeBackground);
 			addChild(resizeButton);
 			addChild(heightf);
@@ -177,18 +159,17 @@ package org.interguild.editor {
 			addChild(titlef);
 			addChild(testBackground);
 			addChild(testButton);
-			addChild(tf);
 			addChild(undoBackground);
 			addChild(undoButton);
 			addChild(redoBackground);
 			addChild(redoButton);
 			
 			editorButtons = new EditorButtonContainer();
-			tf.addChild(editorButtons);
+			addChild(editorButtons);
 			
 			addChild(dropDown);
 			loader = new EditorLoader();
-			loader.addInitializedListener(newGridReady);
+			loader.addInitializedListener(createNewGird);
 			loader.addErrorListener(onLoadError);
 		}
 		
@@ -205,17 +186,23 @@ package org.interguild.editor {
 		/**
 		 * Creates a new grid for the gui
 		 */
-		public function newGridReady(newGrid:EditorGrid):void {
+		public function createNewGird(newGrid:EditorGrid):void {
 //			public function newGridReady(title:String, newGrid:EditorGrid):void {
 //			this.title.text = title;
-			if (grid == null) {
-				removeChild(grid);
-			}
 			grid = newGrid;
 			grid.x = 20;
 			grid.y = 100;
 			addChild(grid);
-			resetComponents();
+			
+			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			gridVerticalScrollBar.y = 100;
+			addChild(gridVerticalScrollBar);
+			gridHorizontalScrollBar = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(gridHorizontalScrollBar);
+			
+			if(gridVerticalScrollBar != null && gridHorizontalScrollBar){
+				resetComponents();
+			}
 			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
 		}
@@ -260,13 +247,13 @@ package org.interguild.editor {
 			grid.resize(h, w);
 
 			//reset scrollbar
-			removeChild(scrollBar);
-			removeChild(scroll);
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
-			scrollBar.y = 100;
-			addChild(scrollBar);
-			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			addChild(scroll);
+			removeChild(gridVerticalScrollBar);
+			removeChild(gridHorizontalScrollBar);
+			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			gridVerticalScrollBar.y = 100;
+			addChild(gridVerticalScrollBar);
+			gridHorizontalScrollBar = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(gridHorizontalScrollBar);
 		}
 
 		private function resetComponents():void{
@@ -278,13 +265,13 @@ package org.interguild.editor {
 			gridMask.x = 20;
 			gridMask.y = 100;
 			grid.mask = gridMask;
-			removeChild(scrollBar);
-			removeChild(scroll);
-			scrollBar = new FullScreenScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
-			scrollBar.y = 100;
-			addChild(scrollBar);
-			scroll = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			addChild(scroll);
+			removeChild(gridVerticalScrollBar);
+			removeChild(gridHorizontalScrollBar);
+			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
+			gridVerticalScrollBar.y = 100;
+			addChild(gridVerticalScrollBar);
+			gridHorizontalScrollBar = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
+			addChild(gridHorizontalScrollBar);
 		}
 		/**
 		 * This function returns to the title menu
@@ -319,7 +306,7 @@ package org.interguild.editor {
 //			var b:Button = new Button();
 			tab.addTab();
 			
-			newGridReady(tab.getCurrentGrid());
+			createNewGird(tab.getCurrentGrid());
 		}
 		/**
 		 * listener for undo button
@@ -329,7 +316,7 @@ package org.interguild.editor {
 			if (undoList.length > 0) {
 				var popped:EditorGrid=undoList.pop();
 				redoList.push(grid.clone());
-				newGridReady(popped);
+				createNewGird(popped);
 			}
 		}
 		
@@ -340,7 +327,7 @@ package org.interguild.editor {
 			if (redoList.length > 0) {
 				var popped:EditorGrid=redoList.pop();
 				undoList.push(grid.clone());
-				newGridReady(popped);
+				createNewGird(popped);
 			}
 		}
 		

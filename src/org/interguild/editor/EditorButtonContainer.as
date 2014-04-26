@@ -1,7 +1,10 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-
+	
+	import org.interguild.Aeon;
+	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.SteelCrate;
@@ -17,6 +20,8 @@ package org.interguild.editor {
 		private var woodButton:WoodBoxButton;
 		private var steelButton:SteelBoxButton;
 		private var collectButton:CollectableButton;
+		
+		private var tf:Sprite;
 
 
 		/*
@@ -117,6 +122,24 @@ package org.interguild.editor {
 			setButtonSize(clearButton, 5, 605, 200, 25);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			
+			//textfield
+			tf = new Sprite();
+			tf.x = 625;
+			tf.y = 100;
+			tf.graphics.beginFill(0xFFFFFF);
+			tf.graphics.drawRect(0,0, 200,1000);
+			tf.graphics.endFill();
+			var maskTf:Sprite = new Sprite();
+			maskTf.graphics.beginFill(0);
+			maskTf.graphics.drawRect(0,0,Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT-75);
+			maskTf.graphics.endFill();
+			maskTf.x =625;
+			maskTf.y = 100;
+			tf.mask = maskTf;
+			
+			var textScrollBar:VerticalScrollBar = new VerticalScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,845);
+			textScrollBar.y = 100;
+			addChild(textScrollBar);
 
 			addChild(arrowDownBackground);
 			addChild(arrowDown);
@@ -140,6 +163,7 @@ package org.interguild.editor {
 			addChild(playerSpawnButton);
 			addChild(clearBackground);
 			addChild(clearButton);
+			addChild(tf);
 		}
 
 		private function finishClick(e:MouseEvent):void {

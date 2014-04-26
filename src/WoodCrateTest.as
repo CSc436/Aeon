@@ -32,9 +32,9 @@ package  {
 			Assert.assertEquals(0, woodCrate.doesKnockback());
 		}
 
-		[Test]
-		public function testIsBuoyant():void {
-			Assert.assertTrue(woodCrate.isBuoyant());
-		}
+//		[Test]
+//		public function testIsBuoyant():void {
+//			Assert.assertTrue(woodCrate.isBuoyant());
+//		}
 	}
 }
