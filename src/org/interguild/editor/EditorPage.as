@@ -15,7 +15,7 @@ package org.interguild.editor {
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-
+	
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
 		//following are objects on this sprite
@@ -30,7 +30,6 @@ package org.interguild.editor {
 		
 		private var loader:Loader;
 		private var gridContainer:Sprite;
-		private var gridMask:Sprite;
 		private var editorButtons:EditorButtonContainer;
 		private var tab:EditorTab;
 		private var dropDown:DropDownMenu;
@@ -40,15 +39,13 @@ package org.interguild.editor {
 		// UNDO REDO ACTIONS ARRAYLIST
 		private var undoList:Array;
 		private var redoList:Array;
-
+		
 		private var mainMenu:Aeon;
-
+		
 		private var progressBar:LevelProgressBar;
 		
-		private var gridVerticalScrollBar:VerticalScrollBar;
-		private var gridHorizontalScrollBar:HorizontalBar;
-
-
+		
+		
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -70,7 +67,7 @@ package org.interguild.editor {
 			redoButton=new RedoButton();
 			setButtonSize(redoButton, 57, 725, 100, 25);
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
-		
+			
 			//Test button:
 			var testBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(testBackground, 330,40, 200);
@@ -128,7 +125,7 @@ package org.interguild.editor {
 			title.x = 55;
 			title.y = 50;
 			title.text = "Level Name";
-
+			
 			//for entering a width and height
 			widthBox = new TextInput();
 			widthBox.width = 50;
@@ -145,9 +142,9 @@ package org.interguild.editor {
 			dropDown = new DropDownMenu(this);
 			dropDown.x = 5;
 			dropDown.y = 5;
-
+			
 			tab = new EditorTab();
-			createNewGird(tab.getCurrentGrid());
+			addChild(tab.getCurrentGridContainer());
 			
 			addChild(resizeBackground);
 			addChild(resizeButton);
@@ -169,8 +166,18 @@ package org.interguild.editor {
 			
 			addChild(dropDown);
 			loader = new EditorLoader();
-			loader.addInitializedListener(createNewGird);
+			loader.addInitializedListener(tab.addTab);
 			loader.addErrorListener(onLoadError);
+		}
+		
+		private function resizeClick(e:MouseEvent):void {
+			var w:Number = Number(widthBox.text);
+			var h:Number = Number(heightBox.text);
+			if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0)
+				throw new Error("Invalid Level Dimensions: '" + w + "' by '" + h + "'");
+			tab.resizeCurrentGrid(h, w);
+			
+			
 		}
 		
 		/**
@@ -180,34 +187,9 @@ package org.interguild.editor {
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
-			resetComponents();
+//			resetComponents();
 		}
-
-		/**
-		 * Creates a new grid for the gui
-		 */
-		public function createNewGird(newGrid:EditorGrid):void {
-//			public function newGridReady(title:String, newGrid:EditorGrid):void {
-//			this.title.text = title;
-			grid = newGrid;
-			grid.x = 20;
-			grid.y = 100;
-			addChild(grid);
-			
-			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
-			gridVerticalScrollBar.y = 100;
-			addChild(gridVerticalScrollBar);
-			gridHorizontalScrollBar = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			addChild(gridHorizontalScrollBar);
-			
-			if(gridVerticalScrollBar != null && gridHorizontalScrollBar){
-				resetComponents();
-			}
-			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
-			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
-		}
-	
-
+		
 		/**
 		 * error found, report then return to original state
 		 */
@@ -216,6 +198,7 @@ package org.interguild.editor {
 			returnFromError(e);
 			//TODO display error to user
 		}
+		
 		private function returnFromError(e:ArrayList):void{
 			Aeon.getMe().returnFromError(e, "Editor");
 		}
@@ -238,50 +221,16 @@ package org.interguild.editor {
 			b.useHandCursor = true;
 			return b;
 		}
-
-		private function resizeClick(e:MouseEvent):void {
-			var w:Number = Number(widthBox.text);
-			var h:Number = Number(heightBox.text);
-			if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0)
-				throw new Error("Invalid Level Dimensions: '" + w + "' by '" + h + "'");
-			grid.resize(h, w);
-
-			//reset scrollbar
-			removeChild(gridVerticalScrollBar);
-			removeChild(gridHorizontalScrollBar);
-			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
-			gridVerticalScrollBar.y = 100;
-			addChild(gridVerticalScrollBar);
-			gridHorizontalScrollBar = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			addChild(gridHorizontalScrollBar);
-		}
-
-		private function resetComponents():void{
-			//adding back mask, scrollbar, and listeners for undo grid
-			gridMask = new Sprite();
-			gridMask.graphics.beginFill(0);
-			gridMask.graphics.drawRect(0,0,550,370);
-			gridMask.graphics.endFill();
-			gridMask.x = 20;
-			gridMask.y = 100;
-			grid.mask = gridMask;
-			removeChild(gridVerticalScrollBar);
-			removeChild(gridHorizontalScrollBar);
-			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
-			gridVerticalScrollBar.y = 100;
-			addChild(gridVerticalScrollBar);
-			gridHorizontalScrollBar = new HorizontalBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true);
-			addChild(gridHorizontalScrollBar);
-		}
+		
 		/**
 		 * This function returns to the title menu
 		 */
 		public function gotoMainMenu():void {
-//			deleteSelf();
-//			mainMenu.initMainMenu();
+			//			deleteSelf();
+			//			mainMenu.initMainMenu();
 			Aeon.getMe().gotoMainMenu();
 		}
-
+		
 		/**
 		 * This function ask the grid for the code of the level so we may
 		 * save this code
@@ -293,7 +242,7 @@ package org.interguild.editor {
 			string += this.grid.toStringCells();
 			return string;
 		}
-
+		
 		/**
 		 * This function deletes level editor and moves on to level page
 		 */
@@ -302,12 +251,10 @@ package org.interguild.editor {
 			Aeon.getMe().playLevelCode(s);
 		}
 		
-		public function addTabListener(e:MouseEvent):void{
-//			var b:Button = new Button();
+		private function addTabListener(e:MouseEvent):void{
 			tab.addTab();
-			
-			createNewGird(tab.getCurrentGrid());
 		}
+		
 		/**
 		 * listener for undo button
 		 */
@@ -316,7 +263,7 @@ package org.interguild.editor {
 			if (undoList.length > 0) {
 				var popped:EditorGrid=undoList.pop();
 				redoList.push(grid.clone());
-				createNewGird(popped);
+				tab.setCurrentGridContainer(popped);
 			}
 		}
 		
@@ -327,35 +274,10 @@ package org.interguild.editor {
 			if (redoList.length > 0) {
 				var popped:EditorGrid=redoList.pop();
 				undoList.push(grid.clone());
-				createNewGird(popped);
+				tab.setCurrentGridContainer(popped);
 			}
 		}
 		
-		/**
-		 * 	Event Listeners Section
-		 *
-		 */
-		public function altClick(e:MouseEvent):void {
-			var cell:EditorCell=EditorCell(e.target);
-			
-			if (e.altKey) {
-				undoList.push(grid.clone());
-				//switch to check what trigger is active
-				cell.setTile(activeButton);
-			}
-		}
 		
-		public function leftClick(e:MouseEvent):void {
-			var cell:EditorCell=EditorCell(e.target);
-			//TODO make undo
-			undoList.push(grid.clone());
-			if (e.ctrlKey) {
-				cell.clearTile();
-			} else {
-				cell.setTile(activeButton);
-			}
-			
-			//switch to check what trigger is active
-		}
 	}
 }
