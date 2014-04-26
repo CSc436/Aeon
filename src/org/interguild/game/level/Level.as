@@ -84,7 +84,7 @@ package org.interguild.game.level {
 			//init level hud
 			hud = new LevelHUD();
 			addChild(hud);
-			
+
 			//init game loop
 			timer = new Timer(PERIOD);
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
@@ -211,13 +211,13 @@ package org.interguild.game.level {
 		public function pauseGame():void {
 			timer.stop();
 		}
-		
-		public function continueGame():void{
+
+		public function continueGame():void {
 			player.wasJumping = true;
 			timer.start();
 		}
-		
-		public function get isRunning():Boolean{
+
+		public function get isRunning():Boolean {
 			return timer.running;
 		}
 
@@ -264,15 +264,18 @@ package org.interguild.game.level {
 		}
 
 		private function update():void {
-			//update player
-			player.onGameLoop();
+
+			if (!player.isDead) {
+				//update player
+				player.onGameLoop();
 
 
-			// update animations
-			player.updateAnimation();
-			player.frameCounter++; // updated counter for game frames
+				// update animations
+				player.updateAnimation();
+				player.frameCounter++; // updated counter for game frames
 
-			player.reset();
+				player.reset();
+			}
 
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -294,9 +297,15 @@ package org.interguild.game.level {
 				}
 			}
 
-			//detect collisions for player
-			collisionGrid.updateObject(player, false);
+			if (!player.isDead) {
+				//detect collisions for player
+				collisionGrid.updateObject(player, false);
+				var index:int = collisionGrid.activeObjects.indexOf(player);
+				if (index != -1) {
+					collisionGrid.activeObjects.splice(index, 1);
+				}
 
+			}
 			//detect collisions for active objects
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
@@ -308,12 +317,18 @@ package org.interguild.game.level {
 			}
 
 			//test and handle collisions
-			collisionGrid.detectAndHandleCollisions(player);
+			if (!player.isDead) {
+
+
+				collisionGrid.detectAndHandleCollisions(player);
+			}
 			if (collisionGrid.activeObjects.length > 0) {
 				for (i = 0; i < collisionGrid.activeObjects.length; i++) {
 					collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
 				}
 			}
+
+
 		}
 
 		private function cleanup():void {

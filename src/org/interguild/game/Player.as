@@ -1,5 +1,6 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
+	
 	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
@@ -43,7 +44,8 @@ package org.interguild.game {
 		public var isCrouching:Boolean;
 		public var isFalling:Boolean;
 		public var isJumping:Boolean;
-
+		public var isDead:Boolean;
+	
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
@@ -61,6 +63,7 @@ package org.interguild.game {
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
+			isDead = false;
 		}
 
 		public function setStartPosition(sx:Number, sy:Number):void {
@@ -186,6 +189,9 @@ package org.interguild.game {
 		}
 
 		public function updateAnimation():void {
+			if ( !isDead ) {
+				
+			
 			if (isJumping) {
 				handleJumping();
 			} else if (isFalling) {
@@ -206,7 +212,7 @@ package org.interguild.game {
 			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkRight();
 			}
-
+			}
 		}
 
 		private function handleCrawlRight():void {
@@ -369,10 +375,12 @@ package org.interguild.game {
 			} else {
 				isJumping = false;
 			}
-
-
-
-
+		}
+		
+		private function handleDeathAnimation():void
+		{
+			// TODO Auto Generated method stub
+			
 		}
 
 
@@ -409,6 +417,10 @@ package org.interguild.game {
 
 		public function die():void {
 			trace("YOU DEAD");
+			isDead = true;
+			handleDeathAnimation();
 		}
+		
+		
 	}
 }

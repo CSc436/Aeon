@@ -12,7 +12,6 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Tile;
 
 	public class CollisionGrid extends Sprite {
 
@@ -34,7 +33,7 @@ package org.interguild.game.collision {
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
 
-			//init 2D array
+			//init 2D arra]y
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
