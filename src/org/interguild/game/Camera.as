@@ -36,7 +36,7 @@ package org.interguild.game {
 			this.levelHeight = h;
 			TweenLite.defaultEase = Back.easeOut;
 		}
-
+//
 		/**
 		 * Main method that updates the camera based on what the player is doing. It recognizes, looking up, down and travelling
 		 * to left or right. The camera will not go outside the bounds of the level. It will not allow the player to look up if doing so

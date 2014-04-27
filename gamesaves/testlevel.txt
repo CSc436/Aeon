@@ -6,8 +6,8 @@ xx    wx                   xxxxx
 xx    sx                   xxxxx        
 xx #  wx                   xxxxx        
 xxxx        x       xx     xxxxx        
-xx         xx             xxxxxx        
-xx   x>   s c       cc  w  xxxxx        
+xx        wxx             xxxxxx        
+xx   x      c       cc  w  xxxxx        
 xx  xxxxsssxxxx    xxx  x  xxxxx        
 xx    xxsssxxxx >       wwwxxxxx        
 xx    xxsssxssx x x xxxxxxxxxxxx        

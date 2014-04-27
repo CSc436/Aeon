@@ -25,11 +25,11 @@ package org.interguild.game.collision {
 			}
 		}
 
-		internal function get gridRow():uint {
+		public function get gridRow():uint {
 			return row;
 		}
 
-		internal function get gridCol():uint {
+		public function get gridCol():uint {
 			return col;
 		}
 

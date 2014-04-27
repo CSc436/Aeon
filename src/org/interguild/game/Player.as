@@ -1,6 +1,8 @@
 package org.interguild.game {
 	import flash.display.MovieClip;
+	
 	import org.interguild.KeyMan;
+	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
@@ -43,6 +45,7 @@ package org.interguild.game {
 		public var isCrouching:Boolean;
 		public var isFalling:Boolean;
 		public var isJumping:Boolean;
+		public var mustCrawl:Boolean = false;
 
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
@@ -150,7 +153,7 @@ package org.interguild.game {
 			}
 
 			// finished crawling
-			if (!keys.isKeyDown) {
+			if (!keys.isKeyDown && !mustCrawl) {
 				isCrouching = false;
 				this.hitbox.height = STANDING_HEIGHT;
 			}
@@ -172,7 +175,7 @@ package org.interguild.game {
 			}
 
 			//jump
-			if (keys.isKeySpace && isStanding && !wasJumping) {
+			if (keys.isKeySpace && isStanding && !wasJumping && !mustCrawl) {
 				speedY = JUMP_SPEED;
 				isStanding = false;
 				isJumping = true;
@@ -186,17 +189,42 @@ package org.interguild.game {
 		}
 
 		public function updateAnimation():void {
-			if (isJumping) {
+			var neighborTiles:Vector.<GridTile> = this.myCollisionGridTiles;
+			trace("Number of neighboring tiles: "+neighborTiles.length);
+			mustCrawl = false;
+			if (neighborTiles.length == 12 && !isJumping && isStanding) {
+				 if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0)
+					 mustCrawl = true;
+			}
+			else if (neighborTiles.length == 16 && !isJumping && isStanding) {
+				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0 ||
+					neighborTiles[2].myCollisionObjects[0].getDestructibility() == 0)
+					mustCrawl = true;
+			}
+			trace("Must crawl value: "+mustCrawl);
+			
+			if (isJumping && !mustCrawl) {
 				handleJumping();
-			} else if (isFalling) {
+			} 
+			else if (isFalling && !mustCrawl) {
 				handleFalling();
-			} else if (keys.isKeyDown && isFacingRight && isStanding) {
+			} 
+			else if (keys.isKeyDown && isFacingRight && isStanding) {
 				handleCrawlRight();
-			} else if (keys.isKeyDown && !isFacingRight && isStanding) {
+			} 
+			else if (keys.isKeyDown && !isFacingRight && isStanding) {
 				handleCrawlLeft();
-			} else if (keys.isKeyRight && !keys.isKeyDown) {
+			}
+			else if (mustCrawl && isFacingRight){
+				handleCrawlRight();
+			}
+			else if (mustCrawl && !isFacingRight) {
+				handleCrawlLeft();
+			}
+			else if (keys.isKeyRight && !keys.isKeyDown) {
 				handleWalkRight();
-			} else if (keys.isKeyLeft && !keys.isKeyDown) {
+			}
+			else if (keys.isKeyLeft && !keys.isKeyDown) {
 				handleWalkLeft();
 			}
 			// reset the animation to walking left
