@@ -6,12 +6,12 @@ package org.interguild.editor {
 	import org.interguild.Aeon;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.game.Player;
+	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
-	import org.interguild.game.tiles.ArrowCrate;
-	import org.interguild.game.tiles.FinishLine;
 	public class EditorButtonContainer extends Page {
 		//following are objects on this sprite
 		
@@ -20,19 +20,12 @@ package org.interguild.editor {
 		private var playerSpawnButton:StartLineButton;
 		private var playerSpawn:Boolean=false;
 		private var wallButton:TerrainBoxButton;
-		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
 		private var steelButton:SteelBoxButton;
 		private var collectButton:CollectableButton;
 		
 		private var tf:Sprite;
 		
-		public function getActiveButton():String{
-			return activeButton;
-		}
-		public function setActiveButton(tileCode:String):void{
-			activeButton = tileCode;
-		}
 		public function EditorButtonContainer() {
 			super();
 		
@@ -113,10 +106,7 @@ package org.interguild.editor {
 			//clear button:
 			var clearBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(clearBackground, 0, 600, 200);
-			clearButton=new ClearAllButton();
-			setButtonSize(clearButton, 5, 605, 200, 25);
-			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
-			
+
 			//textfield
 			tf = new Sprite();
 			tf.x = 625;
@@ -156,8 +146,6 @@ package org.interguild.editor {
 			tf.addChild(finishButton);
 			tf.addChild(playerBackground);
 			tf.addChild(playerSpawnButton);
-			tf.addChild(clearBackground);
-			tf.addChild(clearButton);
 			addChild(tf);
 		}
 
@@ -214,11 +202,12 @@ package org.interguild.editor {
 			var button:ArrowRightButton=ArrowRightButton(e.target); // focus mouse event
 			activeButton = ArrowCrate.LEVEL_CODE_CHAR_RIGHT;
 		}
-
-		private function clearClick(e:MouseEvent):void {
-			grid.clearGrid();
+		
+		public function getActiveButton():String{
+			return activeButton;
+		}
+		public function setActiveButton(tileCode:String):void{
+			activeButton = tileCode;
 		}
 	}
-	
-
 }
