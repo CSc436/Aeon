@@ -18,19 +18,12 @@ package org.interguild.editor {
 		private var finishButton:FinishLineButton;
 		private var playerSpawnButton:StartLineButton;
 		private var wallButton:TerrainBoxButton;
-		private var clearButton:ClearAllButton;
 		private var woodButton:WoodBoxButton;
 		private var steelButton:SteelBoxButton;
 		private var collectButton:CollectableButton;
 		
 		private var tf:Sprite;
 		
-		public function getActiveButton():String{
-			return activeButton;
-		}
-		public function setActiveButton(tileCode:String):void{
-			activeButton = tileCode;
-		}
 		public function EditorButtonContainer() {
 			super();
 		
@@ -108,12 +101,6 @@ package org.interguild.editor {
 			var arrowRight:ArrowRightButton=new ArrowRightButton();
 			setButtonSize(arrowRight, 25, 540, 160, 40);
 			arrowRight.addEventListener(MouseEvent.CLICK, arrowDownClick);
-			//clear button:
-			var clearBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
-			setBackgroundSize(clearBackground, 0, 600, 200);
-			clearButton=new ClearAllButton();
-			setButtonSize(clearButton, 5, 605, 200, 25);
-			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			
 			//textfield
 			tf = new Sprite();
@@ -154,8 +141,6 @@ package org.interguild.editor {
 			tf.addChild(finishButton);
 			tf.addChild(playerBackground);
 			tf.addChild(playerSpawnButton);
-			tf.addChild(clearBackground);
-			tf.addChild(clearButton);
 			addChild(tf);
 		}
 
@@ -194,11 +179,12 @@ package org.interguild.editor {
 			var button:ArrowDownButton=ArrowDownButton(e.target); // focus mouse event
 			//			activeButton = ArrowCrate.LEVEL_CODE_CHAR;
 		}
-
-		private function clearClick(e:MouseEvent):void {
-			grid.clearGrid();
+		
+		public function getActiveButton():String{
+			return activeButton;
+		}
+		public function setActiveButton(tileCode:String):void{
+			activeButton = tileCode;
 		}
 	}
-	
-
 }
