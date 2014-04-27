@@ -27,7 +27,6 @@ package org.interguild.game.tiles {
 		private var justCollided:Dictionary;
 		private var sideBlocked:Array;
 		private var active:Boolean;
-
 		
 		private var LEVEL_CODE_CHAR:String;
 		private var DESTRUCTIBILITY:int;

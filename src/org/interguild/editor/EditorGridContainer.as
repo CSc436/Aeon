@@ -88,7 +88,7 @@ package org.interguild.editor {
 			
 			if (e.altKey) {
 				//switch to check what trigger is active
-				cell.setTile(activeButton);
+//				cell.setTile(activeButton);
 			}
 		}
 		
@@ -98,7 +98,7 @@ package org.interguild.editor {
 			if (e.ctrlKey) {
 				cell.clearTile();
 			} else {
-				cell.setTile(activeButton);
+//				cell.setTile(activeButton);
 			}
 		}
 	}
