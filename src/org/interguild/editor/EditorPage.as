@@ -10,6 +10,8 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
+	
+	import org.interguild.editor.EditorButtonContainer;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.game.level.LevelProgressBar;
@@ -34,6 +36,7 @@ package org.interguild.editor {
 		private var tab:EditorTab;
 		private var dropDown:DropDownMenu;
 		
+		private var clearButton:ClearAllButton;
 		private var undoButton:UndoButton;
 		private var redoButton:RedoButton;
 		// UNDO REDO ACTIONS ARRAYLIST
@@ -44,8 +47,10 @@ package org.interguild.editor {
 		
 		private var progressBar:LevelProgressBar;
 		
-		
-		
+		private var gridVerticalScrollBar:VerticalScrollBar;
+		private var gridHorizontalScrollBar:HorizontalBar;
+		//variable to hold level code if coming back from test level
+		private var currentLevel:String;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -67,6 +72,13 @@ package org.interguild.editor {
 			redoButton=new RedoButton();
 			setButtonSize(redoButton, 57, 725, 100, 25);
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
+			
+			//clear button:
+			var clearBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
+			setBackgroundSize(clearBackground, 0, 600, 200);
+			clearButton=new ClearAllButton();
+			setButtonSize(clearButton, 5, 605, 200, 25);
+			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
 			
 			//Test button:
 			var testBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
@@ -143,7 +155,8 @@ package org.interguild.editor {
 			dropDown.x = 5;
 			dropDown.y = 5;
 			
-			tab = new EditorTab();
+			editorButtons = new EditorButtonContainer();
+			tab = new EditorTab(editorButtons);
 			addChild(tab.getCurrentGridContainer());
 			
 			addChild(resizeBackground);
@@ -154,14 +167,14 @@ package org.interguild.editor {
 			addChild(heightBox);
 			addChild(title);
 			addChild(titlef);
+			addChild(clearBackground);
+			addChild(clearButton);
 			addChild(testBackground);
 			addChild(testButton);
 			addChild(undoBackground);
 			addChild(undoButton);
 			addChild(redoBackground);
 			addChild(redoButton);
-			
-			editorButtons = new EditorButtonContainer();
 			addChild(editorButtons);
 			
 			addChild(dropDown);
@@ -188,6 +201,11 @@ package org.interguild.editor {
 			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
 //			resetComponents();
+		}
+		public function setUpEditorPage(title:String, newGrid:EditorGrid):void{
+			this.title.text = title;
+//			createNewGird(newGrid);
+			
 		}
 		
 		/**
@@ -238,9 +256,16 @@ package org.interguild.editor {
 		public function getLevelCode():String {
 			var string:String = "";
 			string += this.title.text+"\n";
-			string += this.grid.levelHeight+"x"+grid.levelWidth+"\n";
-			string += this.grid.toStringCells();
+			string += tab.getCurrentGrid().levelHeight+"x"+tab.getCurrentGrid().levelWidth+"\n";
+			string += tab.getCurrentGrid().toStringCells();
 			return string;
+		}
+		
+		/**
+		 * listener that clears the grid
+		 */
+		private function clearClick(e:MouseEvent):void {
+			tab.getCurrentGrid().clearGrid();
 		}
 		
 		/**
@@ -248,10 +273,22 @@ package org.interguild.editor {
 		 */
 		private function testGameButtonClick(e:MouseEvent):void {
 			var s:String = getLevelCode();
+			currentLevel = s;
 			Aeon.getMe().playLevelCode(s);
 		}
 		
-		private function addTabListener(e:MouseEvent):void{
+		/**
+		 * This function will return  true if the current level exists.
+		 *  if the player is coming back from the test game
+		 */
+		public function fromTestGame():String{
+			if(currentLevel == null){
+				return null;
+			}
+			return currentLevel;
+		}
+		
+		public function addTabListener(e:MouseEvent):void{
 			tab.addTab();
 		}
 		
@@ -262,7 +299,7 @@ package org.interguild.editor {
 			//this function takes from the undo stack and puts it back on the grid
 			if (undoList.length > 0) {
 				var popped:EditorGrid=undoList.pop();
-				redoList.push(grid.clone());
+				redoList.push(tab.getCurrentGrid().clone());
 				tab.setCurrentGridContainer(popped);
 			}
 		}
@@ -273,11 +310,9 @@ package org.interguild.editor {
 		private function redoClick(e:MouseEvent):void {
 			if (redoList.length > 0) {
 				var popped:EditorGrid=redoList.pop();
-				undoList.push(grid.clone());
+				undoList.push(tab.getCurrentGrid().clone());
 				tab.setCurrentGridContainer(popped);
 			}
 		}
-		
-		
 	}
 }

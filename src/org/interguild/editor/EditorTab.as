@@ -3,10 +3,7 @@ package org.interguild.editor {
 	import flash.text.TextField;
 	
 	import org.interguild.editor.EditorGrid;
-	import org.interguild.editor.scrollBar.HorizontalBar;
-	import org.interguild.editor.scrollBar.VerticalScrollBar;
 
-	//TODO get a list of EditorPages working with tabs
 	/**
 	 * Store mltiple instances of Editor Page such that the user
 	 */
@@ -20,8 +17,10 @@ package org.interguild.editor {
 		private var textState:Array; // of textFields
 		private var currTab:int;
 		private var tabsActive:int=0;
+		private var buttonContainer:EditorButtonContainer;
 
-		public function EditorTab() {
+		public function EditorTab(buttonContainer:EditorButtonContainer) {
+			this.buttonContainer = buttonContainer;
 			gridContainer=new Array(MAX_ARRAY_SIZE);
 			addTab();
 			tabsActive=1;
@@ -43,7 +42,7 @@ package org.interguild.editor {
 		public function addTab():void {
 			if (tabsActive == MAX_ARRAY_SIZE)
 				return; // cannot add more than 5 tabs
-			gridContainer[tabsActive]=new EditorGridContainer(new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH)); //default 15x15
+			gridContainer[tabsActive]=new EditorGridContainer(new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH), buttonContainer); //default 15x15
 			tabsActive++;
 
 			//TODO update gui with more tabs
@@ -98,18 +97,23 @@ package org.interguild.editor {
 		 * return the current tabbed grid
 		 */
 		public function getCurrentGridContainer():EditorGridContainer {
-			return gridContainer[tabsActive];
+			return gridContainer[tabsActive-1];
+		}
+		
+		public function getCurrentGrid():EditorGrid{
+			var e:EditorGridContainer = gridContainer[tabsActive-1];
+			return e.getGrid();
 		}
 		
 		/**
 		 * set the current grid to the current one
 		 */
 		public function setCurrentGridContainer(setGrid:EditorGrid):void {
-			gridContainer[tabsActive] = setGrid;
+			gridContainer[tabsActive-1] = setGrid;
 		}
 		
 		public function resizeCurrentGrid(rows:int, cols:int):void {
-			var g:EditorGridContainer = gridContainer[tabsActive];
+			var g:EditorGridContainer = gridContainer[tabsActive-1];
 			g.resize(rows, cols);
 		}
 	}

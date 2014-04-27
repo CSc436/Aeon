@@ -9,7 +9,6 @@ package org.interguild.editor {
 	 * container for the grid for the EditorPage
 	 * 
 	 * contains:
-	 * tabs
 	 * VScrollBar
 	 * HScrollBar
 	 * Grid
@@ -22,8 +21,11 @@ package org.interguild.editor {
 		private var gridVerticalScrollBar:VerticalScrollBar;
 		private var gridHorizontalScrollBar:HorizontalBar;
 		
-		public function EditorGridContainer(g:EditorGrid){
+		private var buttonContainer:EditorButtonContainer;
+		
+		public function EditorGridContainer(g:EditorGrid, e:EditorButtonContainer){
 			createNewGird(g);
+			buttonContainer = e;
 		}
 		
 		
@@ -58,6 +60,13 @@ package org.interguild.editor {
 		}
 		
 		/**
+		 * get the grid
+		 */
+		public function getGrid():EditorGrid {
+			return grid;
+		}
+		
+		/**
 		 * recreate the guis based on the new grid
 		 */
 		public function resetComponents():void{
@@ -78,7 +87,6 @@ package org.interguild.editor {
 			addChild(gridHorizontalScrollBar);
 		}
 		
-		
 		/**
 		 * 	Event Listeners Section
 		 *
@@ -88,17 +96,20 @@ package org.interguild.editor {
 			
 			if (e.altKey) {
 				//switch to check what trigger is active
-//				cell.setTile(activeButton);
+				cell.setTile(this.buttonContainer.getActiveButton());
 			}
 		}
 		
+		/**
+		 * event listener for left clicking
+		 */
 		public function leftClick(e:MouseEvent):void {
 			var cell:EditorCell=EditorCell(e.target);
 			//switch to check what trigger is active
 			if (e.ctrlKey) {
 				cell.clearTile();
 			} else {
-//				cell.setTile(activeButton);
+				cell.setTile(buttonContainer.getActiveButton());
 			}
 		}
 	}
