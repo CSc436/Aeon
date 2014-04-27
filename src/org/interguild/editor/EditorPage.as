@@ -370,9 +370,19 @@ package org.interguild.editor {
 			//TODO make undo
 			undoList.push(grid.clone());
 			if (e.ctrlKey) {
+				if(cell.cellName == '#'){
+					editorButtons.setPlayerSpawn(false);
+				}
 				cell.clearTile();
 			} else {
-				cell.setTile(editorButtons.getActiveButton());
+				if(editorButtons.getActiveButton() == '#' && editorButtons.isPlayerSpawn() == false){
+					cell.setTile(editorButtons.getActiveButton());
+					editorButtons.setPlayerSpawn(true);
+				}
+				else if(editorButtons.getActiveButton() != '#'){
+					cell.setTile(editorButtons.getActiveButton());
+				}
+				
 			}
 			
 			//switch to check what trigger is active

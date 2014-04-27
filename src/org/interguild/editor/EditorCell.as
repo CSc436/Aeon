@@ -8,7 +8,7 @@ package org.interguild.editor {
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
-
+	import org.interguild.game.tiles.FinishLine;
 	public class EditorCell extends Sprite {
 		
 		private static const CELL_WIDTH:uint = 32;
@@ -53,6 +53,9 @@ package org.interguild.editor {
 					case Player.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new StartLineSprite()));
 						break;
+					case FinishLine.LEVEL_CODE_CHAR:
+						addChild(new Bitmap(new FinishLineSprite()));
+						break;						
 					case WoodCrate.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new WoodenCrateSprite()));
 						break;
@@ -62,8 +65,17 @@ package org.interguild.editor {
 					case Collectable.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new CollectibleSprite()));
 						break;
-					case ArrowCrate.LEVEL_CODE_CHAR:
+					case ArrowCrate.LEVEL_CODE_CHAR_LEFT:
 						addChild(new Bitmap(new LightningBoxLeft()));		
+						break;
+					case ArrowCrate.LEVEL_CODE_CHAR_RIGHT:
+						addChild(new Bitmap(new LightningBoxRight()));		
+						break;
+					case ArrowCrate.LEVEL_CODE_CHAR_DOWN:
+						addChild(new Bitmap(new LightningBoxDown()));		
+						break;
+					case ArrowCrate.LEVEL_CODE_CHAR_UP:
+						addChild(new Bitmap(new LightningBoxUp()));		
 						break;
 					default:
 						trace("EditorCell: Unknown level code character: '" + char + "'");
