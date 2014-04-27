@@ -17,6 +17,7 @@ package org.interguild.game.level {
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
 	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.FinishLine;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -37,6 +38,7 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
+		private var portal:FinishLine;
 		private var tv:TerrainView;
 		private var bg:LevelBackground;
 
@@ -116,6 +118,14 @@ package org.interguild.game.level {
 		public function grabbedCollectable():void {
 			hud.increaseCollected();
 		}
+		
+		public function grabbedAll():Boolean {
+			return (hud.collected == hud.maxCollected);
+		}
+		
+		public function setFinish(o:FinishLine):void{
+			portal = o;
+		}
 
 		public function hideBackground():void {
 			bg.visible = false;
@@ -143,6 +153,14 @@ package org.interguild.game.level {
 			} else {
 				hud.hide();
 			}
+		}
+		
+		public function getPortal():FinishLine{
+			return portal;
+		}
+		
+		public function openPortal():void{
+			portal.activate();
 		}
 
 		/**

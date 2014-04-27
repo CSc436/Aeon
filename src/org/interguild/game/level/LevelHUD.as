@@ -14,8 +14,8 @@ package org.interguild.game.level {
 		public static const XCOORDSTRING:uint = 60;
 		public static const YCOORDSTRING:uint = 13;
 
-		private var collected:int = 0;
-		private var maxCollected:int = 0;
+		public var collected:int = 0;
+		public var maxCollected:int = 0;
 
 		private var iconBM:Bitmap;
 		private var container:Sprite;
