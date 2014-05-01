@@ -14,11 +14,6 @@ package org.interguild.game.tiles
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 6;
 		
-//		private static const SPRITE_COLOR:uint = 0xFF6600;
-//		private static const SPRITE_WIDTH:uint = 32;
-//		private static const SPRITE_HEIGHT:uint = 32;
-//		private static const TILE_ENCODING:String = 'a';
-		
 		// Arrow stuff
 		public var arrow:Arrow;
 		public var direction:int;
@@ -26,7 +21,7 @@ package org.interguild.game.tiles
 		public var yPos:int;
 		public static const DESTRUCTIBILITY:int=2;
 		public static const IS_SOLID:Boolean=true;
-		public static const HAS_GRAVITY:Boolean=false;
+		public static const HAS_GRAVITY:Boolean=true;
 		public static const KNOCKBACK_AMOUNT:int=5;
 		public static const IS_BUOYANT:Boolean=true;
 		public var LEVEL_CODE_CHAR:String;
@@ -76,7 +71,7 @@ package org.interguild.game.tiles
 		}
 		
 		public override function onKillEvent(level:Level): void {
-			arrow = new Arrow(xPos, yPos, direction);
+			arrow = new Arrow(newX, newY, direction);
 			level.createCollidableObject(arrow);
 			this.arrow.parentDestroyed = true;
 		}

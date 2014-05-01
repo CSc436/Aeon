@@ -121,7 +121,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(o is CollidableObject && o.isGravible())
+				if(o is CollidableObject && !o.isActive && o.isGravible())
 					return true;
 			}
 			return false;
