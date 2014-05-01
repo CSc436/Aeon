@@ -14,7 +14,6 @@ package org.interguild {
 
 	import org.interguild.loader.ErrorDialog;
 	import flexunit.utils.ArrayList;
-	import org.interguild.editor.Page;
 
 
 	/**
@@ -140,19 +139,28 @@ package org.interguild {
 
 		public function gotoEditorPage():void {
 			currentPage.visible = false;
-			if (currentPage == levelPage) {
+			if(editorPage != null){
 				removeChild(levelPage);
 				levelPage = null;
+				editorPage.visible = true;
 			}
-			if(editorPage != null){
-				var currentLevel:String = editorPage.fromTestGame();
+			else if (currentPage == levelPage) {
+				removeChild(levelPage);
+				levelPage = null;
+				editorPage = new EditorPage(this);
+				this.addChild(editorPage);
 			}
+			else{
+//			if(editorPage != null){
+//				var currentLevel:String = editorPage.fromTestGame();
+//			}
 			editorPage = new EditorPage(this);
 			this.addChild(editorPage);
 			// if coming back from test game, will be true
-			if(currentLevel != null){
-				trace(currentLevel);
-				editorPage.openLevel(currentLevel);
+//			if(currentLevel != null){
+//				trace(currentLevel);
+//				editorPage.openLevel(currentLevel);
+//			}
 			}
 			currentPage = editorPage;
 		}

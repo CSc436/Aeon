@@ -6,17 +6,19 @@ package org.interguild.editor {
 	import org.interguild.Aeon;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.game.Player;
+	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
-
 	public class EditorButtonContainer extends Page {
 		//following are objects on this sprite
 		
 		private var activeButton:String="";
 		private var finishButton:FinishLineButton;
 		private var playerSpawnButton:StartLineButton;
+		private var playerSpawn:Boolean=false;
 		private var wallButton:TerrainBoxButton;
 		private var woodButton:WoodBoxButton;
 		private var steelButton:SteelBoxButton;
@@ -90,18 +92,21 @@ package org.interguild.editor {
 			setBackgroundSize(arrowUpBackground, 0, 420, 200);
 			var arrowUp:ArrowUpButton=new ArrowUpButton();
 			setButtonSize(arrowUp, 25, 420, 160, 40);
-			arrowUp.addEventListener(MouseEvent.CLICK, arrowDownClick);
+			arrowUp.addEventListener(MouseEvent.CLICK, arrowUpClick);
 			var arrowLeftBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(arrowLeftBackground, 0, 480, 200);
 			var arrowLeft:ArrowLeftButton=new ArrowLeftButton();
 			setButtonSize(arrowLeft, 25, 480, 160, 40);
-			arrowLeft.addEventListener(MouseEvent.CLICK, arrowDownClick);
+			arrowLeft.addEventListener(MouseEvent.CLICK, arrowLeftClick);
 			var arrowRightBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(arrowRightBackground, 0, 540, 200);
 			var arrowRight:ArrowRightButton=new ArrowRightButton();
 			setButtonSize(arrowRight, 25, 540, 160, 40);
-			arrowRight.addEventListener(MouseEvent.CLICK, arrowDownClick);
-			
+			arrowRight.addEventListener(MouseEvent.CLICK, arrowRightClick);
+			//clear button:
+			var clearBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
+			setBackgroundSize(clearBackground, 0, 600, 200);
+
 			//textfield
 			tf = new Sprite();
 			tf.x = 625;
@@ -147,14 +152,20 @@ package org.interguild.editor {
 		private function finishClick(e:MouseEvent):void {
 			var button:FinishLineButton=FinishLineButton(e.target);
 			//TODO: change this to finish line once done
-			setActiveButton(Player.LEVEL_CODE_CHAR);
+			setActiveButton(FinishLine.LEVEL_CODE_CHAR);
 		}
 
 		private function startClick(e:MouseEvent):void {
 			var button:StartLineButton=StartLineButton(e.target);
 			setActiveButton(Player.LEVEL_CODE_CHAR);
-		}
 
+		}
+		public function isPlayerSpawn():Boolean{
+			return playerSpawn;
+		}
+		public function setPlayerSpawn(bool:Boolean):void{
+			playerSpawn = bool;
+		}
 		private function wallClick(e:MouseEvent):void {
 			var button:TerrainBoxButton=TerrainBoxButton(e.target);
 			setActiveButton(Terrain.LEVEL_CODE_CHAR);
@@ -177,7 +188,19 @@ package org.interguild.editor {
 
 		private function arrowDownClick(e:MouseEvent):void {
 			var button:ArrowDownButton=ArrowDownButton(e.target); // focus mouse event
-			//			activeButton = ArrowCrate.LEVEL_CODE_CHAR;
+			activeButton = ArrowCrate.LEVEL_CODE_CHAR_DOWN;
+		}
+		private function arrowUpClick(e:MouseEvent):void {
+			var button:ArrowUpButton=ArrowUpButton(e.target); // focus mouse event
+			activeButton = ArrowCrate.LEVEL_CODE_CHAR_UP;
+		}
+		private function arrowLeftClick(e:MouseEvent):void {
+			var button:ArrowLeftButton=ArrowLeftButton(e.target); // focus mouse event
+			activeButton = ArrowCrate.LEVEL_CODE_CHAR_LEFT;
+		}
+		private function arrowRightClick(e:MouseEvent):void {
+			var button:ArrowRightButton=ArrowRightButton(e.target); // focus mouse event
+			activeButton = ArrowCrate.LEVEL_CODE_CHAR_RIGHT;
 		}
 		
 		public function getActiveButton():String{

@@ -107,10 +107,22 @@ package org.interguild.editor {
 			var cell:EditorCell=EditorCell(e.target);
 			//switch to check what trigger is active
 			if (e.ctrlKey) {
+				if(cell.cellName == '#'){
+					buttonContainer.setPlayerSpawn(false);
+				}
 				cell.clearTile();
 			} else {
-				cell.setTile(buttonContainer.getActiveButton());
+				if(buttonContainer.getActiveButton() == '#' && buttonContainer.isPlayerSpawn() == false){
+					cell.setTile(buttonContainer.getActiveButton());
+					buttonContainer.setPlayerSpawn(true);
+				}
+				else if(buttonContainer.getActiveButton() != '#'){
+					cell.setTile(buttonContainer.getActiveButton());
+				}
+				
 			}
 		}
+		
+		
 	}
 }
