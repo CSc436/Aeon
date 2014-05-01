@@ -197,7 +197,9 @@ package org.interguild.game.level {
 			winDialog.x = Aeon.STAGE_WIDTH / 2 - winDialog.width / 2;
 			winDialog.y = Aeon.STAGE_HEIGHT / 2 - winDialog.height / 2;
 			
-			this.addChild(winDialog);
+			var aeon:Aeon = Aeon.getMe();
+			aeon.gotoMainMenu();
+			//this.addChild(winDialog);
 		}
 		
 		private function closeDialog(e:MouseEvent):void
