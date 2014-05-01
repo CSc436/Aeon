@@ -66,6 +66,8 @@ package org.interguild.game {
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
+			sound = new Sound();
+			sound.load(new URLRequest("../assets/jump.mp3"));
 		}
 
 		public function setStartPosition(sx:Number, sy:Number):void {

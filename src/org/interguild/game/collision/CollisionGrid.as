@@ -13,11 +13,15 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
+	import flash.net.URLRequest;
+	import flash.media.Sound;
 
 	public class CollisionGrid extends Sprite {
 
 		private var level:Level;
 		private var grid:Array;
+		private var jump:Sound;
+		private var coin:Sound;
 
 		private var allObjects:Vector.<GameObject>;
 		public var activeObjects:Vector.<GameObject>;
@@ -33,6 +37,11 @@ package org.interguild.game.collision {
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
+			
+			jump = new Sound();
+			jump.load(new URLRequest("../assets/jump.mp3"));
+			coin = new Sound();
+			coin.load(new URLRequest("../assets/coin.mp3"));
 
 			//init 2D array
 			grid = new Array(height);
@@ -363,6 +372,7 @@ package org.interguild.game.collision {
 			if (p && otherObject is Collectable) {
 				removalObjects.push(otherObject);
 				level.grabbedCollectable();
+				coin.play(0);
 				/*
 				* PLAYER HITS CRATE
 				*/
@@ -370,7 +380,8 @@ package org.interguild.game.collision {
 				// knockback stuff:
 				if (otherTile.doesKnockback() > 0) {
 					if (direction == Direction.DOWN) {
-						p.speedY = Player.KNOCKBACK_JUMP_SPEED;
+						p.speedY = Player.KNOCKBACK_JUMP_SPEED;						
+						jump.play(100);
 					} else if (direction == Direction.UP) {
 						activeObject.speedY = 0;
 					} else if (direction == Direction.RIGHT) {

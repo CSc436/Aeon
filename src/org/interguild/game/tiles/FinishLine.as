@@ -4,7 +4,7 @@ package org.interguild.game.tiles {
 
 	public class FinishLine extends CollidableObject {
 
-		public static const LEVEL_CODE_CHAR:String='s';
+		public static const LEVEL_CODE_CHAR:String='f';
 		public static const DESTRUCTIBILITY:int=0;
 		public static const IS_SOLID:Boolean=false;
 		public static const HAS_GRAVITY:Boolean=false;
