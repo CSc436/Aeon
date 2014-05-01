@@ -7,9 +7,11 @@ package org.interguild.game.collision {
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.level.LevelPage;
 	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
@@ -115,6 +117,9 @@ package org.interguild.game.collision {
 						}
 					}
 				}
+			}
+			if(o is FinishLine){
+				level.setFinish(FinishLine(o));
 			}
 		}
 
@@ -373,6 +378,17 @@ package org.interguild.game.collision {
 				removalObjects.push(otherObject);
 				level.grabbedCollectable();
 				coin.play(0);
+				
+				if(level.grabbedAll()){
+					level.openPortal();
+				}
+				/*
+				* PLAYER ENTERS ACTIVE PORTAL
+				*/
+			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
+				var aeon:Aeon = Aeon.getMe();
+				var lvlpage:LevelPage = aeon.getLevelPage();
+				lvlpage.onWonGame();
 				/*
 				* PLAYER HITS CRATE
 				*/
