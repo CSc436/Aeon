@@ -139,12 +139,16 @@ package org.interguild {
 
 		public function gotoEditorPage():void {
 			currentPage.visible = false;
-			if (currentPage == levelPage) {
+			if(editorPage != null){
 				removeChild(levelPage);
 				levelPage = null;
-				if(editorPage != null){
-					editorPage.visible = true;
-				}
+				editorPage.visible = true;
+			}
+			else if (currentPage == levelPage) {
+				removeChild(levelPage);
+				levelPage = null;
+				editorPage = new EditorPage(this);
+				this.addChild(editorPage);
 			}
 			else{
 //			if(editorPage != null){
