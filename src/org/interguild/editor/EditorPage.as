@@ -273,23 +273,11 @@ package org.interguild.editor {
 		 */
 		private function testGameButtonClick(e:MouseEvent):void {
 			var s:String = getLevelCode();
-			currentLevel = s;
 			Aeon.getMe().playLevelCode(s);
 		}
 		
-		/**
-		 * This function will return  true if the current level exists.
-		 *  if the player is coming back from the test game
-		 */
-		public function fromTestGame():String{
-			if(currentLevel == null){
-				return null;
-			}
-			return currentLevel;
-		}
-		
 		public function addTabListener(e:MouseEvent):void{
-			tab.addTab();
+			tab.addTab;
 		}
 		
 		/**
