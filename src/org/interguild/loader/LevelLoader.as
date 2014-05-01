@@ -9,6 +9,7 @@ package org.interguild.loader {
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.DynamiteCrate;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -70,6 +71,11 @@ package org.interguild.loader {
 				case Collectable.LEVEL_CODE_CHAR:
 					tile = new Collectable(px, py);
 					level.createCollidableObject(tile);
+					break;
+				case DynamiteCrate.LEVEL_CODE_CHAR:
+					tile = new DynamiteCrate(px, py);
+					level.createCollidableObject(tile);
+					break;
 				default:
 					//trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;

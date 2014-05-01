@@ -110,14 +110,14 @@ package org.interguild.game {
 			updateHitBox();
 			
 			trace( "speedY = ", speedY );
-			if ( speedY > 2 && !isJumping ) {
+			if ( speedY > 2 && !isJumping) {
 				isFalling = true;
 			}
 		}
 
 		public function reset():void {
 			isStanding = false;
-			isCrouching = false;
+			//isCrouching = false;
 			isFalling = false;
 //			isJumping = false;
 		}
@@ -206,7 +206,7 @@ package org.interguild.game {
 			if (isJumping && !mustCrawl) {
 				handleJumping();
 			} 
-			else if (isFalling && !mustCrawl) {
+			else if (isFalling && !mustCrawl && !isCrouching) {
 				handleFalling();
 			} 
 			else if (keys.isKeyDown && isFacingRight && isStanding) {
