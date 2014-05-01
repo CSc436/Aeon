@@ -1,0 +1,21 @@
+There should be "selection" tool at top of tile list
+	when using, should select a bounding box around whatever you're highlighting
+	if you already have a selection, can modify the selection by holding shift and clicking
+for other tools,
+	when you click and drag, it should snake (no bounding box)
+	when you hold shift, you get the bounding box
+		you see a preview of your box until you decide to commit.
+	you get a preview when mouse-over-ing over tiles
+There should be "eraser" tool next to selection
+	when click and drag, should snake (no bounding box, unless holding shft)
+
+Design a new keyboard manager strictly for the editor to use
+	instead of relying on KeyMan's callbacks
+keys:
+	Ctrl+C, Ctrl+V, Ctrl+X		copy/paste/cut
+	Arrow keys			scroll level
+	Page Up/Down			scroll level
+	Ctrl+Z, Ctrl+Y			undo/redo
+	Ctrl+=, Ctrl+-			zoom in/out
+	Ctrl+Enter			Test (Play Level)
+	Delete/Backspace		clear the tile

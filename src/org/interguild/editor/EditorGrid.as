@@ -9,8 +9,8 @@ package org.interguild.editor {
 		private var rows:uint=0;
 
 		public function EditorGrid(numRows:uint, numCols:uint) {
-			cols = numRows;
-			rows = numCols;
+			cols = numCols;
+			rows = numRows;
 
 			//init 2D array
 			cells = new Array(numRows);
@@ -23,8 +23,8 @@ package org.interguild.editor {
 		
 		public function clone():EditorGrid{
 			var temp:EditorGrid = new EditorGrid(rows,cols);
-			for(var i:uint =0; i<temp.rows; i++){
-				for(var j:uint =0; j<temp.cols; j++){
+			for(var i:uint =0; i<temp.rows-1; i++){
+				for(var j:uint =0; j<temp.cols-1; j++){
 					var c:EditorCell = new EditorCell();
 					c.x = j * c.width;
 					c.y = i * c.height;

@@ -5,7 +5,8 @@ package org.interguild.game.tiles
 	import org.interguild.Aeon;
 	import org.interguild.game.level.Level;
 	
-	public class ArrowCrate extends CollidableObject implements Tile {
+	//TODO Henry wants to add subclasses for each directional arrow for the editor page
+	public class ArrowCrate extends CollidableObject {
 		public static const LEVEL_CODE_CHAR_RIGHT:String = '>';
 		public static const LEVEL_CODE_CHAR_DOWN:String = 'v';
 		public static const LEVEL_CODE_CHAR_LEFT:String = '<'
@@ -14,66 +15,48 @@ package org.interguild.game.tiles
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 6;
 		
-		private static const SPRITE_COLOR:uint = 0xFF6600;
-		private static const SPRITE_WIDTH:uint = 32;
-		private static const SPRITE_HEIGHT:uint = 32;
-		private static const TILE_ENCODING:String = 'a';
+//		private static const SPRITE_COLOR:uint = 0xFF6600;
+//		private static const SPRITE_WIDTH:uint = 32;
+//		private static const SPRITE_HEIGHT:uint = 32;
+//		private static const TILE_ENCODING:String = 'a';
 		
 		// Arrow stuff
 		public var arrow:Arrow;
 		public var direction:int;
 		public var xPos:int;
 		public var yPos:int;
-		
-		public var destructibility:int = 2;
-		public var solidity:Boolean = true;
-		public var gravible:Boolean = false;
-		public var knocksback:int = 5;
-		public var buoyancy:Boolean = true;
-		
+		public static const DESTRUCTIBILITY:int=2;
+		public static const IS_SOLID:Boolean=true;
+		public static const HAS_GRAVITY:Boolean=false;
+		public static const KNOCKBACK_AMOUNT:int=5;
+		public static const IS_BUOYANT:Boolean=true;
+		public var LEVEL_CODE_CHAR:String;
+		public static var LEVEL_CODE_CHAR:Object;
+
 		public function ArrowCrate(x:int, y:int, direction:int) {
-			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			this.xPos = x;
-			this.yPos = y;
 			this.direction = direction;
 			switch (direction) {
 				case 1:
 					addChild(new Bitmap(new LightningBoxRight()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_RIGHT;
 					break;
 				case 2:
 					addChild(new Bitmap(new LightningBoxDown()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_DOWN;
 					break;
 				case 3:
 					addChild(new Bitmap(new LightningBoxLeft()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_LEFT;
 					break;
 				case 4:
 					addChild(new Bitmap(new LightningBoxUp()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_UP;
 					break;
 			}
-		}
-		
-		public function getDestructibility():int {
-			return destructibility;
-		}
-		
-		
-		public function isSolid():Boolean {
-			return solidity;
-		}
-		
-		
-		public function isGravible():Boolean {
-			return gravible;
-		}
-		
-		
-		public function doesKnockback():int {
-			return knocksback;
-		}
-		
-		
-		public function isBuoyant():Boolean {
-			return buoyancy;
+			
+			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			this.xPos=x;
+			this.yPos=y;
 		}
 		
 		public override function onGameLoop():void {

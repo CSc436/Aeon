@@ -27,10 +27,10 @@ package  {
 			Assert.assertEquals(0, steelCrate.doesKnockback());
 		}
 
-		[Test]
-		public function testIsBuoyant():void {
-			Assert.assertFalse(steelCrate.isBuoyant());
-		}
+//		[Test]
+//		public function testIsBuoyant():void {
+//			Assert.assertFalse(steelCrate.isBuoyant());
+//		}
 	}
 
 

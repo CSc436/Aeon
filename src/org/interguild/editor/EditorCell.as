@@ -3,10 +3,11 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	
 	import org.interguild.game.Player;
+	import org.interguild.game.tiles.ArrowCrate;
+	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
-	import org.interguild.Aeon;
 
 	public class EditorCell extends Sprite {
 		
@@ -47,7 +48,7 @@ package org.interguild.editor {
 					LightningRightSprite
 					*/ 
 					case Terrain.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new TerrainSteelSprite()));
+						addChild(new Bitmap(new TerrainSprite()));
 						break;
 					case Player.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new StartLineSprite()));
@@ -57,6 +58,13 @@ package org.interguild.editor {
 						break;
 					case SteelCrate.LEVEL_CODE_CHAR:
 						addChild(new Bitmap(new SteelCrateSprite()));
+						break;
+					case Collectable.LEVEL_CODE_CHAR:
+						addChild(new Bitmap(new CollectibleSprite()));
+						break;
+					case ArrowCrate.LEVEL_CODE_CHAR:
+						addChild(new Bitmap(new LightningBoxLeft()));		
+						break;
 					default:
 						trace("EditorCell: Unknown level code character: '" + char + "'");
 						break;

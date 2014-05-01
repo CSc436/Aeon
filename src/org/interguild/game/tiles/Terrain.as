@@ -7,18 +7,18 @@ package org.interguild.game.tiles {
 
 	import org.interguild.Aeon;
 
-	public class Terrain extends CollidableObject implements Tile {
+	public class Terrain extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = 'x';
+		public static const DESTRUCTIBILITY:int = 0;
+		public static const IS_SOLID:Boolean = true;
+		public static const HAS_GRAVITY:Boolean = false;
+		public static const KNOCKBACK_AMOUNT:int = 0;
 
-		public var destructibility:int = 0;
-		public var solidity:Boolean = true;
-		public var gravible:Boolean = false;
-		public var knocksback:int = 0;
-		public var buoyancy:Boolean = false;
+//		public static const IS_BUOYANT:Boolean=false;
 
 		public function Terrain(x:int, y:int) {
-			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
+			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 
 			CONFIG::DEBUG {
 				var tf:TextField = new TextField();
@@ -29,31 +29,8 @@ package org.interguild.game.tiles {
 				addChild(tf);
 			}
 
+			//TODO understand this function Henry
 			TerrainView.getMe().drawTerrainAt(x, y);
-		}
-
-		public function getDestructibility():int {
-			return destructibility;
-		}
-
-
-		public function isSolid():Boolean {
-			return solidity;
-		}
-
-
-		public function isGravible():Boolean {
-			return gravible;
-		}
-
-
-		public function doesKnockback():int {
-			return knocksback;
-		}
-
-
-		public function isBuoyant():Boolean {
-			return false;
 		}
 	}
 }
