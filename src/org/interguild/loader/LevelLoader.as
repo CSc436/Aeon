@@ -6,6 +6,7 @@ package org.interguild.loader {
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
@@ -74,6 +75,8 @@ package org.interguild.loader {
 					break;
 				case DynamiteCrate.LEVEL_CODE_CHAR:
 					tile = new DynamiteCrate(px, py);
+				case FinishLine.LEVEL_CODE_CHAR:
+					tile = new FinishLine(px, py);
 					level.createCollidableObject(tile);
 					break;
 				default:

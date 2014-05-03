@@ -1,9 +1,11 @@
 package org.interguild.editor {
+	import flash.display.Bitmap;
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
+	import org.interguild.Aeon;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
-	import flash.display.Sprite;
 
 	/**
 	 * container for the grid for the EditorPage
@@ -49,6 +51,8 @@ package org.interguild.editor {
 			}
 			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
+			//TODO: see at bottom, preview stuff
+		//	grid.addEventListener(MouseEvent.MOUSE_OVER, preview, false, 0 , true);
 		}
 		
 		/**
@@ -73,7 +77,8 @@ package org.interguild.editor {
 			//adding back mask, scrollbar, and listeners for undo grid
 			gridMask = new Sprite();
 			gridMask.graphics.beginFill(0);
-			gridMask.graphics.drawRect(0,0,550,370);
+			var scale:Number = Aeon.getMe().scaleX;
+			gridMask.graphics.drawRect(0,0,scale * 550,scale * 370);
 			gridMask.graphics.endFill();
 			gridMask.x = 20;
 			gridMask.y = 100;
@@ -93,7 +98,7 @@ package org.interguild.editor {
 		 */
 		public function altClick(e:MouseEvent):void {
 			var cell:EditorCell=EditorCell(e.target);
-			
+
 			if (e.altKey) {
 				//switch to check what trigger is active
 				cell.setTile(this.buttonContainer.getActiveButton());
@@ -105,6 +110,11 @@ package org.interguild.editor {
 		 */
 		public function leftClick(e:MouseEvent):void {
 			var cell:EditorCell=EditorCell(e.target);
+			
+			//next two lines are the start to box selection
+			//TODO: FIGURE OUT BOX SELECTION
+//			var box:DrawBox = new DrawBox(grid, e.stageX, e.stageY);
+//			this.addChild(box);
 			//switch to check what trigger is active
 			if (e.ctrlKey) {
 				if(cell.cellName == '#'){
@@ -122,6 +132,18 @@ package org.interguild.editor {
 				
 			}
 		}
+		//playing around with preview listeners
+		//TODO: get it so it doesn't erase previous tile as well as be able to still left click
+//		private function preview(e:MouseEvent):void{
+//			var cell:EditorCell = EditorCell(e.target);
+//			
+//			cell.setTile(buttonContainer.getActiveButton());
+//			cell.addEventListener(MouseEvent.MOUSE_OUT, removePreview);
+//		}
+//		private function removePreview(e:MouseEvent):void{
+//			var cell:EditorCell = EditorCell(e.target);
+//			cell.removeChildren();
+//		}
 		
 		
 	}

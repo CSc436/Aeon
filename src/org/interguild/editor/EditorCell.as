@@ -43,6 +43,11 @@ package org.interguild.editor {
 				 */
 				switch (currentTitleName) {
 					case Terrain.LEVEL_CODE_CHAR:
+						//savin this code excerpt for transparency in the future
+//						var bit:Bitmap = new Bitmap(new TerrainSprite());
+//						bit.alpha =.3;
+//						addChild(bit);
+						
 						addChild(new Bitmap(new TerrainSprite()));
 						break;
 					case Player.LEVEL_CODE_CHAR:
