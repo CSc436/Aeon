@@ -3,6 +3,7 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
+	import org.interguild.Aeon;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
 
@@ -76,7 +77,8 @@ package org.interguild.editor {
 			//adding back mask, scrollbar, and listeners for undo grid
 			gridMask = new Sprite();
 			gridMask.graphics.beginFill(0);
-			gridMask.graphics.drawRect(0,0,550,370);
+			var scale:Number = Aeon.getMe().scaleX;
+			gridMask.graphics.drawRect(0,0,scale * 550,scale * 370);
 			gridMask.graphics.endFill();
 			gridMask.x = 20;
 			gridMask.y = 100;
