@@ -369,7 +369,7 @@ package org.interguild.game.collision {
 				if (explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
 					removalObjects.push(activeObject);
 			}
-			if (explosion && explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
+			else if (explosion && explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
 				removalObjects.push(activeObject);
 			
 			/*
@@ -495,8 +495,9 @@ package org.interguild.game.collision {
 				while (true) {
 					if (inBounds(tile.gridRow - 1, tile.gridCol)) {
 						tile = grid[tile.gridRow - 1][tile.gridCol];
+						var toBreak:Boolean = !tile.isGravible();
 						tile.activate();
-						if (!tile.isGravible())
+						if (toBreak)
 							break;
 					}else{
 						break;
