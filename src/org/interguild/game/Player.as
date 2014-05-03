@@ -1,4 +1,7 @@
 package org.interguild.game {
+	
+	import flash.net.URLRequest;
+	import flash.media.Sound;
 	import flash.display.MovieClip;
 	import org.interguild.KeyMan;
 	import org.interguild.game.level.Level;
@@ -48,6 +51,8 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
+		var sound:Sound;
+		
 		//TODO are these values correct? Henry
 		public static const LEVEL_CODE_CHAR:String = '#';
 		public static const DESTRUCTIBILITY:int=2;
@@ -61,6 +66,8 @@ package org.interguild.game {
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
+			sound = new Sound();
+			sound.load(new URLRequest("../assets/jump.mp3"));
 		}
 
 		public function setStartPosition(sx:Number, sy:Number):void {
@@ -177,6 +184,7 @@ package org.interguild.game {
 				isStanding = false;
 				isJumping = true;
 				frameJumpCounter = frameCounter;
+				sound.play(100);
 			}
 
 			if (keys.isKeySpace)

@@ -7,17 +7,23 @@ package org.interguild.game.collision {
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
+	import org.interguild.game.level.LevelPage;
 	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Tile;
+	import flash.net.URLRequest;
+	import flash.media.Sound;
 
 	public class CollisionGrid extends Sprite {
 
 		private var level:Level;
 		private var grid:Array;
+		private var jump:Sound;
+		private var coin:Sound;
 
 		private var allObjects:Vector.<GameObject>;
 		public var activeObjects:Vector.<GameObject>;
@@ -33,6 +39,11 @@ package org.interguild.game.collision {
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
+			
+			jump = new Sound();
+			jump.load(new URLRequest("../assets/jump.mp3"));
+			coin = new Sound();
+			coin.load(new URLRequest("../assets/coin.mp3"));
 
 			//init 2D array
 			grid = new Array(height);
@@ -106,6 +117,9 @@ package org.interguild.game.collision {
 						}
 					}
 				}
+			}
+			if(o is FinishLine){
+				level.setFinish(FinishLine(o));
 			}
 		}
 
@@ -363,6 +377,18 @@ package org.interguild.game.collision {
 			if (p && otherObject is Collectable) {
 				removalObjects.push(otherObject);
 				level.grabbedCollectable();
+				coin.play(0);
+				
+				if(level.grabbedAll()){
+					level.openPortal();
+				}
+				/*
+				* PLAYER ENTERS ACTIVE PORTAL
+				*/
+			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
+				var aeon:Aeon = Aeon.getMe();
+				var lvlpage:LevelPage = aeon.getLevelPage();
+				lvlpage.onWonGame();
 				/*
 				* PLAYER HITS CRATE
 				*/
@@ -370,7 +396,8 @@ package org.interguild.game.collision {
 				// knockback stuff:
 				if (otherTile.doesKnockback() > 0) {
 					if (direction == Direction.DOWN) {
-						p.speedY = Player.KNOCKBACK_JUMP_SPEED;
+						p.speedY = Player.KNOCKBACK_JUMP_SPEED;						
+						jump.play(100);
 					} else if (direction == Direction.UP) {
 						activeObject.speedY = 0;
 					} else if (direction == Direction.RIGHT) {

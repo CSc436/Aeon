@@ -6,6 +6,7 @@ package org.interguild.loader {
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
@@ -70,6 +71,11 @@ package org.interguild.loader {
 				case Collectable.LEVEL_CODE_CHAR:
 					tile = new Collectable(px, py);
 					level.createCollidableObject(tile);
+					break;
+				case FinishLine.LEVEL_CODE_CHAR:
+					tile = new FinishLine(px, py);
+					level.createCollidableObject(tile);
+					break;
 				default:
 					//trace("LevelLoader: Unknown level code character: '" + curChar + "'");
 					break;

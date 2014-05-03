@@ -18,6 +18,7 @@ package org.interguild.editor.scrollBar
 	import com.greensock.gs.TweenFilterLite;
 	
 	import org.interguild.Aeon;
+
 	public class HorizontalBar extends Sprite
 	{
 		private var _content:DisplayObjectContainer;
@@ -142,7 +143,7 @@ package org.interguild.editor.scrollBar
 			
 			positionGrips();
 			
-			if(_content.width < stage.stageWidth) { stage.removeEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelListener); } else { stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelListener); }
+			if(_content.width < Aeon.STAGE_WIDTH) { stage.removeEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelListener); } else { stage.addEventListener(MouseEvent.MOUSE_WHEEL, mouseWheelListener); }
 		}
 		
 		//============================================================================================================================
@@ -287,13 +288,13 @@ package org.interguild.editor.scrollBar
 			}
 			else
 			{
-				if (((_grabber.x + _grabber.height) + (Math.abs(d) * 4)) <= stage.stageWidth)
+				if (((_grabber.x + _grabber.height) + (Math.abs(d) * 4)) <= Aeon.STAGE_WIDTH)
 				{
 					_grabber.x += Math.abs(d) * 4;
 				}
 				else
 				{
-					_grabber.x = stage.stageWidth - _grabber.width;
+					_grabber.x = Aeon.STAGE_WIDTH - _grabber.width;
 				}
 				if (!_grabber.willTrigger(Event.ENTER_FRAME)) _grabber.addEventListener(Event.ENTER_FRAME, scrollContent);
 			}
@@ -362,13 +363,13 @@ package org.interguild.editor.scrollBar
 					TweenFilterLite.to(_grabber, 0.5, {x:"150", onComplete:reset});
 				}
 				
-				if(_grabber.x + _grabber.getChildByName("bg").width > _track.width) _grabber.x = stage.stageWidth - _grabber.getChildByName("bg").width;
+				if(_grabber.x + _grabber.getChildByName("bg").width > _track.width) _grabber.x = Aeon.STAGE_WIDTH - _grabber.getChildByName("bg").width;
 			}
 			
 			function reset():void
 			{
 				if(_grabber.x < 0) _grabber.x = 0;
-				if(_grabber.x + _grabber.getChildByName("bg").width > _track.width) _grabber.x = stage.stageWidth - _grabber.getChildByName("bg").width;
+				if(_grabber.x + _grabber.getChildByName("bg").width > _track.width) _grabber.x = Aeon.STAGE_WIDTH - _grabber.getChildByName("bg").width;
 			}
 			
 			_grabber.addEventListener(Event.ENTER_FRAME, scrollContent, false, 0, true);

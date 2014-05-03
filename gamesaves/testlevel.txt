@@ -7,9 +7,9 @@ xx    sx                   xxxxx
 xx #  wx                   xxxxx        
 xxxx        x       xx     xxxxx        
 xx         xx             xxxxxx        
-xx   x>   s c       cc  w  xxxxx        
+xx   x>   s             w  xxxxx        
 xx  xxxxsssxxxx    xxx  x  xxxxx        
-xx    xxsssxxxx >       wwwxxxxx        
+xx    xxsssxxxx >      fwwwxxxxx        
 xx    xxsssxssx x x xxxxxxxxxxxx        
 xx  xxx sssxssx x x xxxxxxxxxxxx        
 xx      sssxxxxxxxxxxxxxxxxxxxxx        
@@ -19,5 +19,5 @@ xxxxxx      xxxxxxxxxxxxxxxxxxxx
 xxxxxxx      xxxxxxxxxxxxxxxxxxx        
 xxxxxxxx
 xxxxxxxxx
-xxxxxxxxxx
+xxxxxxxxxx    c  c  c  f
 x=80;
