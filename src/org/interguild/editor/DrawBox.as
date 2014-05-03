@@ -27,10 +27,11 @@ package org.interguild.editor
 			public function DrawBox($canvas:DisplayObjectContainer, $startX:Number, $startY:Number)
 			{
 				_canvas = $canvas;
+
 				_startX = $startX;
 				_startY = $startY;
-				_endX = _canvas.mouseX;
-				_endY = _canvas.mouseY;
+				_endX = mouseX;
+				_endY = mouseY;
 				
 				_canvas.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveHandler);
 				_canvas.addEventListener(MouseEvent.MOUSE_UP, onMouseUpHandler);
@@ -39,12 +40,13 @@ package org.interguild.editor
 			
 			private function onMouseMoveHandler(event:MouseEvent):void
 			{
-				_endX = _canvas.mouseX;
-				_endY = _canvas.mouseY;
+				_endX = mouseX;
+				_endY = mouseY;
 			}
 			
 			private function onMouseUpHandler(event:MouseEvent):void
 			{
+				trace('removed');
 				_canvas.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveHandler);
 				_canvas.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpHandler);
 				_canvas.removeEventListener(Event.ENTER_FRAME, onEnterFrameHandler);

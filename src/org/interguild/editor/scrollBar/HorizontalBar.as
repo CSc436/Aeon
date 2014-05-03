@@ -401,5 +401,9 @@ package org.interguild.editor.scrollBar
 			adjustSize();
 		}
 		
+		public function setPosition(position:int):void{
+			trace(_content.x);
+			_content.x = position;
+		}
 	}
 }

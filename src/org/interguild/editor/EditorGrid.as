@@ -49,6 +49,9 @@ package org.interguild.editor {
 			removeChildren();
 			initGridCells();
 		}
+		public function getCell(x:int, y:int):EditorCell{
+			return cells[x/33][y/33]
+		}
 
 		/**
 		 * place a type on a specific cell

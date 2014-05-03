@@ -3,6 +3,8 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
+	import fl.controls.Button;
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.game.Player;
@@ -12,6 +14,7 @@ package org.interguild.editor {
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.WoodCrate;
+
 	public class EditorButtonContainer extends Page {
 		//following are objects on this sprite
 		
@@ -23,7 +26,7 @@ package org.interguild.editor {
 		private var woodButton:WoodBoxButton;
 		private var steelButton:SteelBoxButton;
 		private var collectButton:CollectableButton;
-		
+		private var selectionBox:Boolean = false;
 		private var tf:Sprite;
 		
 		public function EditorButtonContainer() {
@@ -125,7 +128,12 @@ package org.interguild.editor {
 			var textScrollBar:VerticalScrollBar = new VerticalScrollBar(tf, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true,845);
 			textScrollBar.y = 100;
 			addChild(textScrollBar);
-
+			
+			var selectButtonBox:Button = new Button();
+			selectButtonBox.x = 0;
+			selectButtonBox.y = 660;
+			selectButtonBox.addEventListener(MouseEvent.CLICK, selectButtonBoxClick);
+			tf.addChild(selectButtonBox);
 			tf.addChild(arrowDownBackground);
 			tf.addChild(arrowDown);
 			tf.addChild(arrowUpBackground);
@@ -203,6 +211,13 @@ package org.interguild.editor {
 			activeButton = ArrowCrate.LEVEL_CODE_CHAR_RIGHT;
 		}
 		
+		private function selectButtonBoxClick(e:MouseEvent):void{
+			var button:Button = Button(e.target);
+			selectionBox = !selectionBox;
+		}
+		public function isSelectionBox():Boolean{
+			return selectionBox;
+		}
 		public function getActiveButton():String{
 			return activeButton;
 		}

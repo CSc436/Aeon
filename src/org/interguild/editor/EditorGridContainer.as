@@ -19,15 +19,16 @@ package org.interguild.editor {
 	public class EditorGridContainer extends Sprite{
 		private var grid:EditorGrid;
 		private var gridMask:Sprite;
-		
+		private var box:DrawBox;
 		private var gridVerticalScrollBar:VerticalScrollBar;
 		private var gridHorizontalScrollBar:HorizontalBar;
 		
 		private var buttonContainer:EditorButtonContainer;
 		
 		public function EditorGridContainer(g:EditorGrid, e:EditorButtonContainer){
-			createNewGird(g);
+			
 			buttonContainer = e;
+			createNewGird(g);
 		}
 		
 		
@@ -51,7 +52,7 @@ package org.interguild.editor {
 			}
 			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
-			//if(buttonContainer.ge
+				grid.addEventListener(MouseEvent.MOUSE_DOWN, selectionDown,false, 0 , true);
 			//TODO: see at bottom, preview stuff
 		//	grid.addEventListener(MouseEvent.MOUSE_OVER, preview, false, 0 , true);
 		}
@@ -84,7 +85,8 @@ package org.interguild.editor {
 			gridMask.x = 20;
 			gridMask.y = 100;
 			grid.mask = gridMask;
-			gridVerticalScrollBar.setPosition(0);
+			gridVerticalScrollBar.setPosition(100);
+			gridHorizontalScrollBar.setPosition(20);
 			removeChild(gridVerticalScrollBar);
 			removeChild(gridHorizontalScrollBar);
 			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
@@ -116,13 +118,8 @@ package org.interguild.editor {
 		/**
 		 * event listener for left clicking
 		 */
-		public function leftClick(e:MouseEvent):void {
+		private function leftClick(e:MouseEvent):void {
 			var cell:EditorCell=EditorCell(e.target);
-			
-			//next two lines are the start to box selection
-			//TODO: FIGURE OUT BOX SELECTION
-			//var box:DrawBox = new DrawBox(grid, e.stageX, e.stageY);
-			//this.addChild(box);
 			//switch to check what trigger is active
 			if (e.ctrlKey) {
 				if(cell.cellName == '#'){
@@ -140,7 +137,29 @@ package org.interguild.editor {
 				
 			}
 		}
-		//playing around with preview listeners
+		
+		private function selectionDown(e:MouseEvent):void{
+			var cell:EditorCell=EditorCell(e.target);
+			//next two lines are the start to box selection
+			//TODO: FIGURE OUT BOX SELECTION
+			if(box!= null){
+				removeChild(box);
+			}
+			box = new DrawBox(grid, mouseX, mouseY);
+			addChild(box);
+//			grid.addEventListener(MouseEvent.MOUSE_OVER, highlightBox);
+			grid.addEventListener(MouseEvent.MOUSE_UP, endHighlight);
+		}
+//		private function highlightBox(e:MouseEvent):void{
+//			var cell:EditorCell=EditorCell(e.target);
+//			//next two lines are the start to box selection
+//			//TODO: FIGURE OUT BOX SELECTION
+//			cell.toggleHighlight();
+//		}
+		private function endHighlight(e:MouseEvent):void{
+			trace('up');
+		}
+//		//playing around with preview listeners
 		//TODO: get it so it doesn't erase previous tile as well as be able to still left click
 //		private function preview(e:MouseEvent):void{
 //			var cell:EditorCell = EditorCell(e.target);

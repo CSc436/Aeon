@@ -393,7 +393,8 @@ package org.interguild.editor.scrollBar {
 		}
 		
 		public function setPosition(position:int):void{
-			_defaultPosition = position;
+			trace(_content.y);
+			_content.y = position;
 		}
 
 	}
