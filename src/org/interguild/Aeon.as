@@ -165,5 +165,9 @@ package org.interguild {
 			currentPage = editorPage;
 		}
 		
+		public function getLevelPage():LevelPage{
+			return this.levelPage;
+		}
+		
 	}
 }
