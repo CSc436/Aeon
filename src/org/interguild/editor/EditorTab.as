@@ -32,7 +32,7 @@ package org.interguild.editor {
 			for (var i:int=0; i < MAX_ARRAY_SIZE; i++) {
 				textState[i]=new TextField();
 				textState[i].text="Grid " + i;
-				tabState[i]=new TabSprite();
+				tabState[i]=new TabButton();
 			}
 		}
 
