@@ -139,13 +139,29 @@ package org.interguild {
 
 		public function gotoEditorPage():void {
 			currentPage.visible = false;
-			if (currentPage == levelPage) {
+			if(editorPage != null){
 				removeChild(levelPage);
 				levelPage = null;
+				editorPage.visible = true;
 			}
-
+			else if (currentPage == levelPage) {
+				removeChild(levelPage);
+				levelPage = null;
+				editorPage = new EditorPage(this);
+				this.addChild(editorPage);
+			}
+			else{
+//			if(editorPage != null){
+//				var currentLevel:String = editorPage.fromTestGame();
+//			}
 			editorPage = new EditorPage(this);
 			this.addChild(editorPage);
+			// if coming back from test game, will be true
+//			if(currentLevel != null){
+//				trace(currentLevel);
+//				editorPage.openLevel(currentLevel);
+//			}
+			}
 			currentPage = editorPage;
 		}
 		

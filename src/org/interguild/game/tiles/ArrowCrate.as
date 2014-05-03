@@ -5,6 +5,7 @@ package org.interguild.game.tiles
 	import org.interguild.Aeon;
 	import org.interguild.game.level.Level;
 	
+	//TODO Henry wants to add subclasses for each directional arrow for the editor page
 	public class ArrowCrate extends CollidableObject {
 		public static const LEVEL_CODE_CHAR_RIGHT:String = '>';
 		public static const LEVEL_CODE_CHAR_DOWN:String = 'v';
@@ -25,6 +26,7 @@ package org.interguild.game.tiles
 		public static const KNOCKBACK_AMOUNT:int=5;
 		public static const IS_BUOYANT:Boolean=true;
 		public var LEVEL_CODE_CHAR:String;
+		public static var LEVEL_CODE_CHAR:Object;
 
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			this.direction = direction;
