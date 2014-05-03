@@ -388,7 +388,12 @@ package org.interguild.editor.scrollBar {
 		//============================================================================================================================
 		{
 			_stageH=Aeon.STAGE_HEIGHT - 140;
+			_defaultPosition = 0;
 			adjustSize();
+		}
+		
+		public function setPosition(position:int):void{
+			_defaultPosition = position;
 		}
 
 	}

@@ -50,6 +50,7 @@ package org.interguild.editor {
 			}
 			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
+			//if(buttonContainer.ge
 			//TODO: see at bottom, preview stuff
 		//	grid.addEventListener(MouseEvent.MOUSE_OVER, preview, false, 0 , true);
 		}
@@ -81,6 +82,7 @@ package org.interguild.editor {
 			gridMask.x = 20;
 			gridMask.y = 100;
 			grid.mask = gridMask;
+			gridVerticalScrollBar.setPosition(0);
 			removeChild(gridVerticalScrollBar);
 			removeChild(gridHorizontalScrollBar);
 			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
@@ -99,7 +101,13 @@ package org.interguild.editor {
 
 			if (e.altKey) {
 				//switch to check what trigger is active
-				cell.setTile(this.buttonContainer.getActiveButton());
+				if(buttonContainer.getActiveButton() == '#' && buttonContainer.isPlayerSpawn() == false){
+					cell.setTile(buttonContainer.getActiveButton());
+					buttonContainer.setPlayerSpawn(true);
+				}
+				else if(buttonContainer.getActiveButton() != '#'){
+					cell.setTile(buttonContainer.getActiveButton());
+				}
 			}
 		}
 		
@@ -111,8 +119,8 @@ package org.interguild.editor {
 			
 			//next two lines are the start to box selection
 			//TODO: FIGURE OUT BOX SELECTION
-//			var box:DrawBox = new DrawBox(grid, e.stageX, e.stageY);
-//			this.addChild(box);
+			//var box:DrawBox = new DrawBox(grid, e.stageX, e.stageY);
+			//this.addChild(box);
 			//switch to check what trigger is active
 			if (e.ctrlKey) {
 				if(cell.cellName == '#'){
