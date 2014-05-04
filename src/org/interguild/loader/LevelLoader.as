@@ -2,6 +2,7 @@ package org.interguild.loader {
 
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
+	import org.interguild.game.collision.Direction;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
@@ -53,19 +54,19 @@ package org.interguild.loader {
 					level.createCollidableObject(tile);
 					break;
 				case ArrowCrate.LEVEL_CODE_CHAR_RIGHT:
-					tile = new ArrowCrate(px, py, 1);
+					tile = new ArrowCrate(px, py, Direction.RIGHT);
 					level.createCollidableObject(tile);
 					break;
 				case ArrowCrate.LEVEL_CODE_CHAR_DOWN:
-					tile = new ArrowCrate(px, py, 2);
+					tile = new ArrowCrate(px, py, Direction.DOWN);
 					level.createCollidableObject(tile);
 					break;
 				case ArrowCrate.LEVEL_CODE_CHAR_LEFT:
-					tile = new ArrowCrate(px, py, 3);
+					tile = new ArrowCrate(px, py, Direction.LEFT);
 					level.createCollidableObject(tile);
 					break;
 				case ArrowCrate.LEVEL_CODE_CHAR_UP:
-					tile = new ArrowCrate(px, py, 4);
+					tile = new ArrowCrate(px, py, Direction.UP);
 					level.createCollidableObject(tile);
 					break;
 				case Collectable.LEVEL_CODE_CHAR:

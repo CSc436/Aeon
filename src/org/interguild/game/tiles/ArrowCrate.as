@@ -3,6 +3,7 @@ package org.interguild.game.tiles
 	import flash.display.Bitmap;
 	
 	import org.interguild.Aeon;
+	import org.interguild.game.collision.Direction;
 	import org.interguild.game.level.Level;
 	
 	//TODO Henry wants to add subclasses for each directional arrow for the editor page
@@ -36,19 +37,19 @@ package org.interguild.game.tiles
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			this.direction = direction;
 			switch (direction) {
-				case 1:
+				case Direction.RIGHT:
 					addChild(new Bitmap(new LightningBoxRight()));
 					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_RIGHT;
 					break;
-				case 2:
+				case Direction.DOWN:
 					addChild(new Bitmap(new LightningBoxDown()));
 					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_DOWN;
 					break;
-				case 3:
+				case Direction.LEFT:
 					addChild(new Bitmap(new LightningBoxLeft()));
 					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_LEFT;
 					break;
-				case 4:
+				case Direction.UP:
 					addChild(new Bitmap(new LightningBoxUp()));
 					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_UP;
 					break;
