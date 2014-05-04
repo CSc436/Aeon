@@ -33,7 +33,7 @@ package org.interguild.editor {
 		private var loader:Loader;
 		private var gridContainer:Sprite;
 		private var editorButtons:EditorButtonContainer;
-		private var tab:EditorTab;
+		private var tabsContainer:EditorTabContainer;
 		private var dropDown:DropDownMenu;
 		
 		private var clearButton:ClearAllButton;
@@ -118,6 +118,8 @@ package org.interguild.editor {
 			titlef.textColor = 0xFFFFFF;
 			titlef.x = 25;
 			titlef.y = 50;
+			titlef.width = 25;
+			titlef.height = 15;
 			//width text field
 			widthf = new TextField();
 			widthf.text = "Width:";
@@ -156,8 +158,10 @@ package org.interguild.editor {
 			dropDown.y = 5;
 			
 			editorButtons = new EditorButtonContainer();
-			tab = new EditorTab(editorButtons);
-			addChild(tab.getCurrentGridContainer());
+			tabsContainer = new EditorTabContainer(editorButtons);
+			
+			addChild(tabsContainer);
+			addChild(tabsContainer.getCurrentGridContainer());
 			
 			addChild(resizeBackground);
 			addChild(resizeButton);
@@ -179,7 +183,7 @@ package org.interguild.editor {
 			
 			addChild(dropDown);
 			loader = new EditorLoader();
-			loader.addInitializedListener(tab.addTab);
+			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
 		}
 		
@@ -188,7 +192,7 @@ package org.interguild.editor {
 			var h:Number = Number(heightBox.text);
 			if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0)
 				throw new Error("Invalid Level Dimensions: '" + w + "' by '" + h + "'");
-			tab.resizeCurrentGrid(h, w);
+			tabsContainer.resizeCurrentGrid(h, w);
 			
 			
 		}
@@ -198,6 +202,7 @@ package org.interguild.editor {
 		 * create a level
 		 */
 		public function openLevel(data:String):void {
+			trace(data);
 			loader.loadFromCode(data,"Editor");
 			//adding in mask and new scrollbar
 //			resetComponents();
@@ -256,8 +261,8 @@ package org.interguild.editor {
 		public function getLevelCode():String {
 			var string:String = "";
 			string += this.title.text+"\n";
-			string += tab.getCurrentGrid().levelHeight+"x"+tab.getCurrentGrid().levelWidth+"\n";
-			string += tab.getCurrentGrid().toStringCells();
+			string += tabsContainer.getCurrentGrid().levelHeight+"x"+tabsContainer.getCurrentGrid().levelWidth+"\n";
+			string += tabsContainer.getCurrentGrid().toStringCells();
 			return string;
 		}
 		
@@ -265,7 +270,7 @@ package org.interguild.editor {
 		 * listener that clears the grid
 		 */
 		private function clearClick(e:MouseEvent):void {
-			tab.getCurrentGrid().clearGrid();
+			tabsContainer.getCurrentGrid().clearGrid();
 		}
 		
 		/**
@@ -276,10 +281,6 @@ package org.interguild.editor {
 			Aeon.getMe().playLevelCode(s);
 		}
 		
-		public function addTabListener(e:MouseEvent):void{
-			tab.addTab;
-		}
-		
 		/**
 		 * listener for undo button
 		 */
@@ -287,8 +288,8 @@ package org.interguild.editor {
 			//this function takes from the undo stack and puts it back on the grid
 			if (undoList.length > 0) {
 				var popped:EditorGrid=undoList.pop();
-				redoList.push(tab.getCurrentGrid().clone());
-				tab.setCurrentGridContainer(popped);
+				redoList.push(tabsContainer.getCurrentGrid().clone());
+				tabsContainer.setCurrentGridContainer(popped);
 			}
 		}
 		
@@ -298,8 +299,8 @@ package org.interguild.editor {
 		private function redoClick(e:MouseEvent):void {
 			if (redoList.length > 0) {
 				var popped:EditorGrid=redoList.pop();
-				undoList.push(tab.getCurrentGrid().clone());
-				tab.setCurrentGridContainer(popped);
+				undoList.push(tabsContainer.getCurrentGrid().clone());
+				tabsContainer.setCurrentGridContainer(popped);
 			}
 		}
 
