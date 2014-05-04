@@ -1,8 +1,10 @@
 package org.interguild.game {
 	
-	import flash.net.URLRequest;
-	import flash.media.Sound;
 	import flash.display.MovieClip;
+	import flash.events.Event;
+	import flash.media.Sound;
+	import flash.media.SoundChannel;
+	import flash.net.URLRequest;
 	
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.GridTile;
@@ -54,7 +56,7 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
-		var sound:Sound;
+		public var sound:Sound;
 		
 		//TODO are these values correct? Henry
 		public static const LEVEL_CODE_CHAR:String = '#';
@@ -72,7 +74,7 @@ package org.interguild.game {
 			sound = new Sound();
 			sound.load(new URLRequest("../assets/jump.mp3"));
 		}
-
+		
 		public function setStartPosition(sx:Number, sy:Number):void {
 			x = newX = startX = sx;
 			y = newY = startY = sy - hitbox.height + 32;

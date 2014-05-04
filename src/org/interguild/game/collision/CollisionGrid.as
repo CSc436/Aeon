@@ -370,8 +370,8 @@ package org.interguild.game.collision {
 				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
 			}
 			
-			trace("Object 1: "+activeObject.toString());
-			trace("Object 2: "+otherObject.toString());
+//			trace("Object 1: "+activeObject.toString());
+//			trace("Object 2: "+otherObject.toString());
 
 			var activeTile:CollidableObject = CollidableObject(activeObject);
 			var otherTile:CollidableObject = CollidableObject(otherObject);

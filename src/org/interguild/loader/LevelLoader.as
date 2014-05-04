@@ -75,6 +75,8 @@ package org.interguild.loader {
 					break;
 				case DynamiteCrate.LEVEL_CODE_CHAR:
 					tile = new DynamiteCrate(px, py);
+					level.createCollidableObject(tile);
+					break;
 				case FinishLine.LEVEL_CODE_CHAR:
 					tile = new FinishLine(px, py);
 					level.createCollidableObject(tile);

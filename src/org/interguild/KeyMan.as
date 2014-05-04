@@ -1,6 +1,11 @@
 package org.interguild {
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.TimerEvent;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
+	import flash.utils.Timer;
 
 	public class KeyMan {
 
@@ -19,6 +24,10 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
+		
+		public var walkingSound:Sound;
+		public var walkSoundPlaying:Boolean = false;
+		public var timer:Timer;
 
 		public var spacebarCallback:Function;
 		private var escapeCallback:Function;
@@ -33,6 +42,9 @@ package org.interguild {
 			instance = this;
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp, false, 0, true);
+			walkingSound = new Sound();
+			walkingSound.load(new URLRequest("../assets/Walk2.mp3"));
+			walkingSound.addEventListener(Event.COMPLETE, handleComplete);
 		}
 
 		private function onKeyDown(evt:KeyboardEvent):void {
@@ -44,6 +56,14 @@ package org.interguild {
 					break;
 				case 39: //right arrow key
 					isKeyRight = true;
+					if (!walkSoundPlaying) {
+						timer = new Timer(300);
+						timer.addEventListener(TimerEvent.TIMER, handleComplete);
+						walkingSound.play();
+						timer.start();
+						walkSoundPlaying = true;
+						
+					}
 					break;
 				case 40: //down arrow key
 					isKeyDown = true;
@@ -79,7 +99,14 @@ package org.interguild {
 			if (menuCallback)
 				menuCallback(evt.keyCode);
 		}
-
+		
+		protected function handleComplete(event:TimerEvent):void
+		{
+			timer.stop();
+			trace("walk sound done**************************");
+			walkSoundPlaying = false;
+		}
+		
 		private function onKeyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key

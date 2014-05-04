@@ -1,6 +1,8 @@
 package org.interguild.game.tiles
 {
 	import flash.display.Bitmap;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.level.Level;
@@ -27,6 +29,8 @@ package org.interguild.game.tiles
 		public static const IS_BUOYANT:Boolean=true;
 		public var LEVEL_CODE_CHAR:String;
 		public static var LEVEL_CODE_CHAR:Object;
+		
+		public var arrowSound:Sound;
 
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			this.direction = direction;
@@ -52,6 +56,8 @@ package org.interguild.game.tiles
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			this.xPos=x;
 			this.yPos=y;
+			arrowSound = new Sound();
+			arrowSound.load(new URLRequest("../assets/Arrow.mp3"));
 		}
 		
 		public override function onGameLoop():void {
@@ -76,6 +82,7 @@ package org.interguild.game.tiles
 			arrow = new Arrow(newX, newY, direction);
 			level.createCollidableObject(arrow);
 			this.arrow.parentDestroyed = true;
+			arrowSound.play();
 		}
 	}
 }
