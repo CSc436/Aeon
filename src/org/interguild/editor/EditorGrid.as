@@ -50,7 +50,11 @@ package org.interguild.editor {
 			initGridCells();
 		}
 		public function getCell(x:int, y:int):EditorCell{
-			return cells[x/33][y/33]
+			x = x/32;
+			trace("y " +y);
+			y = y/32;
+			trace(x); trace("y2 " +y);
+			return cells[y][x]
 		}
 
 		/**

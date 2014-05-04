@@ -22,7 +22,7 @@ package org.interguild.editor {
 		private var box:DrawBox;
 		private var gridVerticalScrollBar:VerticalScrollBar;
 		private var gridHorizontalScrollBar:HorizontalBar;
-		
+		private var selectedArray:Array;
 		private var buttonContainer:EditorButtonContainer;
 		
 		public function EditorGridContainer(g:EditorGrid, e:EditorButtonContainer){
@@ -39,7 +39,7 @@ package org.interguild.editor {
 			grid = newGrid;
 			grid.x = 20;
 			grid.y = 100;
-			addChild(grid);
+			addChild(grid)
 			
 			gridVerticalScrollBar = new VerticalScrollBar(grid, 0x222222, 0xff4400, 0x05b59a, 0xffffff, 15, 15, 4, true, 580);
 			gridVerticalScrollBar.y = 100;
@@ -52,7 +52,7 @@ package org.interguild.editor {
 			}
 			grid.addEventListener(MouseEvent.CLICK, leftClick, false, 0, true);
 			grid.addEventListener(MouseEvent.MOUSE_OVER, altClick, false, 0, true);
-				grid.addEventListener(MouseEvent.MOUSE_DOWN, selectionDown,false, 0 , true);
+			grid.addEventListener(MouseEvent.MOUSE_DOWN, selectionDown,true, 0 , true);
 			//TODO: see at bottom, preview stuff
 		//	grid.addEventListener(MouseEvent.MOUSE_OVER, preview, false, 0 , true);
 		}
@@ -142,13 +142,34 @@ package org.interguild.editor {
 			var cell:EditorCell=EditorCell(e.target);
 			//next two lines are the start to box selection
 			//TODO: FIGURE OUT BOX SELECTION
-			if(box!= null){
-				removeChild(box);
+			if(buttonContainer.isSelectionBox()){
+				if(box!= null){
+					removeChild(box);
+				}
+				box = new DrawBox(grid, mouseX, mouseY);
+				addChildAt(box, numChildren-1);
+				
 			}
-			box = new DrawBox(grid, mouseX, mouseY);
-			addChild(box);
-//			grid.addEventListener(MouseEvent.MOUSE_OVER, highlightBox);
-			grid.addEventListener(MouseEvent.MOUSE_UP, endHighlight);
+			grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
+		}
+		private function addCells(e:MouseEvent):void{
+			grid.removeEventListener(MouseEvent.MOUSE_UP,addCells);
+			var startX:int = box.startX;
+			var startY:int = box.startY;
+			var endX:int = box.endX;
+			var endY:int = box.endY;
+			var cols:int = Math.abs((endX-startX)/32);
+			var rows:int = Math.abs((endY-startY)/32);
+			selectedArray = new Array;
+			for(var j:int = 0; j<=rows; j++){
+				var they:int = startY+(j*32);
+				for(var i:int =0; i<=cols;i++){
+					selectedArray.push(grid.getCell(startX+(i*32), they));
+				}
+			}			
+			for(var k:int =0;k<selectedArray.length;k++){
+				selectedArray[k].toggleHighlight();
+			}
 		}
 //		private function highlightBox(e:MouseEvent):void{
 //			var cell:EditorCell=EditorCell(e.target);
@@ -156,9 +177,6 @@ package org.interguild.editor {
 //			//TODO: FIGURE OUT BOX SELECTION
 //			cell.toggleHighlight();
 //		}
-		private function endHighlight(e:MouseEvent):void{
-			trace('up');
-		}
 //		//playing around with preview listeners
 		//TODO: get it so it doesn't erase previous tile as well as be able to still left click
 //		private function preview(e:MouseEvent):void{

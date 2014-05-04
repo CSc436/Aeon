@@ -12,9 +12,11 @@ package org.interguild.editor
 	
 	{
 		import flash.display.DisplayObjectContainer;
-		import flash.events.MouseEvent;
 		import flash.display.Sprite;
 		import flash.events.Event;
+		import flash.events.MouseEvent;
+		
+		import org.interguild.Aeon;
 		
 		public class DrawBox extends Sprite
 		{
@@ -23,37 +25,40 @@ package org.interguild.editor
 			private var _startY:Number;
 			private var _endX:Number;
 			private var _endY:Number;
-			
+		    	
 			public function DrawBox($canvas:DisplayObjectContainer, $startX:Number, $startY:Number)
 			{
 				_canvas = $canvas;
-
 				_startX = $startX;
 				_startY = $startY;
 				_endX = mouseX;
 				_endY = mouseY;
 				
-				_canvas.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveHandler);
-				_canvas.addEventListener(MouseEvent.MOUSE_UP, onMouseUpHandler);
-				_canvas.addEventListener(Event.ENTER_FRAME, onEnterFrameHandler);
+				this.mouseEnabled=false;
+				
+				_canvas.addEventListener(MouseEvent.MOUSE_UP, onMouseUpHandler, true);
+				
+				_canvas.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveHandler, true);
+				Aeon.getMe().stage.addEventListener(Event.ENTER_FRAME, onEnterFrameHandler, false);
 			}
 			
 			private function onMouseMoveHandler(event:MouseEvent):void
 			{
+				//trace('moving');
 				_endX = mouseX;
 				_endY = mouseY;
 			}
 			
 			private function onMouseUpHandler(event:MouseEvent):void
 			{
-				trace('removed');
 				_canvas.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMoveHandler);
 				_canvas.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpHandler);
-				_canvas.removeEventListener(Event.ENTER_FRAME, onEnterFrameHandler);
+				Aeon.getMe().stage.removeEventListener(Event.ENTER_FRAME, onEnterFrameHandler);
 			}
 			
 			private function onEnterFrameHandler(event:Event):void
 			{
+	//			trace('drawing rect');
 				graphics.clear();
 				graphics.lineStyle(2, 0x88B1CC);
 				graphics.moveTo(_startX, _startY);
@@ -63,6 +68,19 @@ package org.interguild.editor
 				graphics.lineTo(_startX, _endY);
 				graphics.lineTo(_startX, _startY);
 				graphics.endFill();
+			}
+			
+			public function get startX():int{
+				return _startX;
+			}
+			public function get startY():int{
+				return _startY;
+			}
+			public function get endX():int{
+				return _endX;
+			}
+			public function get endY():int{
+				return _endY;
 			}
 		}
 	}
