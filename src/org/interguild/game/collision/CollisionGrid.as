@@ -389,6 +389,7 @@ package org.interguild.game.collision {
 				var aeon:Aeon = Aeon.getMe();
 				var lvlpage:LevelPage = aeon.getLevelPage();
 				lvlpage.onWonGame();
+				level.pauseGame();
 				/*
 				* PLAYER HITS CRATE
 				*/
