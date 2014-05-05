@@ -60,6 +60,7 @@ package org.interguild.game.level {
 
 		private function onFileLoad(lvl:Level):void {
 			level = lvl;
+			level.onWinCallback = onWonGame;
 
 			//init start screen
 			startScreen = new LevelStartScreen(level.title);

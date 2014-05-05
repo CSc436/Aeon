@@ -1,25 +1,30 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.net.FileReference;
 	import flash.text.TextField;
-	
+
 	import fl.controls.Button;
 	import fl.controls.TextInput;
-	
+
 	import flexunit.utils.ArrayList;
-	
+
 	import org.interguild.Aeon;
-	
 	import org.interguild.editor.EditorButtonContainer;
-	import org.interguild.editor.scrollBar.VerticalScrollBar;
+	import org.interguild.editor.dropdown.FileMenu;
 	import org.interguild.editor.scrollBar.HorizontalBar;
+	import org.interguild.editor.scrollBar.VerticalScrollBar;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-	
+
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
+
+		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+
 		//following are objects on this sprite
 		private var testButton:TestButton;
 		private var resizeButton:ResizeButton;
@@ -29,89 +34,115 @@ package org.interguild.editor {
 		private var widthf:TextField;
 		private var heightf:TextField;
 		private var title:TextInput;
-		
+
 		private var loader:Loader;
 		private var gridContainer:Sprite;
 		private var editorButtons:EditorButtonContainer;
 		private var tabsContainer:EditorTabContainer;
-		private var dropDown:DropDownMenu;
-		
+		//private var dropDown:DropDownMenu;
+		private var fileButton:FileMenu;
+
 		private var clearButton:ClearAllButton;
 		private var undoButton:UndoButton;
 		private var redoButton:RedoButton;
 		// UNDO REDO ACTIONS ARRAYLIST
 		private var undoList:Array;
 		private var redoList:Array;
-		
-		private var mainMenu:Aeon;
-		
+
 		private var progressBar:LevelProgressBar;
-		
+
 		private var gridVerticalScrollBar:VerticalScrollBar;
 		private var gridHorizontalScrollBar:HorizontalBar;
 		//variable to hold level code if coming back from test level
 		private var currentLevel:String;
+
+		private var filereader:FileReference;
+
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		public function EditorPage(mainMenu:Aeon):void {
-			this.mainMenu = mainMenu;
-			
+		public function EditorPage():void {
 			undoList = new Array();
 			redoList = new Array();
-			
+
+			initBG();
+			initButtons();
+			initTextFields();
+
+			editorButtons = new EditorButtonContainer();
+			tabsContainer = new EditorTabContainer(editorButtons);
+			addChild(tabsContainer);
+			addChild(tabsContainer.getCurrentGridContainer());
+			addChild(editorButtons);
+
+			fileButton = new FileMenu(this);
+			addChild(fileButton);
+
+			//addChild(dropDown);
+			loader = new EditorLoader();
+			loader.addInitializedListener(tabsContainer.addTab);
+			loader.addErrorListener(onLoadError);
+		}
+
+		private function initBG():void {
+			graphics.beginFill(BACKGROUND_COLOR);
+			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
+			graphics.endFill();
+		}
+
+		private function initButtons():void {
 			//undo button:
-			var undoBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
+			var undoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(undoBackground, 0, 660, 200);
-			undoButton=new UndoButton();
+			addChild(undoBackground);
+
+			undoButton = new UndoButton();
 			setButtonSize(undoButton, 55, 665, 100, 25);
 			undoButton.addEventListener(MouseEvent.CLICK, undoClick);
+			addChild(undoButton);
+
 			//redobutton:
-			var redoBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
+			var redoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(redoBackground, 0, 725, 200);
-			redoButton=new RedoButton();
+			addChild(redoBackground);
+
+			redoButton = new RedoButton();
 			setButtonSize(redoButton, 57, 725, 100, 25);
 			redoButton.addEventListener(MouseEvent.CLICK, redoClick);
-			
+			addChild(redoButton);
+
 			//clear button:
-			var clearBackground:Bitmap=new Bitmap(new MenuButtonSelectBG());
+			var clearBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(clearBackground, 0, 600, 200);
-			clearButton=new ClearAllButton();
+			addChild(clearBackground);
+
+			clearButton = new ClearAllButton();
 			setButtonSize(clearButton, 5, 605, 200, 25);
 			clearButton.addEventListener(MouseEvent.CLICK, clearClick);
-			
+			addChild(clearButton);
+
 			//Test button:
 			var testBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			setBackgroundSize(testBackground, 330,40, 200);
+			setBackgroundSize(testBackground, 330, 40, 200);
+			addChild(testBackground);
+
 			testButton = new TestButton();
-			setButtonSize(testButton, 345,42,160,25);
+			setButtonSize(testButton, 345, 42, 160, 25);
 			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
-			/* Buttons to add to the branch
-			ClearAllButton
-			RedoButton
-			ResizeButton
-			TestButton
-			UndoButton
-			
-			//editor tiles
-			ArrowDownButton
-			ArrowUpBotton
-			ArrowRightButton
-			ArrowLeftButton
-			CollectableButton
-			FinishLineButton
-			StartLineButton
-			SteelBoxButton
-			WoodBoxButton
-			TerrainBoxButton
-			*/
+			addChild(testButton);
+
 			//change size button:
 			var resizeBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
-			setBackgroundSize(resizeBackground, 735,37,150);
+			setBackgroundSize(resizeBackground, 735, 37, 150);
+			addChild(resizeBackground);
+
 			resizeButton = new ResizeButton();
-			setButtonSize(resizeButton, 745,37, 120, 35);
+			setButtonSize(resizeButton, 745, 37, 120, 35);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
-			
+			addChild(resizeButton);
+		}
+
+		private function initTextFields():void {
 			//title text field
 			titlef = new TextField();
 			titlef.text = "Title:";
@@ -120,18 +151,24 @@ package org.interguild.editor {
 			titlef.y = 50;
 			titlef.width = 25;
 			titlef.height = 15;
+			addChild(titlef);
+
 			//width text field
 			widthf = new TextField();
 			widthf.text = "Width:";
 			widthf.textColor = 0xFFFFFF;
 			widthf.x = 625;
 			widthf.y = 35;
+			addChild(widthf);
+
 			//height text field
 			heightf = new TextField();
 			heightf.text = "Height:";
 			heightf.textColor = 0xFFFFFF;
 			heightf.x = 625;
 			heightf.y = 60;
+			addChild(heightf);
+
 			//for entering a title name
 			title = new TextInput();
 			title.width = 250;
@@ -139,80 +176,66 @@ package org.interguild.editor {
 			title.x = 55;
 			title.y = 50;
 			title.text = "Level Name";
-			
+			addChild(title);
+
 			//for entering a width and height
 			widthBox = new TextInput();
 			widthBox.width = 50;
 			widthBox.height = 25;
 			widthBox.x = 680;
 			widthBox.y = 35;
+			addChild(widthBox);
+
 			heightBox = new TextInput();
 			heightBox.width = 50;
 			heightBox.height = 25;
 			heightBox.x = 680;
 			heightBox.y = 60;
-			
-			//add the drop down menu
-			dropDown = new DropDownMenu(this);
-			dropDown.x = 5;
-			dropDown.y = 5;
-			
-			editorButtons = new EditorButtonContainer();
-			tabsContainer = new EditorTabContainer(editorButtons);
-			
-			addChild(tabsContainer);
-			addChild(tabsContainer.getCurrentGridContainer());
-			
-			addChild(resizeBackground);
-			addChild(resizeButton);
-			addChild(heightf);
-			addChild(widthf);
-			addChild(widthBox);
 			addChild(heightBox);
-			addChild(title);
-			addChild(titlef);
-			addChild(clearBackground);
-			addChild(clearButton);
-			addChild(testBackground);
-			addChild(testButton);
-			addChild(undoBackground);
-			addChild(undoButton);
-			addChild(redoBackground);
-			addChild(redoButton);
-			addChild(editorButtons);
-			
-			addChild(dropDown);
-			loader = new EditorLoader();
-			loader.addInitializedListener(tabsContainer.addTab);
-			loader.addErrorListener(onLoadError);
 		}
-		
+
 		private function resizeClick(e:MouseEvent):void {
 			var w:Number = Number(widthBox.text);
 			var h:Number = Number(heightBox.text);
 			if (isNaN(w) || isNaN(h) || w <= 0 || h <= 0)
 				throw new Error("Invalid Level Dimensions: '" + w + "' by '" + h + "'");
 			tabsContainer.resizeCurrentGrid(h, w);
-			
-			
 		}
-		
+
+		public function openFromFile():void {
+			filereader = new FileReference();
+			filereader.addEventListener(Event.SELECT, selectHandler);
+			filereader.addEventListener(Event.COMPLETE, loadCompleteHandler);
+			filereader.browse(); // ask user for file
+		}
+
+		private function selectHandler(event:Event):void {
+			filereader.removeEventListener(Event.SELECT, selectHandler);
+			filereader.load();
+		}
+
+		private function loadCompleteHandler(event:Event):void {
+			filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
+			openLevel((String(filereader.data)).split("\r").join(""));
+		}
+
 		/**
-		 * We have the level data use that so we can 
+		 * We have the level data use that so we can
 		 * create a level
 		 */
 		public function openLevel(data:String):void {
 			trace(data);
-			loader.loadFromCode(data,"Editor");
+			loader.loadFromCode(data, "Editor");
 			//adding in mask and new scrollbar
 //			resetComponents();
 		}
-		public function setUpEditorPage(title:String, newGrid:EditorGrid):void{
+
+		public function setUpEditorPage(title:String, newGrid:EditorGrid):void {
 			this.title.text = title;
 //			createNewGird(newGrid);
-			
+
 		}
-		
+
 		/**
 		 * error found, report then return to original state
 		 */
@@ -221,11 +244,11 @@ package org.interguild.editor {
 			returnFromError(e);
 			//TODO display error to user
 		}
-		
-		private function returnFromError(e:ArrayList):void{
+
+		private function returnFromError(e:ArrayList):void {
 			Aeon.getMe().returnFromError(e, "Editor");
 		}
-		
+
 		/**
 		 * Helps populate the sprite by setting up buttons
 		 *
@@ -233,7 +256,7 @@ package org.interguild.editor {
 		 * @param   row
 		 * @param   column
 		 */
-		private function makeButton(label:String, image:Class,xpixel:int, ypixel:int):Button {
+		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
 			var b:Button = new Button();
 			b.label = label;
 			b.width = 50;
@@ -244,7 +267,7 @@ package org.interguild.editor {
 			b.useHandCursor = true;
 			return b;
 		}
-		
+
 		/**
 		 * This function returns to the title menu
 		 */
@@ -253,26 +276,26 @@ package org.interguild.editor {
 			//			mainMenu.initMainMenu();
 			Aeon.getMe().gotoMainMenu();
 		}
-		
+
 		/**
 		 * This function ask the grid for the code of the level so we may
 		 * save this code
 		 */
 		public function getLevelCode():String {
 			var string:String = "";
-			string += this.title.text+"\n";
-			string += tabsContainer.getCurrentGrid().levelHeight+"x"+tabsContainer.getCurrentGrid().levelWidth+"\n";
+			string += this.title.text + "\n";
+			string += tabsContainer.getCurrentGrid().levelHeight + "x" + tabsContainer.getCurrentGrid().levelWidth + "\n";
 			string += tabsContainer.getCurrentGrid().toStringCells();
 			return string;
 		}
-		
+
 		/**
 		 * listener that clears the grid
 		 */
 		private function clearClick(e:MouseEvent):void {
 			tabsContainer.getCurrentGrid().clearGrid();
 		}
-		
+
 		/**
 		 * This function deletes level editor and moves on to level page
 		 */
@@ -280,25 +303,25 @@ package org.interguild.editor {
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
 		}
-		
+
 		/**
 		 * listener for undo button
 		 */
 		private function undoClick(e:MouseEvent):void {
 			//this function takes from the undo stack and puts it back on the grid
 			if (undoList.length > 0) {
-				var popped:EditorGrid=undoList.pop();
+				var popped:EditorGrid = undoList.pop();
 				redoList.push(tabsContainer.getCurrentGrid().clone());
 				tabsContainer.setCurrentGridContainer(popped);
 			}
 		}
-		
+
 		/**
 		 * listener for redo button
 		 */
 		private function redoClick(e:MouseEvent):void {
 			if (redoList.length > 0) {
-				var popped:EditorGrid=redoList.pop();
+				var popped:EditorGrid = redoList.pop();
 				undoList.push(tabsContainer.getCurrentGrid().clone());
 				tabsContainer.setCurrentGridContainer(popped);
 			}

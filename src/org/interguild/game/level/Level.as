@@ -52,6 +52,7 @@ package org.interguild.game.level {
 		private var hud:LevelHUD;
 		private var collectableCount:int;
 
+		public var onWinCallback:Function;
 
 		CONFIG::DEBUG {
 			public var isDebuggingMode:Boolean = false;
@@ -86,7 +87,7 @@ package org.interguild.game.level {
 			//init level hud
 			hud = new LevelHUD();
 			addChild(hud);
-			
+
 			//init game loop
 			timer = new Timer(PERIOD);
 			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
@@ -118,12 +119,12 @@ package org.interguild.game.level {
 		public function grabbedCollectable():void {
 			hud.increaseCollected();
 		}
-		
+
 		public function grabbedAll():Boolean {
 			return (hud.collected == hud.maxCollected);
 		}
-		
-		public function setFinish(o:FinishLine):void{
+
+		public function setFinish(o:FinishLine):void {
 			portal = o;
 		}
 
@@ -154,12 +155,12 @@ package org.interguild.game.level {
 				hud.hide();
 			}
 		}
-		
-		public function getPortal():FinishLine{
+
+		public function getPortal():FinishLine {
 			return portal;
 		}
-		
-		public function openPortal():void{
+
+		public function openPortal():void {
 			portal.activate();
 		}
 
@@ -229,14 +230,19 @@ package org.interguild.game.level {
 		public function pauseGame():void {
 			timer.stop();
 		}
-		
-		public function continueGame():void{
+
+		public function continueGame():void {
 			player.wasJumping = true;
 			timer.start();
 		}
-		
-		public function get isRunning():Boolean{
+
+		public function get isRunning():Boolean {
 			return timer.running;
+		}
+		
+		public function onWonGame():void {
+			pauseGame();
+			onWinCallback();
 		}
 
 		CONFIG::DEBUG {
@@ -353,18 +359,5 @@ package org.interguild.game.level {
 			//update camera
 			camera.updateCamera();
 		}
-
-//		public function activateObject(obj:CollidableObject):void {
-//			obj.isActive = true;
-//			collisionGrid.activeObjects.push(obj);
-//		}
-//		
-//		public function deactivateObject(obj:CollidableObject):void {
-//			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
-//			
-//			obj.isActive = false;
-//			collisionGrid.activeObjects.splice(index, 1);
-//			obj.finishGameLoop;
-//		}
 	}
 }

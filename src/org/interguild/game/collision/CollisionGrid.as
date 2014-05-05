@@ -386,10 +386,7 @@ package org.interguild.game.collision {
 				* PLAYER ENTERS ACTIVE PORTAL
 				*/
 			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
-				var aeon:Aeon = Aeon.getMe();
-				var lvlpage:LevelPage = aeon.getLevelPage();
-				lvlpage.onWonGame();
-				level.pauseGame();
+				level.onWonGame();
 				/*
 				* PLAYER HITS CRATE
 				*/
