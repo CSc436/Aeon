@@ -1,6 +1,6 @@
 package org.interguild.loader {
 
-	import org.interguild.editor.EditorGrid;
+	import org.interguild.editor.grid.EditorGrid;
 
 	public class EditorLoader extends Loader {
 		

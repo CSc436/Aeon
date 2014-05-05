@@ -2,6 +2,7 @@ package org.interguild.editor {
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
+	import org.interguild.editor.grid.EditorGrid;
 
 	/**
 	 * A "Page" is any major screen in the game. For example:
