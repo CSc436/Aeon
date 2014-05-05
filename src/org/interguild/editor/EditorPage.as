@@ -12,7 +12,6 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
-	import org.interguild.editor.EditorButtonContainer;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
@@ -35,7 +34,6 @@ package org.interguild.editor {
 
 		private var loader:Loader;
 		private var gridContainer:Sprite;
-		private var editorButtons:EditorButtonContainer;
 		private var tabsContainer:EditorTabContainer;
 
 		private var clearButton:ClearAllButton;

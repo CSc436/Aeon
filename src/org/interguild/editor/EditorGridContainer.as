@@ -1,6 +1,4 @@
 package org.interguild.editor {
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
@@ -126,7 +124,9 @@ package org.interguild.editor {
 		private function clickTile(cell:EditorCell):void {
 			var char:String = buttonContainer.getActiveChar();
 
-			if (char == Player.LEVEL_CODE_CHAR) {
+			if (char == TileList.SELECTION_TOOL_CHAR) {
+				return;
+			} else if (char == Player.LEVEL_CODE_CHAR) {
 				if (playerTile != null)
 					playerTile.clearTile();
 				playerTile = cell;
@@ -135,6 +135,9 @@ package org.interguild.editor {
 		}
 
 		private function selectionDown(e:MouseEvent):void {
+			grid.removeEventListener(MouseEvent.MOUSE_DOWN, selectionDown);
+			grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
+
 			var cell:EditorCell = EditorCell(e.target);
 			//next two lines are the start to box selection
 			//TODO: FIGURE OUT BOX SELECTION
@@ -144,13 +147,16 @@ package org.interguild.editor {
 				}
 				box = new DrawBox(grid, mouseX, mouseY);
 				addChildAt(box, numChildren - 1);
-
 			}
-			grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
 		}
 
 		private function addCells(e:MouseEvent):void {
 			grid.removeEventListener(MouseEvent.MOUSE_UP, addCells);
+			grid.addEventListener(MouseEvent.MOUSE_DOWN, selectionDown, true, 0, true);
+
+			if (box == null)
+				return;
+
 			var startX:int = box.startX;
 			var startY:int = box.startY;
 			var endX:int = box.endX;
@@ -161,7 +167,9 @@ package org.interguild.editor {
 			for (var j:int = 0; j <= rows; j++) {
 				var they:int = startY + (j * 32);
 				for (var i:int = 0; i <= cols; i++) {
-					selectedArray.push(grid.getCell(startX + (i * 32), they));
+					var toAdd:EditorCell = grid.getCell(startX + (i * 32), they);
+					if (toAdd != null)
+						selectedArray.push(toAdd);
 				}
 			}
 			for (var k:int = 0; k < selectedArray.length; k++) {

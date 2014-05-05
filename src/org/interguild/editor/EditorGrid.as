@@ -1,12 +1,12 @@
 package org.interguild.editor {
 	import flash.display.Sprite;
-	
+
 	public class EditorGrid extends Sprite {
 
 		private var cells:Array;
 
-		private var cols:uint=0;
-		private var rows:uint=0;
+		private var cols:uint = 0;
+		private var rows:uint = 0;
 
 		public function EditorGrid(numRows:uint, numCols:uint) {
 			cols = numCols;
@@ -20,11 +20,11 @@ package org.interguild.editor {
 
 			initGridCells();
 		}
-		
-		public function clone():EditorGrid{
-			var temp:EditorGrid = new EditorGrid(rows,cols);
-			for(var i:uint =0; i<temp.rows-1; i++){
-				for(var j:uint =0; j<temp.cols-1; j++){
+
+		public function clone():EditorGrid {
+			var temp:EditorGrid = new EditorGrid(rows, cols);
+			for (var i:uint = 0; i < temp.rows - 1; i++) {
+				for (var j:uint = 0; j < temp.cols - 1; j++) {
 					var c:EditorCell = new EditorCell();
 					c.x = j * c.width;
 					c.y = i * c.height;
@@ -32,7 +32,7 @@ package org.interguild.editor {
 					temp.cells[i][j].setTile(cells[i][j].cellName);
 					temp.addChild(c);
 				}
-				
+
 			}
 			return temp;
 		}
@@ -49,11 +49,10 @@ package org.interguild.editor {
 			removeChildren();
 			initGridCells();
 		}
-		public function getCell(x:int, y:int):EditorCell{
-			x = (x-20)/32;
-			trace("y " +y);
-			y = (y-100)/32;
-			trace(x); trace("y2 " +y);
+
+		public function getCell(x:int, y:int):EditorCell {
+			x = (x - 20) / 32;
+			y = (y - 100) / 32;
 			return cells[y][x]
 		}
 
@@ -77,15 +76,15 @@ package org.interguild.editor {
 					var c:EditorCell = new EditorCell();
 					c.x = j * c.width;
 					c.y = i * c.height;
-					if(i == 0 || j ==0 || i == rows-1 || j==cols-1){
-						c.setTile("x");	
+					if (i == 0 || j == 0 || i == rows - 1 || j == cols - 1) {
+						c.setTile("x");
 					}
 					cells[i][j] = c;
 					this.addChild(c);
 				}
 			}
 		}
-		
+
 		/**
 		 * print out the cell types using chars
 		 */
@@ -95,7 +94,7 @@ package org.interguild.editor {
 				for (var c:uint = 0; c < cols; c++) {
 					s += EditorCell(cells[r][c]).cellName;
 				}
-				s+="\n";
+				s += "\n";
 			}
 			return s;
 		}

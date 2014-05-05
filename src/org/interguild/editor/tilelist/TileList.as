@@ -32,13 +32,15 @@ package org.interguild.editor.tilelist {
 		private static const BG_WIDTH:uint = MASK_WIDTH + (BG_CORNER_RADIUS * 2);
 		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
 
+		public static const SELECTION_TOOL_CHAR:String = "SELECTION";
+
 		private static var map:Object = new Object();
 
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
 
-		private var selectionBox:Boolean;
+		private var isUsingSelectionTool:Boolean;
 
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
@@ -77,37 +79,40 @@ package org.interguild.editor.tilelist {
 			scrollpane.verticalScrollBar.pageScrollSize = 100;
 			addChild(scrollpane);
 		}
-		
-		private function initList():void{
-			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
-			currentSelection = new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR);
+
+		private function initList():void {
+			map[SELECTION_TOOL_CHAR] = new SelectionToolSprite();
+			currentSelection = new TileListItem("Selection Tool", SELECTION_TOOL_CHAR);
 			currentSelection.select();
+			isUsingSelectionTool = true;
 			addItem(currentSelection);
-			
+
+			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
+			addItem(new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR));
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
 			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
-			
+
 			map[FinishLine.LEVEL_CODE_CHAR] = FinishLine.EDITOR_ICON;
 			addItem(new TileListItem("End Portal", FinishLine.LEVEL_CODE_CHAR));
-			
+
 			map[Collectable.LEVEL_CODE_CHAR] = Collectable.EDITOR_ICON;
 			addItem(new TileListItem("Treasure", Collectable.LEVEL_CODE_CHAR));
-			
+
 			map[WoodCrate.LEVEL_CODE_CHAR] = WoodCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Crate", WoodCrate.LEVEL_CODE_CHAR));
-			
+
 			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_RIGHT] = ArrowCrate.EDITOR_ICON_RIGHT;
 			addItem(new TileListItem("Arrow Crate Right", ArrowCrate.LEVEL_CODE_CHAR_RIGHT));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_LEFT] = ArrowCrate.EDITOR_ICON_LEFT;
 			addItem(new TileListItem("Arrow Crate Left", ArrowCrate.LEVEL_CODE_CHAR_LEFT));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_UP] = ArrowCrate.EDITOR_ICON_UP;
 			addItem(new TileListItem("Arrow Crate Up", ArrowCrate.LEVEL_CODE_CHAR_UP));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
 			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
 		}
@@ -115,8 +120,11 @@ package org.interguild.editor.tilelist {
 		private function onClick(evt:MouseEvent):void {
 			if (evt.target is TileListItem) {
 				currentSelection.deselect();
+				isUsingSelectionTool = false;
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
+				if (currentSelection.getCharCode() == SELECTION_TOOL_CHAR)
+					isUsingSelectionTool = true;
 			}
 		}
 
@@ -131,7 +139,7 @@ package org.interguild.editor.tilelist {
 		}
 
 		public function isSelectionBox():Boolean {
-			return selectionBox;
+			return isUsingSelectionTool;
 		}
 	}
 }

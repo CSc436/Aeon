@@ -8,7 +8,6 @@ package org.interguild.editor.tilelist {
 	import flash.text.TextFormat;
 	
 	import org.interguild.Aeon;
-	import org.interguild.game.tiles.Tile;
 
 	public class TileListItem extends Sprite {
 
