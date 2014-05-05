@@ -4,6 +4,7 @@ package org.interguild.editor {
 	import flash.text.TextField;
 	
 	import org.interguild.editor.EditorGrid;
+	import org.interguild.editor.tilelist.TileList;
 
 	/**
 	 * Store mltiple instances of Editor Page such that the user
@@ -22,9 +23,9 @@ package org.interguild.editor {
 		private var currTab:int;	
 		private var currGrid:EditorGrid;
 		private var tabsActive:int=0;
-		private var buttonContainer:EditorButtonContainer;
+		private var buttonContainer:TileList;
 
-		public function EditorTabContainer(buttonContainer:EditorButtonContainer) {
+		public function EditorTabContainer(buttonContainer:TileList) {
 			this.buttonContainer = buttonContainer;
 			gridContainer=new Array(MAX_ARRAY_SIZE);
 			

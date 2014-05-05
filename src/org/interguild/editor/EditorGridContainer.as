@@ -6,6 +6,7 @@ package org.interguild.editor {
 	import org.interguild.Aeon;
 	import org.interguild.editor.scrollBar.HorizontalBar;
 	import org.interguild.editor.scrollBar.VerticalScrollBar;
+	import org.interguild.editor.tilelist.TileList;
 
 	/**
 	 * container for the grid for the EditorPage
@@ -23,9 +24,9 @@ package org.interguild.editor {
 		private var gridVerticalScrollBar:VerticalScrollBar;
 		private var gridHorizontalScrollBar:HorizontalBar;
 		private var selectedArray:Array;
-		private var buttonContainer:EditorButtonContainer;
+		private var buttonContainer:TileList;
 		
-		public function EditorGridContainer(g:EditorGrid, e:EditorButtonContainer){
+		public function EditorGridContainer(g:EditorGrid, e:TileList){
 			
 			buttonContainer = e;
 			createNewGird(g);

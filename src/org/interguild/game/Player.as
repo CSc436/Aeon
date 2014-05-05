@@ -51,7 +51,7 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
-		var sound:Sound;
+		private var sound:Sound;
 		
 		//TODO are these values correct? Henry
 		public static const LEVEL_CODE_CHAR:String = '#';

@@ -1,6 +1,5 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -13,11 +12,8 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
-	import org.interguild.FancyButton;
 	import org.interguild.editor.EditorButtonContainer;
-	import org.interguild.editor.dropdown.FileMenu;
-	import org.interguild.editor.scrollBar.HorizontalBar;
-	import org.interguild.editor.scrollBar.VerticalScrollBar;
+	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
@@ -41,8 +37,6 @@ package org.interguild.editor {
 		private var gridContainer:Sprite;
 		private var editorButtons:EditorButtonContainer;
 		private var tabsContainer:EditorTabContainer;
-		//private var dropDown:DropDownMenu;
-		private var fileButton:FileMenu;
 
 		private var clearButton:ClearAllButton;
 		private var undoButton:UndoButton;
@@ -53,8 +47,6 @@ package org.interguild.editor {
 
 		private var progressBar:LevelProgressBar;
 
-		private var gridVerticalScrollBar:VerticalScrollBar;
-		private var gridHorizontalScrollBar:HorizontalBar;
 		//variable to hold level code if coming back from test level
 		private var currentLevel:String;
 
@@ -69,31 +61,30 @@ package org.interguild.editor {
 
 			initBG();
 			//initOldButtons();
-			initNewButtons();
 			//initTextFields();
 
-			editorButtons = new EditorButtonContainer();
-			tabsContainer = new EditorTabContainer(editorButtons);
+//			editorButtons = new EditorButtonContainer();
+//			addChild(editorButtons);
+			var tileList:TileList = new TileList();
+			addChild(tileList);
+			
+			tabsContainer = new EditorTabContainer(tileList);
 			addChild(tabsContainer);
 			addChild(tabsContainer.getCurrentGridContainer());
-			addChild(editorButtons);
 
-			fileButton = new FileMenu(this);
-			addChild(fileButton);
-
-			//addChild(dropDown);
 			loader = new EditorLoader();
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
+			
+			//must be initialized last
+			var topBar:TopBar = new TopBar(this);
+			addChild(topBar);
 		}
 
 		private function initBG():void {
 			graphics.beginFill(BACKGROUND_COLOR);
 			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
 			graphics.endFill();
-			
-			var topBar:Bitmap = new Bitmap(new EditorTopBarSprite());
-			addChild(topBar);
 		}
 
 		private function initOldButtons():void {
@@ -134,7 +125,7 @@ package org.interguild.editor {
 
 			testButton = new TestButton();
 			setButtonSize(testButton, 345, 42, 160, 25);
-			testButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
+			testButton.addEventListener(MouseEvent.CLICK, testGame);
 			addChild(testButton);
 
 			//change size button:
@@ -146,46 +137,6 @@ package org.interguild.editor {
 			setButtonSize(resizeButton, 745, 37, 120, 35);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			addChild(resizeButton);
-		}
-		
-		private function initNewButtons():void{
-			var up:DisplayObject;
-			var over:DisplayObject;
-			var hit:Sprite;
-			
-			//init play level button
-			up = new Bitmap(new PlayLevelButtonSprite());
-			over = new Bitmap(new PlayLevelRolloverSprite());
-			hit = new Sprite();
-			hit.graphics.beginFill(0, 0); //define button's hit region
-			hit.graphics.moveTo(25, 1);
-			hit.graphics.lineTo(200, 1);
-			hit.graphics.lineTo(175, 47);
-			hit.graphics.lineTo(0, 47);
-			hit.graphics.lineTo(25, 1);
-			hit.graphics.endFill();
-			var playGameButton:FancyButton = new FancyButton(up, over, hit); 
-			playGameButton.x = 545;
-			playGameButton.y = 18;
-			playGameButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
-			addChild(playGameButton);
-			
-			//init publish button
-			up = new Bitmap(new PublishButtonSprite());
-			over = new Bitmap(new PublishRolloverSprite());
-			hit = new Sprite();
-			hit.graphics.beginFill(0, 0); //define button's hit region
-			hit.graphics.moveTo(25, 1);
-			hit.graphics.lineTo(147, 1);
-			hit.graphics.lineTo(147, 47);
-			hit.graphics.lineTo(0, 47);
-			hit.graphics.lineTo(25, 1);
-			hit.graphics.endFill();
-			var publishButton:FancyButton = new FancyButton(up, over, hit); 
-			publishButton.x = 734;
-			publishButton.y = 18;
-			//todo make button publish to website
-			addChild(publishButton);
 		}
 
 		private function initTextFields():void {
@@ -353,7 +304,7 @@ package org.interguild.editor {
 		/**
 		 * This function deletes level editor and moves on to level page
 		 */
-		private function testGameButtonClick(e:MouseEvent):void {
+		public function testGame(e:MouseEvent):void {
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
 		}
