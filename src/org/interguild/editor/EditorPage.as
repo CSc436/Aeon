@@ -1,17 +1,19 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
 	import flash.text.TextField;
-
+	
 	import fl.controls.Button;
 	import fl.controls.TextInput;
-
+	
 	import flexunit.utils.ArrayList;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.FancyButton;
 	import org.interguild.editor.EditorButtonContainer;
 	import org.interguild.editor.dropdown.FileMenu;
 	import org.interguild.editor.scrollBar.HorizontalBar;
@@ -66,8 +68,9 @@ package org.interguild.editor {
 			redoList = new Array();
 
 			initBG();
-			initButtons();
-			initTextFields();
+			//initOldButtons();
+			initNewButtons();
+			//initTextFields();
 
 			editorButtons = new EditorButtonContainer();
 			tabsContainer = new EditorTabContainer(editorButtons);
@@ -88,9 +91,12 @@ package org.interguild.editor {
 			graphics.beginFill(BACKGROUND_COLOR);
 			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
 			graphics.endFill();
+			
+			var topBar:Bitmap = new Bitmap(new EditorTopBarSprite());
+			addChild(topBar);
 		}
 
-		private function initButtons():void {
+		private function initOldButtons():void {
 			//undo button:
 			var undoBackground:Bitmap = new Bitmap(new MenuButtonSelectBG());
 			setBackgroundSize(undoBackground, 0, 660, 200);
@@ -140,6 +146,46 @@ package org.interguild.editor {
 			setButtonSize(resizeButton, 745, 37, 120, 35);
 			resizeButton.addEventListener(MouseEvent.CLICK, resizeClick);
 			addChild(resizeButton);
+		}
+		
+		private function initNewButtons():void{
+			var up:DisplayObject;
+			var over:DisplayObject;
+			var hit:Sprite;
+			
+			//init play level button
+			up = new Bitmap(new PlayLevelButtonSprite());
+			over = new Bitmap(new PlayLevelRolloverSprite());
+			hit = new Sprite();
+			hit.graphics.beginFill(0, 0); //define button's hit region
+			hit.graphics.moveTo(25, 1);
+			hit.graphics.lineTo(200, 1);
+			hit.graphics.lineTo(175, 47);
+			hit.graphics.lineTo(0, 47);
+			hit.graphics.lineTo(25, 1);
+			hit.graphics.endFill();
+			var playGameButton:FancyButton = new FancyButton(up, over, hit); 
+			playGameButton.x = 545;
+			playGameButton.y = 18;
+			playGameButton.addEventListener(MouseEvent.CLICK, testGameButtonClick);
+			addChild(playGameButton);
+			
+			//init publish button
+			up = new Bitmap(new PublishButtonSprite());
+			over = new Bitmap(new PublishRolloverSprite());
+			hit = new Sprite();
+			hit.graphics.beginFill(0, 0); //define button's hit region
+			hit.graphics.moveTo(25, 1);
+			hit.graphics.lineTo(147, 1);
+			hit.graphics.lineTo(147, 47);
+			hit.graphics.lineTo(0, 47);
+			hit.graphics.lineTo(25, 1);
+			hit.graphics.endFill();
+			var publishButton:FancyButton = new FancyButton(up, over, hit); 
+			publishButton.x = 734;
+			publishButton.y = 18;
+			//todo make button publish to website
+			addChild(publishButton);
 		}
 
 		private function initTextFields():void {
@@ -201,24 +247,32 @@ package org.interguild.editor {
 				throw new Error("Invalid Level Dimensions: '" + w + "' by '" + h + "'");
 			tabsContainer.resizeCurrentGrid(h, w);
 		}
+		
+		private function saveToFile():void{
+			var file:FileReference = new FileReference();
+			var levelcode:String = getLevelCode();
+			var filename:String = levelcode.substring(0,levelcode.indexOf("\n")) + ".txt";
+			file.save(levelcode, filename);
+		}
 
 		public function openFromFile():void {
 			filereader = new FileReference();
 			filereader.addEventListener(Event.SELECT, selectHandler);
 			filereader.addEventListener(Event.COMPLETE, loadCompleteHandler);
 			filereader.browse(); // ask user for file
+			
+			function selectHandler(event:Event):void {
+				filereader.removeEventListener(Event.SELECT, selectHandler);
+				filereader.load();
+			}
+			
+			function loadCompleteHandler(event:Event):void {
+				filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
+				var lvlCode:String = (String(filereader.data)).split("\r").join("");
+				openLevel(lvlCode);
+			}
 		}
-
-		private function selectHandler(event:Event):void {
-			filereader.removeEventListener(Event.SELECT, selectHandler);
-			filereader.load();
-		}
-
-		private function loadCompleteHandler(event:Event):void {
-			filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
-			openLevel((String(filereader.data)).split("\r").join(""));
-		}
-
+		
 		/**
 		 * We have the level data use that so we can
 		 * create a level
