@@ -1,24 +1,19 @@
 package org.interguild.editor {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
-	
-	import org.interguild.game.Player;
-	import org.interguild.game.tiles.ArrowCrate;
-	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.FinishLine;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
+
+	import org.interguild.editor.tilelist.TileList;
 
 	public class EditorCell extends Sprite {
 
-		private static const CELL_WIDTH:uint=32;
-		private static const CELL_HEIGHT:uint=32;
+		private static const CELL_WIDTH:uint = 32;
+		private static const CELL_HEIGHT:uint = 32;
 
-		private static const LINE_COLOR:uint=0xCCCCCC;
-		private var CELL_BG_COLOR:uint=0xF2F2F2;
+		private static const LINE_COLOR:uint = 0xCCCCCC;
+		private var CELL_BG_COLOR:uint = 0xF2F2F2;
 
-		private var currentTitleName:String=" ";
+		private var currentTitleName:String = " ";
 		private var isHighlighted:Boolean = false;
 
 		public function EditorCell() {
@@ -29,81 +24,39 @@ package org.interguild.editor {
 			graphics.endFill();
 
 			//set mouse stuff
-			mouseEnabled=true;
-			buttonMode=true;
+			mouseEnabled = true;
+			buttonMode = true;
 		}
 
 		public function setTile(char:String):void {
-
 			if (currentTitleName != char) {
-				currentTitleName=char;
+				currentTitleName = char;
 				removeChildren();
 
-				/**
-				 * types of sprites for each editor cell
-				 */
-				switch (currentTitleName) {
-					case Terrain.LEVEL_CODE_CHAR:
-						//savin this code excerpt for transparency in the future
-//						var bit:Bitmap = new Bitmap(new TerrainSprite());
-//						bit.alpha =.3;
-//						addChild(bit);
-						
-						addChild(new Bitmap(new TerrainSprite()));
-						break;
-					case Player.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new StartLineSprite()));
-						break;
-					case FinishLine.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new FinishLineSprite()));
-						break;
-					case WoodCrate.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new WoodenCrateSprite()));
-						break;
-					case SteelCrate.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new SteelCrateSprite()));
-						break;
-					case Collectable.LEVEL_CODE_CHAR:
-						addChild(new Bitmap(new CollectibleSprite()));
-						break;
-					case ArrowCrate.LEVEL_CODE_CHAR_LEFT:
-						addChild(new Bitmap(new LightningBoxLeft()));
-						break;
-					case ArrowCrate.LEVEL_CODE_CHAR_RIGHT:
-						addChild(new Bitmap(new LightningBoxRight()));
-						break;
-					case ArrowCrate.LEVEL_CODE_CHAR_DOWN:
-						addChild(new Bitmap(new LightningBoxDown()));
-						break;
-					case ArrowCrate.LEVEL_CODE_CHAR_UP:
-						addChild(new Bitmap(new LightningBoxUp()));
-						break;
-					default:
-						trace("EditorCell: Unknown level code character: '" + char + "'");
-						break;
-				}
+				var icon:BitmapData = TileList.getIcon(char);
+				if (icon != null)
+					addChild(new Bitmap(icon));
 			}
 		}
 
 		public function clearTile():void {
-			currentTitleName="";
+			currentTitleName = "";
 			removeChildren();
 		}
 
 		public function get cellName():String {
 			return currentTitleName;
 		}
-		
-		public function toggleHighlight():void{
+
+		public function toggleHighlight():void {
 			isHighlighted = !isHighlighted;
-			if(isHighlighted){
+			if (isHighlighted) {
 				CELL_BG_COLOR = 0xFFFF00;
 				graphics.lineStyle(1, LINE_COLOR);
 				graphics.beginFill(CELL_BG_COLOR);
 				graphics.drawRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
 				graphics.endFill();
-			}
-			else{
+			} else {
 				CELL_BG_COLOR = 0xF2F2F2;
 				graphics.lineStyle(1, LINE_COLOR);
 				graphics.beginFill(CELL_BG_COLOR);
@@ -111,7 +64,8 @@ package org.interguild.editor {
 				graphics.endFill();
 			}
 		}
-		public function isHighlight():Boolean{
+
+		public function isHighlight():Boolean {
 			return isHighlighted;
 		}
 	}

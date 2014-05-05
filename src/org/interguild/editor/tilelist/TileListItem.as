@@ -38,9 +38,11 @@ package org.interguild.editor.tilelist {
 
 		private var isSelected:Boolean;
 		private var code:String;
+		private var icon:BitmapData;
 
-		public function TileListItem(icon:BitmapData, name:String, code:String) {
+		public function TileListItem(name:String, code:String) {
 			this.code = code;
+			this.icon = TileList.getIcon(code);
 			this.mouseChildren = false;
 
 			//init rollover highlight
@@ -119,6 +121,10 @@ package org.interguild.editor.tilelist {
 		
 		public function getCharCode():String{
 			return code;
+		}
+		
+		public function getIcon():BitmapData{
+			return icon;
 		}
 	}
 }

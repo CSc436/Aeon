@@ -1,10 +1,11 @@
 package org.interguild.editor.tilelist {
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
@@ -22,16 +23,21 @@ package org.interguild.editor.tilelist {
 		private static const BORDER_PADDING:uint = 8;
 		private static const SCROLLBAR_WIDTH:uint = 15;
 
-		//TileListItem references this
+		//TileListItem references this:
 		internal static const MASK_WIDTH:uint = Aeon.STAGE_WIDTH - POSITION_X - SCROLLBAR_WIDTH;
-		private static const MASK_HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y;// - (2 * PADDING_Y);
+		private static const MASK_HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y; // - (2 * PADDING_Y);
 
 		private static const BG_COLOR:uint = 0x115867;
 		private static const BG_CORNER_RADIUS:uint = 20;
 		private static const BG_WIDTH:uint = MASK_WIDTH + (BG_CORNER_RADIUS * 2);
 		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
 
-		private var playerSpawn:Boolean;
+		private static var map:Object = new Object();
+
+		public static function getIcon(charCode:String):BitmapData {
+			return map[charCode];
+		}
+
 		private var selectionBox:Boolean;
 
 		private var list:Sprite;
@@ -54,21 +60,8 @@ package org.interguild.editor.tilelist {
 			nextY += BORDER_PADDING;
 
 			//init items
-			currentSelection = new TileListItem(new TerrainSprite(), "Terrain", Terrain.LEVEL_CODE_CHAR);
-			currentSelection.select();
-			addItem(currentSelection);
-			addItem(new TileListItem(new StartingPositionSprite(), "Starting Position", Player.LEVEL_CODE_CHAR));
-			addItem(new TileListItem(new FinishLineSprite(), "End Portal", FinishLine.LEVEL_CODE_CHAR));
-			addItem(new TileListItem(new CollectibleSprite(), "Treasure", Collectable.LEVEL_CODE_CHAR));
-			addItem(new TileListItem(new WoodenCrateSprite(), "Wooden Crate", WoodCrate.LEVEL_CODE_CHAR));
-			addItem(new TileListItem(new SteelCrateSprite(), "Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
-			addItem(new TileListItem(new LightningBoxRight(), "Arrow Crate Right", ArrowCrate.LEVEL_CODE_CHAR_RIGHT));
-			addItem(new TileListItem(new LightningBoxLeft(), "Arrow Crate Left", ArrowCrate.LEVEL_CODE_CHAR_LEFT));
-			addItem(new TileListItem(new LightningBoxUp(), "Arrow Crate Up", ArrowCrate.LEVEL_CODE_CHAR_UP));
-			addItem(new TileListItem(new LightningBoxDown(), "Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
-			addItem(new TileListItem(new WoodenDynamiteSprite(), "Wooden Dynamite Crate", Terrain.LEVEL_CODE_CHAR));
-			addItem(new TileListItem(new SteelDynamiteSprite(), "Steel Dynamite Crate", Terrain.LEVEL_CODE_CHAR));
-			
+			initList();
+
 			//add some padding
 			list.graphics.beginFill(0, 0);
 			list.graphics.drawRect(0, 0, 1, BORDER_PADDING);
@@ -85,8 +78,42 @@ package org.interguild.editor.tilelist {
 			addChild(scrollpane);
 		}
 		
-		private function onClick(evt:MouseEvent):void{
-			if(evt.target is TileListItem){
+		private function initList():void{
+			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
+			currentSelection = new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR);
+			currentSelection.select();
+			addItem(currentSelection);
+			
+			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
+			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
+			
+			map[FinishLine.LEVEL_CODE_CHAR] = FinishLine.EDITOR_ICON;
+			addItem(new TileListItem("End Portal", FinishLine.LEVEL_CODE_CHAR));
+			
+			map[Collectable.LEVEL_CODE_CHAR] = Collectable.EDITOR_ICON;
+			addItem(new TileListItem("Treasure", Collectable.LEVEL_CODE_CHAR));
+			
+			map[WoodCrate.LEVEL_CODE_CHAR] = WoodCrate.EDITOR_ICON;
+			addItem(new TileListItem("Wooden Crate", WoodCrate.LEVEL_CODE_CHAR));
+			
+			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
+			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_RIGHT] = ArrowCrate.EDITOR_ICON_RIGHT;
+			addItem(new TileListItem("Arrow Crate Right", ArrowCrate.LEVEL_CODE_CHAR_RIGHT));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_LEFT] = ArrowCrate.EDITOR_ICON_LEFT;
+			addItem(new TileListItem("Arrow Crate Left", ArrowCrate.LEVEL_CODE_CHAR_LEFT));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_UP] = ArrowCrate.EDITOR_ICON_UP;
+			addItem(new TileListItem("Arrow Crate Up", ArrowCrate.LEVEL_CODE_CHAR_UP));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
+			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
+		}
+
+		private function onClick(evt:MouseEvent):void {
+			if (evt.target is TileListItem) {
 				currentSelection.deselect();
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
@@ -99,16 +126,8 @@ package org.interguild.editor.tilelist {
 			list.addChild(i);
 		}
 
-		public function getActiveButton():String {
+		public function getActiveChar():String {
 			return currentSelection.getCharCode();
-		}
-
-		public function isPlayerSpawn():Boolean {
-			return playerSpawn;
-		}
-
-		public function setPlayerSpawn(bool:Boolean):void {
-			playerSpawn = bool;
 		}
 
 		public function isSelectionBox():Boolean {
