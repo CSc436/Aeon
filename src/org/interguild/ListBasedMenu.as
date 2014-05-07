@@ -29,6 +29,7 @@ package org.interguild {
 			offsetX = selectorOffsetX;
 			offsetY = selectorOffsetY;
 			
+			
 			//init selectors
 			buttonSelect = new Bitmap(new MenuButtonSelectBG());
 			buttonClick = new Bitmap(new MenuButtonClickBG());

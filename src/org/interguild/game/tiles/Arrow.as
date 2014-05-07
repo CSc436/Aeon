@@ -1,8 +1,10 @@
 package org.interguild.game.tiles {
 
 	import flash.display.Bitmap;
-
+	import flash.display.MovieClip;
+	
 	import org.interguild.Aeon;
+	import org.interguild.game.collision.Direction;
 
 
 	public class Arrow extends CollidableObject {
@@ -22,18 +24,24 @@ package org.interguild.game.tiles {
 			this.direction=direction;
 			parentDestroyed=false;
 			this.isActive=true;
+			var anim:MovieClip = new LightningArrowAnimation();
+			addChild(anim);
 			switch (direction) {
-				case 1:
-					addChild(new Bitmap(new LightningRightSprite()));
+				case Direction.RIGHT:
+					anim.rotation = 90;
+					anim.x += anim.height;
 					break;
-				case 2:
-					addChild(new Bitmap(new LightningDownSprite()));
+				case Direction.LEFT:
+					anim.rotation = -90;
+					anim.y += anim.width;
 					break;
-				case 3:
-					addChild(new Bitmap(new LightningLeftSprite()));
+				case Direction.DOWN:
+					anim.rotation = 180;
+					anim.x += anim.width;
+					anim.y += anim.height;
 					break;
-				case 4:
-					addChild(new Bitmap(new LightningUpSprite()));
+				default:
+					//animation is already facing up
 					break;
 			}
 		}
@@ -41,16 +49,16 @@ package org.interguild.game.tiles {
 		public override function onGameLoop():void {
 			if (parentDestroyed) {
 				switch (direction) {
-					case 1: // The arrow shoots right
+					case Direction.RIGHT:
 						newX+=6;
 						break;
-					case 2: // The arrow shoots down
+					case Direction.DOWN:
 						newY+=6;
 						break;
-					case 3: // The arrow shoots left
+					case Direction.LEFT:
 						newX-=6;
 						break;
-					case 4: // The arrow shoots up
+					case Direction.UP:
 						newY-=6;
 						break;
 				}

@@ -6,6 +6,10 @@ package org.interguild.game {
 	import flash.media.SoundChannel;
 	import flash.net.URLRequest;
 	
+	import flash.display.BitmapData;
+	import flash.display.MovieClip;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
@@ -56,16 +60,17 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
-		public var sound:Sound;
-		
-		//TODO are these values correct? Henry
+		private var sound:Sound;
+
 		public static const LEVEL_CODE_CHAR:String = '#';
-		public static const DESTRUCTIBILITY:int=2;
-		public static const IS_SOLID:Boolean=true;
-		public static const HAS_GRAVITY:Boolean=true;
-		public static const KNOCKBACK_AMOUNT:int=5;
-		public static const IS_BUOYANT:Boolean=false;
-		
+		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
+
+		public static const DESTRUCTIBILITY:int = 2;
+		public static const IS_SOLID:Boolean = true;
+		public static const HAS_GRAVITY:Boolean = true;
+		public static const KNOCKBACK_AMOUNT:int = 5;
+		public static const IS_BUOYANT:Boolean = false;
+
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			drawPlayer();
@@ -117,9 +122,9 @@ package org.interguild.game {
 			newX += speedX;
 			newY += speedY;
 			updateHitBox();
-			
-			trace( "speedY = ", speedY );
-			if ( speedY > 2 && !isJumping) {
+
+			trace("speedY = ", speedY);
+			if (speedY > 2 && !isJumping) {
 				isFalling = true;
 			}
 		}
@@ -240,7 +245,7 @@ package org.interguild.game {
 			// reset the animation to walking left
 			else if (!keys.isKeyDown && !isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkLeft();
-			// reset the animation to walking right
+					// reset the animation to walking right
 			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkRight();
 			}
@@ -362,7 +367,7 @@ package org.interguild.game {
 					playerClip.x = 25;
 					playerClip.y = -8;
 				}
-			} else if (7 <= frameCounter - frameJumpCounter && frameCounter - frameJumpCounter <= 16 ) {
+			} else if (7 <= frameCounter - frameJumpCounter && frameCounter - frameJumpCounter <= 16) {
 				if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
 					removeChild(playerClip);
 					playerClip = new PlayerJumpPeakThenFallAnimation();
