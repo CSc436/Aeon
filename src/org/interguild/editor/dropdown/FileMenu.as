@@ -118,7 +118,7 @@ package org.interguild.editor.dropdown {
 		}
 		
 		private function clickSave(evt:MouseEvent):void{
-			trace("SAVE LEVEL");
+			editor.saveToFile();
 		}
 		
 		private function clickSaveAs(evt:MouseEvent):void{

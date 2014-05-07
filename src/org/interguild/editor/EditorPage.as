@@ -179,7 +179,7 @@ package org.interguild.editor {
 //			tabsContainer.resizeCurrentGrid(h, w);
 //		}
 		
-		private function saveToFile():void{
+		public function saveToFile():void{
 			var file:FileReference = new FileReference();
 			var levelcode:String = getLevelCode();
 			var filename:String = levelcode.substring(0,levelcode.indexOf("\n")) + ".txt";

@@ -48,6 +48,8 @@
 			title.width = FONT_WIDTH;
 			title.height = FONT_HEIGHT;
 			title.text = name;
+			title.selectable = false;
+			title.mouseEnabled = false;
 			addChild(title);
 			
 			//init close button
