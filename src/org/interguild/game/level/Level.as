@@ -265,17 +265,18 @@ package org.interguild.game.level {
 
 		private function update():void {
 
-			if (!player.isDead) {
-				//update player
-				player.onGameLoop();
+
+			//update player
+			player.onGameLoop();
 
 
-				// update animations
-				player.updateAnimation();
-				player.frameCounter++; // updated counter for game frames
+			// update animations
+			player.updateAnimation();
 
-				player.reset();
-			}
+			player.frameCounter++; // update counter for game frames
+
+			player.reset();
+
 
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -297,15 +298,15 @@ package org.interguild.game.level {
 				}
 			}
 
-			if (!player.isDead) {
-				//detect collisions for player
-				collisionGrid.updateObject(player, false);
-				var index:int = collisionGrid.activeObjects.indexOf(player);
-				if (index != -1) {
-					collisionGrid.activeObjects.splice(index, 1);
-				}
 
+			//detect collisions for player
+			collisionGrid.updateObject(player, false);
+			var index:int = collisionGrid.activeObjects.indexOf(player);
+			if (index != -1) {
+				collisionGrid.activeObjects.splice(index, 1);
 			}
+
+
 			//detect collisions for active objects
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
@@ -317,11 +318,7 @@ package org.interguild.game.level {
 			}
 
 			//test and handle collisions
-			if (!player.isDead) {
-
-
-				collisionGrid.detectAndHandleCollisions(player);
-			}
+			collisionGrid.detectAndHandleCollisions(player)
 			if (collisionGrid.activeObjects.length > 0) {
 				for (i = 0; i < collisionGrid.activeObjects.length; i++) {
 					collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
@@ -365,3 +362,5 @@ package org.interguild.game.level {
 //		}
 	}
 }
+
+
