@@ -51,7 +51,8 @@ package org.interguild.editor {
 			tabsContainer = new EditorTabContainer(gridContainer, tileList);
 			addChild(tabsContainer);
 			addChild(gridContainer);
-
+	
+			// whitespace comment
 			loader = new EditorLoader();
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
