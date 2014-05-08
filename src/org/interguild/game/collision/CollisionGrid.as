@@ -1,8 +1,11 @@
 package org.interguild.game.collision {
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
@@ -12,14 +15,11 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
-
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
 	import org.interguild.game.tiles.Tile;
-	import flash.net.URLRequest;
-	import flash.media.Sound;
 
 	public class CollisionGrid extends Sprite {
 
@@ -381,6 +381,8 @@ package org.interguild.game.collision {
 			*/
 			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion))) {
 				removalObjects.push(otherObject);
+				var m:MovieClip = MovieClip(explosion.exp);
+				m.play();
 				if (explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
 					removalObjects.push(activeObject);
 			}

@@ -26,7 +26,7 @@ package org.interguild.game.tiles
 		public function DynamiteCrate(x:int, y:int)
 		{
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
-			addChild(new PlayerWalkingAnimation());
+			addChild(new Bitmap(new WoodenDynamiteSprite()));
 			exp = new Sound();
 			exp.load(new URLRequest("../assets/Explosion.mp3"));
 		}
