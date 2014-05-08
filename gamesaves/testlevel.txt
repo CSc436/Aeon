@@ -1,23 +1,19 @@
 The Test Level of Doom
 80x30
+
 x=80
 x=80
-xx    wx                   xxxxx        
-xx    sx                   xxxxx        
-xx#   wx                   xxxxx        
-xxxx        x       xx     xxxxx        
-xx         xx             xxxxxx        
-xx   x>  ds             w  xxxxx        
-xx  xxxxsssxxxx    xxx  x  xxxxx        
-xx    xxsssxxxx >      fwwwxxxxx        
-xx    xxsssxssx x x xxxxxxxxxxxx        
-xx  xxx sssxssx x x xxxxxxxxxxxx        
-xx      sssxxxxxxxxxxxxxxxxxxxxx        
-xx <    wwsxxxxxxxxxxxxxxxxxxxxx        
-xxxxx     wxxxxxxxxxxxxxxxxxxxxx        
-xxxxxx      xxxxxxxxxxxxxxxxxxxx        
-xxxxxxx      xxxxxxxxxxxxxxxxxxx        
-xxxxxxxx
-xxxxxxxxx
-xxxxxxxxxx    c  c  c  f
-x=80;
+xxxxx
+xx
+xx #
+xxxxxxxx                     d
+x   ddd     <                xxxxxxx
+x   v                        x     x       x
+x                       xxxxxx  c          x         f
+xsssssss            c  ssssssxxxxxxxxxxxxxxxxxx    xxxxxxxxxxxxxxx
+x  c   s   w^w xxxxxxxvxx    x                x    x
+xxxxxxxxxxxxxxxxxxxxx        x                xxwwxx
+                             x                   
+                             x                    ss 
+                            ds                 ssssss
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

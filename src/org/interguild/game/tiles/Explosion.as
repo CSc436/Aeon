@@ -30,15 +30,12 @@ package org.interguild.game.tiles
 			exp.x = -32;
 			exp.y = -62;
 			exp.play();
-			
-//			graphics.beginFill(0xFF0000);
-//			graphics.drawRect(0, 0, 64, 64);
-//			graphics.endFill();
 		}
 		
 		public override function onGameLoop():void {
 			if (parentDestroyed) {
 				timeCounter++;
+				exp.gotoAndStop(timeCounter);
 			}
 		}
 	}

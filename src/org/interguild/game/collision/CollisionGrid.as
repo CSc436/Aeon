@@ -379,10 +379,10 @@ package org.interguild.game.collision {
 			/*
 			* EXPLOSION DESTROYS SURROUNDINGS
 			*/
-			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion))) {
+			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion || otherTile is Arrow))) {
 				removalObjects.push(otherObject);
-				var m:MovieClip = MovieClip(explosion.exp);
-				m.play();
+//				var m:MovieClip = MovieClip(explosion.exp);
+//				m.play();
 				if (explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
 					removalObjects.push(activeObject);
 			}
