@@ -11,7 +11,7 @@ package org.interguild.editor.grid {
 		private static const CELL_HEIGHT:uint = 32;
 
 		public static const LINE_COLOR:uint = 0x777777;
-		private var CELL_BG_COLOR:uint = 0x000000;
+		public static const CELL_BG_COLOR:uint = 0x000000;
 
 		private var currentTitleName:String = " ";
 		private var isHighlighted:Boolean = false;
@@ -61,17 +61,24 @@ package org.interguild.editor.grid {
 		public function toggleHighlight():void {
 			isHighlighted = !isHighlighted;
 			if (isHighlighted) {
-				CELL_BG_COLOR = 0xFFFF00;
-				//graphics.lineStyle(1, LINE_COLOR);
-				graphics.beginFill(CELL_BG_COLOR);
-				graphics.drawRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
-				graphics.endFill();
+				var yellow:uint = 0xFFFF00;
+				//init border
+				removeChild(border);
+				border = new Sprite();
+				border.graphics.beginFill(yellow);
+				border.graphics.drawRect(CELL_WIDTH - 1, 0, 1, CELL_HEIGHT);
+				border.graphics.drawRect(0, CELL_HEIGHT - 1, CELL_WIDTH, 1);
+				border.graphics.endFill();
+				addChild(border);
+
 			} else {
-				CELL_BG_COLOR = 0x000000;
-				//graphics.lineStyle(1, LINE_COLOR);
-				graphics.beginFill(CELL_BG_COLOR);
-				graphics.drawRect(0, 0, CELL_WIDTH, CELL_HEIGHT);
-				graphics.endFill();
+				//init border
+				border = new Sprite();
+				border.graphics.beginFill(LINE_COLOR);
+				border.graphics.drawRect(CELL_WIDTH - 1, 0, 1, CELL_HEIGHT);
+				border.graphics.drawRect(0, CELL_HEIGHT - 1, CELL_WIDTH, 1);
+				border.graphics.endFill();
+				addChild(border);
 			}
 		}
 

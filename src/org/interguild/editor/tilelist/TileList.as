@@ -2,11 +2,12 @@ package org.interguild.editor.tilelist {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-
+	
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.editor.grid.EditorGridContainer;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
@@ -35,7 +36,7 @@ package org.interguild.editor.tilelist {
 		public static const SELECTION_TOOL_CHAR:String = "SELECTION";
 
 		private static var map:Object = new Object();
-
+		
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
@@ -46,11 +47,11 @@ package org.interguild.editor.tilelist {
 		private var currentSelection:TileListItem;
 
 		private var nextY:uint = 0; //used for adding tiles to the list
-
+		private var gridContainer:EditorGridContainer;
 		public function TileList() {
 			x = POSITION_X;
 			y = POSITION_Y;
-
+			
 			//init bg
 			graphics.beginFill(BG_COLOR);
 			graphics.drawRoundRect(0, 0, BG_WIDTH, BG_HEIGHT, BG_CORNER_RADIUS, BG_CORNER_RADIUS);
@@ -126,6 +127,7 @@ package org.interguild.editor.tilelist {
 				if (currentSelection.getCharCode() == SELECTION_TOOL_CHAR)
 					isUsingSelectionTool = true;
 			}
+			gridContainer.setMultipleTiles();
 		}
 
 		private function addItem(i:TileListItem):void {
@@ -140,6 +142,9 @@ package org.interguild.editor.tilelist {
 
 		public function isSelectionBox():Boolean {
 			return isUsingSelectionTool;
+		}
+		public function addContainer(c:EditorGridContainer):void{
+			gridContainer = c;
 		}
 	}
 }

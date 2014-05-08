@@ -43,16 +43,16 @@ package org.interguild.editor {
 			redoList = new Array();
 
 			initBG();
-
+			
 			var tileList:TileList = new TileList();
+			var gridContainer:EditorGridContainer = new EditorGridContainer(tileList);
+			addChild(gridContainer);
+			tileList.addContainer(gridContainer);
 			addChild(tileList);
 			
-			var gridContainer:EditorGridContainer = new EditorGridContainer(tileList);
 			tabsContainer = new EditorTabContainer(gridContainer, tileList);
 			addChild(tabsContainer);
-			addChild(gridContainer);
-	
-			// whitespace comment
+			
 			loader = new EditorLoader();
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
