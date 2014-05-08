@@ -1,6 +1,6 @@
 package org.interguild.loader {
 
-	import org.interguild.editor.EditorGrid;
+	import org.interguild.editor.grid.EditorGrid;
 
 	public class EditorLoader extends Loader {
 		
@@ -12,7 +12,7 @@ package org.interguild.loader {
 		
 		protected override function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void{
 			grid = new EditorGrid(lvlHeight, lvlWidth);
-			initializedCallback(title, grid);
+			initializedCallback(grid);
 		}
 		
 		protected override function initObject(curChar:String, px:int, py:int):void {

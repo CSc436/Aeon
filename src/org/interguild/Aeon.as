@@ -14,7 +14,6 @@ package org.interguild {
 
 	import org.interguild.loader.ErrorDialog;
 	import flexunit.utils.ArrayList;
-	import org.interguild.editor.Page;
 
 
 	/**
@@ -29,8 +28,8 @@ package org.interguild {
 
 	public class Aeon extends Sprite {
 
-		
-		
+
+
 		private static var instance:Aeon;
 
 		/**
@@ -70,15 +69,21 @@ package org.interguild {
 			graphics.drawRect(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
 			graphics.endFill();
 			graphics.beginFill(BG_COLOR);
-			graphics.drawRect(1, 1, STAGE_WIDTH-2, STAGE_HEIGHT-2);
+			graphics.drawRect(1, 1, STAGE_WIDTH - 2, STAGE_HEIGHT - 2);
 			graphics.endFill();
 
 			//init key man
 			keys = new KeyMan(stage);
 
+			//init main menu
 			mainMenu = new MainMenuPage();
 			addChild(mainMenu);
 			currentPage = mainMenu;
+
+			//init editor
+			editorPage = new EditorPage();
+			editorPage.visible = false;
+			addChild(editorPage);
 
 			//init debug mode
 			CONFIG::DEBUG {
@@ -94,33 +99,25 @@ package org.interguild {
 		}
 
 		public function gotoMainMenu():void {
-			currentPage.visible = false;
-			if (currentPage == levelPage) {
-				removeChild(levelPage);
-				levelPage = null;
-			}
-
+			hideCurrentPage();
 			mainMenu.visible = true;
 			currentPage = mainMenu;
 		}
-		
-		public function returnFromError(e:ArrayList, src:String):void{
-			if(src == "MainMenu" || src.search("Loader") >= 0)
+
+		public function returnFromError(e:ArrayList, src:String):void {
+			if (src == "MainMenu" || src.search("Loader") >= 0)
 				gotoMainMenu();
-			if(src == "Editor")
+			if (src == "Editor")
 				gotoEditorPage();
+
 			var dialog:ErrorDialog = new ErrorDialog(e, src);
 			dialog.y = 120;
-			dialog.x=(Aeon.STAGE_WIDTH / 2) - 150;
+			dialog.x = (Aeon.STAGE_WIDTH / 2) - 150;
 			addChild(dialog);
 		}
 
 		public function playLevelFile(file:String):void {
-			currentPage.visible = false;
-			if (currentPage == levelPage) {
-				removeChild(levelPage);
-				levelPage = null;
-			}
+			hideCurrentPage();
 
 			//go to level page
 			levelPage = new LevelPage();
@@ -130,7 +127,7 @@ package org.interguild {
 		}
 
 		public function playLevelCode(code:String):void {
-			currentPage.visible = false;
+			hideCurrentPage();
 
 			levelPage = new LevelPage();
 			levelPage.playLevelFromCode(code);
@@ -139,16 +136,21 @@ package org.interguild {
 		}
 
 		public function gotoEditorPage():void {
+			hideCurrentPage();
+			editorPage.visible = true;
+			currentPage = editorPage;
+		}
+
+//		public function getLevelPage():LevelPage {
+//			return this.levelPage;
+//		}
+
+		public function hideCurrentPage():void {
 			currentPage.visible = false;
 			if (currentPage == levelPage) {
 				removeChild(levelPage);
 				levelPage = null;
 			}
-
-			editorPage = new EditorPage(this);
-			this.addChild(editorPage);
-			currentPage = editorPage;
 		}
-		
 	}
 }

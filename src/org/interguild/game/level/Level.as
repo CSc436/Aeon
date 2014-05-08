@@ -17,6 +17,7 @@ package org.interguild.game.level {
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
 	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.FinishLine;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -37,6 +38,7 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
+		private var portal:FinishLine;
 		private var tv:TerrainView;
 		private var bg:LevelBackground;
 
@@ -50,6 +52,7 @@ package org.interguild.game.level {
 		private var hud:LevelHUD;
 		private var collectableCount:int;
 
+		public var onWinCallback:Function;
 
 		CONFIG::DEBUG {
 			public var isDebuggingMode:Boolean = false;
@@ -117,6 +120,14 @@ package org.interguild.game.level {
 			hud.increaseCollected();
 		}
 
+		public function grabbedAll():Boolean {
+			return (hud.collected == hud.maxCollected);
+		}
+
+		public function setFinish(o:FinishLine):void {
+			portal = o;
+		}
+
 		public function hideBackground():void {
 			bg.visible = false;
 		}
@@ -143,6 +154,14 @@ package org.interguild.game.level {
 			} else {
 				hud.hide();
 			}
+		}
+
+		public function getPortal():FinishLine {
+			return portal;
+		}
+
+		public function openPortal():void {
+			portal.activate();
 		}
 
 		/**
@@ -219,6 +238,11 @@ package org.interguild.game.level {
 
 		public function get isRunning():Boolean {
 			return timer.running;
+		}
+		
+		public function onWonGame():void {
+			pauseGame();
+			onWinCallback();
 		}
 
 		CONFIG::DEBUG {
@@ -347,19 +371,6 @@ package org.interguild.game.level {
 			//update camera
 			camera.updateCamera();
 		}
-
-//		public function activateObject(obj:CollidableObject):void {
-//			obj.isActive = true;
-//			collisionGrid.activeObjects.push(obj);
-//		}
-//		
-//		public function deactivateObject(obj:CollidableObject):void {
-//			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
-//			
-//			obj.isActive = false;
-//			collisionGrid.activeObjects.splice(index, 1);
-//			obj.finishGameLoop;
-//		}
 	}
 }
 
