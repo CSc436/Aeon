@@ -27,13 +27,17 @@
 		private var closeNormal:Bitmap;
 		private var closeOver:Bitmap;
 		
+		private var tabContainer:EditorTabContainer;
+		
 		private var closeButton:Sprite;
 		
-		public function TabButton(name:String) {
+		public function TabButton(name:String, number:int, tContainer:EditorTabContainer) {
 			//init main tab color
 			activeBG = new Bitmap(new TabActiveSprite());
 			activeBG.visible = false;
 			addChild(activeBG);
+			tNum = number;
+			tabContainer = tContainer;
 			
 			//init inactive tab color
 			inactiveBG = new Bitmap(new TabInactiveSprite());
@@ -105,6 +109,8 @@
 		
 		private function onCloseClick(evt:MouseEvent):void{
 			evt.stopPropagation();
+			//this function removes the button of interest
+			tabContainer.removeTab(tNum);
 		}
 		
 		public function activate():void{

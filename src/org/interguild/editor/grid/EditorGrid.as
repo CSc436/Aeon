@@ -165,5 +165,11 @@ package org.interguild.editor.grid {
 			}
 			cols = newCols;
 		}
+
+		
+		public function setGrid(param0:EditorGrid):void {
+			// TODO Auto Generated method stub
+
+		}
 	}
 }
