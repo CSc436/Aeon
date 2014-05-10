@@ -14,21 +14,19 @@ package org.interguild {
 
 	import org.interguild.loader.ErrorDialog;
 	import flexunit.utils.ArrayList;
+	import flash.system.Security;
+	import flash.display.Stage;
+	import flash.external.ExternalInterface;
 
 
 	/**
-	 * Aeon.as initializes the game, but it's also responsible for
-	 * managing all of the menu transitions.
-	 *
-	 * TODO: Put all of the main menu screen's components into its
-	 * own class or object.
+	 * Responsible for managing all of the menu transitions.
+	 * 
 	 */
 
 	[SWF(backgroundColor = "0x999999", width = "900", height = "500", frameRate = "30")]
 
 	public class Aeon extends Sprite {
-
-
 
 		private static var instance:Aeon;
 
@@ -38,6 +36,10 @@ package org.interguild {
 		 */
 		public static function getMe():Aeon {
 			return instance;
+		}
+		
+		public static function get STAGE():Stage{
+			return instance.stage;
 		}
 
 		public static const TILE_WIDTH:uint = 32;
@@ -58,6 +60,7 @@ package org.interguild {
 
 		public function Aeon() {
 			instance = this;
+			Security.allowDomain("http://interguild.org");
 
 			//stop stage from scaling and stuff
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -77,6 +80,7 @@ package org.interguild {
 
 			//init main menu
 			mainMenu = new MainMenuPage();
+			User.init(mainMenu.updateUser);
 			addChild(mainMenu);
 			currentPage = mainMenu;
 

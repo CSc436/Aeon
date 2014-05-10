@@ -1,11 +1,16 @@
 package org.interguild {
 	import flash.display.MovieClip;
+	import flash.events.Event;
+	import flash.events.FocusEvent;
 	import flash.events.MouseEvent;
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
+	import flash.utils.Timer;
 
 	CONFIG::DEPLOY {
 		import org.interguild.game.level.TestLevel;
@@ -49,14 +54,26 @@ package org.interguild {
 		//hyperlink colors
 		private static const LINK_NORMAL_COLOR:uint = 0x00daf2;
 		private static const LINK_DOWN_COLOR:uint = 0x97ffed;
+		
+		private static const LOGGED_OUT_TEXT:String = "to rate and share levels.";
 		private static const COPYRIGHT:String = "© 2014 Interguild.org";
+		
+		private static const LOGOUT_URL:String = "http://interguild.org/logout.php";
+		private static const LOGIN_URL:String = "http://interguild.org/login.php";
 
-		private var creditText:TextField;
-		private var logoutText:TextField;
+		private var creditLink:TextField;
+		private var userText:TextField;
+		private var loginLink:TextField;
+		private var logoutLink:TextField;
 
 		public function MainMenuPage() {
 			super(SELECTOR_X, SELECTOR_Y);
-			
+
+			initMainItems();
+			initSideItems();
+		}
+
+		private function initMainItems():void {
 			//init logo image
 			var logo:MovieClip = new AeonLogo();
 			logo.x = LOGO_X;
@@ -96,58 +113,130 @@ package org.interguild {
 			addButton(optionsButton);
 
 			selectItem(playButton);
+		}
+
+		private function initSideItems():void {
+			var linkFormat:TextFormat = new TextFormat("Verdana", 12, LINK_NORMAL_COLOR);
+			var textFormat:TextFormat = new TextFormat("Verdana", 12, 0xFFFFFF);
 
 			//init credits
-			creditText = new TextField();
-			creditText.defaultTextFormat = new TextFormat("Verdana", 12, LINK_NORMAL_COLOR);
-			creditText.autoSize = TextFieldAutoSize.LEFT;
-			creditText.selectable = false;
-			creditText.text = "Credits";
-			creditText.x = Aeon.STAGE_WIDTH - creditText.width - CREDIT_PADDING_X;
-			creditText.y = Aeon.STAGE_HEIGHT - creditText.height - CREDIT_PADDING_Y;
-			creditText.addEventListener(MouseEvent.CLICK, onLinkClick);
-			creditText.addEventListener(MouseEvent.MOUSE_DOWN, onCreditsDown);
-			creditText.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
-			creditText.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
-			addChild(creditText);
+			creditLink = new TextField();
+			creditLink.defaultTextFormat = linkFormat;
+			creditLink.autoSize = TextFieldAutoSize.LEFT;
+			creditLink.selectable = false;
+			creditLink.text = "Credits";
+			creditLink.x = Aeon.STAGE_WIDTH - creditLink.width - CREDIT_PADDING_X;
+			creditLink.y = Aeon.STAGE_HEIGHT - creditLink.height - CREDIT_PADDING_Y;
+			creditLink.addEventListener(MouseEvent.MOUSE_DOWN, onLinkDown);
+			creditLink.addEventListener(MouseEvent.MOUSE_UP, onLinkUp);
+			creditLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
+			creditLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
+			addChild(creditLink);
 
 			//init copyright
 			var copyText:TextField = new TextField();
-			copyText.defaultTextFormat = new TextFormat("Verdana", 12, 0xFFFFFF);
+			copyText.defaultTextFormat = textFormat;
 			copyText.autoSize = TextFieldAutoSize.LEFT;
 			copyText.selectable = false;
 			copyText.text = COPYRIGHT + "  | ";
-			copyText.x = creditText.x - copyText.width;
-			copyText.y = creditText.y;
+			copyText.x = creditLink.x - copyText.width;
+			copyText.y = creditLink.y;
 			addChild(copyText);
 
 			//init logout
-			logoutText = new TextField();
-			logoutText.defaultTextFormat = new TextFormat("Verdana", 12, LINK_NORMAL_COLOR);
-			logoutText.autoSize = TextFieldAutoSize.LEFT;
-			logoutText.selectable = false;
-			logoutText.text = "Log Out";
-			logoutText.addEventListener(MouseEvent.CLICK, onLinkClick);
-			logoutText.addEventListener(MouseEvent.MOUSE_DOWN, onCreditsDown);
-			logoutText.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
-			logoutText.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
-			logoutText.x = Aeon.STAGE_WIDTH - logoutText.width - LOGIN_PADDING_X;
-			logoutText.y = LOGIN_PADDING_Y;
-			addChild(logoutText);
-
+			logoutLink = new TextField();
+			logoutLink.defaultTextFormat = linkFormat;
+			logoutLink.autoSize = TextFieldAutoSize.LEFT;
+			logoutLink.selectable = false;
+			logoutLink.text = "Log Out";
+			logoutLink.addEventListener(MouseEvent.MOUSE_DOWN, onLinkDown);
+			logoutLink.addEventListener(MouseEvent.MOUSE_UP, onLinkUp);
+			logoutLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
+			logoutLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
+			logoutLink.addEventListener(MouseEvent.CLICK, onLogoutClick);
+			logoutLink.x = Aeon.STAGE_WIDTH - logoutLink.width - LOGIN_PADDING_X;
+			logoutLink.y = LOGIN_PADDING_Y;
+			logoutLink.visible = false;
+			addChild(logoutLink);
+			
 			//init login
-			var loginText:TextField = new TextField();
-			loginText.defaultTextFormat = new TextFormat("Verdana", 12, 0xFFFFFF);
-			loginText.autoSize = TextFieldAutoSize.LEFT;
-			loginText.selectable = false;
-//			loginText.text = "Log in to rate and share levels.";
-			loginText.text = "Welcome, UsernameGoesHere!";
-			loginText.x = logoutText.x - loginText.width;
-			loginText.y = LOGIN_PADDING_Y;
-			addChild(loginText);
+			loginLink = new TextField();
+			loginLink.defaultTextFormat = linkFormat;
+			loginLink.autoSize = TextFieldAutoSize.LEFT;
+			loginLink.selectable = false;
+			loginLink.text = "Log in";
+			loginLink.addEventListener(MouseEvent.MOUSE_DOWN, onLinkDown);
+			loginLink.addEventListener(MouseEvent.MOUSE_UP, onLinkUp);
+			loginLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
+			loginLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
+			loginLink.addEventListener(MouseEvent.CLICK, onLoginClick);
+			loginLink.y = LOGIN_PADDING_Y;
+			loginLink.visible = false;
+			addChild(loginLink);
+
+			//init user text // displays welcome message, or login link
+			userText = new TextField();
+			userText.defaultTextFormat = textFormat;
+			userText.autoSize = TextFieldAutoSize.LEFT;
+			userText.selectable = false;
+			userText.y = LOGIN_PADDING_Y;
+			userText.visible = false;
+			addChild(userText);
+			
+			Aeon.STAGE.focus = Aeon.STAGE;
+			Aeon.STAGE.addEventListener(FocusEvent.FOCUS_OUT, listenForChange);
 		}
 
-		protected override function onItemClicked(selectedButton:uint):void{
+		/**
+		 * Called when get_login.php has loaded, so that we can
+		 * see if the user is logged in.
+		 */
+		public function updateUser():void {
+			if (User.IS_LOGGED_IN) {
+				loginLink.visible = false;
+				userText.text = "Welcome, " + User.NAME + "!";
+				userText.x = logoutLink.x - userText.width;
+				userText.visible = true;
+				logoutLink.visible = true;
+			} else {				
+				logoutLink.visible = false;
+				
+				userText.text = LOGGED_OUT_TEXT;
+				userText.x = Aeon.STAGE_WIDTH - userText.width - LOGIN_PADDING_X;
+				userText.visible = true;
+
+				loginLink.x = userText.x - loginLink.width;
+				loginLink.visible = true;
+			}
+		}
+		
+		private function onLoginClick(evt:MouseEvent):void{
+			navigateToURL(new URLRequest(LOGIN_URL), "_blank");
+//			listenForChange();
+		}
+		
+		private function onLogoutClick(evt:MouseEvent):void{
+			navigateToURL(new URLRequest(LOGOUT_URL), "_blank");
+//			listenForChange();
+		}
+		
+		private function listenForChange(evt:FocusEvent = null):void{
+			trace("lost focus");
+			stage.removeEventListener(FocusEvent.FOCUS_OUT, listenForChange);
+			stage.addEventListener(FocusEvent.FOCUS_IN, onFocus);
+			stage.addEventListener(MouseEvent.MOUSE_MOVE, onFocus);
+			
+			function onFocus(evt:Event = null):void{
+				stage.removeEventListener(FocusEvent.FOCUS_IN, onFocus);
+				stage.removeEventListener(MouseEvent.MOUSE_MOVE, onFocus);
+				stage.addEventListener(FocusEvent.FOCUS_OUT, listenForChange);
+				
+				User.init(updateUser);
+				trace("FOCUS");
+			}
+		}
+
+		protected override function onItemClicked(selectedButton:uint):void {
 			switch (selectedButton) {
 				case TODO_PLAY_GAME:
 					CONFIG::DEPLOY {
@@ -183,7 +272,7 @@ package org.interguild {
 			Mouse.cursor = MouseCursor.AUTO;
 		}
 
-		private function onCreditsDown(evt:MouseEvent):void {
+		private function onLinkDown(evt:MouseEvent):void {
 			var t:TextField = TextField(evt.target);
 			var f:TextFormat = t.defaultTextFormat;
 			f.color = LINK_DOWN_COLOR;
@@ -191,7 +280,7 @@ package org.interguild {
 			t.setTextFormat(f);
 		}
 
-		private function onLinkClick(evt:MouseEvent):void {
+		private function onLinkUp(evt:MouseEvent):void {
 			var t:TextField = TextField(evt.target);
 			var f:TextFormat = t.defaultTextFormat;
 			f.color = LINK_NORMAL_COLOR;
