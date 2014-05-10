@@ -22,7 +22,7 @@ package org.interguild.editor {
 		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 
 		private var loader:Loader;
-		private var gridContainer:Sprite;
+		private var gridContainer:EditorGridContainer;
 		private var tabsContainer:EditorTabContainer;
 
 		// UNDO REDO ACTIONS ARRAYLIST
@@ -36,6 +36,7 @@ package org.interguild.editor {
 
 		private var filereader:FileReference;
 		private var keys:KeyManEditor;
+		private var tileList:TileList;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -45,13 +46,10 @@ package org.interguild.editor {
 			
 			initBG();
 			
-			var tileList:TileList = new TileList();
-			var gridContainer:EditorGridContainer = new EditorGridContainer(tileList);
-			addChild(gridContainer);
-			tileList.addContainer(gridContainer);
+			tileList = new TileList();
 			addChild(tileList);
 			
-			tabsContainer = new EditorTabContainer(gridContainer, this, tileList);
+			tabsContainer = new EditorTabContainer(this, tileList);
 			addChild(tabsContainer);
 			
 			loader = new EditorLoader();
@@ -310,14 +308,6 @@ package org.interguild.editor {
 				undoList.push(tabsContainer.getCurrentGrid().clone());
 				tabsContainer.setCurrentGridContainer(popped);
 			}
-		}
-
-		/**
-		 * repaint the grid
-		 */
-		public function setGrid(g:EditorGrid):void {
-			removeChild(this.grid);
-			addChild(g);
 		}
 	}
 }
