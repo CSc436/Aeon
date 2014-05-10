@@ -286,7 +286,7 @@ package org.interguild.game.level {
 			cleanup();
 			collisionGrid.handleRemovals(camera);
 		}
-
+		
 		private function update():void {
 			//update player
 			player.onGameLoop();

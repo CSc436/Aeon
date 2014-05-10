@@ -20,7 +20,7 @@ package org.interguild.game.tiles {
 		public static const IS_BUOYANT:Boolean=true;
 
 		public function Arrow(x:int, y:int, direction:int) {
-			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			super(x, y, 1, 1, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			this.direction=direction;
 			parentDestroyed=false;
 			this.isActive=true;
@@ -30,17 +30,21 @@ package org.interguild.game.tiles {
 				case Direction.RIGHT:
 					anim.rotation = 90;
 					anim.x += anim.height;
+					newX+= 32;
 					break;
 				case Direction.LEFT:
 					anim.rotation = -90;
 					anim.y += anim.width;
+					newX-=32;
 					break;
 				case Direction.DOWN:
 					anim.rotation = 180;
 					anim.x += anim.width;
 					anim.y += anim.height;
+					newY+=32;
 					break;
 				default:
+					newY-=32;
 					//animation is already facing up
 					break;
 			}
