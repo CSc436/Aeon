@@ -12,10 +12,16 @@ package org.interguild.editor {
 			}
 			return instance;
 		}
+		public var isCtrlO:Boolean = false;
+		public var isCtrlX:Boolean = false;
+		public var isCtrlZ:Boolean = false;
 		
+		public var isCtrlS:Boolean = false;
 		public var isKeyEsc:Boolean = false;
 		
-		public var spacebarCallback:Function;
+		private var openCallback:Function;
+		private var saveCallback:Function;
+		private var spacebarCallback:Function;
 		private var escapeCallback:Function;
 		private var menuCallback:Function;
 		CONFIG::DEBUG{
@@ -33,8 +39,20 @@ package org.interguild.editor {
 			private function onKeyDown(evt:KeyboardEvent):void {
 				if(evt.ctrlKey){
 					switch (evt.keyCode) {
+						
 						case 78://ctrl+n
 							trace('hi')
+							break;
+						case 79://ctrl+o
+							if(openCallback)
+									openCallback();
+							isCtrlO = true;
+							break;
+						
+						case 83://ctrl+s
+							if(saveCallback)
+								saveCallback();
+							isCtrlS = true;
 							break;
 						case 27: //Esc key
 							if(escapeCallback && !isKeyEsc)
@@ -51,6 +69,19 @@ package org.interguild.editor {
 				switch (evt.keyCode) {
 					case 78://ctrl+n
 						trace('key n up')
+						break;
+					
+					case 79://ctrl+o
+						isCtrlO = false;
+						break;
+					case 83://ctrl+s
+						isCtrlS = false;
+						break;
+					case 90://ctrl+z
+						isCtrlZ = false;
+						break;
+					case 89://ctrl+Y
+						isCtrlY = false;
 						break;
 					case 27: //Esc key
 						isKeyEsc = false;
@@ -75,6 +106,13 @@ package org.interguild.editor {
 				menuCallback = cb;
 			}
 			
+			public function addOpenLevelCallback(cb:Function):void {
+				openCallback = cb;
+			}
+			
+			public function addSaveLevelCallback(cb:Function):void {
+				saveCallback = cb;
+			}
 			CONFIG::DEBUG{
 				public function addSlowdownListeners(onToggle:Function, onNext:Function):void {
 					slowDownToggleCallback = onToggle;

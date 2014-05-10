@@ -59,7 +59,8 @@ package org.interguild.editor {
 			loader.addErrorListener(onLoadError);
 			
 			keys = new KeyManEditor(stage);
-			
+			keys.addOpenLevelCallback(openFromFile);
+			keys.addSaveLevelCallback(saveToFile);
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);

@@ -184,7 +184,7 @@ package org.interguild.editor.grid {
 			trace('addcells');
 			if (box == null)
 				return;
-			
+			trace(scroll.horizontalScrollPosition);
 			var startX:int = box.startX;
 			var startY:int = box.startY;
 			var endX:int = box.endX;
@@ -208,9 +208,9 @@ package org.interguild.editor.grid {
 			var rows:int = Math.abs((eY - sY) / 32);
 			selectedArray = new Array;
 			for (var j:int = 0; j <= rows; j++) {
-				var they:int = sY + (j * 32);
+				var they:int = sY+scroll.verticalScrollPosition + (j * 32);
 				for (var i:int = 0; i <= cols; i++) {
-					var toAdd:EditorCell = grid.getCell(sX + (i * 32), they);
+					var toAdd:EditorCell = grid.getCell(sX + scroll.horizontalScrollPosition + (i * 32), they);
 					if (toAdd != null)
 						selectedArray.push(toAdd);
 				}
