@@ -87,7 +87,7 @@ package org.interguild {
 			currentPage = mainMenu;
 
 			//init editor
-			editorPage = new EditorPage();
+			editorPage = new EditorPage(stage);
 			editorPage.visible = false;
 			addChild(editorPage);
 			

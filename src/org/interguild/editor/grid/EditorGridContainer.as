@@ -30,16 +30,23 @@ package org.interguild.editor.grid {
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
 		
 		private var grid:EditorGrid;
-		private var gridMask:Sprite;
-		private var box:DrawBox;
 		
+		private var box:DrawBox;
 		private var selectedArray:Array;
+		
 		private var tileList:TileList;
 		private var playerTile:EditorCell;
 		
 		private var scroll:ScrollPane;
+		
+		// UNDO REDO ACTIONS ARRAYLIST
+		private var undoList:Array;
+		private var redoList:Array;
 
 		public function EditorGridContainer(e:TileList) {
+			undoList = new Array();
+			redoList = new Array();
+			
 			this.tileList = e;
 			this.x = POSITION_X;
 			this.y = POSITION_Y;
@@ -71,11 +78,14 @@ package org.interguild.editor.grid {
 			
 			var container:Sprite = new Sprite();
 			container.addChild(grid);
+			trace(grid.toStringCells());
+			//if the editor is smaller than the scrollpane, do this so that mouse wheel events still work nicely
 			if(container.width < WIDTH){
 				container.graphics.beginFill(0, 0);
 				container.graphics.drawRect(0, 0, WIDTH - 16, grid.height);
 				container.graphics.endFill();
 			}
+			//add a border to the top and left sides of the grid
 			container.graphics.beginFill(EditorCell.LINE_COLOR);
 			container.graphics.drawRect(0, 0, grid.width + 1, 1);
 			container.graphics.drawRect(0, 0, 1, grid.height + 1);
@@ -119,11 +129,17 @@ package org.interguild.editor.grid {
 		 */
 		private function leftClick(e:MouseEvent):void {
 			var cell:EditorCell = EditorCell(e.target);
+			trace('here');
+			if(box!=null && selectedArray.length==1){
+				selectedArray[0].toggleHighlight();
+				selectedArray = new Array;
+			}
 			if (e.ctrlKey) {
 				cell.clearTile();
 			} else {
-				clickTile(cell);
-			}
+				undoList.push(getGrid().clone());
+				clickTile(cell);				
+			}	
 		}
 
 		private function clickTile(cell:EditorCell):void {
@@ -140,39 +156,70 @@ package org.interguild.editor.grid {
 		}
 
 		private function selectionDown(e:MouseEvent):void {
-			grid.removeEventListener(MouseEvent.MOUSE_DOWN, selectionDown);
-			grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
-
-			var cell:EditorCell = EditorCell(e.target);
-			//next two lines are the start to box selection
-			//TODO: FIGURE OUT BOX SELECTION
+			if(box!=null){
+				if(scroll.contains(box)){
+					scroll.removeChild(box);	
+				}
+			}
 			if (tileList.isSelectionBox()) {
+				grid.removeEventListener(MouseEvent.MOUSE_DOWN, selectionDown);
+				grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
+				
+				var cell:EditorCell = EditorCell(e.target);
+				//next two lines are the start to box selection
+				//TODO: FIGURE OUT BOX SELECTION
+				
 				if (box != null) {
-					removeChild(box);
+					trace('notnull');
+					for (var k:int = 0; k < selectedArray.length; k++) {
+						selectedArray[k].toggleHighlight();
+					}
+					selectedArray = new Array;
+					if(scroll.contains(box)){
+						scroll.removeChild(box);	
+					}
 				}
 				box = new DrawBox(grid, mouseX, mouseY);
-				addChild(box);
+				scroll.addChild(box);
 			}
 		}
-
+		/**This method is for addin cells to the array after a box selecton
+		 * has been ade
+		 * 
+		 */
 		private function addCells(e:MouseEvent):void {
 			grid.removeEventListener(MouseEvent.MOUSE_UP, addCells);
 			grid.addEventListener(MouseEvent.MOUSE_DOWN, selectionDown, true, 0, true);
-
+			trace('addcells');
 			if (box == null)
 				return;
-
+			trace(scroll.horizontalScrollPosition);
 			var startX:int = box.startX;
 			var startY:int = box.startY;
 			var endX:int = box.endX;
 			var endY:int = box.endY;
-			var cols:int = Math.abs((endX - startX) / 32);
-			var rows:int = Math.abs((endY - startY) / 32);
+			//if dragging from bottom right or right side
+			if(endY<startY){
+				var eY:int=startY;
+				var sY:int=endY;
+			}else{
+				eY = endY;
+				sY = startY;
+			}
+			if(endX<startX){
+				var eX:int=startX;
+				var sX:int=endX;
+			}else{
+				eX = endX;
+				sX = startX;
+			}
+			var cols:int = Math.abs((eX - sX) / 32);
+			var rows:int = Math.abs((eY - sY) / 32);
 			selectedArray = new Array;
 			for (var j:int = 0; j <= rows; j++) {
-				var they:int = startY + (j * 32);
+				var they:int = sY+scroll.verticalScrollPosition + (j * 32);
 				for (var i:int = 0; i <= cols; i++) {
-					var toAdd:EditorCell = grid.getCell(startX + (i * 32), they);
+					var toAdd:EditorCell = grid.getCell(sX + scroll.horizontalScrollPosition + (i * 32), they);
 					if (toAdd != null)
 						selectedArray.push(toAdd);
 				}
@@ -181,6 +228,7 @@ package org.interguild.editor.grid {
 				selectedArray[k].toggleHighlight();
 			}
 		}
+
 //		private function highlightBox(e:MouseEvent):void{
 //			var cell:EditorCell=EditorCell(e.target);
 //			//next two lines are the start to box selection
@@ -201,5 +249,55 @@ package org.interguild.editor.grid {
 //		}
 
 
+		/**
+		 * This method is calledd when a selection is chosen on the tile list
+		 * only works when selected array contains items
+		 */
+		public function setMultipleTiles():void{
+			undoList.push(getGrid().clone());
+			if(box!=null && selectedArray.length>1){
+				for (var k:int = 0; k < selectedArray.length; k++) {trace(selectedArray[k].x);
+					//selectedArray[k].toggleHighlight();
+					clickTile(selectedArray[k]);
+				}
+			}
+		}			
+		
+		/**
+		 * listener for undo button
+		 */
+		public function undoClick():void {
+			// this function takes from the undo stack
+			// and puts it back on the grid
+			if (undoList.length > 0) {
+				var popped:EditorGrid = undoList.pop();
+				redoList.push(getGrid().clone());
+				setCurrentGrid(popped);
+			}
+		}
+		
+		/**
+		 * listener for redo button
+		 */
+		public function redoClick():void {
+		   trace('redo called')
+			if (redoList.length > 0) {
+				var popped:EditorGrid = redoList.pop();
+				undoList.push(getGrid().clone());
+				setCurrentGrid(popped);
+			}
+		}
+		
+		public function deleteTiles():void{
+			if (selectedArray.length>1){
+				trace('delete!');
+				for(var i:int = 0; i<selectedArray.length;i++){
+					selectedArray[i].setTile(" ");
+				}
+			}
+			else if(selectedArray.length ==1){
+			 	selectedArray[0].setTile(" ");
+			}
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package org.interguild.editor {
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
@@ -7,13 +8,13 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
+	import org.interguild.editor.grid.EditorGrid;
+	import org.interguild.editor.grid.EditorGridContainer;
+	import org.interguild.editor.tabs.EditorTabContainer;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-	import org.interguild.editor.grid.EditorGrid;
-	import org.interguild.editor.grid.EditorGridContainer;
-	import org.interguild.editor.tabs.EditorTabContainer;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
@@ -21,12 +22,8 @@ package org.interguild.editor {
 		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 
 		private var loader:Loader;
-		private var gridContainer:Sprite;
+		private var gridContainer:EditorGridContainer;
 		private var tabsContainer:EditorTabContainer;
-
-		// UNDO REDO ACTIONS ARRAYLIST
-		private var undoList:Array;
-		private var redoList:Array;
 
 		private var progressBar:LevelProgressBar;
 
@@ -34,28 +31,33 @@ package org.interguild.editor {
 		private var currentLevel:String;
 
 		private var filereader:FileReference;
-
+		private var keys:KeyManEditor;
+		private var tileList:TileList;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		public function EditorPage():void {
-			undoList = new Array();
-			redoList = new Array();
-
+		public function EditorPage(stage:Stage):void {
+			
 			initBG();
-
-			var tileList:TileList = new TileList();
+			
+			tileList = new TileList();
 			addChild(tileList);
 			
-			var gridContainer:EditorGridContainer = new EditorGridContainer(tileList);
-			tabsContainer = new EditorTabContainer(gridContainer, tileList);
+			tabsContainer = new EditorTabContainer(this, tileList);
 			addChild(tabsContainer);
-			addChild(gridContainer);
-
+			
 			loader = new EditorLoader();
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
 			
+			
+			
+			keys = new KeyManEditor(stage);
+			keys.addOpenLevelCallback(openFromFile);
+			keys.addSaveLevelCallback(saveToFile);
+			keys.addUndoLevelCallback(tabsContainer.getCurrentGridContainer().undoClick);
+			keys.addRedoLevelCallback(tabsContainer.getCurrentGridContainer().redoClick);
+			keys.addDeleteLevelCallback(tabsContainer.getCurrentGridContainer().deleteTiles);
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);
@@ -264,8 +266,8 @@ package org.interguild.editor {
 			var string:String = "";
 //			string += this.title.text + "\n";
 			string += "Untitled\n";
-			string += tabsContainer.getCurrentGrid().levelHeight + "x" + tabsContainer.getCurrentGrid().levelWidth + "\n";
-			string += tabsContainer.getCurrentGrid().toStringCells();
+			string += tabsContainer.getCurrentGridContainer().getGrid().levelHeight + "x" + tabsContainer.getCurrentGridContainer().getGrid().levelWidth + "\n";
+			string += tabsContainer.getCurrentGridContainer().getGrid().toStringCells();
 			return string;
 		}
 
@@ -273,7 +275,7 @@ package org.interguild.editor {
 		 * listener that clears the grid
 		 */
 		private function clearClick(e:MouseEvent):void {
-			tabsContainer.getCurrentGrid().clearGrid();
+			tabsContainer.getCurrentGridContainer().getGrid().clearGrid();
 		}
 
 		/**
@@ -283,30 +285,5 @@ package org.interguild.editor {
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
 		}
-
-		/**
-		 * listener for undo button
-		 */
-		private function undoClick(e:MouseEvent):void {
-			// this function takes from the undo stack
-			// and puts it back on the grid
-			if (undoList.length > 0) {
-				var popped:EditorGrid = undoList.pop();
-				redoList.push(tabsContainer.getCurrentGrid().clone());
-				tabsContainer.setCurrentGridContainer(popped);
-			}
-		}
-
-		/**
-		 * listener for redo button
-		 */
-		private function redoClick(e:MouseEvent):void {
-			if (redoList.length > 0) {
-				var popped:EditorGrid = redoList.pop();
-				undoList.push(tabsContainer.getCurrentGrid().clone());
-				tabsContainer.setCurrentGridContainer(popped);
-			}
-		}
-
 	}
 }

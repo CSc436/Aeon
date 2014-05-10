@@ -1,11 +1,11 @@
 package org.interguild.editor.tabs {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import flash.text.TextField;
 	
-	import org.interguild.editor.tilelist.TileList;
+	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.grid.EditorGrid;
 	import org.interguild.editor.grid.EditorGridContainer;
+	import org.interguild.editor.tilelist.TileList;
 
 	/**
 	 * Store mltiple instances of Editor Page such that the user
@@ -13,63 +13,45 @@ package org.interguild.editor.tabs {
 	public class EditorTabContainer extends Sprite {
 		private static const DEFAULT_LEVEL_WIDTH:uint = 30;
 		private static const DEFAULT_LEVEL_HEIGHT:uint = 30;
-		private static const MAX_ARRAY_SIZE:uint = 5;
+		private static const MAX_ARRAY_SIZE:uint = 3;
 
-		private var grids:Array; // of EditorGrids
+		private var gridContainerArray:Array; // of EditorGridContainer
 		private var tabButton:Array; // of TabSprites
-		private var tabText:Array; // of textFields
-//		private var tabClose:Array; // of buttons to close the current tab
-		private var tabOpen:TabOpenButton;
 
-		private var currTab:int;
-		private var currGrid:EditorGrid;
+		private var currTab:int = 0;
 		private var tabsActive:int = 0;
+		private var currGrid:EditorGrid;
+		private var tabOpen:TabOpenButton;
 		private var buttonContainer:TileList;
-		private var container:EditorGridContainer;
+		private var page:EditorPage;
 
-		public function EditorTabContainer(gridContainer:EditorGridContainer, buttonContainer:TileList) {
-			this.container = gridContainer;
+		public function EditorTabContainer(p:EditorPage, buttonContainer:TileList) {
+			this.page = p;
 			this.buttonContainer = buttonContainer;
-			grids = new Array(MAX_ARRAY_SIZE);
 
-			//create 5 pictures and 5 text fields for each button
+			//create some pictures and some text fields for each button
 			tabButton = new Array(MAX_ARRAY_SIZE);
-			tabText = new Array(MAX_ARRAY_SIZE);
-//			tabClose = new Array(MAX_ARRAY_SIZE);
+			gridContainerArray = new Array(MAX_ARRAY_SIZE);
 			for (var i:int = 0, width:int = 3; i < MAX_ARRAY_SIZE; i++, width += 134) {
-				// preset the text for each tab
-				tabText[i] = new TextField();
-				tabText[i].text = "Grid " + i;
-				tabText[i].y = 60;
+				// create some editorcontainers
+				gridContainerArray[i] = new EditorGridContainer(buttonContainer);
 
 				//place tab
-				tabButton[i] = new TabButton("Untitled");
+				tabButton[i] = new TabButton("Untitled", i, this);
 				tabButton[i].x = width;
 				tabButton[i].y = 60;
-				//tabButton[i].width = 100;
-//				tabButton[i].height = 35;
-				tabButton[i].tabNum = i; // set their number
 				tabButton[i].addEventListener(MouseEvent.CLICK, switchClick);
-
-				//place the close for each button
-//				tabClose[i] = new TabCloseButton();
-//				tabClose[i].x = width + 50;
-//				tabClose[i].y = 60;
-//				tabClose[i].tabNum = i; // set their number
-//				tabClose[i].addEventListener(MouseEvent.CLICK, removeClick);
-
 			}
+			
 			//create one new tab button
 			tabOpen = new TabOpenButton();
 			tabOpen.x = 470;
 			tabOpen.y = 50;
 			tabOpen.addEventListener(MouseEvent.CLICK, addClick);
-//			tabOpen.width = 100;
-//			tabOpen.height = 35;
+			tabOpen.width = 100;
+			tabOpen.height = 35;
 			addChild(tabOpen);
-
-			tabsActive = 0;
-			currTab = 0;
+			
 			addTab();
 		}
 
@@ -78,18 +60,22 @@ package org.interguild.editor.tabs {
 		 */
 		public function addTab(grid:EditorGrid = null):void {
 			if (tabsActive == MAX_ARRAY_SIZE)
-				return; // cannot add more than 5 tabs
+				return; // cannot add more than 3 tabs
 
 			if (grid == null) {
-				grids[tabsActive] = new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH);
+				//create a new game
+				gridContainerArray[tabsActive].setCurrentGrid(new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH));
 			} else {
-				grids[tabsActive] = grid;
+				//set the new game
+				gridContainerArray[tabsActive] = grid;
 			}
-			container.setCurrentGrid(grids[tabsActive]);
 			
+			//add the tab to this
+			addChild(tabButton[tabsActive]);
+			
+			//add the editorContainer to this
 			switchTabs(tabsActive);
-//			addChild(tabClose[tabsActive]);
-
+			
 			tabsActive++;
 		}
 
@@ -97,70 +83,74 @@ package org.interguild.editor.tabs {
 		 * remove tab at position i
 		 */
 		public function removeTab(i:int):void {
+			trace("removeTab "+i);
 			if (tabsActive == 1)
 				return; // cannot remove if there is only one tab
 
 			//remember if the current tab is being removed
-			var b:int = 0;
+			var b:int=0;
 			if (currTab == i)
-				b = 1;
+				b=1;
 
 			//create a new array without the ith tab
-			var garray:Array = new Array(MAX_ARRAY_SIZE);
-			for (var j:int = 0, count:int = 0; j < MAX_ARRAY_SIZE; j++, count++) {
+			var gridArrayLocal:Array=new Array(MAX_ARRAY_SIZE);
+			for (var j:int=0, count:int=0; j < MAX_ARRAY_SIZE; j++, count++) {
 				if (count == i) {
 					count--; // if count is i then remove it from the new array
 				} else {
-					garray[count] = grids[j];
+					gridArrayLocal[count] = gridContainerArray[j];
 				}
 			}
 			//set the new array
-			grids = garray;
+			gridContainerArray[i] = gridArrayLocal;
+			
+			for (var k:int=0; k < MAX_ARRAY_SIZE; k++) {
+				this.tabButton[k].tabNum = k;
+			}
 
 			// the active tab was removed change the view so it is not the removed tab
 			if (b == 1)
 				switchTabs(0);
 
 			tabsActive--;
-			//TODO update gui
 			removeChild(tabButton[i]);
-//			removeChild(tabClose[i]);
 		}
 
 		/**
 		 * switches the currently active tab with the new one
 		 */
 		public function switchTabs(tabNumber:int):void {
-			var eg2:EditorGrid = grids[tabNumber];
-			// TODO hide eg1 and show eg2
-			
-			var tab:TabButton;
 			//deactivate current tab
-			tab = tabButton[currTab];
-			if(tab != null)
-				tab.deactivate();
+			tabButton[currTab].deactivate();
+			
+			if(tabsActive != 0) { // if there exist a grid already
+				removeChild(this.gridContainerArray[currTab]);
+				trace ("removing grid "+currTab+ " tabs active "+tabsActive);
+			}
+			
 			//activate next tab
 			currTab = tabNumber;
-			tab = tabButton[tabNumber];
-			tab.activate();
-			addChild(tab);
-
-			//TODO tell editorpage to update the grid sprite
+			tabButton[currTab].activate();
+			
+			buttonContainer.addContainer(gridContainerArray[currTab]);
+			addChild(this.gridContainerArray[currTab]);
+			
+//			page.setGrid(this.gridContainerArray[currTab]);
 		}
 
-		public function getCurrentGrid():EditorGrid {
-			return grids[currTab];
+		public function getCurrentGridContainer():EditorGridContainer {
+			return gridContainerArray[currTab];
 		}
 
 		/**
 		 * set the current grid to the current one
 		 */
 		public function setCurrentGridContainer(setGrid:EditorGrid):void {
-			grids[currTab] = setGrid;
+			gridContainerArray[currTab] = setGrid;
 		}
 
 		public function resizeCurrentGrid(rows:int, cols:int):void {
-			var g:EditorGrid = grids[tabsActive - 1];
+			var g:EditorGrid = gridContainerArray[tabsActive - 1];
 			g.resize(rows, cols);
 		}
 
@@ -171,12 +161,6 @@ package org.interguild.editor.tabs {
 			//this function creates a new tab
 			addTab();
 		}
-
-//		private function removeClick(e:MouseEvent):void {
-//			//this function removes the button of interest
-//			var b:TabCloseButton = TabCloseButton(e.target);
-//			this.removeTab(b.tabNum);
-//		}
 
 		private function switchClick(e:MouseEvent):void {
 			// when the user clicks the tab they should switch to that tab
