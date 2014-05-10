@@ -16,7 +16,8 @@ package org.interguild {
 	import flexunit.utils.ArrayList;
 	import flash.system.Security;
 	import flash.display.Stage;
-	import flash.external.ExternalInterface;
+	import org.interguild.menu.MainMenuPage;
+	import org.interguild.menu.UserLevelsPage;
 
 
 	/**
@@ -55,12 +56,13 @@ package org.interguild {
 		private var mainMenu:MainMenuPage;
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;
+		private var userLevelsPage:UserLevelsPage;
 
 		private var keys:KeyMan;
 
 		public function Aeon() {
 			instance = this;
-			Security.allowDomain("http://interguild.org");
+			Security.allowDomain(INTERGUILD.ORG);
 
 			//stop stage from scaling and stuff
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -88,6 +90,11 @@ package org.interguild {
 			editorPage = new EditorPage();
 			editorPage.visible = false;
 			addChild(editorPage);
+			
+			//init user levels page
+			userLevelsPage = new UserLevelsPage();
+			userLevelsPage.visible = false;
+			addChild(userLevelsPage);
 
 			//init debug mode
 			CONFIG::DEBUG {
@@ -106,6 +113,12 @@ package org.interguild {
 			hideCurrentPage();
 			mainMenu.visible = true;
 			currentPage = mainMenu;
+		}
+		
+		public function gotoUserLevels():void {
+			hideCurrentPage();
+			userLevelsPage.visible = true;
+			currentPage = userLevelsPage;
 		}
 
 		public function returnFromError(e:ArrayList, src:String):void {

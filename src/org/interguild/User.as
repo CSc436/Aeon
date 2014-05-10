@@ -10,7 +10,7 @@ package org.interguild {
 	 */
 	public class User {
 
-		private static const GET_LOGIN_PAGE:String = "http://interguild.org/get_login.php";
+		private static const GET_LOGIN_PAGE:String = INTERGUILD.ORG + "/get_login.php";
 		private static const LOGGED_OUT_TEXT:String = "<logged out>";
 
 		private static var isLoggedIn:Boolean = false;
@@ -27,7 +27,7 @@ package org.interguild {
 		/**
 		 * Called by Aeon.as
 		 */
-		internal static function init(onLoadCallback:Function):void {
+		public static function init(onLoadCallback:Function):void {
 			var getFile:URLLoader = new URLLoader();
 			getFile.addEventListener(Event.COMPLETE, onFileLoad);
 			getFile.load(new URLRequest(GET_LOGIN_PAGE));

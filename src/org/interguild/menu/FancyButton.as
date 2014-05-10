@@ -1,4 +1,4 @@
-package org.interguild {
+package org.interguild.menu {
 	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;

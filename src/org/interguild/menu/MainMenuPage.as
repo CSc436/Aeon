@@ -1,4 +1,4 @@
-package org.interguild {
+package org.interguild.menu {
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
@@ -10,14 +10,10 @@ package org.interguild {
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-	import flash.utils.Timer;
 
-	CONFIG::DEPLOY {
-		import org.interguild.game.level.TestLevel;
-	}
-	CONFIG::NODEPLOY {
-		import org.interguild.game.level.LevelPage;
-	}
+	import org.interguild.game.level.LevelPage;
+	import org.interguild.Aeon;
+	import org.interguild.User;
 
 	public class MainMenuPage extends ListBasedMenu {
 
@@ -239,14 +235,10 @@ package org.interguild {
 		protected override function onItemClicked(selectedButton:uint):void {
 			switch (selectedButton) {
 				case TODO_PLAY_GAME:
-					CONFIG::DEPLOY {
-					Aeon.getMe().playLevelCode(TestLevel.getCode());
-				}
-					CONFIG::NODEPLOY {
 					Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
-				}
 					break;
 				case TODO_PLAY_LEVELS:
+					Aeon.getMe().gotoUserLevels();
 					break;
 				case TODO_LEVEL_EDITOR:
 					Aeon.getMe().gotoEditorPage();

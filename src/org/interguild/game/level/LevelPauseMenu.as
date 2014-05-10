@@ -5,7 +5,7 @@ package org.interguild.game.level {
 	
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
-	import org.interguild.ListBasedMenu;
+	import org.interguild.menu.ListBasedMenu;
 
 	public class LevelPauseMenu extends ListBasedMenu {
 		
@@ -98,12 +98,7 @@ package org.interguild.game.level {
 					// This is hardcoded right now, but we probably want some kind of
 					// global reference to the current file so that we know what level
 					// needs to be restarted
-					CONFIG::DEPLOY {
-						Aeon.getMe().playLevelCode(TestLevel.getCode());
-					}
-						CONFIG::NODEPLOY {
 						Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
-					}
 					break;
 				case TODO_LEVEL_EDITOR:
 					// Probably want to give the user some kind of dialog warning them

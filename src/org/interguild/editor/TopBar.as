@@ -4,7 +4,7 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
-	import org.interguild.FancyButton;
+	import org.interguild.menu.FancyButton;
 	import org.interguild.editor.dropdown.FileMenu;
 
 	public class TopBar extends Sprite {
