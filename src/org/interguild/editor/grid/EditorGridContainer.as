@@ -121,11 +121,16 @@ package org.interguild.editor.grid {
 		 */
 		private function leftClick(e:MouseEvent):void {
 			var cell:EditorCell = EditorCell(e.target);
+			trace('here');
+			if(box!=null && selectedArray.length==1){
+				selectedArray[0].toggleHighlight();
+				selectedArray = new Array;
+			}
 			if (e.ctrlKey) {
 				cell.clearTile();
 			} else {
-				clickTile(cell);
-			}
+				clickTile(cell);				
+			}	
 		}
 
 		private function clickTile(cell:EditorCell):void {
@@ -142,39 +147,70 @@ package org.interguild.editor.grid {
 		}
 
 		private function selectionDown(e:MouseEvent):void {
-			grid.removeEventListener(MouseEvent.MOUSE_DOWN, selectionDown);
-			grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
-
-			var cell:EditorCell = EditorCell(e.target);
-			//next two lines are the start to box selection
-			//TODO: FIGURE OUT BOX SELECTION
+			if(box!=null){
+				if(scroll.contains(box)){
+					scroll.removeChild(box);	
+				}
+			}
 			if (tileList.isSelectionBox()) {
+				grid.removeEventListener(MouseEvent.MOUSE_DOWN, selectionDown);
+				grid.addEventListener(MouseEvent.MOUSE_UP, addCells);
+				
+				var cell:EditorCell = EditorCell(e.target);
+				//next two lines are the start to box selection
+				//TODO: FIGURE OUT BOX SELECTION
+				
 				if (box != null) {
-					removeChild(box);
+					trace('notnull');
+					for (var k:int = 0; k < selectedArray.length; k++) {
+						selectedArray[k].toggleHighlight();
+					}
+					selectedArray = new Array;
+					if(scroll.contains(box)){
+						scroll.removeChild(box);	
+					}
 				}
 				box = new DrawBox(grid, mouseX, mouseY);
-				addChild(box);
+				scroll.addChild(box);
 			}
 		}
-
+		/**This method is for addin cells to the array after a box selecton
+		 * has been ade
+		 * 
+		 */
 		private function addCells(e:MouseEvent):void {
 			grid.removeEventListener(MouseEvent.MOUSE_UP, addCells);
 			grid.addEventListener(MouseEvent.MOUSE_DOWN, selectionDown, true, 0, true);
-
+			trace('addcells');
 			if (box == null)
 				return;
-
+			
 			var startX:int = box.startX;
 			var startY:int = box.startY;
 			var endX:int = box.endX;
 			var endY:int = box.endY;
-			var cols:int = Math.abs((endX - startX) / 32);
-			var rows:int = Math.abs((endY - startY) / 32);
+			//if dragging from bottom right or right side
+			if(endY<startY){
+				var eY:int=startY;
+				var sY:int=endY;
+			}else{
+				eY = endY;
+				sY = startY;
+			}
+			if(endX<startX){
+				var eX:int=startX;
+				var sX:int=endX;
+			}else{
+				eX = endX;
+				sX = startX;
+			}
+			var cols:int = Math.abs((eX - sX) / 32);
+			var rows:int = Math.abs((eY - sY) / 32);
 			selectedArray = new Array;
 			for (var j:int = 0; j <= rows; j++) {
-				var they:int = startY + (j * 32);
+				var they:int = sY + (j * 32);
 				for (var i:int = 0; i <= cols; i++) {
-					var toAdd:EditorCell = grid.getCell(startX + (i * 32), they);
+					var toAdd:EditorCell = grid.getCell(sX + (i * 32), they);
 					if (toAdd != null)
 						selectedArray.push(toAdd);
 				}
@@ -204,9 +240,17 @@ package org.interguild.editor.grid {
 //		}
 
 
-		public function setMultipleTiles():void {
-			// TODO Auto Generated method stub
-
-		}
+		/**
+		 * This method is calledd when a selection is chosen on the tile list
+		 * only works when selected array contains items
+		 */
+		public function setMultipleTiles():void{
+			if(box!=null && selectedArray.length>1){
+				for (var k:int = 0; k < selectedArray.length; k++) {trace(selectedArray[k].x);
+					//selectedArray[k].toggleHighlight();
+					clickTile(selectedArray[k]);
+				}
+			}
+		}			
 	}
 }
