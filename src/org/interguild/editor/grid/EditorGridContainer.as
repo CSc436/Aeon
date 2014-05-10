@@ -137,6 +137,7 @@ package org.interguild.editor.grid {
 			if (e.ctrlKey) {
 				cell.clearTile();
 			} else {
+				undoList.push(getGrid().clone());
 				clickTile(cell);				
 			}	
 		}
@@ -151,7 +152,6 @@ package org.interguild.editor.grid {
 					playerTile.clearTile();
 				playerTile = cell;
 			}
-			undoList.push(getGrid().clone());
 			cell.setTile(char);
 		}
 
@@ -254,6 +254,7 @@ package org.interguild.editor.grid {
 		 * only works when selected array contains items
 		 */
 		public function setMultipleTiles():void{
+			undoList.push(getGrid().clone());
 			if(box!=null && selectedArray.length>1){
 				for (var k:int = 0; k < selectedArray.length; k++) {trace(selectedArray[k].x);
 					//selectedArray[k].toggleHighlight();
