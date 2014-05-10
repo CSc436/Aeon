@@ -22,7 +22,7 @@ package org.interguild.editor {
 		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 
 		private var loader:Loader;
-		private var gridContainer:Sprite;
+		private var gridContainer:EditorGridContainer;
 		private var tabsContainer:EditorTabContainer;
 
 		private var progressBar:LevelProgressBar;
@@ -32,6 +32,7 @@ package org.interguild.editor {
 
 		private var filereader:FileReference;
 		private var keys:KeyManEditor;
+		private var tileList:TileList;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
@@ -39,25 +40,24 @@ package org.interguild.editor {
 			
 			initBG();
 			
-			var tileList:TileList = new TileList();
-			var gridContainer:EditorGridContainer = new EditorGridContainer(tileList);
-			addChild(gridContainer);
-			tileList.addContainer(gridContainer);
+			tileList = new TileList();
 			addChild(tileList);
 			
-			tabsContainer = new EditorTabContainer(gridContainer, this, tileList);
+			tabsContainer = new EditorTabContainer(this, tileList);
 			addChild(tabsContainer);
 			
 			loader = new EditorLoader();
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
 			
+			
+			
 			keys = new KeyManEditor(stage);
 			keys.addOpenLevelCallback(openFromFile);
 			keys.addSaveLevelCallback(saveToFile);
-			keys.addUndoLevelCallback(gridContainer.undoClick);
-			keys.addRedoLevelCallback(gridContainer.redoClick);
-			keys.addDeleteLevelCallback(gridContainer.deleteTiles);
+			keys.addUndoLevelCallback(tabsContainer.getCurrentGridContainer().undoClick);
+			keys.addRedoLevelCallback(tabsContainer.getCurrentGridContainer().redoClick);
+			keys.addDeleteLevelCallback(tabsContainer.getCurrentGridContainer().deleteTiles);
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);
@@ -266,8 +266,8 @@ package org.interguild.editor {
 			var string:String = "";
 //			string += this.title.text + "\n";
 			string += "Untitled\n";
-			string += tabsContainer.getCurrentGrid().levelHeight + "x" + tabsContainer.getCurrentGrid().levelWidth + "\n";
-			string += tabsContainer.getCurrentGrid().toStringCells();
+			string += tabsContainer.getCurrentGridContainer().getGrid().levelHeight + "x" + tabsContainer.getCurrentGridContainer().getGrid().levelWidth + "\n";
+			string += tabsContainer.getCurrentGridContainer().getGrid().toStringCells();
 			return string;
 		}
 
@@ -275,7 +275,7 @@ package org.interguild.editor {
 		 * listener that clears the grid
 		 */
 		private function clearClick(e:MouseEvent):void {
-			tabsContainer.getCurrentGrid().clearGrid();
+			tabsContainer.getCurrentGridContainer().getGrid().clearGrid();
 		}
 
 		/**
@@ -284,16 +284,6 @@ package org.interguild.editor {
 		public function testGame(e:MouseEvent):void {
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
-		}
-
-
-
-		/**
-		 * repaint the grid
-		 */
-		public function setGrid(g:EditorGrid):void {
-			removeChild(this.grid);
-			addChild(g);
 		}
 	}
 }
