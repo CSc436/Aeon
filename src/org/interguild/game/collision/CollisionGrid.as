@@ -377,6 +377,19 @@ package org.interguild.game.collision {
 			var otherTile:CollidableObject = CollidableObject(otherObject);
 			
 			/*
+			* PLAYER HIT BY ARROW
+			*/
+			if(p && otherTile is Arrow){
+				p.die();
+				removalObjects.push(p);
+			}
+			
+			if(p && otherTile is Explosion){
+				p.die();
+				removalObjects.push(p);
+			}
+			
+			/*
 			* EXPLOSION DESTROYS SURROUNDINGS
 			*/
 			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion || otherTile is Arrow))) {

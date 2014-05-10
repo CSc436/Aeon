@@ -452,6 +452,7 @@ package org.interguild.game {
 
 		public function die():void {
 			trace("YOU DEAD");
+			
 		}
 	}
 }

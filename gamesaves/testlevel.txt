@@ -3,17 +3,17 @@ The Test Level of Doom
 
 x=80
 x=80
-xxxxx
-xx
-xx #
-xxxxxxxx                     d
-x   ddd     <                xxxxxxx
-x   v                        x     x       x
-x                       xxxxxx  c          x         f
-xsssssss            c  ssssssxxxxxxxxxxxxxxxxxx    xxxxxxxxxxxxxxx
-x  c   s   w^w xxxxxxxvxx    x                x    x
-xxxxxxxxxxxxxxxxxxxxx        x                xxwwxx
-                             x                   
-                             x                    ss 
-                            ds                 ssssss
+xxxxx                         x v
+xx                            x     
+xx #         w                x  xx 
+xxxxxxxxxx  ww               dx dxxxw
+x   ddd     <                xxxsxxx         s
+x   v                        x>   ds   ss  x s
+x                       xxxxxx^<c  s       x s       f
+xsssdsss            c  ssssssxxxxxxxxxxxxxxxxcx    xxxxxxxxxxxxxxx
+x  c   s   w^w xxxxxxxvxx    xcd     <       s   xxxx
+xxxxxxxxxxxxxxxxxxxxx        xwvx    ^       s  dd  x
+ v  <                        xddx    d>      d sww  x
+ d                     s sssxxsxx                  x
+>>s w                   s>  ds       ^             x
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
