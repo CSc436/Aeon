@@ -18,9 +18,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
-
 	import org.interguild.game.tiles.Terrain;
-
 
 	public class CollisionGrid extends Sprite {
 
