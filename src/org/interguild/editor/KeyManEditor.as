@@ -17,11 +17,12 @@ package org.interguild.editor {
 		public var isCtrlZ:Boolean = false;
 		public var isCtrlS:Boolean = false;
 		public var isKeyEsc:Boolean = false;
-		
+		public var isCtrlD:Boolean= false;
 		private var openCallback:Function;
 		private var saveCallback:Function;
 		private var undoCallback:Function;
 		private var redoCallback:Function;
+		private var deleteCallback:Function;
 		private var spacebarCallback:Function;
 		private var escapeCallback:Function;
 		private var menuCallback:Function;
@@ -66,13 +67,22 @@ package org.interguild.editor {
 								undoCallback();
 							isCtrlZ= true;
 							break;
-						
-						case 27: //Esc key
-							if(escapeCallback && !isKeyEsc)
-								escapeCallback();
-							isKeyEsc = true;
-							break;
 					}
+				}
+				else{
+				switch (evt.keyCode) {	
+					case 8:case 46: //ctrl backspace or ctrl delete
+						if(deleteCallback)
+							deleteCallback();
+						isCtrlD= true;
+						break;
+					case 27: //Esc key
+						if(escapeCallback && !isKeyEsc)
+							escapeCallback();
+						isKeyEsc = true;
+						break;
+					
+				}
 				}
 					if (menuCallback)
 						menuCallback(evt.keyCode);
@@ -96,6 +106,8 @@ package org.interguild.editor {
 					case 89://ctrl+Y
 						isCtrlY = false;
 						break;
+					case 8:case 46://ctrl backspace or ctrl delete
+						isCtrlD = false;
 					case 27: //Esc key
 						isKeyEsc = false;
 						break;
@@ -133,6 +145,10 @@ package org.interguild.editor {
 			
 			public function addRedoLevelCallback(cb:Function):void {
 				redoCallback = cb;
+			}
+			
+			public function addDeleteLevelCallback(cb:Function):void {
+				deleteCallback = cb;
 			}
 			CONFIG::DEBUG{
 				public function addSlowdownListeners(onToggle:Function, onNext:Function):void {

@@ -57,6 +57,7 @@ package org.interguild.editor {
 			keys.addSaveLevelCallback(saveToFile);
 			keys.addUndoLevelCallback(gridContainer.undoClick);
 			keys.addRedoLevelCallback(gridContainer.redoClick);
+			keys.addDeleteLevelCallback(gridContainer.deleteTiles);
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);

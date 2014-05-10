@@ -286,5 +286,17 @@ package org.interguild.editor.grid {
 				setCurrentGrid(popped);
 			}
 		}
+		
+		public function deleteTiles():void{
+			if (selectedArray.length>1){
+				trace('delete!');
+				for(var i:int = 0; i<selectedArray.length;i++){
+					selectedArray[i].setTile(" ");
+				}
+			}
+			else if(selectedArray.length ==1){
+			 	selectedArray[0].setTile(" ");
+			}
+		}
 	}
 }
