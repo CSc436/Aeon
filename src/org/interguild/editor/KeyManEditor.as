@@ -31,26 +31,15 @@ package org.interguild.editor {
 			}
 			
 			private function onKeyDown(evt:KeyboardEvent):void {
-				switch (evt.keyCode) {
-					case 27: //Esc key
-						if(escapeCallback && !isKeyEsc)
-							escapeCallback();
-						isKeyEsc = true;
-						break;
-				}
-				CONFIG::DEBUG {
-					switch(evt.keyCode){
-						case 66: //b key
-							if(debugToggleCallback)
-								debugToggleCallback();
+				if(evt.ctrlKey){
+					switch (evt.keyCode) {
+						case 78://ctrl+n
+							trace('hi')
 							break;
-						case 191: // "/" or "?" key
-							if(slowDownToggleCallback)
-								slowDownToggleCallback();
-							break;
-						case 190: // "." or ">" key
-							if(slowDownNextCallback)
-								slowDownNextCallback();
+						case 27: //Esc key
+							if(escapeCallback && !isKeyEsc)
+								escapeCallback();
+							isKeyEsc = true;
 							break;
 					}
 				}
@@ -60,6 +49,9 @@ package org.interguild.editor {
 			
 			private function onKeyUp(evt:KeyboardEvent):void {
 				switch (evt.keyCode) {
+					case 78://ctrl+n
+						trace('key n up')
+						break;
 					case 27: //Esc key
 						isKeyEsc = false;
 						break;

@@ -1,5 +1,6 @@
 package org.interguild.editor {
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
@@ -7,13 +8,13 @@ package org.interguild.editor {
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
+	import org.interguild.editor.grid.EditorGrid;
+	import org.interguild.editor.grid.EditorGridContainer;
+	import org.interguild.editor.tabs.EditorTabContainer;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-	import org.interguild.editor.grid.EditorGrid;
-	import org.interguild.editor.grid.EditorGridContainer;
-	import org.interguild.editor.tabs.EditorTabContainer;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Page {
@@ -34,14 +35,14 @@ package org.interguild.editor {
 		private var currentLevel:String;
 
 		private var filereader:FileReference;
-
+		private var keys:KeyManEditor;
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
-		public function EditorPage():void {
+		public function EditorPage(stage:Stage):void {
 			undoList = new Array();
 			redoList = new Array();
-
+			
 			initBG();
 			
 			var tileList:TileList = new TileList();
@@ -56,6 +57,8 @@ package org.interguild.editor {
 			loader = new EditorLoader();
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
+			
+			keys = new KeyManEditor(stage);
 			
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
