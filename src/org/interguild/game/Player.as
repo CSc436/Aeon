@@ -215,6 +215,8 @@ package org.interguild.game {
 					handleWalkRight();
 				}
 			}
+			else
+				handleDeathAnimation();
 		}
 
 		private function handleCrawlRight():void {
@@ -389,7 +391,21 @@ package org.interguild.game {
 		}
 
 		private function handleDeathAnimation():void {
-			// TODO Auto Generated method stub
+
+			var directionChange:int = Math.random() * 10;
+
+			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+				removeChild(playerClip);
+				playerClip=new PlayerJumpPeakThenFallAnimation();
+				playerClip.stop();
+				addChild(playerClip);
+				playerClip.gotoAndStop(3);
+			}
+
+			parent.addChild(this);
+			playerClip.rotation += 18;
+			playerClip.x += directionChange;
+			playerClip.y -= directionChange;
 
 		}
 
@@ -428,7 +444,6 @@ package org.interguild.game {
 		public function die():void {
 			trace("YOU DEAD");
 			isDead=true;
-			handleDeathAnimation();
 		}
 
 

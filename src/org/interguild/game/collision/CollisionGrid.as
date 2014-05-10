@@ -3,7 +3,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
@@ -53,7 +53,7 @@ package org.interguild.game.collision {
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
-		
+
 		public function addObject(tile:CollidableObject):void {
 			allObjects.push(tile);
 			if (tile.isActive)
@@ -340,13 +340,13 @@ package org.interguild.game.collision {
 				//will never ever happen
 				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
 			}
-			
+
 			trace("Object 1: "+activeObject.toString());
 			trace("Object 2: "+otherObject.toString());
 
 			var activeTile:CollidableObject = CollidableObject(activeObject);
 			var otherTile:CollidableObject = CollidableObject(otherObject);
-			
+
 			/*
 			* ARROW HITS CRATE
 			*/
@@ -380,7 +380,7 @@ package org.interguild.game.collision {
 				}
 				removalObjects.push(otherObject);
 			}
-		
+
 			/*
 			* SOLID COLLISIONS
 			*/
@@ -399,12 +399,14 @@ package org.interguild.game.collision {
 					}
 				} else if (direction == Direction.UP) {
 					if (otherTile.isActive) {
-						otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
-						otherObject.speedY = 0;
 						if (p) { //player got crushed by falling solid object
 							trace("p = active");
 							p.die();
 								//return;
+						}
+						else {
+							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
+							otherObject.speedY = 0;
 						}
 					} else {
 						activeObject.newY = otherBoxCurr.bottom;
@@ -418,8 +420,8 @@ package org.interguild.game.collision {
 					activeObject.speedX = 0;
 				}
 			}
-			
-			
+
+
 			activeObject.updateHitBox();
 		}
 
@@ -564,3 +566,5 @@ package org.interguild.game.collision {
 		}
 	}
 }
+
+

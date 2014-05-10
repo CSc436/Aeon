@@ -52,6 +52,8 @@ package org.interguild.game.level {
 		private var hud:LevelHUD;
 		private var collectableCount:int;
 
+		private var timeDead = 0;
+
 		public var onWinCallback:Function;
 
 		CONFIG::DEBUG {
@@ -239,7 +241,7 @@ package org.interguild.game.level {
 		public function get isRunning():Boolean {
 			return timer.running;
 		}
-		
+
 		public function onWonGame():void {
 			pauseGame();
 			onWinCallback();
@@ -290,10 +292,29 @@ package org.interguild.game.level {
 		private function update():void {
 
 
-			//update player
-			player.onGameLoop();
+			if ( !player.isDead ){
+				//update player
+				player.onGameLoop();
 
+			}
 
+			// restart the game after the player has been dead after time specified
+			if ( player.isDead ) {
+				this.timeDead++;
+				if ( 40 == timeDead )
+				{
+					this.stage.focus = stage;
+					// This is hardcoded right now, but we probably want some kind of
+					// global reference to the current file so that we know what level
+					// needs to be restarted
+					CONFIG::DEPLOY {
+						Aeon.getMe().playLevelCode(TestLevel.getCode());
+					}
+					CONFIG::NODEPLOY {
+						Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+					}
+				}
+			}
 			// update animations
 			player.updateAnimation();
 
@@ -369,7 +390,8 @@ package org.interguild.game.level {
 			}
 
 			//update camera
-			camera.updateCamera();
+			if ( !player.isDead )
+				camera.updateCamera();
 		}
 	}
 }
