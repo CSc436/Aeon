@@ -1,5 +1,6 @@
 package org.interguild.game.collision {
 	import flash.display.DisplayObject;
+	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -13,9 +14,12 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
+	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.Tile;
 
 	public class CollisionGrid extends Sprite {
 
@@ -141,6 +145,12 @@ package org.interguild.game.collision {
 		 * Handle collisions!
 		 */
 		public function detectAndHandleCollisions(target:CollidableObject):Array {
+			if(target is Explosion){
+				var e:Explosion = Explosion(target);
+				if(e.timeCounter >= 15 && removalObjects.indexOf(target) == -1)
+					removalObjects.push(target);
+			}
+			
 			//maintain a list of nearby objects, ordered by proximity
 			var objectsToTest:Array = new Array();
 
@@ -333,6 +343,7 @@ package org.interguild.game.collision {
 			otherObject.setCollidedWith(activeObject);
 			var p:Player = null;
 			var a:Arrow = null;
+			var explosion:Explosion = null
 			var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
 			var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
@@ -352,16 +363,46 @@ package org.interguild.game.collision {
 			if (activeObject is Arrow) {
 				a = Arrow(activeObject);
 			}
+			// Check to see if explosion is the culprit
+			if (activeObject is Explosion) {
+				explosion = Explosion(activeObject);
+			}
 			if (!(otherObject is CollidableObject) || !(activeObject is CollidableObject)) {
 				//will never ever happen
 				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
 			}
 			
-			trace("Object 1: "+activeObject.toString());
-			trace("Object 2: "+otherObject.toString());
+//			trace("Object 1: "+activeObject.toString());
+//			trace("Object 2: "+otherObject.toString());
 
 			var activeTile:CollidableObject = CollidableObject(activeObject);
 			var otherTile:CollidableObject = CollidableObject(otherObject);
+			
+			/*
+			* PLAYER HIT BY ARROW
+			*/
+			if(p && otherTile is Arrow){
+				p.die();
+				removalObjects.push(p);
+			}
+			
+			if(p && otherTile is Explosion){
+				p.die();
+				removalObjects.push(p);
+			}
+			
+			/*
+			* EXPLOSION DESTROYS SURROUNDINGS
+			*/
+			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion || otherTile is Arrow))) {
+				removalObjects.push(otherObject);
+//				var m:MovieClip = MovieClip(explosion.exp);
+//				m.play();
+				if (explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
+					removalObjects.push(activeObject);
+			}
+			else if (explosion && explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
+				removalObjects.push(activeObject);
 			
 			/*
 			* ARROW HITS CRATE
@@ -497,8 +538,9 @@ package org.interguild.game.collision {
 				while (true) {
 					if (inBounds(tile.gridRow - 1, tile.gridCol)) {
 						tile = grid[tile.gridRow - 1][tile.gridCol];
+						var toBreak:Boolean = !tile.isGravible();
 						tile.activate();
-						if (!tile.isGravible())
+						if (toBreak)
 							break;
 					}else{
 						break;

@@ -1,6 +1,11 @@
 package org.interguild {
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.TimerEvent;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
+	import flash.utils.Timer;
 
 	public class KeyMan {
 
@@ -19,6 +24,10 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
+		
+		public var walkingSound:Sound;
+		public var walkSoundPlaying:Boolean = false;
+		public var timer:Timer;
 
 		public var spacebarCallback:Function;
 		private var escapeCallback:Function;
@@ -79,7 +88,7 @@ package org.interguild {
 			if (menuCallback)
 				menuCallback(evt.keyCode);
 		}
-
+		
 		private function onKeyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key

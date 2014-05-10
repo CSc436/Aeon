@@ -1,5 +1,7 @@
 package org.interguild.game.tiles {
 	import flash.display.Bitmap;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
 
 	import org.interguild.Aeon;
 	import org.interguild.game.collision.Direction;
@@ -22,6 +24,7 @@ package org.interguild.game.tiles {
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 6;
 
+
 //		private static const SPRITE_COLOR:uint = 0xFF6600;
 //		private static const SPRITE_WIDTH:uint = 32;
 //		private static const SPRITE_HEIGHT:uint = 32;
@@ -32,6 +35,7 @@ package org.interguild.game.tiles {
 		public var direction:int;
 		public var xPos:int;
 		public var yPos:int;
+
 		public static const DESTRUCTIBILITY:int = 2;
 		public static const IS_SOLID:Boolean = true;
 		public static const HAS_GRAVITY:Boolean = false;
@@ -39,6 +43,8 @@ package org.interguild.game.tiles {
 		public static const IS_BUOYANT:Boolean = true;
 		public var LEVEL_CODE_CHAR:String;
 		public static var LEVEL_CODE_CHAR:Object;
+		
+		public var arrowSound:Sound;
 
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			this.direction = direction;
@@ -62,8 +68,10 @@ package org.interguild.game.tiles {
 			}
 
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
-			this.xPos = x;
-			this.yPos = y;
+			this.xPos=x;
+			this.yPos=y;
+			arrowSound = new Sound();
+			arrowSound.load(new URLRequest("../assets/Arrow.mp3"));
 		}
 
 		public override function onGameLoop():void {
@@ -84,10 +92,12 @@ package org.interguild.game.tiles {
 			updateHitBox();
 		}
 
+
 		public override function onKillEvent(level:Level):void {
 			arrow = new Arrow(xPos, yPos, direction);
 			level.createCollidableObject(arrow);
 			this.arrow.parentDestroyed = true;
+			arrowSound.play();
 		}
 	}
 }
