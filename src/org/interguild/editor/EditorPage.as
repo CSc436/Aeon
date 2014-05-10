@@ -50,7 +50,7 @@ package org.interguild.editor {
 			tileList.addContainer(gridContainer);
 			addChild(tileList);
 			
-			tabsContainer = new EditorTabContainer(gridContainer, tileList);
+			tabsContainer = new EditorTabContainer(gridContainer, this, tileList);
 			addChild(tabsContainer);
 			
 			loader = new EditorLoader();
@@ -309,5 +309,12 @@ package org.interguild.editor {
 			}
 		}
 
+		/**
+		 * repaint the grid
+		 */
+		public function setGrid(g:EditorGrid):void {
+			removeChild(this.grid);
+			addChild(g);
+		}
 	}
 }
