@@ -1,6 +1,4 @@
 package org.interguild.game.level {
-	import fl.controls.Button;
-	
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -8,9 +6,12 @@ package org.interguild.game.level {
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
+	import fl.controls.Button;
+	
 	import flexunit.utils.ArrayList;
 	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
 	import org.interguild.loader.LevelLoader;
 
@@ -23,10 +24,11 @@ package org.interguild.game.level {
 	 * 		-The level itself
 	 */
 	public class LevelPage extends Sprite {
-
-		CONFIG::NODEPLOY {
-			public static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
-		}
+		
+		//remote file
+		public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/aeon_demo/testlevel.txt";
+		//local file
+//		public static const TEST_LEVEL_FILE:String = "../gamesaves/testlevel.txt";
 
 		private var level:Level;
 		private var loader:LevelLoader;

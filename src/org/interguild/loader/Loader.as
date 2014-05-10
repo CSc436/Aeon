@@ -7,8 +7,6 @@ package org.interguild.loader {
 	
 	import flexunit.utils.ArrayList;
 	
-	import org.interguild.Aeon;
-	
 	public class Loader {
 		
 		private static const LOOPS_PER_TICK:uint = 250;

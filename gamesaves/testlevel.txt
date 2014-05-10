@@ -4,11 +4,11 @@ x=80
 x=80
 xx    wx                   xxxxx        
 xx    sx                   xxxxx        
-xx #  wx                   xxxxx        
-xxxx        x       xx     xxxxx        
+xx #  wx  s                xxxxx        
+xxxx      s x       xx     xxxxx        
 xx         xx             xxxxxx        
-xx   x>   s             w  xxxxx        
-xx  xxxxsssxxxx    xxx  x  xxxxx        
+xx   x>   d             w  xxxxx        
+xx  xxxxssdxxxx    xxx  x  xxxxx        
 xx    xxsssxxxx >      fwwwxxxxx        
 xx    xxsssxssx x x xxxxxxxxxxxx        
 xx  xxx sssxssx x x xxxxxxxxxxxx        

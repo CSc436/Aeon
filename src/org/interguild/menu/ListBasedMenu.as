@@ -1,12 +1,11 @@
-package org.interguild {
+package org.interguild.menu {
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
-	
-	import org.interguild.game.level.LevelPage;
+	import org.interguild.KeyMan;
 
 	public class ListBasedMenu extends Sprite {
 		

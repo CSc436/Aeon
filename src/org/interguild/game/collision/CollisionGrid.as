@@ -3,20 +3,19 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
-	import org.interguild.game.level.LevelPage;
 	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Tile;
-	import flash.net.URLRequest;
-	import flash.media.Sound;
 
 	public class CollisionGrid extends Sprite {
 
@@ -41,9 +40,11 @@ package org.interguild.game.collision {
 			activeObjects = new Vector.<GameObject>();
 			
 			jump = new Sound();
-			jump.load(new URLRequest("../assets/jump.mp3"));
+			jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
+//			jump.load(new URLRequest("../assets/jump.mp3")); //local
 			coin = new Sound();
-			coin.load(new URLRequest("../assets/coin.mp3"));
+			coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
+//			coin.load(new URLRequest("../assets/coin.mp3")); //local
 
 			//init 2D array
 			grid = new Array(height);
