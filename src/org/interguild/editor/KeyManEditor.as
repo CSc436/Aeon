@@ -13,14 +13,15 @@ package org.interguild.editor {
 			return instance;
 		}
 		public var isCtrlO:Boolean = false;
-		public var isCtrlX:Boolean = false;
+		public var isCtrlY:Boolean = false;
 		public var isCtrlZ:Boolean = false;
-		
 		public var isCtrlS:Boolean = false;
 		public var isKeyEsc:Boolean = false;
 		
 		private var openCallback:Function;
 		private var saveCallback:Function;
+		private var undoCallback:Function;
+		private var redoCallback:Function;
 		private var spacebarCallback:Function;
 		private var escapeCallback:Function;
 		private var menuCallback:Function;
@@ -54,6 +55,18 @@ package org.interguild.editor {
 								saveCallback();
 							isCtrlS = true;
 							break;
+						case 89://ctrl+y
+							
+							if(redoCallback)
+								redoCallback();
+							isCtrlY = true;
+							break;
+						case 90://ctrl+z
+							if(undoCallback)
+								undoCallback();
+							isCtrlZ= true;
+							break;
+						
 						case 27: //Esc key
 							if(escapeCallback && !isKeyEsc)
 								escapeCallback();
@@ -112,6 +125,14 @@ package org.interguild.editor {
 			
 			public function addSaveLevelCallback(cb:Function):void {
 				saveCallback = cb;
+			}
+			
+			public function addUndoLevelCallback(cb:Function):void {
+				undoCallback = cb;
+			}
+			
+			public function addRedoLevelCallback(cb:Function):void {
+				redoCallback = cb;
 			}
 			CONFIG::DEBUG{
 				public function addSlowdownListeners(onToggle:Function, onNext:Function):void {

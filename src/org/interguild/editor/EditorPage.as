@@ -25,10 +25,6 @@ package org.interguild.editor {
 		private var gridContainer:Sprite;
 		private var tabsContainer:EditorTabContainer;
 
-		// UNDO REDO ACTIONS ARRAYLIST
-		private var undoList:Array;
-		private var redoList:Array;
-
 		private var progressBar:LevelProgressBar;
 
 		//variable to hold level code if coming back from test level
@@ -40,8 +36,6 @@ package org.interguild.editor {
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
-			undoList = new Array();
-			redoList = new Array();
 			
 			initBG();
 			
@@ -61,6 +55,8 @@ package org.interguild.editor {
 			keys = new KeyManEditor(stage);
 			keys.addOpenLevelCallback(openFromFile);
 			keys.addSaveLevelCallback(saveToFile);
+			keys.addUndoLevelCallback(gridContainer.undoClick);
+			keys.addRedoLevelCallback(gridContainer.redoClick);
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);
@@ -289,29 +285,7 @@ package org.interguild.editor {
 			Aeon.getMe().playLevelCode(s);
 		}
 
-		/**
-		 * listener for undo button
-		 */
-		private function undoClick(e:MouseEvent):void {
-			// this function takes from the undo stack
-			// and puts it back on the grid
-			if (undoList.length > 0) {
-				var popped:EditorGrid = undoList.pop();
-				redoList.push(tabsContainer.getCurrentGrid().clone());
-				tabsContainer.setCurrentGridContainer(popped);
-			}
-		}
 
-		/**
-		 * listener for redo button
-		 */
-		private function redoClick(e:MouseEvent):void {
-			if (redoList.length > 0) {
-				var popped:EditorGrid = redoList.pop();
-				undoList.push(tabsContainer.getCurrentGrid().clone());
-				tabsContainer.setCurrentGridContainer(popped);
-			}
-		}
 
 		/**
 		 * repaint the grid

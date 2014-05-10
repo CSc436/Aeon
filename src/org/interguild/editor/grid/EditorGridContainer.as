@@ -38,8 +38,15 @@ package org.interguild.editor.grid {
 		private var playerTile:EditorCell;
 		
 		private var scroll:ScrollPane;
+		
+		// UNDO REDO ACTIONS ARRAYLIST
+		private var undoList:Array;
+		private var redoList:Array;
 
 		public function EditorGridContainer(e:TileList) {
+			undoList = new Array();
+			redoList = new Array();
+			
 			this.tileList = e;
 			this.x = POSITION_X;
 			this.y = POSITION_Y;
@@ -71,6 +78,7 @@ package org.interguild.editor.grid {
 			
 			var container:Sprite = new Sprite();
 			container.addChild(grid);
+			trace(grid.toStringCells());
 			//if the editor is smaller than the scrollpane, do this so that mouse wheel events still work nicely
 			if(container.width < WIDTH){
 				container.graphics.beginFill(0, 0);
@@ -143,6 +151,7 @@ package org.interguild.editor.grid {
 					playerTile.clearTile();
 				playerTile = cell;
 			}
+			undoList.push(getGrid().clone());
 			cell.setTile(char);
 		}
 
@@ -252,5 +261,30 @@ package org.interguild.editor.grid {
 				}
 			}
 		}			
+		
+		/**
+		 * listener for undo button
+		 */
+		public function undoClick():void {
+			// this function takes from the undo stack
+			// and puts it back on the grid
+			if (undoList.length > 0) {
+				var popped:EditorGrid = undoList.pop();
+				redoList.push(getGrid().clone());
+				setCurrentGrid(popped);
+			}
+		}
+		
+		/**
+		 * listener for redo button
+		 */
+		public function redoClick():void {
+		   trace('redo called')
+			if (redoList.length > 0) {
+				var popped:EditorGrid = redoList.pop();
+				undoList.push(getGrid().clone());
+				setCurrentGrid(popped);
+			}
+		}
 	}
 }
