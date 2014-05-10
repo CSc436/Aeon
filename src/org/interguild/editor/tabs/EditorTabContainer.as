@@ -138,7 +138,7 @@ package org.interguild.editor.tabs {
 //			page.setGrid(this.gridContainerArray[currTab]);
 		}
 
-		public function getCurrentGrid():EditorGrid {
+		public function getCurrentGridContainer():EditorGridContainer {
 			return gridContainerArray[currTab];
 		}
 

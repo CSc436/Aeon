@@ -25,10 +25,6 @@ package org.interguild.editor {
 		private var gridContainer:EditorGridContainer;
 		private var tabsContainer:EditorTabContainer;
 
-		// UNDO REDO ACTIONS ARRAYLIST
-		private var undoList:Array;
-		private var redoList:Array;
-
 		private var progressBar:LevelProgressBar;
 
 		//variable to hold level code if coming back from test level
@@ -41,8 +37,6 @@ package org.interguild.editor {
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
-			undoList = new Array();
-			redoList = new Array();
 			
 			initBG();
 			
@@ -56,8 +50,14 @@ package org.interguild.editor {
 			loader.addInitializedListener(tabsContainer.addTab);
 			loader.addErrorListener(onLoadError);
 			
-			keys = new KeyManEditor(stage);
 			
+			
+			keys = new KeyManEditor(stage);
+			keys.addOpenLevelCallback(openFromFile);
+			keys.addSaveLevelCallback(saveToFile);
+			keys.addUndoLevelCallback(tabsContainer.getCurrentGridContainer().undoClick);
+			keys.addRedoLevelCallback(tabsContainer.getCurrentGridContainer().redoClick);
+			keys.addDeleteLevelCallback(tabsContainer.getCurrentGridContainer().deleteTiles);
 			//must be initialized last
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);
@@ -266,8 +266,8 @@ package org.interguild.editor {
 			var string:String = "";
 //			string += this.title.text + "\n";
 			string += "Untitled\n";
-			string += tabsContainer.getCurrentGrid().levelHeight + "x" + tabsContainer.getCurrentGrid().levelWidth + "\n";
-			string += tabsContainer.getCurrentGrid().toStringCells();
+			string += tabsContainer.getCurrentGridContainer().getGrid().levelHeight + "x" + tabsContainer.getCurrentGridContainer().getGrid().levelWidth + "\n";
+			string += tabsContainer.getCurrentGridContainer().getGrid().toStringCells();
 			return string;
 		}
 
@@ -275,7 +275,7 @@ package org.interguild.editor {
 		 * listener that clears the grid
 		 */
 		private function clearClick(e:MouseEvent):void {
-			tabsContainer.getCurrentGrid().clearGrid();
+			tabsContainer.getCurrentGridContainer().getGrid().clearGrid();
 		}
 
 		/**
@@ -284,30 +284,6 @@ package org.interguild.editor {
 		public function testGame(e:MouseEvent):void {
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
-		}
-
-		/**
-		 * listener for undo button
-		 */
-		private function undoClick(e:MouseEvent):void {
-			// this function takes from the undo stack
-			// and puts it back on the grid
-			if (undoList.length > 0) {
-				var popped:EditorGrid = undoList.pop();
-				redoList.push(tabsContainer.getCurrentGrid().clone());
-				tabsContainer.setCurrentGridContainer(popped);
-			}
-		}
-
-		/**
-		 * listener for redo button
-		 */
-		private function redoClick(e:MouseEvent):void {
-			if (redoList.length > 0) {
-				var popped:EditorGrid = redoList.pop();
-				undoList.push(tabsContainer.getCurrentGrid().clone());
-				tabsContainer.setCurrentGridContainer(popped);
-			}
 		}
 	}
 }
