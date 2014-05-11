@@ -30,21 +30,21 @@ package org.interguild.game.tiles {
 				case Direction.RIGHT:
 					anim.rotation = 90;
 					anim.x += anim.height;
-					newX+= 32;
+					newX+= 20;
 					break;
 				case Direction.LEFT:
 					anim.rotation = -90;
 					anim.y += anim.width;
-					newX-=32;
+					newX-=20;
 					break;
 				case Direction.DOWN:
 					anim.rotation = 180;
 					anim.x += anim.width;
 					anim.y += anim.height;
-					newY+=32;
+					newY+=20;
 					break;
 				default:
-					newY-=32;
+					newY-=20;
 					//animation is already facing up
 					break;
 			}

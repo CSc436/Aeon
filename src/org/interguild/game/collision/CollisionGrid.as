@@ -410,8 +410,13 @@ package org.interguild.game.collision {
 				removalObjects.push(otherObject);
 				removalObjects.push(activeObject);
 			}
-			else if (a && otherTile.getDestructibility() == 0) 
+			else if (a && otherTile.getDestructibility() == 0 && !(otherTile is Explosion)) 
 				removalObjects.push(activeObject);
+
+			else if(a && otherTile is Explosion){
+				trace("hi");
+			}
+				
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
