@@ -29,7 +29,7 @@ package org.interguild.game.collision {
 
 		private var removalObjects:Array;
 		private var deactivateObjects:Array;
-		
+
 		private var jump:Sound;
 		private var coin:Sound;
 
@@ -141,12 +141,12 @@ package org.interguild.game.collision {
 		 * Handle collisions!
 		 */
 		public function detectAndHandleCollisions(target:CollidableObject):Array {
-			if(target is Explosion){
+			if (target is Explosion) {
 				var e:Explosion = Explosion(target);
-				if(e.timeCounter >= 15 && removalObjects.indexOf(target) == -1)
+				if (e.timeCounter >= 15 && removalObjects.indexOf(target) == -1)
 					removalObjects.push(target);
 			}
-			
+
 			//maintain a list of nearby objects, ordered by proximity
 			var objectsToTest:Array = new Array();
 
@@ -377,14 +377,14 @@ package org.interguild.game.collision {
 			/*
 			* PLAYER HIT BY ARROW
 			*/
-			if(p && otherTile is Arrow){
+			if (p && otherTile is Arrow) {
 				p.die();
 			}
-			
-			if(p && otherTile is Explosion){
+
+			if (p && otherTile is Explosion) {
 				p.die();
 			}
-			
+
 			/*
 			* EXPLOSION DESTROYS SURROUNDINGS
 			*/
@@ -394,24 +394,21 @@ package org.interguild.game.collision {
 //				m.play();
 				if (explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
 					removalObjects.push(activeObject);
-			}
-			else if (explosion && explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
+			} else if (explosion && explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
 				removalObjects.push(activeObject);
-			
+
 			/*
 			* ARROW HITS CRATE
 			*/
 			if ((a && otherTile.getDestructibility() == 2) || (a && otherTile is SteelCrate)) {
 				removalObjects.push(otherObject);
 				removalObjects.push(activeObject);
-			}
-			else if (a && otherTile.getDestructibility() == 0 && !(otherTile is Explosion)) 
+			} else if (a && otherTile.getDestructibility() == 0 && !(otherTile is Explosion) && !(otherTile is FinishLine)) {
 				removalObjects.push(activeObject);
-
-			else if(a && otherTile is Explosion){
+			} else if (a && otherTile is Explosion) {
 				trace("hi");
 			}
-				
+
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
@@ -445,8 +442,7 @@ package org.interguild.game.collision {
 
 			/*
 			* SOLID COLLISIONS
-			*/
-			else if (activeTile.isSolid() && otherTile.isSolid()) {
+			*/else if (activeTile.isSolid() && otherTile.isSolid()) {
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
@@ -465,8 +461,7 @@ package org.interguild.game.collision {
 							trace("p = active");
 							p.die();
 								//return;
-						}
-						else {
+						} else {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
 							otherObject.speedY = 0;
 						}
@@ -538,7 +533,7 @@ package org.interguild.game.collision {
 						tile.activate();
 						if (toBreak)
 							break;
-					}else{
+					} else {
 						break;
 					}
 				}
