@@ -289,6 +289,7 @@ package org.interguild.editor.grid {
 		}
 		
 		public function deleteTiles():void{
+
 			if (selectedArray.length>1){
 				trace('delete!');
 				for(var i:int = 0; i<selectedArray.length;i++){

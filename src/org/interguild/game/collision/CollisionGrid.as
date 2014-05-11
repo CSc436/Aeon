@@ -200,18 +200,27 @@ package org.interguild.game.collision {
 			var mlen:uint = objectsToTest.length;
 			for (var m:uint = 0; m < mlen; m++) {
 				var other:CollidableObject = objectsToTest[m][1];
+				var active:CollidableObject = target;
+				
+				if(other is Explosion || other is Arrow){
+					var toSwap:CollidableObject = active;
+					active = other;
+					other = toSwap;
+				}
+				
 				CONFIG::DEBUG {
 					if (level.isDebuggingMode)
 						trace(other, "x: " + other.x, "y: " + other.y, "dist: " + objectsToTest[m][0]);
 				}
 
-				if (!target.hasCollidedWith(other) && target.hitboxWrapper.intersects(other.hitboxWrapper)) {
+				if (!active.hasCollidedWith(other) && active.hitboxWrapper.intersects(other.hitboxWrapper)) {
+					
 					CONFIG::DEBUG {
 						if (level.isDebuggingMode)
 							trace("	handling collision");
 					}
-					//if they are colliding:
-					handleCollision(target, other);
+						
+					handleCollision(active, other);
 				}
 			}
 			CONFIG::DEBUG {
@@ -362,7 +371,10 @@ package org.interguild.game.collision {
 			// Check to see if explosion is the culprit
 			if (activeObject is Explosion) {
 				explosion = Explosion(activeObject);
+			}else if(otherObject is Explosion){
+				explosion = Explosion(otherObject);
 			}
+			
 			if (!(otherObject is CollidableObject) || !(activeObject is CollidableObject)) {
 				//will never ever happen
 				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
