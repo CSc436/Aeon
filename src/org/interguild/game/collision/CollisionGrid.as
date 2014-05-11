@@ -143,8 +143,8 @@ package org.interguild.game.collision {
 		public function detectAndHandleCollisions(target:CollidableObject):Array {
 			if (target is Explosion) {
 				var e:Explosion = Explosion(target);
-				if (e.timeCounter >= 15 && removalObjects.indexOf(target) == -1)
-					removalObjects.push(target);
+				if (e.timeCounter >= 15)
+					toRemove(target);
 			}
 
 			//maintain a list of nearby objects, ordered by proximity
@@ -389,22 +389,21 @@ package org.interguild.game.collision {
 			* EXPLOSION DESTROYS SURROUNDINGS
 			*/
 			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion || otherTile is Arrow))) {
-				removalObjects.push(otherObject);
-//				var m:MovieClip = MovieClip(explosion.exp);
-//				m.play();
-				if (explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
-					removalObjects.push(activeObject);
-			} else if (explosion && explosion.timeCounter >= 15 && removalObjects.indexOf(activeObject) == -1)
-				removalObjects.push(activeObject);
+				toRemove(otherObject);
+				if (explosion.timeCounter >= 15)
+					toRemove(activeObject);
+			} else if (explosion && explosion.timeCounter >= 15){
+				toRemove(activeObject);
+			}
 
 			/*
 			* ARROW HITS CRATE
 			*/
 			if ((a && otherTile.getDestructibility() == 2) || (a && otherTile is SteelCrate)) {
-				removalObjects.push(otherObject);
-				removalObjects.push(activeObject);
+				toRemove(otherObject);
+				toRemove(activeObject);
 			} else if (a && otherTile.getDestructibility() == 0 && !(otherTile is Explosion) && !(otherTile is FinishLine)) {
-				removalObjects.push(activeObject);
+				toRemove(activeObject);
 			} else if (a && otherTile is Explosion) {
 				trace("hi");
 			}
@@ -413,7 +412,7 @@ package org.interguild.game.collision {
 			* PLAYER GRABS COLLECTABLE
 			*/
 			if (p && otherObject is Collectable) {
-				removalObjects.push(otherObject);
+				toRemove(otherObject);
 				level.grabbedCollectable();
 				coin.play();
 				/*
@@ -437,7 +436,7 @@ package org.interguild.game.collision {
 						activeObject.speedX = Player.KNOCKBACK_HORIZONTAL;
 					}
 				}
-				removalObjects.push(otherObject);
+				toRemove(otherObject);
 			}
 
 			/*
@@ -480,6 +479,12 @@ package org.interguild.game.collision {
 
 
 			activeObject.updateHitBox();
+		}
+		
+		private function toRemove(obj:GameObject):void{
+			if(removalObjects.indexOf(obj) == -1){
+				removalObjects.push(obj);
+			}
 		}
 
 		public function handleRemovals(camera:Sprite):void {

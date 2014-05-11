@@ -1,12 +1,13 @@
 package org.interguild.game.tiles
 {
-	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.level.Level;
+	import flash.display.Bitmap;
 	
 	public class DynamiteCrate extends CollidableObject
 	{
@@ -14,6 +15,7 @@ package org.interguild.game.tiles
 		private static const MAX_FALL_SPEED:Number = 6;
 		
 		public static const LEVEL_CODE_CHAR:String = 'd';
+		public static const EDITOR_ICON:BitmapData = new WoodenDynamiteSprite();
 		public static const DESTRUCTIBILITY:int=2;
 		public static const IS_SOLID:Boolean=true;
 		public static const HAS_GRAVITY:Boolean=true;
