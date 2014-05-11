@@ -202,7 +202,7 @@ package org.interguild.game.collision {
 				var other:CollidableObject = objectsToTest[m][1];
 				var active:CollidableObject = target;
 				
-				if(other is Explosion || other is Arrow){
+				if(!(target is Player) && (other is Explosion || other is Arrow)){
 					var toSwap:CollidableObject = active;
 					active = other;
 					other = toSwap;
