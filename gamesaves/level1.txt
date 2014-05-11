@@ -1,4 +1,4 @@
-Level Title
+title
 10x15
 xxxxxxxxxxxxxxx
 x             x

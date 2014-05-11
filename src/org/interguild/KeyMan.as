@@ -1,6 +1,11 @@
 package org.interguild {
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.TimerEvent;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
+	import flash.utils.Timer;
 
 	public class KeyMan {
 
@@ -19,6 +24,10 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
+		
+		public var walkingSound:Sound;
+		public var walkSoundPlaying:Boolean = false;
+		public var timer:Timer;
 
 		public var spacebarCallback:Function;
 		private var escapeCallback:Function;
@@ -38,12 +47,9 @@ package org.interguild {
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key
-					if(!isKeyEsc)
-						isKeyEsc = true;
-					else
-						isKeyEsc = false;
-					if(escapeCallback)
+					if(escapeCallback && !isKeyEsc)
 						escapeCallback();
+					isKeyEsc = true;
 					break;
 				case 39: //right arrow key
 					isKeyRight = true;
@@ -60,7 +66,7 @@ package org.interguild {
 				case 32: //spacebar
 					isKeySpace = true;
 					if(spacebarCallback)
-						spacebarCallback(false);
+						spacebarCallback();
 					break;
 			}
 			CONFIG::DEBUG {
@@ -82,9 +88,12 @@ package org.interguild {
 			if (menuCallback)
 				menuCallback(evt.keyCode);
 		}
-
+		
 		private function onKeyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
+				case 27: //Esc key
+					isKeyEsc = false;
+					break;
 				case 39: //right arrow key
 					isKeyRight = false;
 					break;
@@ -102,14 +111,10 @@ package org.interguild {
 					break;
 			}
 		}
+		
 		public function resumeFromButton():void {
-			resetEscKey();
 			if(escapeCallback)
 				escapeCallback();
-		}
-		
-		public function resetEscKey():void {
-			isKeyEsc = false;
 		}
 
 		public function addEscapeListener(f:Function):void {
@@ -118,10 +123,6 @@ package org.interguild {
 
 		public function addSpacebarListener(cb:Function):void {
 			spacebarCallback = cb;
-		}
-
-		public function removeSpacebarListener():void {
-			spacebarCallback = null;
 		}
 
 		public function addMenuCallback(cb:Function):void {

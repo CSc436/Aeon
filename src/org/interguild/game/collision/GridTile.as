@@ -25,11 +25,11 @@ package org.interguild.game.collision {
 			}
 		}
 
-		internal function get gridRow():uint {
+		public function get gridRow():uint {
 			return row;
 		}
 
-		internal function get gridCol():uint {
+		public function get gridCol():uint {
 			return col;
 		}
 
@@ -109,7 +109,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if (!o.isActive && o is Tile && Tile(o).isGravible()) {
+				if (!o.isActive && o is CollidableObject && o.isGravible()) {
 					o.isActive = true;
 					grid.activeObjects.push(o);
 				}
@@ -121,7 +121,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(o is Tile && Tile(o).isGravible())
+				if(o is CollidableObject && !o.isActive && o.isGravible())
 					return true;
 			}
 			return false;

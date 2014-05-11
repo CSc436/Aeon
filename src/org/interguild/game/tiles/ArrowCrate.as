@@ -1,103 +1,104 @@
-package org.interguild.game.tiles
-{
+package org.interguild.game.tiles {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.media.Sound;
+	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
+	import org.interguild.game.collision.Direction;
 	import org.interguild.game.level.Level;
-	
-	public class ArrowCrate extends CollidableObject implements Tile {
+
+	//TODO Henry wants to add subclasses for each directional arrow for the editor page
+	public class ArrowCrate extends CollidableObject {
+
 		public static const LEVEL_CODE_CHAR_RIGHT:String = '>';
 		public static const LEVEL_CODE_CHAR_DOWN:String = 'v';
-		public static const LEVEL_CODE_CHAR_LEFT:String = '<'
-		public static const LEVEL_CODE_CHAR_UP:String = '^'
+		public static const LEVEL_CODE_CHAR_LEFT:String = '<';
+		public static const LEVEL_CODE_CHAR_UP:String = '^';
+
+		public static const EDITOR_ICON_RIGHT:BitmapData = new LightningBoxRight();
+		public static const EDITOR_ICON_LEFT:BitmapData = new LightningBoxLeft();
+		public static const EDITOR_ICON_UP:BitmapData = new LightningBoxUp();
+		public static const EDITOR_ICON_DOWN:BitmapData = new LightningBoxDown();
 
 		private static const GRAVITY:uint = 4;
 		private static const MAX_FALL_SPEED:Number = 6;
-		
-		private static const SPRITE_COLOR:uint = 0xFF6600;
-		private static const SPRITE_WIDTH:uint = 32;
-		private static const SPRITE_HEIGHT:uint = 32;
-		private static const TILE_ENCODING:String = 'a';
-		
+
+
+//		private static const SPRITE_COLOR:uint = 0xFF6600;
+//		private static const SPRITE_WIDTH:uint = 32;
+//		private static const SPRITE_HEIGHT:uint = 32;
+//		private static const TILE_ENCODING:String = 'a';
+
 		// Arrow stuff
 		public var arrow:Arrow;
 		public var direction:int;
 		public var xPos:int;
 		public var yPos:int;
+
+		public static const DESTRUCTIBILITY:int = 2;
+		public static const IS_SOLID:Boolean = true;
+		public static const HAS_GRAVITY:Boolean = false;
+		public static const KNOCKBACK_AMOUNT:int = 5;
+		public static const IS_BUOYANT:Boolean = true;
+		public var LEVEL_CODE_CHAR:String;
+		public static var LEVEL_CODE_CHAR:Object;
 		
-		public var destructibility:int = 2;
-		public var solidity:Boolean = true;
-		public var gravible:Boolean = false;
-		public var knocksback:int = 5;
-		public var buoyancy:Boolean = true;
-		
+		public var arrowSound:Sound;
+
 		public function ArrowCrate(x:int, y:int, direction:int) {
-			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			this.xPos = x;
-			this.yPos = y;
 			this.direction = direction;
 			switch (direction) {
-				case 1:
+				case Direction.RIGHT:
 					addChild(new Bitmap(new LightningBoxRight()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_RIGHT;
 					break;
-				case 2:
+				case Direction.DOWN:
 					addChild(new Bitmap(new LightningBoxDown()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_DOWN;
 					break;
-				case 3:
+				case Direction.LEFT:
 					addChild(new Bitmap(new LightningBoxLeft()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_LEFT;
 					break;
-				case 4:
+				case Direction.UP:
 					addChild(new Bitmap(new LightningBoxUp()));
+					LEVEL_CODE_CHAR = LEVEL_CODE_CHAR_UP;
 					break;
 			}
+
+			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			this.xPos=x;
+			this.yPos=y;
+			arrowSound = new Sound();
+			arrowSound.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Arrow.mp3"));
 		}
-		
-		public function getDestructibility():int {
-			return destructibility;
-		}
-		
-		
-		public function isSolid():Boolean {
-			return solidity;
-		}
-		
-		
-		public function isGravible():Boolean {
-			return gravible;
-		}
-		
-		
-		public function doesKnockback():int {
-			return knocksback;
-		}
-		
-		
-		public function isBuoyant():Boolean {
-			return buoyancy;
-		}
-		
+
 		public override function onGameLoop():void {
 			//gravity
 			speedY += GRAVITY;
-			
+
 			//update movement
 			newX += speedX;
 			newY += speedY;
-			
+
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
 			}
-			
+
 			//commit location change:
 			x = newX;
 			y = newY;
 			updateHitBox();
 		}
-		
-		public override function onKillEvent(level:Level): void {
+
+
+		public override function onKillEvent(level:Level):void {
 			arrow = new Arrow(xPos, yPos, direction);
 			level.createCollidableObject(arrow);
 			this.arrow.parentDestroyed = true;
+			arrowSound.play();
 		}
 	}
 }

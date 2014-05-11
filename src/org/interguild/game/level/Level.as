@@ -17,6 +17,7 @@ package org.interguild.game.level {
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
 	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.FinishLine;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -37,6 +38,7 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
+		private var portals:Vector.<FinishLine>;
 		private var tv:TerrainView;
 		private var bg:LevelBackground;
 
@@ -50,6 +52,9 @@ package org.interguild.game.level {
 		private var hud:LevelHUD;
 		private var collectableCount:int;
 
+		private var timeDead:int = 0;
+
+		public var onWinCallback:Function;
 
 		CONFIG::DEBUG {
 			public var isDebuggingMode:Boolean = false;
@@ -67,6 +72,9 @@ package org.interguild.game.level {
 			//init background
 			bg = new LevelBackground(widthInPixels, heightInPixels);
 			addChild(bg);
+			
+			//init portals list
+			portals = new Vector.<FinishLine>();
 
 			//init player and camera
 			player = new Player()
@@ -81,8 +89,13 @@ package org.interguild.game.level {
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 
+			//init level hud
 			hud = new LevelHUD();
 			addChild(hud);
+
+			//init game loop
+			timer = new Timer(PERIOD);
+			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 
 			CONFIG::DEBUG {
 				var keys:KeyMan = KeyMan.getMe();
@@ -106,10 +119,18 @@ package org.interguild.game.level {
 		public function finishLoading():void {
 			tv.finishTerrain();
 			hud.updateMax(collectableCount);
+			if(hud.maxCollected == 0)
+				openPortal();
 		}
 
 		public function grabbedCollectable():void {
 			hud.increaseCollected();
+			if(hud.collected == hud.maxCollected)
+				openPortal();
+		}
+
+		public function setFinish(o:FinishLine):void {
+			portals.push(o);
 		}
 
 		public function hideBackground():void {
@@ -132,12 +153,18 @@ package org.interguild.game.level {
 			myTitle = t;
 		}
 
-		public function showHUD(show:Boolean):void {
+		public function set hudVisibility(show:Boolean):void {
 			if (show) {
 				hud.show();
-				return;
+			} else {
+				hud.hide();
 			}
-			hud.hide();
+		}
+
+		public function openPortal():void {
+			for each(var p:FinishLine in portals){
+				p.activate();
+			}
 		}
 
 		/**
@@ -200,14 +227,25 @@ package org.interguild.game.level {
 
 			player.wasJumping = true;
 
-			//init game loop
-			timer = new Timer(PERIOD);
-			timer.addEventListener(TimerEvent.TIMER, onGameLoop, false, 0, true);
 			timer.start();
 		}
 
-		public function stopGame():void {
+		public function pauseGame():void {
 			timer.stop();
+		}
+
+		public function continueGame():void {
+			player.wasJumping = true;
+			timer.start();
+		}
+
+		public function get isRunning():Boolean {
+			return timer.running;
+		}
+
+		public function onWonGame():void {
+			pauseGame();
+			onWinCallback();
 		}
 
 		CONFIG::DEBUG {
@@ -253,16 +291,30 @@ package org.interguild.game.level {
 		}
 
 		private function update():void {
-			//update player
-			player.onGameLoop();
-			
+			if (!player.isDead) {
+				//update player
+				player.onGameLoop();
+			}
 
+			// restart the game after the player has been dead after time specified
+			if (player.isDead) {
+				this.timeDead++;
+				if (40 == timeDead) {
+					this.stage.focus = stage;
+					// This is hardcoded right now, but we probably want some kind of
+					// global reference to the current file so that we know what level
+					// needs to be restarted
+					Aeon.getMe().playLastLevel();
+				}
+			}
 			// update animations
 			player.updateAnimation();
-			player.frameCounter++; // updated counter for game frames
+
+			player.frameCounter++; // update counter for game frames
 
 			player.reset();
-			
+
+
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
@@ -283,8 +335,14 @@ package org.interguild.game.level {
 				}
 			}
 
+
 			//detect collisions for player
 			collisionGrid.updateObject(player, false);
+			var index:int = collisionGrid.activeObjects.indexOf(player);
+			if (index != -1) {
+				collisionGrid.activeObjects.splice(index, 1);
+			}
+
 
 			//detect collisions for active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -297,12 +355,14 @@ package org.interguild.game.level {
 			}
 
 			//test and handle collisions
-			collisionGrid.detectAndHandleCollisions(player);
+			collisionGrid.detectAndHandleCollisions(player)
 			if (collisionGrid.activeObjects.length > 0) {
 				for (i = 0; i < collisionGrid.activeObjects.length; i++) {
 					collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
 				}
 			}
+
+
 		}
 
 		private function cleanup():void {
@@ -322,20 +382,10 @@ package org.interguild.game.level {
 			}
 
 			//update camera
-			camera.updateCamera();
+			if (!player.isDead)
+				camera.updateCamera();
 		}
-
-//		public function activateObject(obj:CollidableObject):void {
-//			obj.isActive = true;
-//			collisionGrid.activeObjects.push(obj);
-//		}
-//		
-//		public function deactivateObject(obj:CollidableObject):void {
-//			var index:int = collisionGrid.activeObjects.indexOf(obj, 0);
-//			
-//			obj.isActive = false;
-//			collisionGrid.activeObjects.splice(index, 1);
-//			obj.finishGameLoop;
-//		}
 	}
 }
+
+

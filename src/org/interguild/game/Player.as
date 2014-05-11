@@ -1,21 +1,22 @@
 package org.interguild.game {
-	import flash.display.MovieClip;
 
+	import flash.display.BitmapData;
+	import flash.display.MovieClip;
+	
 	import org.interguild.KeyMan;
+	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.Tile;
 
-	public class Player extends CollidableObject implements Tile {
-
-		public static const LEVEL_CODE_CHAR:String = '#';
+	public class Player extends CollidableObject {
+		CONFIG::DEBUG {
+			private static const SPRITE_COLOR:uint = 0xFF0000;
+			private static const SPRITE_WIDTH:uint = 24;
+			private static const SPRITE_HEIGHT:uint = 40;
+		}
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
-
-		private static const SPRITE_COLOR:uint = 0xFF0000;
-		private static const SPRITE_WIDTH:uint = 24;
-		private static const SPRITE_HEIGHT:uint = 40;
 
 		private static const CRAWLING_HEIGHT:uint = 32;
 		private static const STANDING_HEIGHT:uint = 40;
@@ -46,16 +47,29 @@ package org.interguild.game {
 		public var isCrouching:Boolean;
 		public var isFalling:Boolean;
 		public var isJumping:Boolean;
+		public var mustCrawl:Boolean = false;
+
+		public var isDead:Boolean;
 
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
+		//TODO are these values correct? Henry
+		public static const LEVEL_CODE_CHAR:String = '#';
+		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
+		public static const DESTRUCTIBILITY:int = 2;
+		public static const IS_SOLID:Boolean = true;
+		public static const HAS_GRAVITY:Boolean = true;
+		public static const KNOCKBACK_AMOUNT:int = 5;
+		public static const IS_BUOYANT:Boolean = false;
+
 		public function Player() {
-			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
+			isDead = false;
 		}
 
 		public function setStartPosition(sx:Number, sy:Number):void {
@@ -81,8 +95,8 @@ package org.interguild.game {
 
 		public override function onGameLoop():void {
 			speedY += Level.GRAVITY;
-//			trace("speedY =", speedY);
-//			trace("speedX =", speedX);
+			trace("speedY =", speedY);
+			trace("speedX =", speedX);
 
 			updateKeys();
 
@@ -100,18 +114,21 @@ package org.interguild.game {
 			newX += speedX;
 			newY += speedY;
 			updateHitBox();
-			
-			trace( "speedY = ", speedY );
-			if ( speedY > 2 && !isJumping ) {
+
+			trace("speedY = ", speedY);
+			if (speedY > 6 && !isJumping) {
 				isFalling = true;
-			}
+			} else
+				isFalling = false;
+
+			if (speedY != 2)
+				isStanding = false;
+
 		}
 
 		public function reset():void {
 			isStanding = false;
-			isCrouching = false;
 			isFalling = false;
-//			isJumping = false;
 		}
 
 		private function updateKeys():void {
@@ -140,12 +157,10 @@ package org.interguild.game {
 			if (keys.isKeyDown && isStanding) {
 				isCrouching = true;
 				this.hitbox.height = CRAWLING_HEIGHT;
-				this.hitbox.y = this.hitbox.y + (STANDING_HEIGHT - CRAWLING_HEIGHT);
-				updateHitBox();
 			}
 
 			// finished crawling
-			if (!keys.isKeyDown) {
+			if (!keys.isKeyDown && !mustCrawl) {
 				isCrouching = false;
 				this.hitbox.height = STANDING_HEIGHT;
 			}
@@ -167,7 +182,7 @@ package org.interguild.game {
 			}
 
 			//jump
-			if (keys.isKeySpace && isStanding && !wasJumping) {
+			if (keys.isKeySpace && isStanding && !wasJumping && !mustCrawl) {
 				speedY = JUMP_SPEED;
 				isStanding = false;
 				isJumping = true;
@@ -181,13 +196,34 @@ package org.interguild.game {
 		}
 
 		public function updateAnimation():void {
-			if (isJumping) {
+			if (isDead) {
+				handleDeathAnimation();
+				return;
+			}
+
+			var neighborTiles:Vector.<GridTile> = this.myCollisionGridTiles;
+			trace("Number of neighboring tiles: " + neighborTiles.length);
+			mustCrawl = false;
+			if (neighborTiles.length == 12 && !isJumping && isStanding) {
+				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0)
+					mustCrawl = true;
+			} else if (neighborTiles.length == 16 && !isJumping && isStanding) {
+				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0 || neighborTiles[2].myCollisionObjects[0].getDestructibility() == 0)
+					mustCrawl = true;
+			}
+			trace("Must crawl value: " + mustCrawl);
+
+			if (isJumping && !mustCrawl) {
 				handleJumping();
-			} else if (isFalling) {
+			} else if (isFalling && !mustCrawl && !isCrouching) {
 				handleFalling();
 			} else if (keys.isKeyDown && isFacingRight && isStanding) {
 				handleCrawlRight();
 			} else if (keys.isKeyDown && !isFacingRight && isStanding) {
+				handleCrawlLeft();
+			} else if (mustCrawl && isFacingRight) {
+				handleCrawlRight();
+			} else if (mustCrawl && !isFacingRight) {
 				handleCrawlLeft();
 			} else if (keys.isKeyRight && !keys.isKeyDown) {
 				handleWalkRight();
@@ -197,17 +233,17 @@ package org.interguild.game {
 			// reset the animation to walking left
 			else if (!keys.isKeyDown && !isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkLeft();
-			// reset the animation to walking right
+					// reset the animation to walking right
 			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkRight();
 			}
-
 		}
 
 		private function handleCrawlRight():void {
 			if (!(playerClip is PlayerCrawlAnimation)) {
 				removeChild(playerClip);
 				playerClip = new PlayerCrawlAnimation();
+				playerClip.stop();
 				addChild(playerClip);
 				playerClip.gotoAndStop(0);
 			}
@@ -230,6 +266,7 @@ package org.interguild.game {
 			if (!(playerClip is PlayerCrawlAnimation)) {
 				removeChild(playerClip);
 				playerClip = new PlayerCrawlAnimation();
+				playerClip.stop();
 				addChild(playerClip);
 				playerClip.gotoAndStop(0);
 			}
@@ -298,6 +335,12 @@ package org.interguild.game {
 		}
 
 		private function handleJumping():void {
+			if (this.prevSpeedY - this.newY < 0) {
+				frameJumpCounter == 6;
+			} else if (this.prevSpeedY - this.newY > 0) {
+				frameJumpCounter == 16;
+			}
+
 			if (frameCounter - frameJumpCounter <= 6) {
 				if (!(playerClip is PlayerJumpUpAnimation)) {
 					removeChild(playerClip);
@@ -319,7 +362,7 @@ package org.interguild.game {
 					playerClip.x = 25;
 					playerClip.y = -8;
 				}
-			} else if (7 <= frameCounter - frameJumpCounter && frameCounter - frameJumpCounter <= 16 ) {
+			} else if (7 <= frameCounter - frameJumpCounter && frameCounter - frameJumpCounter <= 16) {
 				if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
 					removeChild(playerClip);
 					playerClip = new PlayerJumpPeakThenFallAnimation();
@@ -340,7 +383,7 @@ package org.interguild.game {
 					playerClip.x = 25;
 					playerClip.y = -8;
 				}
-			} else if (frameCounter - frameJumpCounter < 18) {
+			} else if (frameCounter - frameJumpCounter < 17) {
 				if (!(playerClip is PlayerJumpLandAnimation)) {
 					removeChild(playerClip);
 					playerClip = new PlayerJumpLandAnimation();
@@ -364,9 +407,24 @@ package org.interguild.game {
 			} else {
 				isJumping = false;
 			}
+		}
 
+		private function handleDeathAnimation():void {
 
+			var directionChange:int = Math.random() * 10;
 
+			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerJumpPeakThenFallAnimation();
+				playerClip.stop();
+				addChild(playerClip);
+				playerClip.gotoAndStop(3);
+			}
+
+			parent.addChild(this);
+			playerClip.rotation += 18;
+			playerClip.x += directionChange;
+			playerClip.y -= directionChange;
 
 		}
 
@@ -402,67 +460,11 @@ package org.interguild.game {
 
 		}
 
-		/*
-		function: getDestructibility()
-		description: returns value indicating whether or not
-		a tile should be destroyed and by what.
-		param: None
-		return: int
-		0 = indestructible (terrain)
-		1 = destructible by arrows and dynamite (steel)
-		2 = destructible by arrows, dynamite and touch (wooden)
-		*/
-		public function getDestructibility():int {
-			return 1;
-		}
-
-		/*
-		function: isSolid()
-		description: returns whether or not the tile is solid
-		i.e. player/tiles can pass through it.
-		param: None
-		return: Boolean
-		*/
-		public function isSolid():Boolean {
-			return true;
-		}
-
-		/*
-		function: isGravible()
-		description: returns whether or not the tile is affected
-		by simulated game gravity.
-		param: None
-		return: Boolean
-		*/
-		public function isGravible():Boolean {
-			return true;
-		}
-
-		/*
-		function: doesKnockback()
-		description: returns whether or not the tile knocks back
-		the character/tile that has collided with it.
-		param: None
-		return: int
-		0 = does not knockback
-		>0 = amount to knockback
-		*/
-		public function doesKnockback():int {
-			return 0;
-		}
-
-		/*
-		function: isBuoyant()
-		description: returns whether or not the tile can float.
-		param: None
-		return: Boolean
-		*/
-		public function isBuoyant():Boolean {
-			return false;
-		}
-
 		public function die():void {
 			trace("YOU DEAD");
+			isDead = true;
 		}
 	}
 }
+
+
