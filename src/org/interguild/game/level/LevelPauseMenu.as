@@ -1,7 +1,6 @@
 package org.interguild.game.level {
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
-	import flash.events.MouseEvent;
 	
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
@@ -98,7 +97,7 @@ package org.interguild.game.level {
 					// This is hardcoded right now, but we probably want some kind of
 					// global reference to the current file so that we know what level
 					// needs to be restarted
-						Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+						Aeon.getMe().playLastLevel();
 					break;
 				case TODO_LEVEL_EDITOR:
 					// Probably want to give the user some kind of dialog warning them

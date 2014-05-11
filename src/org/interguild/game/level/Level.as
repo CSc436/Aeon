@@ -302,7 +302,7 @@ package org.interguild.game.level {
 					// This is hardcoded right now, but we probably want some kind of
 					// global reference to the current file so that we know what level
 					// needs to be restarted
-					Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+					Aeon.getMe().playLastLevel();
 				}
 			}
 			// update animations

@@ -51,6 +51,9 @@ package org.interguild {
 
 		private static const BG_COLOR:uint = 0x000b17;
 		private static const BORDER_COLOR:uint = 0x000b17; //no border
+		
+		private var lastLevel:String;
+		private var wasLastLevelCode:Boolean;
 
 		private var currentPage:Sprite;
 		private var mainMenu:MainMenuPage;
@@ -134,6 +137,8 @@ package org.interguild {
 		}
 
 		public function playLevelFile(file:String):void {
+			wasLastLevelCode = false;
+			lastLevel = file;
 			hideCurrentPage();
 
 			//go to level page
@@ -144,12 +149,21 @@ package org.interguild {
 		}
 
 		public function playLevelCode(code:String):void {
+			wasLastLevelCode = true;
+			lastLevel = code;
 			hideCurrentPage();
 
 			levelPage = new LevelPage();
 			levelPage.playLevelFromCode(code);
 			this.addChild(levelPage);
 			currentPage = levelPage;
+		}
+		
+		public function playLastLevel():void{
+			if(wasLastLevelCode)
+				playLevelCode(lastLevel);
+			else
+				playLevelFile(lastLevel);
 		}
 
 		public function gotoEditorPage():void {
