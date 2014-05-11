@@ -87,34 +87,20 @@ package org.interguild.editor.tabs {
 			if (tabsActive == 1)
 				return; // cannot remove if there is only one tab
 
-			//remember if the current tab is being removed
-			var b:int=0;
-			if (currTab == i)
-				b=1;
-
-			//create a new array without the ith tab
-			var gridArrayLocal:Array=new Array(MAX_ARRAY_SIZE);
-			for (var j:int=0, count:int=0; j < MAX_ARRAY_SIZE; j++, count++) {
-				if (count == i) {
-					count--; // if count is i then remove it from the new array
-				} else {
-					gridArrayLocal[count] = gridContainerArray[j];
-				}
-			}
-			//TODO:remove last tab, and shift grids left, starting at i
-			//set the new array
-			gridContainerArray[i] = gridArrayLocal;
+			//remove last tab
+			removeChild(tabButton[--tabsActive]);
 			
-			for (var k:int=0; k < MAX_ARRAY_SIZE; k++) {
-				this.tabButton[k].tabNum = k;
+			if(i == tabsActive)
+				return; // was already removed
+			
+			//shift grids right, starting at i
+			var k:int;
+			for (k=i; k < tabsActive; k++) {
+				//move k+1 grid into k
+				gridContainerArray[k].setCurrentGrid(gridContainerArray[k+1].getGrid());
 			}
-
-			// the active tab was removed change the view so it is not the removed tab
-			if (b == 1)
-				switchTabs(0);
-
-			tabsActive--;
-			removeChild(tabButton[i]);
+			switchTabs(0); //default to 0
+			
 		}
 
 		/**
