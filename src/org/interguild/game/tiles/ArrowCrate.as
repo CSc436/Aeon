@@ -1,12 +1,13 @@
 package org.interguild.game.tiles {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	import org.interguild.game.collision.Direction;
 	import org.interguild.game.level.Level;
-	import flash.display.BitmapData;
 
 	//TODO Henry wants to add subclasses for each directional arrow for the editor page
 	public class ArrowCrate extends CollidableObject {
@@ -71,7 +72,7 @@ package org.interguild.game.tiles {
 			this.xPos=x;
 			this.yPos=y;
 			arrowSound = new Sound();
-			arrowSound.load(new URLRequest("../assets/Arrow.mp3"));
+			arrowSound.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Arrow.mp3"));
 		}
 
 		public override function onGameLoop():void {

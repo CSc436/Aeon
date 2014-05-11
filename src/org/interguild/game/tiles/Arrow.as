@@ -1,9 +1,7 @@
 package org.interguild.game.tiles {
 
-	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	
-	import org.interguild.Aeon;
 	import org.interguild.game.collision.Direction;
 
 

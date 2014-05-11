@@ -38,8 +38,6 @@
   </compiler>
   <applications>
     <application path="org/interguild/Aeon.as"/>
-    <application path="FlexUnitCompilerApplication.as"/>
-    <application path="FlexUnitApplication.as"/>
   </applications>
   <modules/>
   <workers/>

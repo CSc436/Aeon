@@ -5,6 +5,7 @@ package org.interguild.game.tiles
 	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	import org.interguild.game.level.Level;
 	
 	public class DynamiteCrate extends CollidableObject
@@ -28,7 +29,7 @@ package org.interguild.game.tiles
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			addChild(new Bitmap(new WoodenDynamiteSprite()));
 			exp = new Sound();
-			exp.load(new URLRequest("../assets/Explosion.mp3"));
+			exp.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Explosion.mp3"));
 		}
 		
 		public override function onGameLoop():void {
