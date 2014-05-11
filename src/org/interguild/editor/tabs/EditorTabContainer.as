@@ -48,8 +48,8 @@ package org.interguild.editor.tabs {
 			tabOpen.x = 470;
 			tabOpen.y = 50;
 			tabOpen.addEventListener(MouseEvent.CLICK, addClick);
-			tabOpen.width = 100;
-			tabOpen.height = 35;
+			tabOpen.width = 55;
+			tabOpen.height = 30;
 			addChild(tabOpen);
 			
 			addTab();
@@ -67,7 +67,7 @@ package org.interguild.editor.tabs {
 				gridContainerArray[tabsActive].setCurrentGrid(new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH));
 			} else {
 				//set the new game
-				gridContainerArray[tabsActive] = grid;
+				gridContainerArray[tabsActive].setCurrentGrid(grid);
 			}
 			
 			//add the tab to this
@@ -101,6 +101,7 @@ package org.interguild.editor.tabs {
 					gridArrayLocal[count] = gridContainerArray[j];
 				}
 			}
+			//TODO:remove last tab, and shift grids left, starting at i
 			//set the new array
 			gridContainerArray[i] = gridArrayLocal;
 			
