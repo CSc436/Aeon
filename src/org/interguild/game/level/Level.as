@@ -119,6 +119,8 @@ package org.interguild.game.level {
 		public function finishLoading():void {
 			tv.finishTerrain();
 			hud.updateMax(collectableCount);
+			if(hud.maxCollected == 0)
+				openPortal();
 		}
 
 		public function grabbedCollectable():void {
