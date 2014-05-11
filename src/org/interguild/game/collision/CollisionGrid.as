@@ -378,12 +378,10 @@ package org.interguild.game.collision {
 			*/
 			if(p && otherTile is Arrow){
 				p.die();
-				removalObjects.push(p);
 			}
 			
 			if(p && otherTile is Explosion){
 				p.die();
-				removalObjects.push(p);
 			}
 			
 			/*
