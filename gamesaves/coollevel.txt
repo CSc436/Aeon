@@ -4,7 +4,7 @@ x=80
 x=80
 xxxxx                         x v
 xx                            x     
-xx           w                x  xx 
+xx #         w                x  xx 
 xxxxxxxxxx  ww               dx dxxxw
 x   ddd     <                xxxsxxx         s
 x   v                        x>   ds   ss  x s
@@ -14,5 +14,5 @@ x  c   s   w^w xxxxxxxvxx    xcd      <       s   xxxx
 xxxxxxxxxxxxxxxxxxxxx        xwvxx    ^       s  dd  x
  v  <                        xddxx    d>      d sww  x
  d                     s  xxxxsxxx                  x
-c>   w                   s>  # > d >  ^             x
+c>   w                   s>    > d >  ^             x
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

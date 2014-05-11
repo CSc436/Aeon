@@ -38,7 +38,7 @@ package org.interguild.game.level {
 
 		private var camera:Camera;
 		private var player:Player;
-		private var portal:FinishLine;
+		private var portals:Vector.<FinishLine>;
 		private var tv:TerrainView;
 		private var bg:LevelBackground;
 
@@ -52,7 +52,7 @@ package org.interguild.game.level {
 		private var hud:LevelHUD;
 		private var collectableCount:int;
 
-		private var timeDead = 0;
+		private var timeDead:int = 0;
 
 		public var onWinCallback:Function;
 
@@ -72,6 +72,9 @@ package org.interguild.game.level {
 			//init background
 			bg = new LevelBackground(widthInPixels, heightInPixels);
 			addChild(bg);
+			
+			//init portals list
+			portals = new Vector.<FinishLine>();
 
 			//init player and camera
 			player = new Player()
@@ -120,14 +123,12 @@ package org.interguild.game.level {
 
 		public function grabbedCollectable():void {
 			hud.increaseCollected();
-		}
-
-		public function grabbedAll():Boolean {
-			return (hud.collected == hud.maxCollected);
+			if(hud.collected == hud.maxCollected)
+				openPortal();
 		}
 
 		public function setFinish(o:FinishLine):void {
-			portal = o;
+			portals.push(o);
 		}
 
 		public function hideBackground():void {
@@ -158,12 +159,10 @@ package org.interguild.game.level {
 			}
 		}
 
-		public function getPortal():FinishLine {
-			return portal;
-		}
-
 		public function openPortal():void {
-			portal.activate();
+			for each(var p:FinishLine in portals){
+				p.activate();
+			}
 		}
 
 		/**

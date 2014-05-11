@@ -14,6 +14,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
+	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
@@ -418,6 +419,11 @@ package org.interguild.game.collision {
 				removalObjects.push(otherObject);
 				level.grabbedCollectable();
 				coin.play();
+				/*
+				* PLAYER ENTERS ACTIVE PORTAL
+				*/
+			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
+				level.onWonGame();
 				/*
 				* PLAYER HITS CRATE
 				*/
