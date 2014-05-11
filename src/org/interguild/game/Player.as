@@ -1,15 +1,8 @@
 package org.interguild.game {
-	
-	import flash.display.MovieClip;
-	import flash.events.Event;
-	import flash.media.Sound;
-	import flash.media.SoundChannel;
-	import flash.net.URLRequest;
-	
+
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	import flash.media.Sound;
-	import flash.net.URLRequest;
+	
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
@@ -56,15 +49,15 @@ package org.interguild.game {
 		public var isJumping:Boolean;
 		public var mustCrawl:Boolean = false;
 
+		public var isDead:Boolean;
+
 		private var playerClip:MovieClip;
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
-		private var sound:Sound;
-
+		//TODO are these values correct? Henry
 		public static const LEVEL_CODE_CHAR:String = '#';
 		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
-
 		public static const DESTRUCTIBILITY:int = 2;
 		public static const IS_SOLID:Boolean = true;
 		public static const HAS_GRAVITY:Boolean = true;
@@ -76,10 +69,9 @@ package org.interguild.game {
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
-			sound = new Sound();
-			sound.load(new URLRequest("../assets/jump.mp3"));
+			isDead = false;
 		}
-		
+
 		public function setStartPosition(sx:Number, sy:Number):void {
 			x = newX = startX = sx;
 			y = newY = startY = sy - hitbox.height + 32;
@@ -103,8 +95,8 @@ package org.interguild.game {
 
 		public override function onGameLoop():void {
 			speedY += Level.GRAVITY;
-//			trace("speedY =", speedY);
-//			trace("speedX =", speedX);
+			trace("speedY =", speedY);
+			trace("speedX =", speedX);
 
 			updateKeys();
 
@@ -124,16 +116,19 @@ package org.interguild.game {
 			updateHitBox();
 
 			trace("speedY = ", speedY);
-			if (speedY > 2 && !isJumping) {
+			if (speedY > 6 && !isJumping) {
 				isFalling = true;
-			}
+			} else
+				isFalling = false;
+
+			if (speedY != 2)
+				isStanding = false;
+
 		}
 
 		public function reset():void {
 			isStanding = false;
-			//isCrouching = false;
 			isFalling = false;
-//			isJumping = false;
 		}
 
 		private function updateKeys():void {
@@ -162,8 +157,6 @@ package org.interguild.game {
 			if (keys.isKeyDown && isStanding) {
 				isCrouching = true;
 				this.hitbox.height = CRAWLING_HEIGHT;
-				this.hitbox.y = this.hitbox.y + (STANDING_HEIGHT - CRAWLING_HEIGHT);
-				updateHitBox();
 			}
 
 			// finished crawling
@@ -194,7 +187,6 @@ package org.interguild.game {
 				isStanding = false;
 				isJumping = true;
 				frameJumpCounter = frameCounter;
-				sound.play(100);
 			}
 
 			if (keys.isKeySpace)
@@ -204,42 +196,38 @@ package org.interguild.game {
 		}
 
 		public function updateAnimation():void {
+			if (isDead) {
+				handleDeathAnimation();
+				return;
+			}
+
 			var neighborTiles:Vector.<GridTile> = this.myCollisionGridTiles;
-			trace("Number of neighboring tiles: "+neighborTiles.length);
+			trace("Number of neighboring tiles: " + neighborTiles.length);
 			mustCrawl = false;
 			if (neighborTiles.length == 12 && !isJumping && isStanding) {
-				 if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0)
-					 mustCrawl = true;
-			}
-			else if (neighborTiles.length == 16 && !isJumping && isStanding) {
-				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0 ||
-					neighborTiles[2].myCollisionObjects[0].getDestructibility() == 0)
+				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0)
+					mustCrawl = true;
+			} else if (neighborTiles.length == 16 && !isJumping && isStanding) {
+				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0 || neighborTiles[2].myCollisionObjects[0].getDestructibility() == 0)
 					mustCrawl = true;
 			}
-			trace("Must crawl value: "+mustCrawl);
-			
+			trace("Must crawl value: " + mustCrawl);
+
 			if (isJumping && !mustCrawl) {
 				handleJumping();
-			} 
-			else if (isFalling && !mustCrawl && !isCrouching) {
+			} else if (isFalling && !mustCrawl && !isCrouching) {
 				handleFalling();
-			} 
-			else if (keys.isKeyDown && isFacingRight && isStanding) {
+			} else if (keys.isKeyDown && isFacingRight && isStanding) {
 				handleCrawlRight();
-			} 
-			else if (keys.isKeyDown && !isFacingRight && isStanding) {
+			} else if (keys.isKeyDown && !isFacingRight && isStanding) {
 				handleCrawlLeft();
-			}
-			else if (mustCrawl && isFacingRight){
+			} else if (mustCrawl && isFacingRight) {
 				handleCrawlRight();
-			}
-			else if (mustCrawl && !isFacingRight) {
+			} else if (mustCrawl && !isFacingRight) {
 				handleCrawlLeft();
-			}
-			else if (keys.isKeyRight && !keys.isKeyDown) {
+			} else if (keys.isKeyRight && !keys.isKeyDown) {
 				handleWalkRight();
-			}
-			else if (keys.isKeyLeft && !keys.isKeyDown) {
+			} else if (keys.isKeyLeft && !keys.isKeyDown) {
 				handleWalkLeft();
 			}
 			// reset the animation to walking left
@@ -249,13 +237,13 @@ package org.interguild.game {
 			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
 				handleWalkRight();
 			}
-
 		}
 
 		private function handleCrawlRight():void {
 			if (!(playerClip is PlayerCrawlAnimation)) {
 				removeChild(playerClip);
 				playerClip = new PlayerCrawlAnimation();
+				playerClip.stop();
 				addChild(playerClip);
 				playerClip.gotoAndStop(0);
 			}
@@ -278,6 +266,7 @@ package org.interguild.game {
 			if (!(playerClip is PlayerCrawlAnimation)) {
 				removeChild(playerClip);
 				playerClip = new PlayerCrawlAnimation();
+				playerClip.stop();
 				addChild(playerClip);
 				playerClip.gotoAndStop(0);
 			}
@@ -346,6 +335,12 @@ package org.interguild.game {
 		}
 
 		private function handleJumping():void {
+			if (this.prevSpeedY - this.newY < 0) {
+				frameJumpCounter == 6;
+			} else if (this.prevSpeedY - this.newY > 0) {
+				frameJumpCounter == 16;
+			}
+
 			if (frameCounter - frameJumpCounter <= 6) {
 				if (!(playerClip is PlayerJumpUpAnimation)) {
 					removeChild(playerClip);
@@ -388,7 +383,7 @@ package org.interguild.game {
 					playerClip.x = 25;
 					playerClip.y = -8;
 				}
-			} else if (frameCounter - frameJumpCounter < 18) {
+			} else if (frameCounter - frameJumpCounter < 17) {
 				if (!(playerClip is PlayerJumpLandAnimation)) {
 					removeChild(playerClip);
 					playerClip = new PlayerJumpLandAnimation();
@@ -412,9 +407,24 @@ package org.interguild.game {
 			} else {
 				isJumping = false;
 			}
+		}
 
+		private function handleDeathAnimation():void {
 
+			var directionChange:int = Math.random() * 10;
 
+			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
+				removeChild(playerClip);
+				playerClip = new PlayerJumpPeakThenFallAnimation();
+				playerClip.stop();
+				addChild(playerClip);
+				playerClip.gotoAndStop(3);
+			}
+
+			parent.addChild(this);
+			playerClip.rotation += 18;
+			playerClip.x += directionChange;
+			playerClip.y -= directionChange;
 
 		}
 
@@ -452,7 +462,9 @@ package org.interguild.game {
 
 		public function die():void {
 			trace("YOU DEAD");
-			
+			isDead = true;
 		}
 	}
 }
+
+

@@ -52,6 +52,8 @@ package org.interguild.game.level {
 		private var hud:LevelHUD;
 		private var collectableCount:int;
 
+		private var timeDead = 0;
+
 		public var onWinCallback:Function;
 
 		CONFIG::DEBUG {
@@ -239,7 +241,7 @@ package org.interguild.game.level {
 		public function get isRunning():Boolean {
 			return timer.running;
 		}
-		
+
 		public function onWonGame():void {
 			pauseGame();
 			onWinCallback();
@@ -286,17 +288,31 @@ package org.interguild.game.level {
 			cleanup();
 			collisionGrid.handleRemovals(camera);
 		}
-		
+
 		private function update():void {
-			//update player
-			player.onGameLoop();
+			if (!player.isDead) {
+				//update player
+				player.onGameLoop();
+			}
 
-
+			// restart the game after the player has been dead after time specified
+			if (player.isDead) {
+				this.timeDead++;
+				if (40 == timeDead) {
+					this.stage.focus = stage;
+					// This is hardcoded right now, but we probably want some kind of
+					// global reference to the current file so that we know what level
+					// needs to be restarted
+					Aeon.getMe().playLevelFile(LevelPage.TEST_LEVEL_FILE);
+				}
+			}
 			// update animations
 			player.updateAnimation();
-			player.frameCounter++; // updated counter for game frames
+
+			player.frameCounter++; // update counter for game frames
 
 			player.reset();
+
 
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -318,8 +334,14 @@ package org.interguild.game.level {
 				}
 			}
 
+
 			//detect collisions for player
 			collisionGrid.updateObject(player, false);
+			var index:int = collisionGrid.activeObjects.indexOf(player);
+			if (index != -1) {
+				collisionGrid.activeObjects.splice(index, 1);
+			}
+
 
 			//detect collisions for active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -332,12 +354,14 @@ package org.interguild.game.level {
 			}
 
 			//test and handle collisions
-			collisionGrid.detectAndHandleCollisions(player);
+			collisionGrid.detectAndHandleCollisions(player)
 			if (collisionGrid.activeObjects.length > 0) {
 				for (i = 0; i < collisionGrid.activeObjects.length; i++) {
 					collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
 				}
 			}
+
+
 		}
 
 		private function cleanup():void {
@@ -357,7 +381,10 @@ package org.interguild.game.level {
 			}
 
 			//update camera
-			camera.updateCamera();
+			if (!player.isDead)
+				camera.updateCamera();
 		}
 	}
 }
+
+

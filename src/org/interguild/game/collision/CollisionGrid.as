@@ -1,6 +1,5 @@
 package org.interguild.game.collision {
 	import flash.display.DisplayObject;
-	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -15,7 +14,6 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
-	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
@@ -24,14 +22,15 @@ package org.interguild.game.collision {
 
 		private var level:Level;
 		private var grid:Array;
-		private var jump:Sound;
-		private var coin:Sound;
 
 		private var allObjects:Vector.<GameObject>;
 		public var activeObjects:Vector.<GameObject>;
 
 		private var removalObjects:Array;
 		private var deactivateObjects:Array;
+		
+		private var jump:Sound;
+		private var coin:Sound;
 
 		public function CollisionGrid(width:int, height:int, level:Level) {
 			this.level = level;
@@ -41,7 +40,7 @@ package org.interguild.game.collision {
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
-			
+
 			jump = new Sound();
 			jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
 //			jump.load(new URLRequest("../assets/jump.mp3")); //local
@@ -49,7 +48,7 @@ package org.interguild.game.collision {
 			coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
 //			coin.load(new URLRequest("../assets/coin.mp3")); //local
 
-			//init 2D array
+			//init 2D arra]y
 			grid = new Array(height);
 			for (var i:uint = 0; i < height; i++) {
 				grid[i] = new Array(width);
@@ -69,7 +68,7 @@ package org.interguild.game.collision {
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
-		
+
 		public function addObject(tile:CollidableObject):void {
 			allObjects.push(tile);
 			if (tile.isActive)
@@ -121,9 +120,6 @@ package org.interguild.game.collision {
 						}
 					}
 				}
-			}
-			if(o is FinishLine){
-				level.setFinish(FinishLine(o));
 			}
 		}
 
@@ -370,24 +366,22 @@ package org.interguild.game.collision {
 				//will never ever happen
 				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
 			}
-			
+
 //			trace("Object 1: "+activeObject.toString());
 //			trace("Object 2: "+otherObject.toString());
 
 			var activeTile:CollidableObject = CollidableObject(activeObject);
 			var otherTile:CollidableObject = CollidableObject(otherObject);
-			
+
 			/*
 			* PLAYER HIT BY ARROW
 			*/
 			if(p && otherTile is Arrow){
 				p.die();
-				removalObjects.push(p);
 			}
 			
 			if(p && otherTile is Explosion){
 				p.die();
-				removalObjects.push(p);
 			}
 			
 			/*
@@ -423,16 +417,7 @@ package org.interguild.game.collision {
 			if (p && otherObject is Collectable) {
 				removalObjects.push(otherObject);
 				level.grabbedCollectable();
-				coin.play(0);
-				
-				if(level.grabbedAll()){
-					level.openPortal();
-				}
-				/*
-				* PLAYER ENTERS ACTIVE PORTAL
-				*/
-			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
-				level.onWonGame();
+				coin.play();
 				/*
 				* PLAYER HITS CRATE
 				*/
@@ -440,8 +425,7 @@ package org.interguild.game.collision {
 				// knockback stuff:
 				if (otherTile.doesKnockback() > 0) {
 					if (direction == Direction.DOWN) {
-						p.speedY = Player.KNOCKBACK_JUMP_SPEED;						
-						jump.play(100);
+						p.speedY = Player.KNOCKBACK_JUMP_SPEED;
 					} else if (direction == Direction.UP) {
 						activeObject.speedY = 0;
 					} else if (direction == Direction.RIGHT) {
@@ -452,7 +436,7 @@ package org.interguild.game.collision {
 				}
 				removalObjects.push(otherObject);
 			}
-		
+
 			/*
 			* SOLID COLLISIONS
 			*/
@@ -471,12 +455,14 @@ package org.interguild.game.collision {
 					}
 				} else if (direction == Direction.UP) {
 					if (otherTile.isActive) {
-						otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
-						otherObject.speedY = 0;
 						if (p) { //player got crushed by falling solid object
 							trace("p = active");
 							p.die();
 								//return;
+						}
+						else {
+							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
+							otherObject.speedY = 0;
 						}
 					} else {
 						activeObject.newY = otherBoxCurr.bottom;
@@ -490,8 +476,8 @@ package org.interguild.game.collision {
 					activeObject.speedX = 0;
 				}
 			}
-			
-			
+
+
 			activeObject.updateHitBox();
 		}
 
@@ -637,3 +623,5 @@ package org.interguild.game.collision {
 		}
 	}
 }
+
+
