@@ -13,7 +13,6 @@ package org.interguild {
 	import org.interguild.game.level.LevelPage;
 
 	import org.interguild.loader.ErrorDialog;
-	import flexunit.utils.ArrayList;
 	import flash.system.Security;
 	import flash.display.Stage;
 	import org.interguild.menu.MainMenuPage;
@@ -124,7 +123,7 @@ package org.interguild {
 			currentPage = userLevelsPage;
 		}
 
-		public function returnFromError(e:ArrayList, src:String):void {
+		public function returnFromError(e:Array, src:String):void {
 			if (src == "MainMenu" || src.search("Loader") >= 0)
 				gotoMainMenu();
 			if (src == "Editor")

@@ -8,8 +8,6 @@ package org.interguild.game.level {
 	
 	import fl.controls.Button;
 	
-	import flexunit.utils.ArrayList;
-	
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
@@ -78,7 +76,7 @@ package org.interguild.game.level {
 			addChild(pauseMenu);
 		}
 
-		private function onLoadError(e:ArrayList):void {
+		private function onLoadError(e:Array):void {
 			Aeon.getMe().returnFromError(e, "LevelLoader");
 		}
 

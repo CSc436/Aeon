@@ -1,14 +1,10 @@
 package org.interguild.editor {
-	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
 	
-	import flexunit.utils.ArrayList;
-	
 	import org.interguild.Aeon;
-	import org.interguild.editor.grid.EditorGrid;
 	import org.interguild.editor.grid.EditorGridContainer;
 	import org.interguild.editor.tabs.EditorTabContainer;
 	import org.interguild.editor.tilelist.TileList;
@@ -222,13 +218,13 @@ package org.interguild.editor {
 		/**
 		 * error found, report then return to original state
 		 */
-		private function onLoadError(e:ArrayList):void {
+		private function onLoadError(e:Array):void {
 			trace(e);
 			returnFromError(e);
 			//TODO display error to user
 		}
 
-		private function returnFromError(e:ArrayList):void {
+		private function returnFromError(e:Array):void {
 			Aeon.getMe().returnFromError(e, "Editor");
 		}
 
