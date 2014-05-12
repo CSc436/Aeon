@@ -11,8 +11,8 @@ package org.interguild.game.tiles {
 		public static const EDITOR_ICON:BitmapData = new CollectibleSprite();
 
 		public static const DESTRUCTIBILITY:int = 0;
-		public static const IS_SOLID:Boolean = false;
-		public static const HAS_GRAVITY:Boolean = false;
+		public static const IS_SOLID:Boolean = true;
+		public static const HAS_GRAVITY:Boolean = true;
 		public static const KNOCKBACK_AMOUNT:int = 0;
 		public static const IS_BUOYANT:int = 0;
 
