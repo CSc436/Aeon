@@ -4,7 +4,7 @@ package org.interguild.game.tiles {
 	}
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	
+
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
 
@@ -27,14 +27,33 @@ package org.interguild.game.tiles {
 		private var justCollided:Dictionary;
 		private var sideBlocked:Array;
 		private var active:Boolean;
-		
+
 		private var LEVEL_CODE_CHAR:String;
+		/*
+		function: getDestructibility()
+		description: returns value indicating whether or not
+		a tile should be destroyed and by what.
+		param: None
+		return: int
+		0 = indestructible (terrain)
+		1 = destructible by arrows and dynamite (steel)
+		2 = destructible by arrows, dynamite and touch (wooden)
+		*/
 		private var DESTRUCTIBILITY:int;
 		private var IS_SOLID:Boolean;
 		private var HAS_GRAVITY:Boolean;
+		/*
+		function: doesKnockback()
+		description: returns whether or not the tile knocks back
+		the character/tile that has collided with it.
+		param: None
+		return: int
+		0 = does not knockback
+		>0 = amount to knockback
+		*/
 		private var KNOCKBACK_AMOUNT:int;
-		//		private var IS_BUOYANT:int=0;
-		
+		private var IS_BUOYANT:int = 0;
+
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS. Please instantiate
 		 * a subclass instead.
@@ -47,50 +66,50 @@ package org.interguild.game.tiles {
 			justCollided = new Dictionary(true);
 			sideBlocked = [false, false, false, false];
 			active = false;
-			
+
 			LEVEL_CODE_CHAR = charcode;
 			DESTRUCTIBILITY = des;
 			IS_SOLID = solid;
 			HAS_GRAVITY = gravity;
 			KNOCKBACK_AMOUNT = knockback;
 		}
-		
+
 		/**
-		 * returns value indicating whether or not 
+		 * returns value indicating whether or not
 		 * a tile should be destroyed and by what.
-		 * 
+		 *
 		 * 0 = indestructible (terrain)
 		 * 1 = destructible by arrows and dynamite (steel)
 		 * 2 = destructible by arrows, dynamite and touch (wooden)
-		 * 
+		 *
 		 */
 		public function getDestructibility():int {
 			return DESTRUCTIBILITY;
 		}
-		
+
 		/**
 		 * tiles cannot move through solid objects
-		 * 
+		 *
 		 * true is solid
 		 */
 		public function isSolid():Boolean {
 			return IS_SOLID;
 		}
-		
+
 		/**
 		 * This tile will fall if it is true
 		 */
 		public function isGravible():Boolean {
 			return HAS_GRAVITY;
 		}
-		
+
 		/**
 		 * returns whether or not the tile knocks back
 		 * the character/tile that has collided with it.
-		 * 
+		 *
 		 * return 0    does not knockback
 		 * return < 0  amount to knockback
-		 * 
+		 *
 		 */
 		public function doesKnockback():int {
 			return KNOCKBACK_AMOUNT;
