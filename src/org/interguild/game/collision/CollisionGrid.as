@@ -208,24 +208,12 @@ package org.interguild.game.collision {
 					other = toSwap;
 				}
 				
-				CONFIG::DEBUG {
-					if (level.isDebuggingMode)
-						trace(other, "x: " + other.x, "y: " + other.y, "dist: " + objectsToTest[m][0]);
-				}
+				if( (target is Player && Player(target).isDead) || (other is Player && Player(other).isDead))
+					continue;
 
 				if (!active.hasCollidedWith(other) && active.hitboxWrapper.intersects(other.hitboxWrapper)) {
-					
-					CONFIG::DEBUG {
-						if (level.isDebuggingMode)
-							trace("	handling collision");
-					}
-						
 					handleCollision(active, other);
 				}
-			}
-			CONFIG::DEBUG {
-				if (level.isDebuggingMode)
-					trace("-----------------------");
 			}
 			return removalObjects;
 		}

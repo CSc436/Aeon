@@ -28,37 +28,17 @@ package org.interguild.game.tiles {
 		private var sideBlocked:Array;
 		private var active:Boolean;
 
-		private var LEVEL_CODE_CHAR:String;
-		/*
-		function: getDestructibility()
-		description: returns value indicating whether or not
-		a tile should be destroyed and by what.
-		param: None
-		return: int
-		0 = indestructible (terrain)
-		1 = destructible by arrows and dynamite (steel)
-		2 = destructible by arrows, dynamite and touch (wooden)
-		*/
-		private var DESTRUCTIBILITY:int;
-		private var IS_SOLID:Boolean;
-		private var HAS_GRAVITY:Boolean;
-		/*
-		function: doesKnockback()
-		description: returns whether or not the tile knocks back
-		the character/tile that has collided with it.
-		param: None
-		return: int
-		0 = does not knockback
-		>0 = amount to knockback
-		*/
-		private var KNOCKBACK_AMOUNT:int;
-		private var IS_BUOYANT:int = 0;
+		private var destruct:int = 0;
+		private var solid:Boolean = true;
+		private var gravity:Boolean = true;
+		private var knockback:int = 0;
+		private var buoyancy:Boolean = false;
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS. Please instantiate
 		 * a subclass instead.
 		 */
-		public function CollidableObject(_x:Number, _y:Number, width:Number, height:Number, charcode:String, des:int, solid:Boolean, gravity:Boolean, knockback:int) {
+		public function CollidableObject(_x:Number, _y:Number, width:Number, height:Number) { //, charcode:String, des:int, solid:Boolean, gravity:Boolean, knockback:int) {
 			super(_x, _y);
 			myGrids = new Vector.<GridTile>();
 			hit_box = new Rectangle(_x, _y, width, height);
@@ -66,12 +46,17 @@ package org.interguild.game.tiles {
 			justCollided = new Dictionary(true);
 			sideBlocked = [false, false, false, false];
 			active = false;
+		}
 
-			LEVEL_CODE_CHAR = charcode;
-			DESTRUCTIBILITY = des;
-			IS_SOLID = solid;
-			HAS_GRAVITY = gravity;
-			KNOCKBACK_AMOUNT = knockback;
+		/**
+		 * Subclasses can modify their shared settings with this function.
+		 */
+		protected function setProperties(destruct:int, solid:Boolean, gravity:Boolean, knockback:int = 0, buoyancy:Boolean = false):void {
+			this.destruct = destruct;
+			this.solid = solid;
+			this.gravity = gravity;
+			this.knockback = knockback;
+			this.buoyancy = buoyancy;
 		}
 
 		/**
@@ -84,7 +69,7 @@ package org.interguild.game.tiles {
 		 *
 		 */
 		public function getDestructibility():int {
-			return DESTRUCTIBILITY;
+			return destruct;
 		}
 
 		/**
@@ -93,14 +78,14 @@ package org.interguild.game.tiles {
 		 * true is solid
 		 */
 		public function isSolid():Boolean {
-			return IS_SOLID;
+			return solid;
 		}
 
 		/**
 		 * This tile will fall if it is true
 		 */
 		public function isGravible():Boolean {
-			return HAS_GRAVITY;
+			return gravity;
 		}
 
 		/**
@@ -112,9 +97,49 @@ package org.interguild.game.tiles {
 		 *
 		 */
 		public function doesKnockback():int {
-			return KNOCKBACK_AMOUNT;
+			return knockback;
 		}
 
+		/**
+		 * Whether or not it floats underwater.
+		 */
+		public function isBuoyant():Boolean {
+			return buoyancy;
+		}
+
+		/**
+		 * Called before collision detection.
+		 * Should handle the gameloop for all subclasses.
+		 */
+		public override function onGameLoop():void {
+			//gravity
+			if (this.isGravible()) {
+				speedY += GRAVITY;
+
+				if (speedY > MAX_FALL_SPEED) {
+					speedY = MAX_FALL_SPEED;
+				}
+			}
+
+			//update movement
+			newX += speedX;
+			newY += speedY;
+			updateHitBox();
+		}
+
+		/**
+		 * Called after collision detection.
+		 */
+		public override function finishGameLoop():void {
+			super.finishGameLoop();
+			justCollided = new Dictionary(true);
+			updateHitBox();
+			hit_box_prev = hitbox.clone();
+		}
+
+		/**
+		 * Hitbox visualization used for debugging.
+		 */
 		CONFIG::DEBUG {
 			public function drawHitBox(final:Boolean):Sprite {
 				var color:uint;
@@ -186,6 +211,10 @@ package org.interguild.game.tiles {
 			return hit_box_prev;
 		}
 
+		/**
+		 * Returns a bounding box for the space taken up by both
+		 * the previous and the current frame.
+		 */
 		public function get hitboxWrapper():Rectangle {
 			var r:Rectangle = new Rectangle();
 			r.left = Math.min(hit_box.left, hit_box_prev.left);
@@ -232,34 +261,6 @@ package org.interguild.game.tiles {
 
 		public function get isActive():Boolean {
 			return active;
-		}
-
-		public override function finishGameLoop():void {
-			super.finishGameLoop();
-			justCollided = new Dictionary(true);
-			updateHitBox();
-//			if (this is Player) {
-//				trace("I am player");
-//			}
-			hit_box_prev = hitbox.clone();
-		}
-
-		public override function onGameLoop():void {
-			if (this is CollidableObject) {
-				//gravity
-				if (this.isGravible()) {
-					speedY += GRAVITY;
-
-					if (speedY > MAX_FALL_SPEED) {
-						speedY = MAX_FALL_SPEED;
-					}
-				}
-			}
-
-			//update movement
-			newX += speedX;
-			newY += speedY;
-			updateHitBox();
 		}
 	}
 }

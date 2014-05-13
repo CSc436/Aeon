@@ -13,11 +13,10 @@ package org.interguild.game.tiles {
 		public static const DESTRUCTIBILITY:int = 0;
 		public static const IS_SOLID:Boolean = true;
 		public static const HAS_GRAVITY:Boolean = true;
-		public static const KNOCKBACK_AMOUNT:int = 0;
-		public static const IS_BUOYANT:int = 0;
 
 		public function Collectable(x:int, y:int) {
-			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
+			setProperties(DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY);
 			addChild(new Bitmap(new CollectibleSprite()));
 		}
 	}

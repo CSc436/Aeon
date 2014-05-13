@@ -2,7 +2,7 @@ package org.interguild.game {
 
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	
+
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
@@ -21,9 +21,6 @@ package org.interguild.game {
 		private static const CRAWLING_HEIGHT:uint = 32;
 		private static const STANDING_HEIGHT:uint = 40;
 
-		public var frameCounter:int = 0;
-		public var frameJumpCounter:int;
-
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
 
@@ -33,6 +30,9 @@ package org.interguild.game {
 		private static const JUMP_SPEED:Number = -20;
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
 		public static const KNOCKBACK_HORIZONTAL:Number = 20;
+
+		public var frameCounter:int = 0;
+		public var frameJumpCounter:int;
 
 		private var maxSpeedY:Number = MAX_FALL_SPEED;
 		private var maxSpeedX:Number = MAX_RUN_SPEED;
@@ -55,17 +55,16 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
-		//TODO are these values correct? Henry
 		public static const LEVEL_CODE_CHAR:String = '#';
 		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
-		public static const DESTRUCTIBILITY:int = 2;
-		public static const IS_SOLID:Boolean = true;
-		public static const HAS_GRAVITY:Boolean = true;
-		public static const KNOCKBACK_AMOUNT:int = 5;
-		public static const IS_BUOYANT:Boolean = false;
+
+		private static const DESTRUCTIBILITY:int = 2;
+		private static const IS_SOLID:Boolean = true;
+		private static const HAS_GRAVITY:Boolean = true;
 
 		public function Player() {
-			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+			setProperties(DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY);
 			drawPlayer();
 			isActive = true;
 			keys = KeyMan.getMe();
@@ -421,7 +420,8 @@ package org.interguild.game {
 				playerClip.gotoAndStop(3);
 			}
 
-			parent.addChild(this);
+			if (parent)
+				parent.addChild(this);
 			playerClip.rotation += 18;
 			playerClip.x += directionChange;
 			playerClip.y -= directionChange;
