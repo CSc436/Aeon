@@ -4,7 +4,8 @@ package org.interguild.game.tiles {
 	}
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-
+	
+	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
 
@@ -20,6 +21,17 @@ package org.interguild.game.tiles {
 
 		private static const GRAVITY:Number = Level.GRAVITY;
 		private static const MAX_FALL_SPEED:Number = 6;
+		
+		public static function setWoodenCrateDestruction(obj:CollidableObject):void{
+			obj.destruction.destroyedBy(Destruction.ARROWS);
+			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
+			obj.destruction.destroyedBy(Destruction.PLAYER);
+		}
+		
+		public static function setSteelCrateDestruction(obj:CollidableObject):void{
+			obj.destruction.destroyedBy(Destruction.ARROWS);
+			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
+		}
 
 		private var myGrids:Vector.<GridTile>;
 		private var hit_box:Rectangle;
@@ -28,7 +40,7 @@ package org.interguild.game.tiles {
 		private var sideBlocked:Array;
 		private var active:Boolean;
 
-		private var destruct:int = 0;
+		protected var destruction:Destruction;
 		private var solid:Boolean = true;
 		private var gravity:Boolean = true;
 		private var knockback:int = 0;
@@ -40,6 +52,7 @@ package org.interguild.game.tiles {
 		 */
 		public function CollidableObject(_x:Number, _y:Number, width:Number, height:Number) { //, charcode:String, des:int, solid:Boolean, gravity:Boolean, knockback:int) {
 			super(_x, _y);
+			destruction = new Destruction();
 			myGrids = new Vector.<GridTile>();
 			hit_box = new Rectangle(_x, _y, width, height);
 			hit_box_prev = hit_box.clone();
@@ -51,25 +64,35 @@ package org.interguild.game.tiles {
 		/**
 		 * Subclasses can modify their shared settings with this function.
 		 */
-		protected function setProperties(destruct:int, solid:Boolean, gravity:Boolean, knockback:int = 0, buoyancy:Boolean = false):void {
-			this.destruct = destruct;
+		protected function setProperties(solid:Boolean, gravity:Boolean, knockback:int = 0, buoyancy:Boolean = false):void {
 			this.solid = solid;
 			this.gravity = gravity;
 			this.knockback = knockback;
 			this.buoyancy = buoyancy;
 		}
 
+//		/**
+//		 * returns value indicating whether or not
+//		 * a tile should be destroyed and by what.
+//		 *
+//		 * 0 = indestructible (terrain)
+//		 * 1 = destructible by arrows and dynamite (steel)
+//		 * 2 = destructible by arrows, dynamite and touch (wooden)
+//		 *
+//		 */
+//		public function getDestructibility():int {
+//			return destruct;
+//		}
+
 		/**
-		 * returns value indicating whether or not
-		 * a tile should be destroyed and by what.
-		 *
-		 * 0 = indestructible (terrain)
-		 * 1 = destructible by arrows and dynamite (steel)
-		 * 2 = destructible by arrows, dynamite and touch (wooden)
-		 *
+		 * Will this object destroy that other object?
 		 */
-		public function getDestructibility():int {
-			return destruct;
+		public function canDestroy(other:CollidableObject):Boolean {
+			return destruction.canDestroy(other.destruction);
+		}
+		
+		public function isDestroyedBy(constant:uint):Boolean{
+			return destruction.isDestroyedBy(constant);
 		}
 
 		/**
@@ -96,7 +119,7 @@ package org.interguild.game.tiles {
 		 * return < 0  amount to knockback
 		 *
 		 */
-		public function doesKnockback():int {
+		public function getKnockback():int {
 			return knockback;
 		}
 

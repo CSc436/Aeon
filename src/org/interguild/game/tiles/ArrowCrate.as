@@ -21,7 +21,6 @@ package org.interguild.game.tiles {
 		public static const EDITOR_ICON_UP:BitmapData = new LightningBoxUp();
 		public static const EDITOR_ICON_DOWN:BitmapData = new LightningBoxDown();
 
-		private static const DESTRUCTIBILITY:int = 2;
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = false;
 		private static const KNOCKBACK_AMOUNT:int = 5;
@@ -35,7 +34,8 @@ package org.interguild.game.tiles {
 
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			setProperties(DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
+			CollidableObject.setWoodenCrateDestruction(this);
 			
 			this.direction = direction;
 			switch (direction) {

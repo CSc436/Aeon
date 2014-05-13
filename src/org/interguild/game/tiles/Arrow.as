@@ -2,6 +2,7 @@ package org.interguild.game.tiles {
 
 	import flash.display.MovieClip;
 	
+	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.Direction;
 
 
@@ -11,7 +12,6 @@ package org.interguild.game.tiles {
 
 		public static const LEVEL_CODE_CHAR:String = 'a';
 
-		private static const DESTRUCTIBILITY:int = 0;
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;
 		
@@ -19,7 +19,9 @@ package org.interguild.game.tiles {
 
 		public function Arrow(x:int, y:int, direction:int) {
 			super(x, y, 1, 1);
-			setProperties(DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY);
+			setProperties(IS_SOLID, HAS_GRAVITY);
+			destruction.destroyWithMarker(Destruction.ARROWS);
+			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
 
 			this.direction = direction;
 			this.isActive = true;

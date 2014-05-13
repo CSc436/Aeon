@@ -2,8 +2,9 @@ package org.interguild.game {
 
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-
+	
 	import org.interguild.KeyMan;
+	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
@@ -58,14 +59,19 @@ package org.interguild.game {
 		public static const LEVEL_CODE_CHAR:String = '#';
 		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
 
-		private static const DESTRUCTIBILITY:int = 2;
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
 
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
-			setProperties(DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY);
+			setProperties(IS_SOLID, HAS_GRAVITY);
+			destruction.destroyedBy(Destruction.ARROWS);
+			destruction.destroyedBy(Destruction.EXPLOSIONS);
+			destruction.destroyedBy(Destruction.FALLING_SOLID_OBJECTS);
+			destruction.destroyWithMarker(Destruction.PLAYER);
+
 			drawPlayer();
+
 			isActive = true;
 			keys = KeyMan.getMe();
 			isDead = false;
@@ -203,11 +209,13 @@ package org.interguild.game {
 			var neighborTiles:Vector.<GridTile> = this.myCollisionGridTiles;
 			trace("Number of neighboring tiles: " + neighborTiles.length);
 			mustCrawl = false;
+			var above1:CollidableObject = CollidableObject(neighborTiles[1].myCollisionObjects[0]);
+			var above2:CollidableObject = CollidableObject(neighborTiles[2].myCollisionObjects[0]);
 			if (neighborTiles.length == 12 && !isJumping && isStanding) {
-				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0)
+				if (above1.isSolid() && !this.canDestroy(above1))
 					mustCrawl = true;
 			} else if (neighborTiles.length == 16 && !isJumping && isStanding) {
-				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0 || neighborTiles[2].myCollisionObjects[0].getDestructibility() == 0)
+				if ((above1.isSolid() && !this.canDestroy(above1)) || (above2.isSolid() && !this.canDestroy(above2)))
 					mustCrawl = true;
 			}
 			trace("Must crawl value: " + mustCrawl);
@@ -460,7 +468,7 @@ package org.interguild.game {
 
 		}
 
-		public function die():void {
+		public override function onKillEvent(level:Level):void {
 			trace("YOU DEAD");
 			isDead = true;
 		}

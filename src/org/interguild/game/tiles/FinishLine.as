@@ -9,7 +9,6 @@ package org.interguild.game.tiles {
 		public static const LEVEL_CODE_CHAR:String = 'f';
 		public static const EDITOR_ICON:BitmapData = new FinishLineSprite();
 
-		private static const DESTRUCTIBILITY:int = 0;
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;
 
@@ -19,7 +18,7 @@ package org.interguild.game.tiles {
 
 		public function FinishLine(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			setProperties(DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY);
+			setProperties(IS_SOLID, HAS_GRAVITY);
 			
 			inactive = new Bitmap(new StartLineSprite());
 			active = new Bitmap(new FinishLineSprite());
