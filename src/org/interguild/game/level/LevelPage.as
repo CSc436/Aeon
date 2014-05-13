@@ -26,7 +26,7 @@ package org.interguild.game.level {
 	public class LevelPage extends Sprite {
 		
 		//remote file
-		public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/aeon_demo/coollevel.txt";
+		public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65180.txt";
 		//local file
 //		public static const TEST_LEVEL_FILE:String = "../gamesaves/coollevel.txt";
 
