@@ -4,14 +4,14 @@ x=80
 x=80
 xxxxx                         x v
 xx                            x     
-xx #         w                x  xx 
+xx   #       w                x  xx 
 xxxxxxxxxx  ww               dx dxxxw
 x   ddd     <                xxxsxxx         s
 x   v                        x>   ds   ss  x s
 x                       xxxxxx^<c  s       x s       f
-xsssdsss            c  ssssssxxxxxxxxxxxxxxxxcx    xxxxxxxxxxxxxxx
-x  c   s   w^w xxxxxxxvxx    xcd      <       s   xxxx
-xxxxxxxxxxxxxxxxxxxxx        xwvxx    ^       s  dd  x
+xsssdsss            c  ssssssxxxxxxxxxxxxxxxxxx    xxxxxxxxxxxxxxx
+x  c   s   w^w xxxxxxxvxx    xcd      <      cs   xxxx
+xxxxxxxxxxxxxxxxxxxxx        xwvxx    ^      ss  dd  x
  v  <                        xddxx    d>      d sww  x
  d                     s  xxxxsxxx                  x
 c>   w                   s>    > d >  ^             x
