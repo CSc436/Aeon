@@ -21,6 +21,8 @@ package org.interguild.game.collision {
 				dir = simpleDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
 				if (dir == Direction.NONE)
 					return simpleBackupDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
+				else
+					return dir;
 			} else {
 				return cornerCaseDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
 			}

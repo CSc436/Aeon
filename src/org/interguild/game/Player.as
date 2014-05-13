@@ -218,6 +218,7 @@ package org.interguild.game {
 				if ((above1.isSolid() && !this.canDestroy(above1)) || (above2.isSolid() && !this.canDestroy(above2)))
 					mustCrawl = true;
 			}
+			mustCrawl = false; // debugging
 			trace("Must crawl value: " + mustCrawl);
 
 			if (isJumping && !mustCrawl) {

@@ -35,7 +35,7 @@ package org.interguild.game.collision {
 		}
 		
 		public function canDestroy(other:Destruction):Boolean{
-			if((this.defend & other.attack) > 0)
+			if((this.attack & other.defend) > 0)
 				return true;
 			else
 				return false;

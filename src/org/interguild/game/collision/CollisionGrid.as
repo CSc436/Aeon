@@ -1,23 +1,19 @@
 package org.interguild.game.collision {
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
-	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
 
 	public class CollisionGrid extends Sprite {
 
@@ -133,7 +129,7 @@ package org.interguild.game.collision {
 			return Math.sqrt((distx * distx) + (disty * disty));
 		}
 
-		
+
 
 		/**
 		 * Handle collisions!
@@ -154,12 +150,6 @@ package org.interguild.game.collision {
 				var active:CollidableObject = target;
 
 				// HACKY STUFF BELOW //
-				if (!(target is Player) && (other is Explosion || other is Arrow)) {
-					var toSwap:CollidableObject = active;
-					active = other;
-					other = toSwap;
-				}
-
 				if ((target is Player && Player(target).isDead) || (other is Player && Player(other).isDead))
 					continue;
 				// HACKY STUFF ABOVE //
@@ -217,48 +207,13 @@ package org.interguild.game.collision {
 			var direction:uint = Direction.determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
 			if (direction == Direction.NONE)
 				return;
-			
+
 			//EVERYTHING BELOW THIS LINE IS DEFINITELY A COLLISION
 
 			if (activeObject is Player) {
 				p = Player(activeObject);
 			}
-//			// Check to see if arrow is the culprit
-//			if (activeObject is Arrow) {
-//				a = Arrow(activeObject);
-//			}
-//			// Check to see if explosion is the culprit
-//			if (activeObject is Explosion) {
-//				explosion = Explosion(activeObject);
-//			} else if (otherObject is Explosion) {
-//				explosion = Explosion(otherObject);
-//			}
 			
-			if(activeObject.canDestroy(otherObject)){
-				toRemove(otherObject);
-			}
-			if(otherObject.canDestroy(activeObject)){
-				activeObject.onKillEvent(level);
-				toRemove(activeObject);
-			}
-			
-			/*
-			 * KNOCKBACK
-			 *
-			 * TODO: use getKnockback, rather than constants?
-			 */
-			if (otherObject.getKnockback() > 0) {
-				if (direction == Direction.DOWN) {
-					activeObject.speedY = Player.KNOCKBACK_JUMP_SPEED;
-				} else if (direction == Direction.UP) {
-					activeObject.speedY = 0;
-				} else if (direction == Direction.RIGHT) {
-					activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
-				} else if (direction == Direction.LEFT) {
-					activeObject.speedX = Player.KNOCKBACK_HORIZONTAL;
-				}
-			}
-
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
@@ -266,34 +221,41 @@ package org.interguild.game.collision {
 				toRemove(otherObject);
 				level.grabbedCollectable();
 				coin.play();
-				/*
-				* PLAYER ENTERS ACTIVE PORTAL
-				*/
-			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
+			}
+			/*
+			* PLAYER ENTERS ACTIVE PORTAL
+			*/
+			if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
 				level.onWonGame();
 			}
 
 			/*
+			 * HANDLE DESTRUCTIONS
+			 */
+			if (activeObject.canDestroy(otherObject)) {
+				toRemove(otherObject);
+			}
+			if (otherObject.canDestroy(activeObject)) {
+				toRemove(activeObject);
+			}
+			if (otherObject.isSolid() && activeObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
+				toRemove(activeObject);
+			}
+			if (activeObject.isSolid() && otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
+				toRemove(otherObject);
+			}
+			
+			/*
 			* SOLID COLLISIONS
 			*/
 			if (activeObject.isSolid() && otherObject.isSolid()) {
-				//handle deaths:
-				if(activeObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)){
-					activeObject.onKillEvent(level);
-					toRemove(activeObject);
-				}
-				if(otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)){
-					otherObject.onKillEvent(level);
-					toRemove(otherObject);
-				}
 				//handle directions:
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
 					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS)) {
-						otherObject.onKillEvent(level);
 						toRemove(otherObject);
-					}else if (p) { // player lands on object
+					} else if (p) { // player lands on object
 						p.isStanding = true;
 					} else { // something else lands on object
 						deactivateObjects.push(activeObject);
@@ -301,7 +263,6 @@ package org.interguild.game.collision {
 				} else if (direction == Direction.UP) {
 					if (otherObject.isActive) {
 						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS)) {
-							activeObject.onKillEvent(level);
 							toRemove(activeObject);
 						} else {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
@@ -320,51 +281,69 @@ package org.interguild.game.collision {
 				}
 			}
 
+			/*
+			* KNOCKBACK
+			*
+			* TODO: use getKnockback, rather than constants?
+			*/
+			if (p && otherObject.getKnockback() > 0) {
+				if (direction == Direction.DOWN) {
+					activeObject.speedY = Player.KNOCKBACK_JUMP_SPEED;
+				} else if (direction == Direction.UP) {
+					activeObject.speedY = 0;
+				} else if (direction == Direction.RIGHT) {
+					activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
+				} else if (direction == Direction.LEFT) {
+					activeObject.speedX = Player.KNOCKBACK_HORIZONTAL;
+				}
+			}
+
 			activeObject.updateHitBox();
 		}
 
+		/**
+		 * Called whenever an object is meant to die this frame.
+		 */
 		private function toRemove(obj:GameObject):void {
 			if (removalObjects.indexOf(obj) == -1) {
 				removalObjects.push(obj);
-				obj.onKillEvent(level);
 			}
 		}
 
+		/**
+		 * Handle all of the objects that are meant to be destroyed
+		 * or deactivated this frame.
+		 */
 		public function handleRemovals(camera:Sprite):void {
 			for (var i:int = 0; i < removalObjects.length; i++) {
-				var r:GameObject = GameObject(removalObjects[i]);
+				var r:CollidableObject = CollidableObject(removalObjects[i]);
 
-				if(r is Player)
-					continue;
-				
-				//remove from display list
-				camera.removeChild(DisplayObject(r));
+				if (!(r is Player))
+					camera.removeChild(r);
 
-				//remove from grid tiles
-				if (r is CollidableObject) {
-					destroyObject(CollidableObject(r));
-				}
+				destroyObject(r);
 			}
 			removalObjects = new Array();
 
 			for (i = 0; i < deactivateObjects.length; i++) {
-				r = GameObject(deactivateObjects[i]);
+				r = CollidableObject(deactivateObjects[i]);
 
 				var index:int = activeObjects.indexOf(r);
 				if (index != -1) {
 					activeObjects.splice(index, 1);
 				}
 
-				if (r is CollidableObject) {
-					var c:CollidableObject = CollidableObject(r);
-					c.isActive = false;
-					updateObject(c, true);
-				}
+				r.isActive = false;
+				updateObject(r, true);
 			}
 			deactivateObjects = new Array();
 		}
 
-		public function destroyObject(obj:CollidableObject):void {
+		/**
+		 * Called by handleRemovals, when destroying objects
+		 * at the end of each game loop.
+		 */
+		private function destroyObject(obj:CollidableObject):void {
 			if (obj.isActive) {
 				//remove from active objects
 				var index:int = activeObjects.indexOf(obj);
@@ -391,22 +370,6 @@ package org.interguild.game.collision {
 			}
 			obj.clearGrids();
 			obj.onKillEvent(level);
-
-//			var tile:GridTile = toDestroy.myCollisionGridTiles[0];
-//			unblockNeighbors(tile.gridRow, tile.gridCol);
-//			if (inBounds(tile.gridRow - 1, tile.gridCol) && grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length > 0) {
-//				for (var i:int = 0; i < grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length; i++) {
-//					if (!(grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[i] is Player)) {
-//						var obj:CollidableObject = grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[0];
-//						level.activateObject(obj);
-//						obj.setUnblocked(Direction.UP);
-//					}
-//				}
-//			}
-		}
-
-		public function getGrid():Array {
-			return grid;
 		}
 
 		/**
