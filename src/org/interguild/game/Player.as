@@ -100,8 +100,6 @@ package org.interguild.game {
 
 		public override function onGameLoop():void {
 			speedY += Level.GRAVITY;
-			trace("speedY =", speedY);
-			trace("speedX =", speedX);
 
 			updateKeys();
 
@@ -120,7 +118,6 @@ package org.interguild.game {
 			newY += speedY;
 			updateHitBox();
 
-			trace("speedY = ", speedY);
 			if (speedY > 6 && !isJumping) {
 				isFalling = true;
 			} else
@@ -207,7 +204,7 @@ package org.interguild.game {
 			}
 
 			var neighborTiles:Vector.<GridTile> = this.myCollisionGridTiles;
-			trace("Number of neighboring tiles: " + neighborTiles.length);
+//			trace("Number of neighboring tiles: " + neighborTiles.length);
 			mustCrawl = false;
 			var above1:CollidableObject = CollidableObject(neighborTiles[1].myCollisionObjects[0]);
 			var above2:CollidableObject = CollidableObject(neighborTiles[2].myCollisionObjects[0]);
@@ -219,7 +216,7 @@ package org.interguild.game {
 					mustCrawl = true;
 			}
 			mustCrawl = false; // debugging
-			trace("Must crawl value: " + mustCrawl);
+//			trace("Must crawl value: " + mustCrawl);
 
 			if (isJumping && !mustCrawl) {
 				handleJumping();
@@ -439,7 +436,6 @@ package org.interguild.game {
 
 
 		private function handleFalling():void {
-			trace("Made it inside falling");
 			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
 				removeChild(playerClip);
 				playerClip = new PlayerJumpPeakThenFallAnimation();

@@ -19,7 +19,6 @@ package org.interguild.game.tiles {
 		private static const HAS_GRAVITY:Boolean = true;
 		private static const KNOCKBACK_AMOUNT:int = 5;
 
-		public var explosion:Explosion;
 		public var exp:Sound;
 
 		public function DynamiteCrate(x:int, y:int) {
@@ -51,9 +50,9 @@ package org.interguild.game.tiles {
 		}
 
 		public override function onKillEvent(level:Level):void {
-			explosion = new Explosion(newX, newY);
+			var explosion:Explosion = new Explosion(newX, newY);
 			level.createCollidableObject(explosion);
-			this.explosion.parentDestroyed = true;
+			explosion.parentDestroyed = true;
 			exp.play();
 		}
 	}
