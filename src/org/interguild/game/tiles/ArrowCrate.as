@@ -3,7 +3,7 @@ package org.interguild.game.tiles {
 	import flash.display.BitmapData;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.collision.Direction;
@@ -29,14 +29,14 @@ package org.interguild.game.tiles {
 		public var direction:int;
 		public var xPos:int;
 		public var yPos:int;
-		
+
 		public var arrowSound:Sound;
 
 		public function ArrowCrate(x:int, y:int, direction:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			CollidableObject.setWoodenCrateDestruction(this);
-			
+
 			this.direction = direction;
 			switch (direction) {
 				case Direction.RIGHT:
@@ -52,11 +52,16 @@ package org.interguild.game.tiles {
 					addChild(new Bitmap(new LightningBoxUp()));
 					break;
 			}
-			
-			this.xPos=x;
-			this.yPos=y;
+
+			this.xPos = x;
+			this.yPos = y;
 			arrowSound = new Sound();
-			arrowSound.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Arrow.mp3"));
+			CONFIG::ONLINE {
+				arrowSound.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Arrow.mp3"));
+			}
+			CONFIG::NOONLINE {
+				arrowSound.load(new URLRequest("../assets/Arrow.mp3"));
+			}
 		}
 
 		public override function onKillEvent(level:Level):void {

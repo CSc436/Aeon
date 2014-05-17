@@ -39,11 +39,20 @@ package org.interguild.game.collision {
 			activeObjects = new Vector.<GameObject>();
 
 			jump = new Sound();
-			jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
-//			jump.load(new URLRequest("../assets/jump.mp3")); //local
+			CONFIG::ONLINE {
+				jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
+			}
+			CONFIG::NOONLINE {
+				jump.load(new URLRequest("../assets/jump.mp3")); //local
+			}
+
 			coin = new Sound();
-			coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
-//			coin.load(new URLRequest("../assets/coin.mp3")); //local
+			CONFIG::ONLINE {
+				coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
+			}
+			CONFIG::NOONLINE {
+				coin.load(new URLRequest("../assets/coin.mp3")); //local
+			}
 
 			//init 2D arra]y
 			grid = new Array(height);
@@ -213,7 +222,7 @@ package org.interguild.game.collision {
 			if (activeObject is Player) {
 				p = Player(activeObject);
 			}
-			
+
 			/*
 			* PLAYER GRABS COLLECTABLE
 			*/
@@ -244,7 +253,7 @@ package org.interguild.game.collision {
 			if (activeObject.isSolid() && otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
 				toRemove(otherObject);
 			}
-			
+
 			/*
 			* SOLID COLLISIONS
 			*/

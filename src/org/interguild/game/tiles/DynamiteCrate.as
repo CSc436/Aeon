@@ -3,7 +3,7 @@ package org.interguild.game.tiles {
 	import flash.display.BitmapData;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.level.Level;
@@ -25,10 +25,15 @@ package org.interguild.game.tiles {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			CollidableObject.setWoodenCrateDestruction(this);
-			
+
 			addChild(new Bitmap(new WoodenDynamiteSprite()));
 			exp = new Sound();
-			exp.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Explosion.mp3"));
+			CONFIG::ONLINE {
+				exp.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Explosion.mp3"));
+			}
+			CONFIG::NOONLINE {
+				exp.load(new URLRequest("../assets/Explosion.mp3"));
+			}
 		}
 
 		public override function onGameLoop():void {
