@@ -47,7 +47,7 @@ package org.interguild {
 					onLoadCallback();
 				}
 			}
-			CONFIG::NOONLINE {
+			CONFIG::OFFLINE {
 				isLoggedIn = false;
 				onLoadCallback();
 			}

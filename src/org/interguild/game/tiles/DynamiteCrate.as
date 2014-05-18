@@ -31,7 +31,7 @@ package org.interguild.game.tiles {
 			CONFIG::ONLINE {
 				exp.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Explosion.mp3"));
 			}
-			CONFIG::NOONLINE {
+			CONFIG::OFFLINE {
 				exp.load(new URLRequest("../assets/Explosion.mp3"));
 			}
 		}

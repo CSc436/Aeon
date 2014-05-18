@@ -42,7 +42,7 @@ package org.interguild.game.collision {
 			CONFIG::ONLINE {
 				jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
 			}
-			CONFIG::NOONLINE {
+			CONFIG::OFFLINE {
 				jump.load(new URLRequest("../assets/jump.mp3")); //local
 			}
 
@@ -50,7 +50,7 @@ package org.interguild.game.collision {
 			CONFIG::ONLINE {
 				coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
 			}
-			CONFIG::NOONLINE {
+			CONFIG::OFFLINE {
 				coin.load(new URLRequest("../assets/coin.mp3")); //local
 			}
 

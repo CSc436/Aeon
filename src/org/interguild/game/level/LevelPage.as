@@ -27,7 +27,7 @@ package org.interguild.game.level {
 			public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65180.txt";
 		}
 
-		CONFIG::NOONLINE {
+		CONFIG::OFFLINE {
 			public static const TEST_LEVEL_FILE:String = "../gamesaves/coollevel.txt";
 		}
 

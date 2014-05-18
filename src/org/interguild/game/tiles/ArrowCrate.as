@@ -59,7 +59,7 @@ package org.interguild.game.tiles {
 			CONFIG::ONLINE {
 				arrowSound.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Arrow.mp3"));
 			}
-			CONFIG::NOONLINE {
+			CONFIG::OFFLINE {
 				arrowSound.load(new URLRequest("../assets/Arrow.mp3"));
 			}
 		}
