@@ -54,6 +54,8 @@ package org.interguild.editor.dropdown {
 			popup.addItem(new FileMenuItem("Open", "Ctrl+O", clickOpen));
 			popup.addItem(new FileMenuItem("Save", "Ctrl+S", clickSave));
 			popup.addItem(new FileMenuItem("Save As...", "Ctrl+Shift+S", clickSaveAs));
+			popup.addItem(new FileMenuItem("Close Level", "", clickClose));
+			popup.addItem(new FileMenuItem("Close All", "", clickCloseAll));
 			popup.addItem(new FileMenuItem("Copy", "Ctrl+C", clickCopy));
 			popup.addItem(new FileMenuItem("Cut", "Ctrl+X", clickCut));
 			popup.addItem(new FileMenuItem("Paste", "Ctrl+V", clickPaste));
@@ -123,6 +125,14 @@ package org.interguild.editor.dropdown {
 		
 		private function clickSaveAs(evt:MouseEvent):void{
 			trace("SAVE AS...");
+		}
+		
+		private function clickClose(evt:MouseEvent):void{
+			editor.closeLevel();
+		}
+		
+		private function clickCloseAll(evt:MouseEvent):void{
+			editor.closeAllLevels();
 		}
 		
 		private function clickCopy(evt:MouseEvent):void{

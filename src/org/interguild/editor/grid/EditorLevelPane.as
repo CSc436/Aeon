@@ -55,6 +55,14 @@ package org.interguild.editor.grid {
 			tabMan.addTab(level);
 		}
 
+		public function closeLevel():void {
+			tabMan.closeLevel();
+		}
+		
+		public function closeAllLevels():void {
+			tabMan.closeAllLevels();
+		}
+
 		public function get level():EditorLevel {
 			return currentLevel;
 		}
@@ -63,6 +71,11 @@ package org.interguild.editor.grid {
 		 * Creates a new grid for the container
 		 */
 		public function set level(lvl:EditorLevel):void {
+			if (lvl == null) {
+				addLevel();
+				return;
+			}
+
 			if (currentLevel != null) {
 				currentLevel.horizontalScrollPosition = scroll.horizontalScrollPosition;
 				currentLevel.verticalScrollPosition = scroll.verticalScrollPosition;

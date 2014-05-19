@@ -42,11 +42,47 @@ package org.interguild.editor.grid {
 		}
 
 		private function switchToTab(tab:EditorTab):void {
-			tab.activate();
 			if (currentTab != null)
 				currentTab.deactivate();
+			tab.activate();
 			currentTab = tab;
 			levelPane.level = tab.level;
+		}
+
+		public function closeLevel(tab:EditorTab = null):void {
+			if (tab == null)
+				tab = currentTab;
+			var index:int = tabs.indexOf(tab);
+			if (index == -1) //should hopefully never fire, but should help with debugging
+				throw new Error("EditorTabManager.closeLevel() can't close a tab that isn't in its array of tabs.");
+
+			//TODO prompt to save
+
+			tabs.splice(index, 1);
+			removeChild(tab);
+			if (tabs.length == 0) {
+				//if no more levels to switch to
+				levelPane.level = null; //create a new level
+			} else {
+				//move tabs to the left
+				for (var i:int = index; i < tabs.length; i++) {
+					EditorTab(tabs[i]).x -= TAB_WIDTH;
+				}
+				if (currentTab == tab) {
+					if (index >= tabs.length) {
+						index--;
+					}
+					switchToTab(tabs[index]);
+				}
+			}
+		}
+
+		public function closeAllLevels():void {
+			var n:uint = tabs.length;
+			while (n > 0) {
+				closeLevel();
+				n--;
+			}
 		}
 	}
 }

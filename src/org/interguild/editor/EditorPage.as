@@ -77,6 +77,14 @@ package org.interguild.editor {
 		public function newLevel():void{
 			levelPane.addLevel();
 		}
+		
+		public function closeLevel():void{
+			levelPane.closeLevel();
+		}
+		
+		public function closeAllLevels():void{
+			levelPane.closeAllLevels()
+		}
 
 		public function saveToFile():void {
 			var file:FileReference = new FileReference();
@@ -110,10 +118,6 @@ package org.interguild.editor {
 		public function openLevel(data:String):void {
 			loader.loadFromCode(data, "Editor");
 		}
-
-//		public function setUpEditorPage(title:String, newGrid:EditorGrid):void {
-//			this.title.text = title;
-//		}
 
 		/**
 		 * error found, report then return to original state

@@ -5,8 +5,6 @@
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
-	import org.interguild.editor.tabs.EditorTabContainer;
-
 	public class EditorTab extends Sprite {
 
 		private static const CLOSE_BUTTON_X:uint = 113;
@@ -52,7 +50,7 @@
 			title.y = FONT_Y;
 			title.width = FONT_WIDTH;
 			title.height = FONT_HEIGHT;
-			title.text = "Untitled";
+			title.text = level.title;
 			title.selectable = false;
 			title.mouseEnabled = false;
 			addChild(title);
@@ -110,8 +108,7 @@
 
 		private function onCloseClick(evt:MouseEvent):void {
 			evt.stopPropagation();
-			//this function removes the button of interest
-			//tabContainer.removeTab(tNum);
+			tabMan.closeLevel(this);
 		}
 
 		public function get level():EditorLevel {

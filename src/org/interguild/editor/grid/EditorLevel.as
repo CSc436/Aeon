@@ -4,7 +4,7 @@ package org.interguild.editor.grid {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-
+	
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -16,7 +16,9 @@ package org.interguild.editor.grid {
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 
-		private var levelName:String;
+		private static var untitledCount:uint = 1;
+
+		private var levelTitle:String;
 
 		private var cells:Array;
 		private var cols:uint = 0;
@@ -45,8 +47,9 @@ package org.interguild.editor.grid {
 				cols = DEFAULT_WIDTH;
 			if (rows <= 0)
 				rows = DEFAULT_HEIGHT;
-			
-			levelName = "Untitled";
+
+			levelTitle = "Untitled-" + untitledCount;
+			untitledCount++;
 
 			//init undo/redo
 			undoList = new Array();
@@ -68,6 +71,14 @@ package org.interguild.editor.grid {
 			this.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OVER, onOver, true, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OUT, onOut, false, 0, true);
+		}
+		
+		public function get title():String{
+			return levelTitle;
+		}
+		
+		public function set title(s:String):void{
+			levelTitle = s;
 		}
 
 		private function onDown(evt:MouseEvent):void {
@@ -109,7 +120,7 @@ package org.interguild.editor.grid {
 					break;
 				case TileList.ERASER_TOOL_CHAR:
 					cell.clearTile();
-					if(cell == currentPlayerTile)
+					if (cell == currentPlayerTile)
 						currentPlayerTile = null;
 					previewCell(cell);
 					break;
@@ -214,9 +225,9 @@ package org.interguild.editor.grid {
 		 */
 		public function getLevelCode():String {
 			var s:String = "";
-			s += levelName + "\n";
+			s += levelTitle + "\n";
 			s += cols + "x" + rows + "\n";
-			
+
 			for (var r:uint = 0; r < rows; r++) {
 				for (var c:uint = 0; c < cols; c++) {
 					s += EditorCell(cells[r][c]).char;
