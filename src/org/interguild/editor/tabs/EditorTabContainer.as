@@ -3,9 +3,10 @@ package org.interguild.editor.tabs {
 	import flash.events.MouseEvent;
 	
 	import org.interguild.editor.EditorPage;
-	import org.interguild.editor.grid.EditorGrid;
-	import org.interguild.editor.grid.EditorGridContainer;
 	import org.interguild.editor.tilelist.TileList;
+	import org.interguild.editor.grid.EditorLevel;
+	import org.interguild.editor.grid.EditorLevelPane;
+	import org.interguild.editor.grid.EditorTab;
 
 	/**
 	 * Store mltiple instances of Editor Page such that the user
@@ -20,7 +21,7 @@ package org.interguild.editor.tabs {
 
 		private var currTab:int = 0;
 		private var tabsActive:int = 0;
-		private var currGrid:EditorGrid;
+		private var currGrid:EditorLevel;
 		private var tabOpen:TabOpenButton;
 		private var buttonContainer:TileList;
 		private var page:EditorPage;
@@ -34,10 +35,10 @@ package org.interguild.editor.tabs {
 			gridContainerArray = new Array(MAX_ARRAY_SIZE);
 			for (var i:int = 0, width:int = 3; i < MAX_ARRAY_SIZE; i++, width += 134) {
 				// create some editorcontainers
-				gridContainerArray[i] = new EditorGridContainer(buttonContainer);
+				gridContainerArray[i] = new EditorLevelPane(buttonContainer);
 
 				//place tab
-				tabButton[i] = new TabButton("Untitled", i, this);
+				tabButton[i] = new EditorTab("Untitled", i, this);
 				tabButton[i].x = width;
 				tabButton[i].y = 60;
 				tabButton[i].addEventListener(MouseEvent.CLICK, switchClick);
@@ -58,13 +59,13 @@ package org.interguild.editor.tabs {
 		/**
 		 * add a new tab with a new grid
 		 */
-		public function addTab(grid:EditorGrid = null):void {
+		public function addTab(grid:EditorLevel = null):void {
 			if (tabsActive == MAX_ARRAY_SIZE)
 				return; // cannot add more than 3 tabs
 
 			if (grid == null) {
 				//create a new game
-				gridContainerArray[tabsActive].setCurrentGrid(new EditorGrid(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH));
+				gridContainerArray[tabsActive].setCurrentGrid(new EditorLevel(DEFAULT_LEVEL_HEIGHT, DEFAULT_LEVEL_WIDTH));
 			} else {
 				//set the new game
 				gridContainerArray[tabsActive].setCurrentGrid(grid);
@@ -125,19 +126,19 @@ package org.interguild.editor.tabs {
 //			page.setGrid(this.gridContainerArray[currTab]);
 		}
 
-		public function getCurrentGridContainer():EditorGridContainer {
+		public function getCurrentGridContainer():EditorLevelPane {
 			return gridContainerArray[currTab];
 		}
 
 		/**
 		 * set the current grid to the current one
 		 */
-		public function setCurrentGridContainer(setGrid:EditorGrid):void {
+		public function setCurrentGridContainer(setGrid:EditorLevel):void {
 			gridContainerArray[currTab] = setGrid;
 		}
 
 		public function resizeCurrentGrid(rows:int, cols:int):void {
-			var g:EditorGrid = gridContainerArray[tabsActive - 1];
+			var g:EditorLevel = gridContainerArray[tabsActive - 1];
 			g.resize(rows, cols);
 		}
 
@@ -151,7 +152,7 @@ package org.interguild.editor.tabs {
 
 		private function switchClick(e:MouseEvent):void {
 			// when the user clicks the tab they should switch to that tab
-			var b:TabButton = TabButton(e.currentTarget);
+			var b:EditorTab = EditorTab(e.currentTarget);
 			trace("switching to tab " + b.tabNum);
 			switchTabs(b.tabNum);
 		}

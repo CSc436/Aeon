@@ -1,17 +1,17 @@
 package org.interguild.loader {
 
-	import org.interguild.editor.grid.EditorGrid;
+	import org.interguild.editor.grid.EditorLevel;
 
 	public class EditorLoader extends Loader {
 		
-		private var grid:EditorGrid;
+		private var grid:EditorLevel;
 		
 		public function EditorLoader() {
 			super();
 		}
 		
 		protected override function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void{
-			grid = new EditorGrid(lvlHeight, lvlWidth);
+			grid = new EditorLevel(lvlHeight, lvlWidth);
 			initializedCallback(grid);
 		}
 		

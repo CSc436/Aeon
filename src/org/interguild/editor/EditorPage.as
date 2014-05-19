@@ -5,8 +5,7 @@ package org.interguild.editor {
 	import flash.net.FileReference;
 	
 	import org.interguild.Aeon;
-	import org.interguild.editor.grid.EditorGridContainer;
-	import org.interguild.editor.tabs.EditorTabContainer;
+	import org.interguild.editor.grid.EditorLevelPane;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.level.LevelProgressBar;
 	import org.interguild.loader.EditorLoader;
@@ -16,45 +15,55 @@ package org.interguild.editor {
 	public class EditorPage extends Page {
 
 		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+		
+		private static var selectedTile:String;
+		
+		public static function get currentTile():String{
+			return selectedTile;
+		}
+		
+		public static function set currentTile(s:String):void{
+			selectedTile = s;
+			if(s == TileList.SELECTION_TOOL_CHAR){
+				//do selection tool stuff
+			}
+		}
 
 		private var loader:Loader;
-		private var gridContainer:EditorGridContainer;
-		private var tabsContainer:EditorTabContainer;
 
 		private var progressBar:LevelProgressBar;
-
-		//variable to hold level code if coming back from test level
-		private var currentLevel:String;
-
+		private var levelPane:EditorLevelPane;
+		
 		private var filereader:FileReference;
 		private var keys:KeyManEditor;
-		private var tileList:TileList;
+
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
-			
 			initBG();
-			
-			tileList = new TileList();
+
+			var tileList:TileList = new TileList(this);
 			addChild(tileList);
-			
-			tabsContainer = new EditorTabContainer(this, tileList);
-			addChild(tabsContainer);
-			
+
+			levelPane = new EditorLevelPane(this);
+			addChild(levelPane);
+//			tabsContainer = new EditorTabContainer(this, tileList);
+//			addChild(tabsContainer);
+
 			loader = new EditorLoader();
-			loader.addInitializedListener(tabsContainer.addTab);
+			loader.addInitializedListener(levelPane.addLevel);
 			loader.addErrorListener(onLoadError);
-			
-			
-			
+
 			keys = new KeyManEditor(stage);
 			keys.addOpenLevelCallback(openFromFile);
 			keys.addSaveLevelCallback(saveToFile);
-			keys.addUndoLevelCallback(tabsContainer.getCurrentGridContainer().undoClick);
-			keys.addRedoLevelCallback(tabsContainer.getCurrentGridContainer().redoClick);
-			keys.addDeleteLevelCallback(tabsContainer.getCurrentGridContainer().deleteTiles);
-			//must be initialized last
+//			keys.addUndoLevelCallback(tabsContainer.getCurrentGridContainer().undoClick);
+//			keys.addRedoLevelCallback(tabsContainer.getCurrentGridContainer().redoClick);
+//			keys.addDeleteLevelCallback(tabsContainer.getCurrentGridContainer().deleteTiles);
+
+			// must be initialized last so that overlay can cover everything
+			// and disable editor mouse evemts for certain menus
 			var topBar:TopBar = new TopBar(this);
 			addChild(topBar);
 		}
@@ -177,10 +186,14 @@ package org.interguild.editor {
 //			tabsContainer.resizeCurrentGrid(h, w);
 //		}
 		
-		public function saveToFile():void{
+		public function newLevel():void{
+			levelPane.addLevel();
+		}
+
+		public function saveToFile():void {
 			var file:FileReference = new FileReference();
 			var levelcode:String = getLevelCode();
-			var filename:String = levelcode.substring(0,levelcode.indexOf("\n")) + ".txt";
+			var filename:String = levelcode.substring(0, levelcode.indexOf("\n")) + ".txt";
 			file.save(levelcode, filename);
 		}
 
@@ -189,19 +202,19 @@ package org.interguild.editor {
 			filereader.addEventListener(Event.SELECT, selectHandler);
 			filereader.addEventListener(Event.COMPLETE, loadCompleteHandler);
 			filereader.browse(); // ask user for file
-			
+
 			function selectHandler(event:Event):void {
 				filereader.removeEventListener(Event.SELECT, selectHandler);
 				filereader.load();
 			}
-			
+
 			function loadCompleteHandler(event:Event):void {
 				filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
 				var lvlCode:String = (String(filereader.data)).split("\r").join("");
 				openLevel(lvlCode);
 			}
 		}
-		
+
 		/**
 		 * We have the level data use that so we can
 		 * create a level
@@ -228,25 +241,6 @@ package org.interguild.editor {
 			Aeon.getMe().returnFromError(e, "Editor");
 		}
 
-//		/**
-//		 * Helps populate the sprite by setting up buttons
-//		 *
-//		 * @param   index
-//		 * @param   row
-//		 * @param   column
-//		 */
-//		private function makeButton(label:String, image:Class, xpixel:int, ypixel:int):Button {
-//			var b:Button = new Button();
-//			b.label = label;
-//			b.width = 50;
-//			b.height = 50;
-//			b.setStyle("icon", image);
-//			b.x = xpixel;
-//			b.y = ypixel;
-//			b.useHandCursor = true;
-//			return b;
-//		}
-
 		/**
 		 * This function returns to the title menu
 		 */
@@ -262,8 +256,8 @@ package org.interguild.editor {
 			var string:String = "";
 //			string += this.title.text + "\n";
 			string += "Untitled\n";
-			string += tabsContainer.getCurrentGridContainer().getGrid().levelHeight + "x" + tabsContainer.getCurrentGridContainer().getGrid().levelWidth + "\n";
-			string += tabsContainer.getCurrentGridContainer().getGrid().toStringCells();
+//			string += tabsContainer.getCurrentGridContainer().getGrid().levelHeight + "x" + tabsContainer.getCurrentGridContainer().getGrid().levelWidth + "\n";
+//			string += tabsContainer.getCurrentGridContainer().getGrid().toStringCells();
 			return string;
 		}
 
@@ -271,7 +265,7 @@ package org.interguild.editor {
 		 * listener that clears the grid
 		 */
 		private function clearClick(e:MouseEvent):void {
-			tabsContainer.getCurrentGridContainer().getGrid().clearGrid();
+//			tabsContainer.getCurrentGridContainer().getGrid().clearGrid();
 		}
 
 		/**

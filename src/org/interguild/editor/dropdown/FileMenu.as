@@ -110,7 +110,7 @@ package org.interguild.editor.dropdown {
 		}
 		
 		private function clickNew(evt:MouseEvent):void{
-			trace("NEW LEVEL");
+			editor.newLevel();
 		}
 		
 		private function clickOpen(evt:MouseEvent):void{

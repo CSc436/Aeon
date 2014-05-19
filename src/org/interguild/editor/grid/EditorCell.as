@@ -4,6 +4,7 @@ package org.interguild.editor.grid {
 	import flash.display.Sprite;
 	
 	import org.interguild.editor.tilelist.TileList;
+	import org.interguild.game.Player;
 
 	public class EditorCell extends Sprite {
 
@@ -13,7 +14,8 @@ package org.interguild.editor.grid {
 		public static const LINE_COLOR:uint = 0x777777;
 		public static const CELL_BG_COLOR:uint = 0x000000;
 
-		private var currentTitleName:String = " ";
+		private var tileChar:String = TileList.ERASER_TOOL_CHAR;
+		private var tileBeforePlayer:String = tileChar;
 		private var isHighlighted:Boolean = false;
 		private var border:Sprite;
 
@@ -22,7 +24,7 @@ package org.interguild.editor.grid {
 			graphics.beginFill(CELL_BG_COLOR);
 			graphics.drawRect(0, 0, CELL_WIDTH - 1, CELL_HEIGHT - 1);
 			graphics.endFill();
-			
+
 			//init border
 			border = new Sprite();
 			border.graphics.beginFill(LINE_COLOR);
@@ -37,25 +39,32 @@ package org.interguild.editor.grid {
 			mouseChildren = false;
 		}
 
-		public function setTile(char:String):void {
-			if (currentTitleName != char) {
-				currentTitleName = char;
+		public function setTile(newChar:String):void {
+			if (tileChar != newChar) {
+				if (newChar == Player.LEVEL_CODE_CHAR) {
+					tileBeforePlayer = tileChar;
+				}
+				tileChar = newChar;
 				removeChildren();
-
-				var icon:BitmapData = TileList.getIcon(char);
+				var icon:BitmapData = TileList.getIcon(newChar);
 				if (icon != null)
 					addChild(new Bitmap(icon));
 				addChild(border);
 			}
 		}
 
-		public function clearTile():void {
-			currentTitleName = "";
-			removeChildren();
+		public function clearTile(clearFromPLayer:Boolean = false):void {
+			if (clearFromPLayer && tileBeforePlayer != TileList.ERASER_TOOL_CHAR) {
+				setTile(tileBeforePlayer);
+			} else {
+				tileChar = " ";
+				removeChildren();
+				addChild(border);
+			}
 		}
 
 		public function get cellName():String {
-			return currentTitleName;
+			return tileChar;
 		}
 
 		public function toggleHighlight():void {
