@@ -16,7 +16,7 @@ package org.interguild.editor.grid {
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 
-		private var name:String;
+		private var levelName:String;
 
 		private var cells:Array;
 		private var cols:uint = 0;
@@ -45,6 +45,8 @@ package org.interguild.editor.grid {
 				cols = DEFAULT_WIDTH;
 			if (rows <= 0)
 				rows = DEFAULT_HEIGHT;
+			
+			levelName = "Untitled";
 
 			//init undo/redo
 			undoList = new Array();
@@ -210,11 +212,14 @@ package org.interguild.editor.grid {
 		/**
 		 * print out the cell types using chars
 		 */
-		public function toStringCells():String {
+		public function getLevelCode():String {
 			var s:String = "";
+			s += levelName + "\n";
+			s += cols + "x" + rows + "\n";
+			
 			for (var r:uint = 0; r < rows; r++) {
 				for (var c:uint = 0; c < cols; c++) {
-					s += EditorCell(cells[r][c]).cellName;
+					s += EditorCell(cells[r][c]).char;
 				}
 				s += "\n";
 			}
@@ -286,12 +291,6 @@ package org.interguild.editor.grid {
 				}
 			}
 			cols = newCols;
-		}
-
-
-		public function setGrid(param0:EditorLevel):void {
-			// TODO Auto Generated method stub
-
 		}
 	}
 }

@@ -63,7 +63,7 @@ package org.interguild.editor.grid {
 			}
 		}
 
-		public function get cellName():String {
+		public function get char():String {
 			return tileChar;
 		}
 

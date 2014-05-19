@@ -55,14 +55,14 @@ package org.interguild.editor.grid {
 			tabMan.addTab(level);
 		}
 
-		internal function get level():EditorLevel {
+		public function get level():EditorLevel {
 			return currentLevel;
 		}
 
 		/**
 		 * Creates a new grid for the container
 		 */
-		internal function set level(lvl:EditorLevel):void {
+		public function set level(lvl:EditorLevel):void {
 			if (currentLevel != null) {
 				currentLevel.horizontalScrollPosition = scroll.horizontalScrollPosition;
 				currentLevel.verticalScrollPosition = scroll.verticalScrollPosition;
