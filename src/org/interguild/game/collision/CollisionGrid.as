@@ -262,7 +262,7 @@ package org.interguild.game.collision {
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
-					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS)) {
+					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
 						toRemove(otherObject);
 					} else if (p) { // player lands on object
 						p.isStanding = true;
@@ -271,7 +271,7 @@ package org.interguild.game.collision {
 					}
 				} else if (direction == Direction.UP) {
 					if (otherObject.isActive) {
-						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS)) {
+						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !activeObject.canDestroy(otherObject)) {
 							toRemove(activeObject);
 						} else {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
