@@ -1,18 +1,24 @@
 package org.interguild.editor.grid {
 	import flash.display.Bitmap;
-	import flash.display.DisplayObjectContainer;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	
+	import flash.geom.Rectangle;
+
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
 
+	/**
+	 * Responsible for:
+	 *   -managing a grid of EditorTile objects
+	 *   -managing the mouse events for it
+	 */
 	public class EditorLevel extends Sprite {
 
-		private static const DEFAULT_WIDTH:uint = 40;
-		private static const DEFAULT_HEIGHT:uint = 40;
+		private static const DEFAULT_WIDTH:uint = 10;
+		private static const DEFAULT_HEIGHT:uint = 10;
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 
@@ -26,6 +32,8 @@ package org.interguild.editor.grid {
 
 		private var previewSprite:Sprite;
 		private var previewChar:String;
+		private var previewBD:BitmapData;
+		private var previewSquare:Sprite;
 
 		private var selectStart:Point;
 		private var selectEnd:Point;
@@ -38,6 +46,7 @@ package org.interguild.editor.grid {
 		private var redoList:Array;
 
 		private var isMouseDown:Boolean;
+		private var isShiftMouseDown:Boolean;
 
 		public function EditorLevel(numRows:uint = 0, numCols:uint = 0) {
 			//init dimensions
@@ -64,6 +73,11 @@ package org.interguild.editor.grid {
 			//init preview
 			previewSprite = new Sprite();
 			previewSprite.alpha = PREVIEW_ALPHA;
+			previewSquare = new Sprite();
+			previewSquare.visible = false;
+			previewSquare.mouseEnabled = false;
+			previewSquare.alpha = PREVIEW_ALPHA;
+			addChild(previewSquare);
 
 			initGridCells();
 
@@ -72,31 +86,57 @@ package org.interguild.editor.grid {
 			this.addEventListener(MouseEvent.MOUSE_OVER, onOver, true, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OUT, onOut, false, 0, true);
 		}
-		
-		public function get title():String{
+
+		public function get title():String {
 			return levelTitle;
 		}
-		
-		public function set title(s:String):void{
+
+		public function set title(s:String):void {
 			levelTitle = s;
 		}
 
 		private function onDown(evt:MouseEvent):void {
-			previewSprite.visible = false;
-			if (evt.target is EditorCell)
-				clickCell(EditorCell(evt.target));
-			isMouseDown = true;
+			if (evt.target is EditorCell) {
+				var cell:EditorCell = EditorCell(evt.target);
+				previewSprite.visible = false;
+				isMouseDown = true;
+				selectStart = cell.getPoint();
+				selectEnd = selectStart;
+				if (evt.shiftKey) {
+					isShiftMouseDown = true;
+					previewSelection(cell);
+				} else {
+					clickCell(cell);
+				}
+			}
 		}
 
 		private function onUp(evt:MouseEvent):void {
+			if (isShiftMouseDown) {
+				clickSelection();
+			}
 			isMouseDown = false;
+			isShiftMouseDown = false;
 			previewSprite.visible = true;
+			previewSquare.visible = false;
 		}
 
+		/**
+		 * Instead of listening to a mouse-move event (which is slow),
+		 * we are listening to the mouse-over event that is triggered
+		 * on every single tile.
+		 */
 		private function onOver(evt:MouseEvent):void {
 			if (evt.target is EditorCell) {
 				var cell:EditorCell = EditorCell(evt.target);
-				if (isMouseDown) {
+				if(isMouseDown && !isShiftMouseDown && evt.shiftKey){
+					isShiftMouseDown = true;
+				}
+				if (isShiftMouseDown) {
+					selectEnd = cell.getPoint()
+					previewSelection(cell);
+					cell.addChild(previewSprite);
+				} else if (isMouseDown) {
 					clickCell(cell);
 				} else {
 					previewCell(cell);
@@ -105,13 +145,66 @@ package org.interguild.editor.grid {
 		}
 
 		private function previewCell(cell:EditorCell):void {
+			//update preview image for mouseovers
 			if (previewChar != EditorPage.currentTile) {
 				previewChar = EditorPage.currentTile;
+				var bd:BitmapData = TileList.getIcon(previewChar);
+				if (bd == null)
+					return;
 				previewSprite.removeChildren();
-				previewSprite.addChild(new Bitmap(TileList.getIcon(previewChar)));
+				previewSprite.addChild(new Bitmap(bd));
+
+				var toRender:Sprite = new Sprite();
+				toRender.graphics.beginFill(0, 0);
+				toRender.graphics.drawRect(0, 0, EditorCell.CELL_WIDTH, EditorCell.CELL_HEIGHT);
+				toRender.graphics.endFill();
+				toRender.graphics.beginBitmapFill(bd);
+				toRender.graphics.drawRect(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
+				toRender.graphics.endFill();
+
+				previewBD = new BitmapData(cell.width, cell.height, true, 0x00000000);
+				previewBD.draw(toRender);
+				addChild(previewSquare); //make sure it's on top of display list
 			}
+
+			//move preview image
 			previewSprite.visible = true;
 			cell.addChild(previewSprite);
+		}
+
+		private function previewSelection(cell:EditorCell):void {
+			if (selectStart.equals(selectEnd)) {
+				previewSquare.visible = false;
+				previewCell(cell);
+			} else {
+				previewSprite.visible = false;
+
+				var rect:Rectangle = new Rectangle();
+				rect.width = (selectEnd.x - selectStart.x) * EditorCell.CELL_WIDTH;
+				rect.height = (selectEnd.y - selectStart.y) * EditorCell.CELL_HEIGHT;
+				rect.x = selectStart.x * EditorCell.CELL_WIDTH;
+				rect.y = selectStart.y * EditorCell.CELL_HEIGHT;
+				if (rect.width < 0) {
+					rect.x += rect.width;
+				}
+				if (rect.height < 0) {
+					rect.y += rect.height;
+				}
+				rect.width = Math.abs(rect.width);
+				rect.height = Math.abs(rect.height);
+				rect.width += EditorCell.CELL_WIDTH;
+				rect.height += EditorCell.CELL_HEIGHT;
+				trace(rect.width);
+				trace(rect.height);
+				trace("----");
+
+				previewSquare.graphics.clear();
+				previewSquare.graphics.beginBitmapFill(previewBD);
+				previewSquare.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
+				previewSquare.graphics.endFill();
+
+				previewSquare.visible = true;
+			}
 		}
 
 		private function clickCell(cell:EditorCell):void {
@@ -132,6 +225,29 @@ package org.interguild.editor.grid {
 						currentPlayerTile = cell;
 					}
 					break;
+			}
+		}
+
+		private function clickSelection():void {
+			var incX:int = 1;
+			var incY:int = 1;
+			if (selectEnd.x < selectStart.x)
+				incX = -1;
+			if (selectEnd.y < selectStart.y)
+				incY = -1;
+
+			var finX:Boolean = false;
+			var finY:Boolean = false;
+			for (var ix:int = selectStart.x; !finX; ix += incX) {
+				finY = false;
+				for (var iy:int = selectStart.y; !finY; iy += incY) {
+					var cell:EditorCell = EditorCell(cells[iy][ix]);
+					clickCell(cell);
+					if (iy == selectEnd.y)
+						finY = true;
+				}
+				if (ix == selectEnd.x)
+					finX = true;
 			}
 		}
 
