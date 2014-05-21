@@ -3,7 +3,7 @@ package org.interguild.editor.grid {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.geom.Point;
-
+	
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
 
@@ -52,8 +52,11 @@ package org.interguild.editor.grid {
 				tileChar = newChar;
 				removeChildren();
 				var icon:BitmapData = TileList.getIcon(newChar);
-				if (icon != null)
+				if (icon != null && tileChar != TileList.ERASER_TOOL_CHAR){
 					addChild(new Bitmap(icon));
+				}else{
+					tileChar = TileList.ERASER_TOOL_CHAR;
+				}
 				addChild(border);
 			}
 		}

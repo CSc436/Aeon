@@ -5,7 +5,7 @@ package org.interguild.editor.grid {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -17,8 +17,8 @@ package org.interguild.editor.grid {
 	 */
 	public class EditorLevel extends Sprite {
 
-		private static const DEFAULT_WIDTH:uint = 10;
-		private static const DEFAULT_HEIGHT:uint = 10;
+		private static const DEFAULT_WIDTH:uint = 40;
+		private static const DEFAULT_HEIGHT:uint = 40;
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 
@@ -34,6 +34,9 @@ package org.interguild.editor.grid {
 		private var previewChar:String;
 		private var previewBD:BitmapData;
 		private var previewSquare:Sprite;
+		private var selectionSquare:SelectionHighlight;
+		private var pastePreview:Bitmap;
+		private var clipboard:String;
 
 		private var selectStart:Point;
 		private var selectEnd:Point;
@@ -47,6 +50,7 @@ package org.interguild.editor.grid {
 
 		private var isMouseDown:Boolean;
 		private var isShiftMouseDown:Boolean;
+		private var isSelectDown:Boolean;
 
 		public function EditorLevel(numRows:uint = 0, numCols:uint = 0) {
 			//init dimensions
@@ -69,17 +73,20 @@ package org.interguild.editor.grid {
 			for (var i:uint = 0; i < rows; i++) {
 				cells[i] = new Array(cols);
 			}
+			initGridCells();
 
 			//init preview
 			previewSprite = new Sprite();
 			previewSprite.alpha = PREVIEW_ALPHA;
+
 			previewSquare = new Sprite();
 			previewSquare.visible = false;
 			previewSquare.mouseEnabled = false;
 			previewSquare.alpha = PREVIEW_ALPHA;
 			addChild(previewSquare);
 
-			initGridCells();
+			selectionSquare = new SelectionHighlight();
+			addChild(selectionSquare);
 
 			this.addEventListener(MouseEvent.MOUSE_DOWN, onDown, false, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
@@ -100,9 +107,19 @@ package org.interguild.editor.grid {
 				var cell:EditorCell = EditorCell(evt.target);
 				previewSprite.visible = false;
 				isMouseDown = true;
+				selectionSquare.visible = false;
 				selectStart = cell.getPoint();
 				selectEnd = selectStart;
-				if (evt.shiftKey) {
+				if (pastePreview && !evt.shiftKey) {
+					paste(cell);
+				} else if (EditorPage.currentTile == TileList.SELECTION_TOOL_CHAR || (pastePreview && evt.shiftKey)) {
+					isSelectDown = true;
+					if (pastePreview) {
+						removeChild(pastePreview);
+						pastePreview = null;
+					}
+					previewSelection(cell);
+				} else if (evt.shiftKey) {
 					isShiftMouseDown = true;
 					previewSelection(cell);
 				} else {
@@ -112,12 +129,12 @@ package org.interguild.editor.grid {
 		}
 
 		private function onUp(evt:MouseEvent):void {
-			if (isShiftMouseDown) {
+			if (isShiftMouseDown && !isSelectDown) {
 				clickSelection();
 			}
 			isMouseDown = false;
+			isSelectDown = false;
 			isShiftMouseDown = false;
-			previewSprite.visible = true;
 			previewSquare.visible = false;
 		}
 
@@ -129,11 +146,24 @@ package org.interguild.editor.grid {
 		private function onOver(evt:MouseEvent):void {
 			if (evt.target is EditorCell) {
 				var cell:EditorCell = EditorCell(evt.target);
-				if(isMouseDown && !isShiftMouseDown && evt.shiftKey){
+
+				if (pastePreview) {
+					pastePreview.x = cell.x;
+					pastePreview.y = cell.y;
+					addChild(pastePreview);
+					return;
+				}
+
+				//for users who started pressing shift too late
+				if (isMouseDown && !isShiftMouseDown && evt.shiftKey) {
 					isShiftMouseDown = true;
 				}
-				if (isShiftMouseDown) {
-					selectEnd = cell.getPoint()
+
+				if (isSelectDown) {
+					selectEnd = cell.getPoint();
+					previewSelection(cell);
+				} else if (isShiftMouseDown) {
+					selectEnd = cell.getPoint();
 					previewSelection(cell);
 					cell.addChild(previewSprite);
 				} else if (isMouseDown) {
@@ -145,26 +175,23 @@ package org.interguild.editor.grid {
 		}
 
 		private function previewCell(cell:EditorCell):void {
+			var currentChar:String = EditorPage.currentTile;
+			if (currentChar == TileList.SELECTION_TOOL_CHAR)
+				return;
+
 			//update preview image for mouseovers
-			if (previewChar != EditorPage.currentTile) {
-				previewChar = EditorPage.currentTile;
+			if (previewChar != currentChar) {
+				previewChar = currentChar;
 				var bd:BitmapData = TileList.getIcon(previewChar);
 				if (bd == null)
 					return;
 				previewSprite.removeChildren();
 				previewSprite.addChild(new Bitmap(bd));
 
-				var toRender:Sprite = new Sprite();
-				toRender.graphics.beginFill(0, 0);
-				toRender.graphics.drawRect(0, 0, EditorCell.CELL_WIDTH, EditorCell.CELL_HEIGHT);
-				toRender.graphics.endFill();
-				toRender.graphics.beginBitmapFill(bd);
-				toRender.graphics.drawRect(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
-				toRender.graphics.endFill();
-
 				previewBD = new BitmapData(cell.width, cell.height, true, 0x00000000);
-				previewBD.draw(toRender);
-				addChild(previewSquare); //make sure it's on top of display list
+				var sourceRect:Rectangle = new Rectangle(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
+				var destPoint:Point = new Point(0, 0);
+				previewBD.copyPixels(bd, sourceRect, destPoint);
 			}
 
 			//move preview image
@@ -173,12 +200,13 @@ package org.interguild.editor.grid {
 		}
 
 		private function previewSelection(cell:EditorCell):void {
-			if (selectStart.equals(selectEnd)) {
+			if (selectStart.equals(selectEnd) && !isSelectDown) {
 				previewSquare.visible = false;
 				previewCell(cell);
 			} else {
 				previewSprite.visible = false;
 
+				//determine selection dimensions
 				var rect:Rectangle = new Rectangle();
 				rect.width = (selectEnd.x - selectStart.x) * EditorCell.CELL_WIDTH;
 				rect.height = (selectEnd.y - selectStart.y) * EditorCell.CELL_HEIGHT;
@@ -194,23 +222,27 @@ package org.interguild.editor.grid {
 				rect.height = Math.abs(rect.height);
 				rect.width += EditorCell.CELL_WIDTH;
 				rect.height += EditorCell.CELL_HEIGHT;
-				trace(rect.width);
-				trace(rect.height);
-				trace("----");
 
-				previewSquare.graphics.clear();
-				previewSquare.graphics.beginBitmapFill(previewBD);
-				previewSquare.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
-				previewSquare.graphics.endFill();
-
-				previewSquare.visible = true;
+				if (isSelectDown) {
+					selectionSquare.resize(rect);
+					selectionSquare.visible = true;
+					addChild(selectionSquare);
+				} else {
+					previewSquare.graphics.clear();
+					previewSquare.graphics.beginBitmapFill(previewBD);
+					previewSquare.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
+					previewSquare.graphics.endFill();
+					previewSquare.visible = true;
+				}
 			}
 		}
 
-		private function clickCell(cell:EditorCell):void {
-			switch (EditorPage.currentTile) {
-				case TileList.SELECTION_TOOL_CHAR:
-					break;
+		private function clickCell(cell:EditorCell, tile:String = null):void {
+			var char:String = tile;
+			if (char == null) {
+				char = EditorPage.currentTile;
+			}
+			switch (char) {
 				case TileList.ERASER_TOOL_CHAR:
 					cell.clearTile();
 					if (cell == currentPlayerTile)
@@ -218,13 +250,21 @@ package org.interguild.editor.grid {
 					previewCell(cell);
 					break;
 				default:
-					cell.setTile(EditorPage.currentTile);
-					if (EditorPage.currentTile == Player.LEVEL_CODE_CHAR) {
+					cell.setTile(char);
+					if (char == Player.LEVEL_CODE_CHAR) {
 						if (currentPlayerTile != null)
 							currentPlayerTile.clearTile(isMouseDown);
 						currentPlayerTile = cell;
 					}
 					break;
+			}
+		}
+
+		public function deselect(onCopy:Boolean = false):void {
+			selectionSquare.visible = false;
+			if (!onCopy && pastePreview) {
+				removeChild(pastePreview);
+				pastePreview = null;
 			}
 		}
 
@@ -253,6 +293,81 @@ package org.interguild.editor.grid {
 
 		private function onOut(evt:MouseEvent):void {
 			previewSprite.visible = false;
+		}
+
+		public function copy(toCut:Boolean = false):void {
+			//selection boundaries
+			var top:int = Math.min(selectStart.y, selectEnd.y);
+			var left:int = Math.min(selectStart.x, selectEnd.x);
+			var bottom:int = Math.max(selectStart.y, selectEnd.y);
+			var right:int = Math.max(selectStart.x, selectEnd.x);
+			
+			//image dimensions
+			var width:Number = (selectEnd.x - selectStart.x) * EditorCell.CELL_WIDTH;
+			var height:Number = (selectEnd.y - selectStart.y) * EditorCell.CELL_HEIGHT;
+			width = Math.abs(width);
+			height = Math.abs(height);
+			width += EditorCell.CELL_WIDTH;
+			height += EditorCell.CELL_HEIGHT;
+
+			//will store copy data as text, and create image preview of clipboard
+			clipboard = "";
+			var image:BitmapData = new BitmapData(width, height, true, 0x00000000);
+			
+			//iterate through copy region
+			for (var iy:int = top; iy <= bottom; iy++) {
+				for (var ix:int = left; ix <= right; ix++) {
+					var cell:EditorCell = EditorCell(cells[iy][ix]);
+					
+					//add cell to clipboard text
+					clipboard += cell.char;
+					
+					//add cell image to image preview
+					var sizeToCopy:Rectangle = new Rectangle(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
+					var locToCopy:Point = new Point((ix - left) * EditorCell.CELL_WIDTH, (iy - top) * EditorCell.CELL_HEIGHT);
+					var bdToCopy:BitmapData = TileList.getIcon(cell.char);
+					if (cell.char != TileList.ERASER_TOOL_CHAR && bdToCopy != null) {
+						image.copyPixels(bdToCopy, sizeToCopy, locToCopy);
+					}
+					
+					//if cutting, delete the cell
+					if(toCut)
+						cell.clearTile();
+				}
+				clipboard += "\n";
+			}
+			
+			//finalize preview image
+			pastePreview = new Bitmap(image);
+			pastePreview.alpha = PREVIEW_ALPHA;
+			addChild(pastePreview);
+
+			//make the selection go away so that user can paste
+			deselect(true);
+		}
+		
+		public function cut():void{
+			copy(true); // ~~magic~~ // :o
+		}
+
+		private function paste(cell:EditorCell):void {
+			var pasteLoc:Point = cell.getPoint();
+
+			var iy:int = pasteLoc.y;
+			var ix:int = pasteLoc.x;
+			var i:uint = 0;
+			while (i < clipboard.length) {
+				var char:String = clipboard.charAt(i);
+				if (char == "\n") {
+					ix = pasteLoc.x;
+					iy++;
+				} else {
+					var c:EditorCell = EditorCell(cells[iy][ix]);
+					clickCell(c, char);
+					ix++;
+				}
+				i++;
+			}
 		}
 
 		public function clone():EditorLevel {

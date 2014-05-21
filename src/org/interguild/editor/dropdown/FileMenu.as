@@ -136,11 +136,11 @@ package org.interguild.editor.dropdown {
 		}
 		
 		private function clickCopy(evt:MouseEvent):void{
-			trace("COPY SELECTION");
+			editor.copy();
 		}
 		
 		private function clickCut(evt:MouseEvent):void{
-			trace("CUT SELECTION");
+			editor.cut();
 		}
 		
 		private function clickPaste(evt:MouseEvent):void{

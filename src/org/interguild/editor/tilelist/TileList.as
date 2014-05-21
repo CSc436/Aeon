@@ -2,10 +2,10 @@ package org.interguild.editor.tilelist {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.Player;
@@ -38,22 +38,22 @@ package org.interguild.editor.tilelist {
 		public static const ERASER_TOOL_CHAR:String = " ";
 
 		private static var map:Object = new Object();
-		
+
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
-		
+
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
 		private var nextY:uint = 0; //used for adding tiles to the list
-		
+
 		private var editor:EditorPage;
-		
+
 		public function TileList(editor:EditorPage) {
 			this.editor = editor;
 			x = POSITION_X;
 			y = POSITION_Y;
-			
+
 			//init bg
 			graphics.beginFill(BG_COLOR);
 			graphics.drawRoundRect(0, 0, BG_WIDTH, BG_HEIGHT, BG_CORNER_RADIUS, BG_CORNER_RADIUS);
@@ -86,7 +86,7 @@ package org.interguild.editor.tilelist {
 		private function initList():void {
 			map[SELECTION_TOOL_CHAR] = new SelectionToolSprite();
 			addItem(new TileListItem("Selection Tool", SELECTION_TOOL_CHAR));
-			
+
 			map[ERASER_TOOL_CHAR] = new SelectionToolSprite();
 			addItem(new TileListItem("Eraser Tool", ERASER_TOOL_CHAR));
 
@@ -95,7 +95,7 @@ package org.interguild.editor.tilelist {
 			currentSelection.select();
 			EditorPage.currentTile = currentSelection.getCharCode();
 			addItem(currentSelection);
-			
+
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
 			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
 
@@ -122,7 +122,7 @@ package org.interguild.editor.tilelist {
 
 			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
 			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
-			
+
 			map[DynamiteCrate.LEVEL_CODE_CHAR] = DynamiteCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteCrate.LEVEL_CODE_CHAR));
 		}
@@ -130,9 +130,13 @@ package org.interguild.editor.tilelist {
 		private function onClick(evt:MouseEvent):void {
 			if (evt.target is TileListItem) {
 				currentSelection.deselect();
+				var lastChar:String = currentSelection.getCharCode();
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
-				EditorPage.currentTile = currentSelection.getCharCode();
+				EditorPage.currentTile = currentSelection.getCharCode();;
+				if (lastChar == TileList.SELECTION_TOOL_CHAR) {
+					editor.deselect();
+				}
 			}
 		}
 

@@ -24,9 +24,6 @@ package org.interguild.editor {
 		
 		public static function set currentTile(s:String):void{
 			selectedTile = s;
-			if(s == TileList.SELECTION_TOOL_CHAR){
-				//do selection tool stuff
-			}
 		}
 
 		private var loader:Loader;
@@ -138,6 +135,21 @@ package org.interguild.editor {
 		public function gotoMainMenu():void {
 			Aeon.getMe().gotoMainMenu();
 		}
+		
+		public function copy():void{
+			levelPane.level.copy();
+		}
+		
+		public function cut():void{
+			levelPane.level.cut();
+		}
+		
+		/**
+		 * TileList notifies EditorLevel when it's time to deselect
+		 */
+		public function deselect():void{
+			levelPane.level.deselect();
+		}
 
 		/**
 		 * This function ask the grid for the code of the level so we may
@@ -145,13 +157,6 @@ package org.interguild.editor {
 		 */
 		public function getLevelCode():String {
 			return levelPane.level.getLevelCode();
-		}
-
-		/**
-		 * listener that clears the grid
-		 */
-		private function clearClick(e:MouseEvent):void {
-//			tabsContainer.getCurrentGridContainer().getGrid().clearGrid();
 		}
 
 		/**
