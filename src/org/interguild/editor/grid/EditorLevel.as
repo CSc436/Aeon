@@ -5,7 +5,7 @@ package org.interguild.editor.grid {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -301,7 +301,7 @@ package org.interguild.editor.grid {
 			var left:int = Math.min(selectStart.x, selectEnd.x);
 			var bottom:int = Math.max(selectStart.y, selectEnd.y);
 			var right:int = Math.max(selectStart.x, selectEnd.x);
-			
+
 			//image dimensions
 			var width:Number = (selectEnd.x - selectStart.x) * EditorCell.CELL_WIDTH;
 			var height:Number = (selectEnd.y - selectStart.y) * EditorCell.CELL_HEIGHT;
@@ -313,15 +313,15 @@ package org.interguild.editor.grid {
 			//will store copy data as text, and create image preview of clipboard
 			clipboard = "";
 			var image:BitmapData = new BitmapData(width, height, true, 0x00000000);
-			
+
 			//iterate through copy region
 			for (var iy:int = top; iy <= bottom; iy++) {
 				for (var ix:int = left; ix <= right; ix++) {
 					var cell:EditorCell = EditorCell(cells[iy][ix]);
-					
+
 					//add cell to clipboard text
 					clipboard += cell.char;
-					
+
 					//add cell image to image preview
 					var sizeToCopy:Rectangle = new Rectangle(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
 					var locToCopy:Point = new Point((ix - left) * EditorCell.CELL_WIDTH, (iy - top) * EditorCell.CELL_HEIGHT);
@@ -329,14 +329,14 @@ package org.interguild.editor.grid {
 					if (cell.char != TileList.ERASER_TOOL_CHAR && bdToCopy != null) {
 						image.copyPixels(bdToCopy, sizeToCopy, locToCopy);
 					}
-					
+
 					//if cutting, delete the cell
-					if(toCut)
+					if (toCut)
 						cell.clearTile();
 				}
 				clipboard += "\n";
 			}
-			
+
 			//finalize preview image
 			pastePreview = new Bitmap(image);
 			pastePreview.alpha = PREVIEW_ALPHA;
@@ -345,8 +345,8 @@ package org.interguild.editor.grid {
 			//make the selection go away so that user can paste
 			deselect(true);
 		}
-		
-		public function cut():void{
+
+		public function cut():void {
 			copy(true); // ~~magic~~ // :o
 		}
 
