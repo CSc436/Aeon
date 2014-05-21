@@ -265,7 +265,7 @@ package org.interguild.game.collision {
 					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
 						toRemove(otherObject);
 					} else if (p) { // player lands on object
-						p.isStanding = true;
+						p.landedOnGround();
 					} else { // something else lands on object
 						deactivateObjects.push(activeObject);
 					}

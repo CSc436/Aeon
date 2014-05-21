@@ -225,7 +225,7 @@ package org.interguild.game.level {
 				camera.addChild(debugSprite);
 			}
 
-			player.wasJumping = true;
+			player.pressedJump = true;
 
 			timer.start();
 		}
@@ -235,7 +235,7 @@ package org.interguild.game.level {
 		}
 
 		public function continueGame():void {
-			player.wasJumping = true;
+			player.pressedJump = true;
 			timer.start();
 		}
 
@@ -291,10 +291,7 @@ package org.interguild.game.level {
 		}
 
 		private function update():void {
-			if (!player.isDead) {
-				//update player
-				player.onGameLoop();
-			}
+			player.onGameLoop();
 
 			// restart the game after the player has been dead after time specified
 			if (player.isDead) {
@@ -307,13 +304,8 @@ package org.interguild.game.level {
 					Aeon.getMe().playLastLevel();
 				}
 			}
-			// update animations
-			player.updateAnimation();
 
-			player.frameCounter++; // update counter for game frames
-
-			player.reset();
-
+//			player.frameCounter++; // update counter for game frames
 
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -373,6 +365,11 @@ package org.interguild.game.level {
 					GameObject(collisionGrid.activeObjects[i]).finishGameLoop();
 				}
 			}
+
+			//update camera
+			if (!player.isDead)
+				camera.updateCamera();
+			
 			CONFIG::DEBUG { //draw collision wireframes
 				if (isDebuggingMode) {
 					var s:Sprite = player.drawHitBox(true);
@@ -380,10 +377,6 @@ package org.interguild.game.level {
 						debugSprite.addChild(s);
 				}
 			}
-
-			//update camera
-			if (!player.isDead)
-				camera.updateCamera();
 		}
 	}
 }
