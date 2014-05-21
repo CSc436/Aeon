@@ -110,8 +110,10 @@ package org.interguild.editor.grid {
 				selectionSquare.visible = false;
 				selectStart = cell.getPoint();
 				selectEnd = selectStart;
+				// if user is pasting, and they aren't canceling it with shift key
 				if (pastePreview && !evt.shiftKey) {
 					paste(cell);
+						//if user is selecting, or they cancelled their paste with shift key
 				} else if (EditorPage.currentTile == TileList.SELECTION_TOOL_CHAR || (pastePreview && evt.shiftKey)) {
 					isSelectDown = true;
 					if (pastePreview) {
@@ -119,18 +121,21 @@ package org.interguild.editor.grid {
 						pastePreview = null;
 					}
 					previewSelection(cell);
+						//if user is shift-clicking a tile
 				} else if (evt.shiftKey) {
 					isShiftMouseDown = true;
 					previewSelection(cell);
 				} else {
+					//user is placing down a tile
 					clickCell(cell);
 				}
 			}
 		}
 
 		private function onUp(evt:MouseEvent):void {
+			//if user was shift-clicking a tile, then commit the changes
 			if (isShiftMouseDown && !isSelectDown) {
-				clickSelection();
+				fillSelection();
 			}
 			isMouseDown = false;
 			isSelectDown = false;
@@ -147,47 +152,62 @@ package org.interguild.editor.grid {
 			if (evt.target is EditorCell) {
 				var cell:EditorCell = EditorCell(evt.target);
 
+				//user is moving around the pastePreview before pasting
 				if (pastePreview) {
 					pastePreview.x = cell.x;
 					pastePreview.y = cell.y;
 					addChild(pastePreview);
-					return;
-				}
-
-				//for users who started pressing shift too late
-				if (isMouseDown && !isShiftMouseDown && evt.shiftKey) {
-					isShiftMouseDown = true;
-				}
-
-				if (isSelectDown) {
-					selectEnd = cell.getPoint();
-					previewSelection(cell);
-				} else if (isShiftMouseDown) {
-					selectEnd = cell.getPoint();
-					previewSelection(cell);
-					cell.addChild(previewSprite);
-				} else if (isMouseDown) {
-					clickCell(cell);
 				} else {
-					previewCell(cell);
+					//if user started pressing shift too late, pretend like they pressed it on time
+					if (isMouseDown && !isShiftMouseDown && evt.shiftKey) {
+						isShiftMouseDown = true;
+					}
+
+					//if user is making selection, update selection
+					if (isSelectDown) {
+						selectEnd = cell.getPoint();
+						previewSelection(cell);
+							//if user is shift-clicking, update preview
+					} else if (isShiftMouseDown) {
+						selectEnd = cell.getPoint();
+						previewSelection(cell);
+						cell.addChild(previewSprite);
+							//if user is click-and-dragging over many cells
+					} else if (isMouseDown) {
+						clickCell(cell);
+							//if user is moving the preview cell around
+					} else {
+						previewCell(cell);
+					}
 				}
 			}
 		}
 
+		/**
+		 * Shows a single-cell preview image of what it would look like
+		 * to place the currently selected tile over the given cell.
+		 *
+		 * When the selected tool has changed, it updates the preview
+		 * image, as well as the image used for the shift-click preview.
+		 */
 		private function previewCell(cell:EditorCell):void {
 			var currentChar:String = EditorPage.currentTile;
+			//if selection tool, don't show a preview
 			if (currentChar == TileList.SELECTION_TOOL_CHAR)
 				return;
 
-			//update preview image for mouseovers
+			//if we need to update the preview images
 			if (previewChar != currentChar) {
 				previewChar = currentChar;
 				var bd:BitmapData = TileList.getIcon(previewChar);
 				if (bd == null)
 					return;
+
+				//update preview cell image
 				previewSprite.removeChildren();
 				previewSprite.addChild(new Bitmap(bd));
 
+				//update shift-click preview image data
 				previewBD = new BitmapData(cell.width, cell.height, true, 0x00000000);
 				var sourceRect:Rectangle = new Rectangle(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
 				var destPoint:Point = new Point(0, 0);
@@ -199,14 +219,19 @@ package org.interguild.editor.grid {
 			cell.addChild(previewSprite);
 		}
 
+		/**
+		 * This function is used to update both the shift-click preview image
+		 * and the selection tool's highlight box.
+		 */
 		private function previewSelection(cell:EditorCell):void {
+			//if shift-click selection is only one tile, show single-cell preview image
 			if (selectStart.equals(selectEnd) && !isSelectDown) {
 				previewSquare.visible = false;
 				previewCell(cell);
 			} else {
 				previewSprite.visible = false;
 
-				//determine selection dimensions
+				//determine selection dimensions and position
 				var rect:Rectangle = new Rectangle();
 				rect.width = (selectEnd.x - selectStart.x) * EditorCell.CELL_WIDTH;
 				rect.height = (selectEnd.y - selectStart.y) * EditorCell.CELL_HEIGHT;
@@ -223,11 +248,12 @@ package org.interguild.editor.grid {
 				rect.width += EditorCell.CELL_WIDTH;
 				rect.height += EditorCell.CELL_HEIGHT;
 
+				//if using selection tool, how highlight box
 				if (isSelectDown) {
 					selectionSquare.resize(rect);
 					selectionSquare.visible = true;
 					addChild(selectionSquare);
-				} else {
+				} else { //if shift-clicking, show preview
 					previewSquare.graphics.clear();
 					previewSquare.graphics.beginBitmapFill(previewBD);
 					previewSquare.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
@@ -237,6 +263,11 @@ package org.interguild.editor.grid {
 			}
 		}
 
+		/**
+		 * Called whenever the user wants to set a tile to something.
+		 *
+		 * If `tile` is null, the currently selected tile will be used.
+		 */
 		private function clickCell(cell:EditorCell, tile:String = null):void {
 			var char:String = tile;
 			if (char == null) {
@@ -259,7 +290,22 @@ package org.interguild.editor.grid {
 					break;
 			}
 		}
+		
+		/**
+		 * Used by EditorLoader when loading in a level.
+		 */
+		public function setTileAt(char:String, row:uint, col:uint):void {
+			if (row < rows && col < cols) {
+				clickCell(EditorCell(cells[row][col]), char);
+			} else {
+				throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
+			}
+		}
 
+		/**
+		 * Called whenever it's time to deselect from the selection tool.
+		 * This event is also when it's time to turn off copy/paste.
+		 */
 		public function deselect(onCopy:Boolean = false):void {
 			selectionSquare.visible = false;
 			if (!onCopy && pastePreview) {
@@ -268,7 +314,11 @@ package org.interguild.editor.grid {
 			}
 		}
 
-		private function clickSelection():void {
+		/**
+		 * Fills the current selection with the current tile. This is currently
+		 * only used by the shift-click feature.
+		 */
+		private function fillSelection():void {
 			var incX:int = 1;
 			var incY:int = 1;
 			if (selectEnd.x < selectStart.x)
@@ -291,10 +341,18 @@ package org.interguild.editor.grid {
 			}
 		}
 
+		/**
+		 * This function is triggered when the MouseOut event is triggered
+		 * on the entire level (not every tile).
+		 */
 		private function onOut(evt:MouseEvent):void {
+			//if user's mouse leaves level, hide preview
 			previewSprite.visible = false;
 		}
 
+		/**
+		 * Assumes there is an active selection made.
+		 */
 		public function copy(toCut:Boolean = false):void {
 			//selection boundaries
 			var top:int = Math.min(selectStart.y, selectEnd.y);
@@ -350,6 +408,9 @@ package org.interguild.editor.grid {
 			copy(true); // ~~magic~~ // :o
 		}
 
+		/**
+		 * Assumes there's something that you can paste.
+		 */
 		private function paste(cell:EditorCell):void {
 			var pasteLoc:Point = cell.getPoint();
 
@@ -370,6 +431,9 @@ package org.interguild.editor.grid {
 			}
 		}
 
+		/**
+		 * Duplicates this level, tile by tile.
+		 */
 		public function clone():EditorLevel {
 			var temp:EditorLevel = new EditorLevel(rows, cols);
 			for (var i:uint = 0; i < temp.rows - 1; i++) {
@@ -384,14 +448,6 @@ package org.interguild.editor.grid {
 
 			}
 			return temp;
-		}
-
-		public function get levelWidth():uint {
-			return cols;
-		}
-
-		public function get levelHeight():uint {
-			return rows;
 		}
 
 		public function get horizontalScrollPosition():Number {
@@ -410,32 +466,6 @@ package org.interguild.editor.grid {
 			scrollPosY = n;
 		}
 
-
-		public function clearGrid():void {
-			removeChildren();
-			initGridCells();
-		}
-
-		public function getCell(x:int, y:int):EditorCell {
-			x = (x) / 32;
-			y = (y) / 32;
-			return cells[y][x]
-		}
-
-		/**
-		 * place a type on a specific cell
-		 */
-		public function placeTile(char:String, row:uint, col:uint):void {
-			if (row < rows && col < cols) {
-				EditorCell(cells[row][col]).setTile(char);
-			} else {
-				throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
-			}
-		}
-
-		/**
-		 * create a new grid
-		 */
 		private function initGridCells():void {
 			for (var i:uint = 0; i < rows; i++) {
 				for (var j:uint = 0; j < cols; j++) {
@@ -451,26 +481,6 @@ package org.interguild.editor.grid {
 			}
 		}
 
-		/**
-		 * print out the cell types using chars
-		 */
-		public function getLevelCode():String {
-			var s:String = "";
-			s += levelTitle + "\n";
-			s += cols + "x" + rows + "\n";
-
-			for (var r:uint = 0; r < rows; r++) {
-				for (var c:uint = 0; c < cols; c++) {
-					s += EditorCell(cells[r][c]).char;
-				}
-				s += "\n";
-			}
-			return s;
-		}
-
-		/**
-		 * resize the new grid to the new dimensions
-		 */
 		public function resize(newRows:uint, newCols:uint):void {
 			var i:uint, j:uint;
 			var c:EditorCell;
@@ -533,6 +543,20 @@ package org.interguild.editor.grid {
 				}
 			}
 			cols = newCols;
+		}
+
+		public function getLevelCode():String {
+			var s:String = "";
+			s += levelTitle + "\n";
+			s += cols + "x" + rows + "\n";
+
+			for (var r:uint = 0; r < rows; r++) {
+				for (var c:uint = 0; c < cols; c++) {
+					s += EditorCell(cells[r][c]).char;
+				}
+				s += "\n";
+			}
+			return s;
 		}
 	}
 }
