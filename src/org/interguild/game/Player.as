@@ -12,15 +12,18 @@ package org.interguild.game {
 	public class Player extends CollidableObject {
 		CONFIG::DEBUG {
 			private static const SPRITE_COLOR:uint = 0xFF0000;
-			private static const SPRITE_WIDTH:uint = 24;
-			private static const SPRITE_HEIGHT:uint = 40;
 		}
+			
+		public static const LEVEL_CODE_CHAR:String = '#';
+		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
+		private static const IS_SOLID:Boolean = true;
+		private static const HAS_GRAVITY:Boolean = true;
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
 
 		private static const CRAWLING_HEIGHT:uint = 32;
-		private static const STANDING_HEIGHT:uint = 40;
+		private static const STANDING_HEIGHT:uint = HITBOX_HEIGHT;
 
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
@@ -29,6 +32,7 @@ package org.interguild.game {
 		private static const RUN_FRICTION:Number = 2;
 
 		private static const JUMP_SPEED:Number = -20;
+		
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
 		public static const KNOCKBACK_HORIZONTAL:Number = 20;
 
@@ -56,12 +60,6 @@ package org.interguild.game {
 		private var prevSpeedY:Number = 0;
 		private var prevScaleX:Number = 1;
 
-		public static const LEVEL_CODE_CHAR:String = '#';
-		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
-
-		private static const IS_SOLID:Boolean = true;
-		private static const HAS_GRAVITY:Boolean = true;
-
 		public function Player() {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
@@ -87,7 +85,7 @@ package org.interguild.game {
 		private function drawPlayer():void {
 			CONFIG::DEBUG {
 				graphics.beginFill(SPRITE_COLOR);
-				graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
+				graphics.drawRect(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 				graphics.endFill();
 			}
 
@@ -118,6 +116,7 @@ package org.interguild.game {
 			newY += speedY;
 			updateHitBox();
 
+			//animation stuff
 			if (speedY > 6 && !isJumping) {
 				isFalling = true;
 			} else
