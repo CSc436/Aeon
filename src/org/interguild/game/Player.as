@@ -3,7 +3,7 @@ package org.interguild.game {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	
+
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.level.Level;
@@ -22,16 +22,13 @@ package org.interguild.game {
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
-
-		private static const CRAWLING_HEIGHT:uint = 32;
+		private static const CRAWLING_HEIGHT:uint = 28;
 		private static const STANDING_HEIGHT:uint = HITBOX_HEIGHT;
 
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
-
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
-
 		private static const JUMP_SPEED:Number = -20;
 
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
@@ -45,9 +42,9 @@ package org.interguild.game {
 		private static const WALKING_ANIMATION_Y:int = -8;
 
 		private static const CRAWLING_ANIMATION:MovieClip = new PlayerCrawlAnimation();
-		private static const CRAWLING_ANIMATION_X_RIGHT:int = -2;
-		private static const CRAWLING_ANIMATION_X_LEFT:int = 26;
-		private static const CRAWLING_ANIMATION_Y:int = -8;
+		private static const CRAWLING_ANIMATION_X_RIGHT:int = -18;
+		private static const CRAWLING_ANIMATION_X_LEFT:int = 42;
+		private static const CRAWLING_ANIMATION_Y:int = -20;
 
 		private static const JUMP_UP_ANIMATION:MovieClip = new PlayerJumpUpAnimation();
 		private static const JUMP_UP_ANIMATION_X_RIGHT:int = -8;
@@ -70,8 +67,6 @@ package org.interguild.game {
 		private static const DEATH_SPRITE_X_RIGHT:int = -2;
 		private static const DEATH_SPRITE_X_LEFT:int = 26;
 		private static const DEATH_SPRITE_Y:int = -8;
-
-		//SET VARIABLES
 
 		private var keys:KeyMan;
 
@@ -130,8 +125,15 @@ package org.interguild.game {
 
 			//draw hit box
 			CONFIG::DEBUG {
+				drawHitBox();
+			}
+		}
+
+		CONFIG::DEBUG {
+			private function drawHitBox():void {
+				graphics.clear();
 				graphics.beginFill(SPRITE_COLOR);
-				graphics.drawRect(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+				graphics.drawRect(0, 0, hitbox.width, hitbox.height);
 				graphics.endFill();
 			}
 		}
@@ -183,6 +185,25 @@ package org.interguild.game {
 					speedX = 0;
 			}
 
+			//crawl
+			if (keys.isKeyDown && !isCrawling && isOnGround) {
+				//start crawling
+				newY += (STANDING_HEIGHT - CRAWLING_HEIGHT);
+				hitbox.height = CRAWLING_HEIGHT;
+				isCrawling = true;
+				CONFIG::DEBUG {
+					drawHitBox();
+				}
+			} else if (!keys.isKeyDown && isCrawling) {
+				//stop crawling
+				newY -= (STANDING_HEIGHT - CRAWLING_HEIGHT);
+				hitbox.height = STANDING_HEIGHT;
+				isCrawling = false;
+				CONFIG::DEBUG {
+					drawHitBox();
+				}
+			}
+
 			//jump
 			if (keys.isKeySpace && isOnGround && !pressedJump) {
 				speedY = JUMP_SPEED;
@@ -217,10 +238,16 @@ package org.interguild.game {
 		public function updateAnimation():void {
 			if (isDead) {
 				//handle death animation
-			} else if (isRunning && isOnGround && !isCrawling) {
-				animateWalking();
+			} else if (isRunning && isOnGround) {
+				if (isCrawling)
+					animateCrawlWalking();
+				else
+					animateStandingWalking();
 			} else if (isOnGround) {
-				animateStanding();
+				if (isCrawling)
+					animateCrawlStill();
+				else
+					animateStandingStill();
 			} else {
 				animateJumpAndFall();
 			}
@@ -234,9 +261,9 @@ package org.interguild.game {
 				currentAnimation.visible = false;
 				currentAnimation = animation;
 				currentAnimationIsFacingRight = isFacingRight;
-				if(isFacingRight){
+				if (isFacingRight) {
 					positionAnimationRight();
-				}else{
+				} else {
 					positionAnimationLeft();
 				}
 				currentAnimation.visible = true;
@@ -247,8 +274,8 @@ package org.interguild.game {
 				}
 			}
 		}
-		
-		private function positionAnimationRight():void{
+
+		private function positionAnimationRight():void {
 			currentAnimation.scaleX = 1;
 			switch (currentAnimation) {
 				case WALKING_ANIMATION:
@@ -273,8 +300,8 @@ package org.interguild.game {
 					break;
 			}
 		}
-		
-		private function positionAnimationLeft():void{
+
+		private function positionAnimationLeft():void {
 			currentAnimation.scaleX = -1;
 			switch (currentAnimation) {
 				case WALKING_ANIMATION:
@@ -313,7 +340,8 @@ package org.interguild.game {
 			}
 		}
 
-		private function animateStanding():void {
+		private function animateStandingStill():void {
+			//jump land animation
 			if (currentAnimation == JUMP_PEAK_FALL_ANIMATION || currentAnimation == JUMP_UP_ANIMATION || currentAnimation == JUMP_LAND_ANIMATION) {
 				switchTo(JUMP_LAND_ANIMATION);
 				if (currentFrame <= currentAnimation.totalFrames) {
@@ -322,13 +350,26 @@ package org.interguild.game {
 					return;
 				}
 			}
+			//standing still animation
 			switchTo(WALKING_ANIMATION);
 			currentFrame = 1;
 			currentAnimation.gotoAndStop(currentFrame);
 		}
 
-		private function animateWalking():void {
+		private function animateCrawlStill():void {
+			switchTo(CRAWLING_ANIMATION);
+			currentFrame = 1;
+			currentAnimation.gotoAndStop(currentFrame);
+		}
+
+		private function animateStandingWalking():void {
 			switchTo(WALKING_ANIMATION);
+			currentAnimation.gotoAndStop(currentFrame);
+			incrementFrameWithLoop();
+		}
+
+		private function animateCrawlWalking():void {
+			switchTo(CRAWLING_ANIMATION);
 			currentAnimation.gotoAndStop(currentFrame);
 			incrementFrameWithLoop();
 		}
