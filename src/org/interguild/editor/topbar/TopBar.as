@@ -3,14 +3,14 @@ package org.interguild.editor.topbar {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+
 	import org.interguild.editor.EditorPage;
 	import org.interguild.menu.FancyButton;
 
 	public class TopBar extends Sprite {
 
 		private var editor:EditorPage;
-		
+
 		private var fileButton:FileMenu;
 
 		public function TopBar(editor:EditorPage) {
@@ -54,7 +54,9 @@ package org.interguild.editor.topbar {
 			var playGameButton:FancyButton = new FancyButton(up, over, hit);
 			playGameButton.x = 545;
 			playGameButton.y = 18;
-			playGameButton.addEventListener(MouseEvent.CLICK, editor.testGame);
+			playGameButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
+				editor.playLevel();
+			});
 			addChild(playGameButton);
 
 			//init publish button
@@ -74,12 +76,12 @@ package org.interguild.editor.topbar {
 			//todo make button publish to website
 			addChild(publishButton);
 		}
-		
-		public function toggleMenu():void{
+
+		public function toggleMenu():void {
 			fileButton.toggleMenu();
 		}
-		
-		public function hideMenu():void{
+
+		public function hideMenu():void {
 			fileButton.hideMenu();
 		}
 	}

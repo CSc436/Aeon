@@ -31,7 +31,7 @@ package org.interguild.game {
 		private static const MAX_RUN_SPEED:Number = 6;
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
-		private static const JUMP_SPEED:Number = -20;
+		private static const JUMP_SPEED:Number = -21.5;
 
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
 		public static const KNOCKBACK_HORIZONTAL:Number = 20;

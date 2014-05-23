@@ -6,7 +6,6 @@ LEVEL EDITOR
 		-need to design how this will look like
 		-then need to implement it
 	-Given new copy/paste experience, re-assess which buttons and icons we need for File Menu and top bar
-	-refactor keyboard input
 	-figure out how to best handle too many tabs
 	-make editor scroll to follow the mouse when click and dragging
 	-implement undo/redo

@@ -28,6 +28,7 @@ package org.interguild.editor {
 		}
 
 		private var loader:Loader;
+		private var keys:EditorKeyMan;
 
 		private var topBar:TopBar;
 		private var levelPane:EditorLevelPane;
@@ -37,7 +38,8 @@ package org.interguild.editor {
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
-			new EditorKeyMan(this, stage);
+			keys = new EditorKeyMan(this, stage);
+
 			initBG();
 
 			tileList = new TileList(this);
@@ -134,15 +136,19 @@ package org.interguild.editor {
 			topBar.hideMenu();
 			levelPane.level.cut();
 		}
-		
+
 		public function paste():void {
 			topBar.hideMenu();
 			levelPane.level.prepareToPaste();
 		}
 
+		/**
+		 * When the user presses delete when a selection is active,
+		 * clear every cell in the selection.
+		 */
 		public function deleteSelection():void {
 			topBar.hideMenu();
-			trace("todo");
+			levelPane.level.deleteSelection();
 		}
 
 		/**
@@ -156,16 +162,15 @@ package org.interguild.editor {
 		 * This function ask the grid for the code of the level so we may
 		 * save this code
 		 */
-		public function getLevelCode():String {
+		private function getLevelCode():String {
 			return levelPane.level.getLevelCode();
 		}
 
 		/**
 		 * This function deletes level editor and moves on to level page
 		 */
-		public function testGame(e:MouseEvent):void {
-			var s:String = getLevelCode();
-			Aeon.getMe().playLevelCode(s);
+		public function playLevel():void {
+			Aeon.getMe().playLevelCode(getLevelCode());
 		}
 
 		public function undo():void {
@@ -178,8 +183,22 @@ package org.interguild.editor {
 			trace("TODO");
 		}
 
+		/**
+		 * When Esc is pressed, open the file menu, so that the
+		 * user sees how to leave the level editor.
+		 */
 		public function toggleMenu():void {
 			topBar.toggleMenu();
+		}
+
+		public override function set visible(b:Boolean):void {
+			super.visible = b;
+			if (!b) {
+				deselect();
+				keys.deactivate();
+			} else {
+				keys.activate();
+			}
 		}
 	}
 }

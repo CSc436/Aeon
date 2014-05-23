@@ -355,6 +355,9 @@ package org.interguild.editor.levelpane {
 		 * Assumes there is an active selection made.
 		 */
 		public function copy(toCut:Boolean = false):void {
+			if(!selectionSquare.visible)
+				return;
+			
 			//selection boundaries
 			var top:int = Math.min(selectStart.y, selectEnd.y);
 			var left:int = Math.min(selectStart.x, selectEnd.x);
@@ -410,6 +413,10 @@ package org.interguild.editor.levelpane {
 			copy(true); // ~~magic~~ // :o
 		}
 		
+		/**
+		 * When user presses "Paste" load in the last thing
+		 * on the clipboard so that they can paste it.
+		 */
 		public function prepareToPaste():void{
 			if(pastePreviewOld){
 				deselect();
@@ -438,6 +445,28 @@ package org.interguild.editor.levelpane {
 					ix++;
 				}
 				i++;
+			}
+		}
+		
+		/**
+		 * Delete everything inside a selection
+		 */
+		public function deleteSelection():void{
+			if(!selectionSquare.visible)
+				return;
+			
+			//selection boundaries
+			var top:int = Math.min(selectStart.y, selectEnd.y);
+			var left:int = Math.min(selectStart.x, selectEnd.x);
+			var bottom:int = Math.max(selectStart.y, selectEnd.y);
+			var right:int = Math.max(selectStart.x, selectEnd.x);
+			
+			//iterate through copy region
+			for (var iy:int = top; iy <= bottom; iy++) {
+				for (var ix:int = left; ix <= right; ix++) {
+					var cell:EditorCell = EditorCell(cells[iy][ix]);
+					cell.clearTile();
+				}
 			}
 		}
 

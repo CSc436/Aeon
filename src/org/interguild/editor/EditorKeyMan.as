@@ -6,11 +6,22 @@ package org.interguild.editor {
 
 		private var editor:EditorPage;
 		private var isDown:Array = new Array();
+		private var stage:Stage;
 
 		public function EditorKeyMan(editor:EditorPage, stage:Stage) {
 			this.editor = editor;
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);//, false, 0, true);
-			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);//, false, 0, true);
+			this.stage = stage;
+			activate();
+		}
+
+		public function activate():void {
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		}
+
+		public function deactivate():void {
+			stage.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
+			stage.removeEventListener(KeyboardEvent.KEY_UP, onKeyUp);
 		}
 
 		private function onKeyDown(evt:KeyboardEvent):void {
@@ -38,19 +49,22 @@ package org.interguild.editor {
 							editor.undo();
 						break;
 					case 67: //CTRL + C
-						if(isNotDown)
+						if (isNotDown)
 							editor.copy();
 						break;
 					case 88: //CTRL + X
-						if(isNotDown)
+						if (isNotDown)
 							editor.cut();
 						break;
 					case 86: //CTRL + V
-						if(isNotDown)
+						if (isNotDown)
 							editor.paste();
 						break;
 					case 68: //CTRL + D
 						editor.deselect();
+						break;
+					case 13: //CTRL + ENTER
+						editor.playLevel();
 						break;
 					default:
 						trace(evt.keyCode);
@@ -66,6 +80,8 @@ package org.interguild.editor {
 					case 27: //Esc key
 						if (isNotDown)
 							editor.toggleMenu();
+						break;
+					case 32: //spacebar
 						break;
 				}
 			}
