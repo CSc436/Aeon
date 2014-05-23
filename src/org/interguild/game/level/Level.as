@@ -72,7 +72,7 @@ package org.interguild.game.level {
 			//init background
 			bg = new LevelBackground(widthInPixels, heightInPixels);
 			addChild(bg);
-			
+
 			//init portals list
 			portals = new Vector.<FinishLine>();
 
@@ -119,13 +119,13 @@ package org.interguild.game.level {
 		public function finishLoading():void {
 			tv.finishTerrain();
 			hud.updateMax(collectableCount);
-			if(hud.maxCollected == 0)
+			if (hud.maxCollected == 0)
 				openPortal();
 		}
 
 		public function grabbedCollectable():void {
 			hud.increaseCollected();
-			if(hud.collected == hud.maxCollected)
+			if (hud.collected == hud.maxCollected)
 				openPortal();
 		}
 
@@ -162,7 +162,7 @@ package org.interguild.game.level {
 		}
 
 		public function openPortal():void {
-			for each(var p:FinishLine in portals){
+			for each (var p:FinishLine in portals) {
 				p.activate();
 			}
 		}
@@ -286,26 +286,12 @@ package org.interguild.game.level {
 		private function onGameLoop(evt:TimerEvent):void {
 			update();
 			collisions();
-			cleanup();
 			collisionGrid.handleRemovals(camera);
+			cleanup();
 		}
 
 		private function update():void {
 			player.onGameLoop();
-
-			// restart the game after the player has been dead after time specified
-			if (player.isDead) {
-				this.timeDead++;
-				if (40 == timeDead) {
-					this.stage.focus = stage;
-					// This is hardcoded right now, but we probably want some kind of
-					// global reference to the current file so that we know what level
-					// needs to be restarted
-					Aeon.getMe().playLastLevel();
-				}
-			}
-
-//			player.frameCounter++; // update counter for game frames
 
 			//update active objects
 			var len:uint = collisionGrid.activeObjects.length;
@@ -327,50 +313,38 @@ package org.interguild.game.level {
 				}
 			}
 
-
-			//detect collisions for player
+			//update everyone's positions
 			collisionGrid.updateObject(player, false);
-			var index:int = collisionGrid.activeObjects.indexOf(player);
-			if (index != -1) {
-				collisionGrid.activeObjects.splice(index, 1);
-			}
-
-
-			//detect collisions for active objects
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
 				var obj:GameObject = collisionGrid.activeObjects[i];
 				if (obj is CollidableObject) {
-					//TODO if obj is no longer active, pass true below, rather than false
 					collisionGrid.updateObject(CollidableObject(obj), false);
 				}
 			}
 
 			//test and handle collisions
-			collisionGrid.detectAndHandleCollisions(player)
-			if (collisionGrid.activeObjects.length > 0) {
-				for (i = 0; i < collisionGrid.activeObjects.length; i++) {
-					collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
-				}
+			collisionGrid.detectAndHandleCollisions(player);
+			len = collisionGrid.activeObjects.length;
+			for (i = 0; i < len; i++) {
+				collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
 			}
-
-
 		}
 
 		private function cleanup():void {
 			//finish game loops
 			player.finishGameLoop();
-			if (collisionGrid.activeObjects.length > 0) {
-				for (var i:uint = 0; i < collisionGrid.activeObjects.length; i++) {
-					GameObject(collisionGrid.activeObjects[i]).finishGameLoop();
-				}
+			var len:uint = collisionGrid.activeObjects.length;
+			for (var i:uint = 0; i < len; i++) {
+				GameObject(collisionGrid.activeObjects[i]).finishGameLoop();
 			}
 
 			//update camera
 			if (!player.isDead)
 				camera.updateCamera();
-			
-			CONFIG::DEBUG { //draw collision wireframes
+
+			//if debugging, draw collision wireframes
+			CONFIG::DEBUG {
 				if (isDebuggingMode) {
 					var s:Sprite = player.drawHitBox(true);
 					if (s)

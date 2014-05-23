@@ -90,11 +90,11 @@ package org.interguild.game {
 			var cameraY:int = -player.y - player.height / 2 + Aeon.STAGE_HEIGHT / 2.0;
 			
 			//stop camera from going too far
-			if (cameraX + width < Aeon.STAGE_WIDTH) {
-				cameraX = Aeon.STAGE_WIDTH - width;
+			if (cameraX + levelWidth < Aeon.STAGE_WIDTH) {
+				cameraX = Aeon.STAGE_WIDTH - levelWidth;
 			}
-			if ( cameraY + height < Aeon.STAGE_HEIGHT ) {
-				cameraY = Aeon.STAGE_HEIGHT - height;
+			if ( cameraY + levelHeight < Aeon.STAGE_HEIGHT ) {
+				cameraY = Aeon.STAGE_HEIGHT - levelHeight;
 			}
 			if (cameraX > 0) {
 				cameraX = 0;

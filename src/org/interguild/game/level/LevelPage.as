@@ -28,7 +28,7 @@ package org.interguild.game.level {
 		}
 
 		CONFIG::OFFLINE {
-			public static const TEST_LEVEL_FILE:String = "../gamesaves/coollevel.txt";
+			public static const TEST_LEVEL_FILE:String = "../gamesaves/deathtest.txt";
 		}
 
 		private var level:Level;
@@ -77,6 +77,14 @@ package org.interguild.game.level {
 			pauseMenu = new LevelPauseMenu();
 			pauseMenu.visible = false;
 			addChild(pauseMenu);
+		}
+		
+		/**
+		 * This is called when a new level is about to be loaded
+		 * and this one needs to shutdown
+		 */
+		public function shutdown():void{
+			level.pauseGame();
 		}
 
 		private function onLoadError(e:Array):void {

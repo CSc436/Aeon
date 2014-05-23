@@ -138,8 +138,6 @@ package org.interguild.game.collision {
 			return Math.sqrt((distx * distx) + (disty * disty));
 		}
 
-
-
 		/**
 		 * Handle collisions!
 		 */
@@ -202,15 +200,10 @@ package org.interguild.game.collision {
 			activeObject.setCollidedWith(otherObject);
 			otherObject.setCollidedWith(activeObject);
 			var p:Player = null;
-//			var a:Arrow = null;
-//			var explosion:Explosion = null
 			var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
 			var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
 			var otherBoxCurr:Rectangle = otherObject.hitbox;
-
-			//NOTE: just because this method was called, it doesn't mean that there was a collision
-			//^^^ what????
 
 			// get dirction of collision
 			var direction:uint = Direction.determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
@@ -327,8 +320,13 @@ package org.interguild.game.collision {
 			for (var i:int = 0; i < removalObjects.length; i++) {
 				var r:CollidableObject = CollidableObject(removalObjects[i]);
 
-				if (!(r is Player))
-					camera.removeChild(r);
+				if (!(r is Player)) {
+					try {
+						camera.removeChild(r);
+					} catch (e:ArgumentError) {
+						trace(e);
+					}
+				}
 
 				destroyObject(r);
 			}

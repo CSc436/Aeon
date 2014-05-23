@@ -3,7 +3,8 @@ package org.interguild.game {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-
+	
+	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.level.Level;
@@ -19,6 +20,7 @@ package org.interguild.game {
 		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
+		private static const DEATH_DELAY:uint = 40;
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
@@ -62,19 +64,27 @@ package org.interguild.game {
 		private static const JUMP_LAND_ANIMATION_X_RIGHT:int = -8;
 		private static const JUMP_LAND_ANIMATION_X_LEFT:int = 32;
 		private static const JUMP_LAND_ANIMATION_Y:int = -13;
-
+		
 		private static const DEATH_SPRITE:Bitmap = new Bitmap(new PlayerDeathSprite());
-		private static const DEATH_SPRITE_X_RIGHT:int = -2;
-		private static const DEATH_SPRITE_X_LEFT:int = 26;
-		private static const DEATH_SPRITE_Y:int = -8;
+		private static const DEATH_ANIMATION_X_RIGHT:int = -8;
+		private static const DEATH_ANIMATION_X_LEFT:int = 32;
+		private static const DEATH_ANIMATION_Y:int = -13;
+		private static const MIN_DEATH_SPEED:Number = 0.25;
+		private static const MAX_ADDITIONAL_SPEED:Number = 1;
+		private static const MIN_DEATH_ROTATION:Number = 4;
+		private static const MAX_ADDITIONAL_ROTATION:Number = 4;
 
 		private var keys:KeyMan;
 
 		private var currentAnimation:MovieClip;
 		private var currentAnimationIsFacingRight:Boolean;
-		private var deathSprite:Bitmap;
 		private var isRunning:Boolean;
 		private var isJumping:Boolean;
+
+		private var deathAnimation:MovieClip = new MovieClip();
+		private var deathSpeedX:Number;
+		private var deathSpeedY:Number;
+		private var deathRotation:Number;
 
 		private var isOnGround:Boolean;
 		private var isCrawling:Boolean;
@@ -118,10 +128,11 @@ package org.interguild.game {
 			JUMP_LAND_ANIMATION.visible = false;
 			addChild(JUMP_LAND_ANIMATION);
 
-			DEATH_SPRITE.x = DEATH_SPRITE_X_RIGHT;
-			DEATH_SPRITE.y = DEATH_SPRITE_Y;
-			DEATH_SPRITE.visible = false;
-			addChild(DEATH_SPRITE);
+			deathAnimation.addChild(DEATH_SPRITE);
+			DEATH_SPRITE.x = DEATH_ANIMATION_X_RIGHT;
+			DEATH_SPRITE.y = DEATH_ANIMATION_Y;
+			deathAnimation.visible = false;
+			addChild(deathAnimation);
 
 			//draw hit box
 			CONFIG::DEBUG {
@@ -150,17 +161,27 @@ package org.interguild.game {
 		}
 
 		public override function onGameLoop():void {
-			if (isDead)
-				return;
+			if (isDead) {
+				updateDeath();
+			} else {
+				updateKeys();
+				updateGravity();
+				updateMaxSpeeds();
 
-			updateKeys();
-			updateGravity();
-			updateMaxSpeeds();
+				isOnGround = false;
+				newX += speedX;
+				newY += speedY;
+				updateHitBox();
+			}
+		}
 
-			isOnGround = false;
-			newX += speedX;
-			newY += speedY;
-			updateHitBox();
+		private var deathTimer:uint = 0;
+
+		private function updateDeath():void {
+			deathTimer++;
+			if (deathTimer >= DEATH_DELAY) {
+				Aeon.getMe().playLastLevel();
+			}
 		}
 
 		private function updateKeys():void {
@@ -237,7 +258,7 @@ package org.interguild.game {
 
 		public function updateAnimation():void {
 			if (isDead) {
-				//handle death animation
+				animateDeath();
 			} else if (isRunning && isOnGround) {
 				if (isCrawling)
 					animateCrawlWalking();
@@ -390,10 +411,46 @@ package org.interguild.game {
 				incrementFrameNoLoop();
 			}
 		}
+		
+		private function animateDeath():void {
+			if (!deathAnimation.visible) {
+				currentAnimation.visible = false;
+				deathAnimation.visible = true;
+				if (isFacingRight) {
+					deathAnimation.scaleX = 1;
+//					DEATH_ANIMATION.x = DEATH_ANIMATION_X_RIGHT;
+				} else {
+					deathAnimation.scaleX = -1;
+//					DEATH_ANIMATION.x = DEATH_ANIMATION_X_LEFT;
+				}
+				CONFIG::DEBUG {
+					DEATH_ANIMATION.alpha = ANIMATION_ALPHA;
+				}
+//				DEATH_ANIMATION.graphics.beginFill(0);
+//				DEATH_ANIMATION.graphics.drawRect(-2, -2, 4, 4);
+//				DEATH_ANIMATION.graphics.endFill();
+//				DEATH_ANIMATION.alpha = 0.1;
+			}
+			deathAnimation.x += deathSpeedX;
+			deathAnimation.y += deathSpeedY;
+			deathAnimation.rotation += deathRotation;
+		}
 
 		public override function onKillEvent(level:Level):void {
-			trace("YOU DEAD");
 			isDead = true;
+			deathAnimation.x += hitbox.width / 2;
+			deathAnimation.y += hitbox.height / 2;
+			DEATH_SPRITE.x -= hitbox.width / 2;
+			DEATH_SPRITE.y -= hitbox.height / 2;
+			deathSpeedX = MAX_ADDITIONAL_SPEED * Math.random() + MIN_DEATH_SPEED;
+			if(Math.random() > 0.5)
+				deathSpeedX *= -1;
+			deathSpeedY = MAX_ADDITIONAL_SPEED * Math.random() + MIN_DEATH_SPEED;
+			if(Math.random() > 0.5)
+				deathSpeedY *= -1;
+			deathRotation = MAX_ADDITIONAL_ROTATION * Math.random() + MIN_DEATH_ROTATION;
+			if(Math.random() > 0.5)
+				deathRotation *= -1;
 		}
 	}
 }

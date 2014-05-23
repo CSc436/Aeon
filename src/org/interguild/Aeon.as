@@ -171,13 +171,10 @@ package org.interguild {
 			currentPage = editorPage;
 		}
 
-//		public function getLevelPage():LevelPage {
-//			return this.levelPage;
-//		}
-
 		public function hideCurrentPage():void {
 			currentPage.visible = false;
 			if (currentPage == levelPage) {
+				levelPage.shutdown();
 				removeChild(levelPage);
 				levelPage = null;
 			}

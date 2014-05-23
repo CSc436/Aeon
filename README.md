@@ -12,7 +12,6 @@ LEVEL EDITOR
 
 GAME
 	-import new crawling animation //do at home, requires fonts and many programs
-	-player death animation //todo next
 	-ability to move camera with facingright and up and down
 	-refactor camera //do at home, may require research
 	-refactor how projectiles are thrown
