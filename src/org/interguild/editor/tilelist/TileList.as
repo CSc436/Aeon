@@ -128,15 +128,13 @@ package org.interguild.editor.tilelist {
 		}
 
 		private function onClick(evt:MouseEvent):void {
+			editor.deselect();
 			if (evt.target is TileListItem) {
 				currentSelection.deselect();
 				var lastChar:String = currentSelection.getCharCode();
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
 				EditorPage.currentTile = currentSelection.getCharCode();;
-				if (lastChar == TileList.SELECTION_TOOL_CHAR) {
-					editor.deselect();
-				}
 			}
 		}
 

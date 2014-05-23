@@ -1,15 +1,17 @@
-package org.interguild.editor {
+package org.interguild.editor.topbar {
 	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-
+	
+	import org.interguild.editor.EditorPage;
 	import org.interguild.menu.FancyButton;
-	import org.interguild.editor.dropdown.FileMenu;
 
 	public class TopBar extends Sprite {
 
 		private var editor:EditorPage;
+		
+		private var fileButton:FileMenu;
 
 		public function TopBar(editor:EditorPage) {
 			this.editor = editor;
@@ -22,7 +24,7 @@ package org.interguild.editor {
 			initButtons();
 
 			//init File button
-			var fileButton:FileMenu = new FileMenu(editor);
+			fileButton = new FileMenu(editor);
 			addChild(fileButton);
 		}
 
@@ -71,6 +73,14 @@ package org.interguild.editor {
 			publishButton.y = 18;
 			//todo make button publish to website
 			addChild(publishButton);
+		}
+		
+		public function toggleMenu():void{
+			fileButton.toggleMenu();
+		}
+		
+		public function hideMenu():void{
+			fileButton.hideMenu();
 		}
 	}
 }

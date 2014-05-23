@@ -1,11 +1,11 @@
-package org.interguild.editor.grid {
+package org.interguild.editor.levelpane {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -23,6 +23,9 @@ package org.interguild.editor.grid {
 		private static const PREVIEW_ALPHA:Number = 0.5;
 
 		private static var untitledCount:uint = 1;
+		private static var clipboard:String;
+		private static var pastePreview:Bitmap;
+		private static var pastePreviewOld:Bitmap;
 
 		private var levelTitle:String;
 
@@ -35,8 +38,6 @@ package org.interguild.editor.grid {
 		private var previewBD:BitmapData;
 		private var previewSquare:Sprite;
 		private var selectionSquare:SelectionHighlight;
-		private var pastePreview:Bitmap;
-		private var clipboard:String;
 
 		private var selectStart:Point;
 		private var selectEnd:Point;
@@ -398,6 +399,7 @@ package org.interguild.editor.grid {
 			//finalize preview image
 			pastePreview = new Bitmap(image);
 			pastePreview.alpha = PREVIEW_ALPHA;
+			pastePreviewOld = pastePreview;
 			addChild(pastePreview);
 
 			//make the selection go away so that user can paste
@@ -406,6 +408,14 @@ package org.interguild.editor.grid {
 
 		public function cut():void {
 			copy(true); // ~~magic~~ // :o
+		}
+		
+		public function prepareToPaste():void{
+			if(pastePreviewOld){
+				deselect();
+				pastePreview = pastePreviewOld;
+				addChild(pastePreview);
+			}
 		}
 
 		/**

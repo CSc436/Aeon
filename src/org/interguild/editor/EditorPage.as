@@ -1,67 +1,58 @@
 package org.interguild.editor {
+	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
-	
+
 	import org.interguild.Aeon;
-	import org.interguild.editor.grid.EditorLevelPane;
+	import org.interguild.editor.levelpane.EditorLevelPane;
 	import org.interguild.editor.tilelist.TileList;
-	import org.interguild.game.level.LevelProgressBar;
+	import org.interguild.editor.topbar.TopBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
 
 	// EditorPage handles all the initialization for the level editor gui and more
-	public class EditorPage extends Page {
+	public class EditorPage extends Sprite {
 
 		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
-		
+
 		private static var selectedTile:String;
-		
-		public static function get currentTile():String{
+
+		public static function get currentTile():String {
 			return selectedTile;
 		}
-		
-		public static function set currentTile(s:String):void{
+
+		public static function set currentTile(s:String):void {
 			selectedTile = s;
 		}
 
 		private var loader:Loader;
 
-		private var progressBar:LevelProgressBar;
+		private var topBar:TopBar;
 		private var levelPane:EditorLevelPane;
-		
-		private var filereader:FileReference;
-		private var keys:KeyManEditor;
+		private var tileList:TileList
 
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
+			new EditorKeyMan(this, stage);
 			initBG();
 
-			var tileList:TileList = new TileList(this);
+			tileList = new TileList(this);
 			addChild(tileList);
 
 			levelPane = new EditorLevelPane(this);
 			addChild(levelPane);
-//			tabsContainer = new EditorTabContainer(this, tileList);
-//			addChild(tabsContainer);
 
 			loader = new EditorLoader();
 			loader.addInitializedListener(levelPane.addLevel);
 			loader.addErrorListener(onLoadError);
 
-			keys = new KeyManEditor(stage);
-			keys.addOpenLevelCallback(openFromFile);
-			keys.addSaveLevelCallback(saveToFile);
-//			keys.addUndoLevelCallback(tabsContainer.getCurrentGridContainer().undoClick);
-//			keys.addRedoLevelCallback(tabsContainer.getCurrentGridContainer().redoClick);
-//			keys.addDeleteLevelCallback(tabsContainer.getCurrentGridContainer().deleteTiles);
-
 			// must be initialized last so that overlay can cover everything
 			// and disable editor mouse evemts for certain menus
-			var topBar:TopBar = new TopBar(this);
+			topBar = new TopBar(this);
 			addChild(topBar);
 		}
 
@@ -71,15 +62,15 @@ package org.interguild.editor {
 			graphics.endFill();
 		}
 
-		public function newLevel():void{
+		public function newLevel():void {
 			levelPane.addLevel();
 		}
-		
-		public function closeLevel():void{
+
+		public function closeLevel():void {
 			levelPane.closeLevel();
 		}
-		
-		public function closeAllLevels():void{
+
+		public function closeAllLevels():void {
 			levelPane.closeAllLevels()
 		}
 
@@ -91,7 +82,7 @@ package org.interguild.editor {
 		}
 
 		public function openFromFile():void {
-			filereader = new FileReference();
+			var filereader:FileReference = new FileReference();
 			filereader.addEventListener(Event.SELECT, selectHandler);
 			filereader.addEventListener(Event.COMPLETE, loadCompleteHandler);
 			filereader.browse(); // ask user for file
@@ -120,9 +111,7 @@ package org.interguild.editor {
 		 * error found, report then return to original state
 		 */
 		private function onLoadError(e:Array):void {
-			trace(e);
 			returnFromError(e);
-			//TODO display error to user
 		}
 
 		private function returnFromError(e:Array):void {
@@ -135,19 +124,31 @@ package org.interguild.editor {
 		public function gotoMainMenu():void {
 			Aeon.getMe().gotoMainMenu();
 		}
-		
-		public function copy():void{
+
+		public function copy():void {
+			topBar.hideMenu();
 			levelPane.level.copy();
 		}
-		
-		public function cut():void{
+
+		public function cut():void {
+			topBar.hideMenu();
 			levelPane.level.cut();
 		}
 		
+		public function paste():void {
+			topBar.hideMenu();
+			levelPane.level.prepareToPaste();
+		}
+
+		public function deleteSelection():void {
+			topBar.hideMenu();
+			trace("todo");
+		}
+
 		/**
 		 * TileList notifies EditorLevel when it's time to deselect
 		 */
-		public function deselect():void{
+		public function deselect():void {
 			levelPane.level.deselect();
 		}
 
@@ -165,6 +166,20 @@ package org.interguild.editor {
 		public function testGame(e:MouseEvent):void {
 			var s:String = getLevelCode();
 			Aeon.getMe().playLevelCode(s);
+		}
+
+		public function undo():void {
+			topBar.hideMenu();
+			trace("TODO");
+		}
+
+		public function redo():void {
+			topBar.hideMenu();
+			trace("TODO");
+		}
+
+		public function toggleMenu():void {
+			topBar.toggleMenu();
 		}
 	}
 }

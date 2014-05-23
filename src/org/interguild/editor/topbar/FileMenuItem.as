@@ -1,4 +1,4 @@
-package org.interguild.editor.dropdown {
+package org.interguild.editor.topbar {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;

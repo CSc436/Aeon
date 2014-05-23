@@ -1,4 +1,4 @@
-package org.interguild.editor.dropdown {
+package org.interguild.editor.topbar {
 	import flash.display.Sprite;
 
 	public class FileMenuPopup extends Sprite {

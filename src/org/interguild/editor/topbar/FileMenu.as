@@ -1,4 +1,4 @@
-package org.interguild.editor.dropdown {
+package org.interguild.editor.topbar {
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -6,6 +6,10 @@ package org.interguild.editor.dropdown {
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 
+	/**
+	 * 
+	 * @author Livio
+	 */
 	public class FileMenu extends Sprite {
 
 		private static const POSITION_X:uint = 10;
@@ -20,6 +24,10 @@ package org.interguild.editor.dropdown {
 		
 		private var editor:EditorPage;
 
+		/**
+		 * 
+		 * @param editor
+		 */
 		public function FileMenu(editor:EditorPage) {
 			this.editor = editor;
 			
@@ -34,7 +42,7 @@ package org.interguild.editor.dropdown {
 			button.y = POSITION_Y;
 			button.buttonMode = true;
 			button.addEventListener(MouseEvent.MOUSE_OVER, buttonMouseOver, false, 0, true);
-			button.addEventListener(MouseEvent.CLICK, buttonMouseClick, false, 0, true);
+			button.addEventListener(MouseEvent.CLICK, toggleMenu, false, 0, true);
 			addChild(button);
 			
 			buttonFace = new Bitmap(new FileButtonSprite());
@@ -59,6 +67,7 @@ package org.interguild.editor.dropdown {
 			popup.addItem(new FileMenuItem("Copy", "Ctrl+C", clickCopy));
 			popup.addItem(new FileMenuItem("Cut", "Ctrl+X", clickCut));
 			popup.addItem(new FileMenuItem("Paste", "Ctrl+V", clickPaste));
+			popup.addItem(new FileMenuItem("Deselect", "Ctrl+D", clickDeselect));
 			popup.addItem(new FileMenuItem("Exit to Main Menu", "", clickExit));
 			
 			popup.addEventListener(MouseEvent.CLICK, hidePopup, true, 0, true);
@@ -79,12 +88,24 @@ package org.interguild.editor.dropdown {
 			addChild(clickArea);
 		}
 
-		private function buttonMouseClick(evt:MouseEvent):void {
+		/**
+		 * 
+		 * @param evt
+		 */
+		public function toggleMenu(evt:MouseEvent = null):void {
 			if(popup.visible){
 				hidePopup();
 			}else{
 				showPopup();
 			}
+		}
+		
+		/**
+		 * 
+		 */
+		public function hideMenu():void{
+			if(popup.visible)
+				hidePopup();
 		}
 
 		private function buttonMouseOver(evt:MouseEvent):void {
@@ -144,7 +165,11 @@ package org.interguild.editor.dropdown {
 		}
 		
 		private function clickPaste(evt:MouseEvent):void{
-			trace("PASTE");
+			editor.paste();
+		}
+		
+		private function clickDeselect(evt:MouseEvent):void{
+			editor.deselect();
 		}
 		
 		private function clickExit(evt:MouseEvent):void{

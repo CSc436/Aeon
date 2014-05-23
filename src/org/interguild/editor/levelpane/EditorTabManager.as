@@ -1,4 +1,4 @@
-package org.interguild.editor.grid {
+package org.interguild.editor.levelpane {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
