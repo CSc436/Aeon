@@ -2,12 +2,12 @@ package org.interguild.editor.tilelist {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	
+
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-	
+
 	import org.interguild.Aeon;
-	import org.interguild.editor.grid.EditorGridContainer;
+	import org.interguild.editor.EditorPage;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
@@ -35,24 +35,25 @@ package org.interguild.editor.tilelist {
 		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
 
 		public static const SELECTION_TOOL_CHAR:String = "SELECTION";
+		public static const ERASER_TOOL_CHAR:String = " ";
 
 		private static var map:Object = new Object();
-		
+
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
 
-		private var isUsingSelectionTool:Boolean;
-
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
-
 		private var nextY:uint = 0; //used for adding tiles to the list
-		private var gridContainer:EditorGridContainer;
-		public function TileList() {
+
+		private var editor:EditorPage;
+
+		public function TileList(editor:EditorPage) {
+			this.editor = editor;
 			x = POSITION_X;
 			y = POSITION_Y;
-			
+
 			//init bg
 			graphics.beginFill(BG_COLOR);
 			graphics.drawRoundRect(0, 0, BG_WIDTH, BG_HEIGHT, BG_CORNER_RADIUS, BG_CORNER_RADIUS);
@@ -84,13 +85,17 @@ package org.interguild.editor.tilelist {
 
 		private function initList():void {
 			map[SELECTION_TOOL_CHAR] = new SelectionToolSprite();
-			currentSelection = new TileListItem("Selection Tool", SELECTION_TOOL_CHAR);
-			currentSelection.select();
-			isUsingSelectionTool = true;
-			addItem(currentSelection);
+			addItem(new TileListItem("Selection Tool", SELECTION_TOOL_CHAR));
+
+			map[ERASER_TOOL_CHAR] = new SelectionToolSprite();
+			addItem(new TileListItem("Eraser Tool", ERASER_TOOL_CHAR));
 
 			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
-			addItem(new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR));
+			currentSelection = new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR);
+			currentSelection.select();
+			EditorPage.currentTile = currentSelection.getCharCode();
+			addItem(currentSelection);
+
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
 			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
 
@@ -117,38 +122,26 @@ package org.interguild.editor.tilelist {
 
 			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
 			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
-			
+
 			map[DynamiteCrate.LEVEL_CODE_CHAR] = DynamiteCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteCrate.LEVEL_CODE_CHAR));
 		}
 
 		private function onClick(evt:MouseEvent):void {
+			editor.deselect();
 			if (evt.target is TileListItem) {
 				currentSelection.deselect();
-				isUsingSelectionTool = false;
+				var lastChar:String = currentSelection.getCharCode();
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
-				if (currentSelection.getCharCode() == SELECTION_TOOL_CHAR)
-					isUsingSelectionTool = true;
+				EditorPage.currentTile = currentSelection.getCharCode();;
 			}
-			gridContainer.setMultipleTiles();
 		}
 
 		private function addItem(i:TileListItem):void {
 			i.y = nextY;
 			nextY += i.height;
 			list.addChild(i);
-		}
-
-		public function getActiveChar():String {
-			return currentSelection.getCharCode();
-		}
-
-		public function isSelectionBox():Boolean {
-			return isUsingSelectionTool;
-		}
-		public function addContainer(c:EditorGridContainer):void{
-			gridContainer = c;
 		}
 	}
 }

@@ -12,7 +12,6 @@ package org.interguild.loader
 	
 	import fl.controls.Button;
 	
-	import flexunit.utils.ArrayList;
 	import flash.text.TextFormat;
 
 	public class ErrorDialog extends Sprite
@@ -23,7 +22,7 @@ package org.interguild.loader
 		private var scrolling:Boolean;
 		private var scrollDirection:String;
 		
-		public function ErrorDialog(e:ArrayList, src:String):void
+		public function ErrorDialog(e:Array, src:String):void
 		{
 			source = src;
 			//main dialog box
@@ -33,8 +32,8 @@ package org.interguild.loader
 			rect.graphics.drawRect(0,0,300,160);
 			addChild(rect);
 			var txt:String = "";
-			for (var i:int = 0; i < e.length(); i++){
-				txt += "error " + String(i+1) + ": " + e.getItemAt(i);
+			for (var i:int = 0; i < e.length; i++){
+				txt += "error " + String(i+1) + ": " + e[i];
 				txt += "\n";
 			}
 			if(source.search("Loader") >= 0){

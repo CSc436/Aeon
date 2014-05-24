@@ -1,75 +1,152 @@
 package org.interguild.game {
 
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	
+	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
-	import org.interguild.game.collision.GridTile;
+	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {
 		CONFIG::DEBUG {
 			private static const SPRITE_COLOR:uint = 0xFF0000;
-			private static const SPRITE_WIDTH:uint = 24;
-			private static const SPRITE_HEIGHT:uint = 40;
+			private static const ANIMATION_ALPHA:Number = 0.5;
 		}
+
+		public static const LEVEL_CODE_CHAR:String = '#';
+		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
+		private static const IS_SOLID:Boolean = true;
+		private static const HAS_GRAVITY:Boolean = true;
+		private static const DEATH_DELAY:uint = 40;
 
 		private static const HITBOX_WIDTH:uint = 24;
 		private static const HITBOX_HEIGHT:uint = 40;
-
-		private static const CRAWLING_HEIGHT:uint = 32;
-		private static const STANDING_HEIGHT:uint = 40;
-
-		public var frameCounter:int = 0;
-		public var frameJumpCounter:int;
+		private static const CRAWLING_HEIGHT:uint = 28;
+		private static const STANDING_HEIGHT:uint = HITBOX_HEIGHT;
 
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
-
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const RUN_FRICTION:Number = 2;
+		private static const JUMP_SPEED:Number = -21.5;
 
-		private static const JUMP_SPEED:Number = -20;
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
 		public static const KNOCKBACK_HORIZONTAL:Number = 20;
 
-		private var maxSpeedY:Number = MAX_FALL_SPEED;
-		private var maxSpeedX:Number = MAX_RUN_SPEED;
+		//ANIMATIONS
+
+		private static const WALKING_ANIMATION:MovieClip = new PlayerWalkingAnimation();
+		private static const WALKING_ANIMATION_X_RIGHT:int = -2;
+		private static const WALKING_ANIMATION_X_LEFT:int = 26;
+		private static const WALKING_ANIMATION_Y:int = -8;
+
+		private static const CRAWLING_ANIMATION:MovieClip = new PlayerCrawlAnimation();
+		private static const CRAWLING_ANIMATION_X_RIGHT:int = -18;
+		private static const CRAWLING_ANIMATION_X_LEFT:int = 42;
+		private static const CRAWLING_ANIMATION_Y:int = -20;
+
+		private static const JUMP_UP_ANIMATION:MovieClip = new PlayerJumpUpAnimation();
+		private static const JUMP_UP_ANIMATION_X_RIGHT:int = -8;
+		private static const JUMP_UP_ANIMATION_X_LEFT:int = 32;
+		private static const JUMP_UP_ANIMATION_Y:int = -13;
+
+		private static const JUMP_PEAK_FALL_ANIMATION:MovieClip = new PlayerJumpPeakThenFallAnimation();
+		private static const JUMP_PEAK_FALL_ANIMATION_X_RIGHT:int = -8;
+		private static const JUMP_PEAK_FALL_ANIMATION_X_LEFT:int = 32;
+		private static const JUMP_PEAK_FALL_ANIMATION_Y:int = -13;
+		private static const PEAK_SPEED_THRESHOLD:Number = 6;
+		private static const JUMP_PEAK_FRAME:uint = 6;
+
+		private static const JUMP_LAND_ANIMATION:MovieClip = new PlayerJumpLandAnimation();
+		private static const JUMP_LAND_ANIMATION_X_RIGHT:int = -8;
+		private static const JUMP_LAND_ANIMATION_X_LEFT:int = 32;
+		private static const JUMP_LAND_ANIMATION_Y:int = -13;
+		
+		private static const DEATH_SPRITE:Bitmap = new Bitmap(new PlayerDeathSprite());
+		private static const DEATH_ANIMATION_X_RIGHT:int = -8;
+		private static const DEATH_ANIMATION_X_LEFT:int = 32;
+		private static const DEATH_ANIMATION_Y:int = -13;
+		private static const MIN_DEATH_SPEED:Number = 0.25;
+		private static const MAX_ADDITIONAL_SPEED:Number = 1;
+		private static const MIN_DEATH_ROTATION:Number = 4;
+		private static const MAX_ADDITIONAL_ROTATION:Number = 4;
 
 		private var keys:KeyMan;
 
-		public var wasJumping:Boolean;
+		private var currentAnimation:MovieClip;
+		private var currentAnimationIsFacingRight:Boolean;
+		private var isRunning:Boolean;
+		private var isJumping:Boolean;
 
-		public var isStanding:Boolean;
-		public var isFacingRight:Boolean;
-		public var isFacingUp:Boolean;
-		public var isCrouching:Boolean;
-		public var isFalling:Boolean;
-		public var isJumping:Boolean;
-		public var mustCrawl:Boolean = false;
+		private var deathAnimation:MovieClip = new MovieClip();
+		private var deathSpeedX:Number;
+		private var deathSpeedY:Number;
+		private var deathRotation:Number;
 
+		private var isOnGround:Boolean;
+		private var isCrawling:Boolean;
+		private var currentFrame:uint = 1;
+
+		//TODO: refactor, should not be public
 		public var isDead:Boolean;
-
-		private var playerClip:MovieClip;
-		private var prevSpeedY:Number = 0;
-		private var prevScaleX:Number = 1;
-
-		//TODO are these values correct? Henry
-		public static const LEVEL_CODE_CHAR:String = '#';
-		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
-		public static const DESTRUCTIBILITY:int = 2;
-		public static const IS_SOLID:Boolean = true;
-		public static const HAS_GRAVITY:Boolean = true;
-		public static const KNOCKBACK_AMOUNT:int = 5;
-		public static const IS_BUOYANT:Boolean = false;
+		public var isFacingRight:Boolean;
+		public var pressedJump:Boolean;
 
 		public function Player() {
-			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT, LEVEL_CODE_CHAR, DESTRUCTIBILITY, IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
-			drawPlayer();
-			isActive = true;
+			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+			setProperties(IS_SOLID, HAS_GRAVITY);
+			destruction.destroyedBy(Destruction.ARROWS);
+			destruction.destroyedBy(Destruction.EXPLOSIONS);
+			destruction.destroyedBy(Destruction.FALLING_SOLID_OBJECTS);
+			destruction.destroyWithMarker(Destruction.PLAYER);
+
+			initAnimations();
+
 			keys = KeyMan.getMe();
+			isFacingRight = true;
+			isActive = true;
 			isDead = false;
+		}
+
+		private function initAnimations():void {
+			currentAnimation = WALKING_ANIMATION;
+			WALKING_ANIMATION.visible = true;
+			addChild(WALKING_ANIMATION);
+
+			CRAWLING_ANIMATION.visible = false;
+			addChild(CRAWLING_ANIMATION);
+
+			JUMP_UP_ANIMATION.visible = false;
+			addChild(JUMP_UP_ANIMATION);
+
+			JUMP_PEAK_FALL_ANIMATION.visible = false;
+			addChild(JUMP_PEAK_FALL_ANIMATION);
+
+			JUMP_LAND_ANIMATION.visible = false;
+			addChild(JUMP_LAND_ANIMATION);
+
+			deathAnimation.addChild(DEATH_SPRITE);
+			DEATH_SPRITE.x = DEATH_ANIMATION_X_RIGHT;
+			DEATH_SPRITE.y = DEATH_ANIMATION_Y;
+			deathAnimation.visible = false;
+			addChild(deathAnimation);
+
+			//draw hit box
+			CONFIG::DEBUG {
+				drawHitBox();
+			}
+		}
+
+		CONFIG::DEBUG {
+			private function drawHitBox():void {
+				graphics.clear();
+				graphics.beginFill(SPRITE_COLOR);
+				graphics.drawRect(0, 0, hitbox.width, hitbox.height);
+				graphics.endFill();
+			}
 		}
 
 		public function setStartPosition(sx:Number, sy:Number):void {
@@ -79,66 +156,40 @@ package org.interguild.game {
 			finishGameLoop();
 		}
 
-		private function drawPlayer():void {
-			CONFIG::DEBUG {
-				graphics.beginFill(SPRITE_COLOR);
-				graphics.drawRect(0, 0, SPRITE_WIDTH, SPRITE_HEIGHT);
-				graphics.endFill();
-			}
-
-			playerClip = new PlayerWalkingAnimation();
-			playerClip.x = -2;
-			playerClip.y = -8;
-			addChild(playerClip);
-			isFacingRight = true; // player always starts out facing right
+		public function landedOnGround():void {
+			isOnGround = true;
 		}
 
 		public override function onGameLoop():void {
-			speedY += Level.GRAVITY;
-			trace("speedY =", speedY);
-			trace("speedX =", speedX);
+			if (isDead) {
+				updateDeath();
+			} else {
+				updateKeys();
+				updateGravity();
+				updateMaxSpeeds();
 
-			updateKeys();
-
-			if (speedY > MAX_FALL_SPEED) {
-				speedY = MAX_FALL_SPEED;
+				isOnGround = false;
+				newX += speedX;
+				newY += speedY;
+				updateHitBox();
 			}
-			if (speedX > MAX_RUN_SPEED) {
-				speedX = MAX_RUN_SPEED;
-			} else if (speedX < -MAX_RUN_SPEED) {
-				speedX = -MAX_RUN_SPEED;
-			}
-
-			//update movement
-			prevSpeedY = speedY;
-			newX += speedX;
-			newY += speedY;
-			updateHitBox();
-
-			trace("speedY = ", speedY);
-			if (speedY > 6 && !isJumping) {
-				isFalling = true;
-			} else
-				isFalling = false;
-
-			if (speedY != 2)
-				isStanding = false;
-
 		}
 
-		public function reset():void {
-			isStanding = false;
-			isFalling = false;
+		private var deathTimer:uint = 0;
+
+		private function updateDeath():void {
+			deathTimer++;
+			if (deathTimer >= DEATH_DELAY) {
+				Aeon.getMe().playLastLevel();
+			}
 		}
 
 		private function updateKeys():void {
-			if (!keys.isKeyLeft && !keys.isKeyRight && !keys.isKeyDown && isStanding)
-				playerClip.gotoAndStop(0);
-
 			//moving to the left
 			if (keys.isKeyLeft && !keys.isKeyRight) {
 				speedX -= RUN_ACC;
 				isFacingRight = false;
+				isRunning = true;
 			} else if (speedX < 0) {
 				speedX += RUN_FRICTION;
 				if (speedX > 0)
@@ -148,321 +199,258 @@ package org.interguild.game {
 			if (keys.isKeyRight && !keys.isKeyLeft) {
 				speedX += RUN_ACC;
 				isFacingRight = true;
+				isRunning = true;
 			} else if (speedX > 0) {
 				speedX -= RUN_FRICTION;
 				if (speedX < 0)
 					speedX = 0;
 			}
 
-			if (keys.isKeyDown && isStanding) {
-				isCrouching = true;
-				this.hitbox.height = CRAWLING_HEIGHT;
-			}
-
-			// finished crawling
-			if (!keys.isKeyDown && !mustCrawl) {
-				isCrouching = false;
-				this.hitbox.height = STANDING_HEIGHT;
-			}
-
-
-			// if player pushes both right and left stop them
-			if (keys.isKeyRight && keys.isKeyLeft && isStanding) {
-				speedX = 0;
-				playerClip.gotoAndStop(0); // reset animation
-			}
-
-			// look up
-			if (keys.isKeyUp) {
-				isFacingUp = true;
-			}
-			// no longer looking up
-			if (!keys.isKeyUp) {
-				isFacingUp = false;
+			//crawl
+			if (keys.isKeyDown && !isCrawling && isOnGround) {
+				//start crawling
+				newY += (STANDING_HEIGHT - CRAWLING_HEIGHT);
+				hitbox.height = CRAWLING_HEIGHT;
+				isCrawling = true;
+				CONFIG::DEBUG {
+					drawHitBox();
+				}
+			} else if (!keys.isKeyDown && isCrawling) {
+				//stop crawling
+				newY -= (STANDING_HEIGHT - CRAWLING_HEIGHT);
+				hitbox.height = STANDING_HEIGHT;
+				isCrawling = false;
+				CONFIG::DEBUG {
+					drawHitBox();
+				}
 			}
 
 			//jump
-			if (keys.isKeySpace && isStanding && !wasJumping && !mustCrawl) {
+			if (keys.isKeySpace && isOnGround && !pressedJump) {
 				speedY = JUMP_SPEED;
-				isStanding = false;
-				isJumping = true;
-				frameJumpCounter = frameCounter;
+				pressedJump = true;
 			}
+			if (pressedJump && !keys.isKeySpace) {
+				pressedJump = false;
+			}
+		}
 
-			if (keys.isKeySpace)
-				wasJumping = true;
-			else
-				wasJumping = false;
+		private function updateGravity():void {
+			speedY += Level.GRAVITY;
+		}
+
+		private function updateMaxSpeeds():void {
+			if (speedY > MAX_FALL_SPEED) {
+				speedY = MAX_FALL_SPEED;
+			}
+			if (speedX > MAX_RUN_SPEED) {
+				speedX = MAX_RUN_SPEED;
+			} else if (speedX < -MAX_RUN_SPEED) {
+				speedX = -MAX_RUN_SPEED;
+			}
+		}
+
+		public override function finishGameLoop():void {
+			super.finishGameLoop();
+			updateAnimation();
+			isRunning = false;
 		}
 
 		public function updateAnimation():void {
 			if (isDead) {
-				handleDeathAnimation();
-				return;
-			}
-
-			var neighborTiles:Vector.<GridTile> = this.myCollisionGridTiles;
-			trace("Number of neighboring tiles: " + neighborTiles.length);
-			mustCrawl = false;
-			if (neighborTiles.length == 12 && !isJumping && isStanding) {
-				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0)
-					mustCrawl = true;
-			} else if (neighborTiles.length == 16 && !isJumping && isStanding) {
-				if (neighborTiles[1].myCollisionObjects[0].getDestructibility() == 0 || neighborTiles[2].myCollisionObjects[0].getDestructibility() == 0)
-					mustCrawl = true;
-			}
-			trace("Must crawl value: " + mustCrawl);
-
-			if (isJumping && !mustCrawl) {
-				handleJumping();
-			} else if (isFalling && !mustCrawl && !isCrouching) {
-				handleFalling();
-			} else if (keys.isKeyDown && isFacingRight && isStanding) {
-				handleCrawlRight();
-			} else if (keys.isKeyDown && !isFacingRight && isStanding) {
-				handleCrawlLeft();
-			} else if (mustCrawl && isFacingRight) {
-				handleCrawlRight();
-			} else if (mustCrawl && !isFacingRight) {
-				handleCrawlLeft();
-			} else if (keys.isKeyRight && !keys.isKeyDown) {
-				handleWalkRight();
-			} else if (keys.isKeyLeft && !keys.isKeyDown) {
-				handleWalkLeft();
-			}
-			// reset the animation to walking left
-			else if (!keys.isKeyDown && !isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
-				handleWalkLeft();
-					// reset the animation to walking right
-			} else if (!keys.isKeyDown && isFacingRight && !keys.isKeyUp && !keys.isKeyRight && !keys.isKeyLeft) {
-				handleWalkRight();
-			}
-		}
-
-		private function handleCrawlRight():void {
-			if (!(playerClip is PlayerCrawlAnimation)) {
-				removeChild(playerClip);
-				playerClip = new PlayerCrawlAnimation();
-				playerClip.stop();
-				addChild(playerClip);
-				playerClip.gotoAndStop(0);
-			}
-			//animate moving to the right
-			playerClip.scaleX = 1;
-			prevScaleX = 1;
-			playerClip.x = -20;
-			playerClip.y = -15;
-
-			if (speedX > 0) {
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
+				animateDeath();
+			} else if (isRunning && isOnGround) {
+				if (isCrawling)
+					animateCrawlWalking();
 				else
-					playerClip.gotoAndStop(0);
-			}
-
-		}
-
-		private function handleCrawlLeft():void {
-			if (!(playerClip is PlayerCrawlAnimation)) {
-				removeChild(playerClip);
-				playerClip = new PlayerCrawlAnimation();
-				playerClip.stop();
-				addChild(playerClip);
-				playerClip.gotoAndStop(0);
-			}
-			// Use scaleX = -1 to flip the direction of movement
-
-			playerClip.scaleX = -1;
-			prevScaleX = -1;
-			//This value might need to be changed, I think it might be off a few pixels
-			playerClip.x = 45;
-			playerClip.y = -15;
-
-			if (speedX < 0) {
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
+					animateStandingWalking();
+			} else if (isOnGround) {
+				if (isCrawling)
+					animateCrawlStill();
 				else
-					playerClip.gotoAndStop(0);
-			}
-
-		}
-
-		private function handleWalkRight():void {
-			if (!(playerClip is PlayerWalkingAnimation)) {
-				removeChild(playerClip);
-				playerClip = new PlayerWalkingAnimation();
-				playerClip.stop();
-				addChild(playerClip);
-				playerClip.gotoAndStop(0);
-			}
-
-			//animate moving to the right
-			playerClip.scaleX = 1;
-			prevScaleX = 1;
-			playerClip.x = -2;
-			playerClip.y = -8;
-
-			if (speedX > 0) {
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
-				else
-					playerClip.gotoAndStop(0);
-			}
-
-
-		}
-
-		private function handleWalkLeft():void {
-			if (!(playerClip is PlayerWalkingAnimation)) {
-				removeChild(playerClip);
-				playerClip = new PlayerWalkingAnimation();
-				addChild(playerClip);
-				playerClip.gotoAndStop(0);
-			}
-			// Use scaleX = -1 to flip the direction of movement
-			playerClip.scaleX = -1;
-			prevScaleX = -1;
-			//This value might need to be changed, I think it might be off a few pixels
-			playerClip.x = 25;
-			playerClip.y = -8;
-
-			if (speedX < 0) {
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
-				else
-					playerClip.gotoAndStop(0);
-			}
-		}
-
-		private function handleJumping():void {
-			if (this.prevSpeedY - this.newY < 0) {
-				frameJumpCounter == 6;
-			} else if (this.prevSpeedY - this.newY > 0) {
-				frameJumpCounter == 16;
-			}
-
-			if (frameCounter - frameJumpCounter <= 6) {
-				if (!(playerClip is PlayerJumpUpAnimation)) {
-					removeChild(playerClip);
-					playerClip = new PlayerJumpUpAnimation();
-					addChild(playerClip);
-				}
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
-				// make sure the animation is facing the correct direction if the player changes it in mid air
-				if (isFacingRight) {
-					playerClip.scaleX = 1;
-					prevScaleX = 1;
-					playerClip.x = -2;
-					playerClip.y = -8;
-				} else {
-					playerClip.scaleX = -1;
-					prevScaleX = -1;
-					//This value might need to be changed, I think it might be off a few pixels
-					playerClip.x = 25;
-					playerClip.y = -8;
-				}
-			} else if (7 <= frameCounter - frameJumpCounter && frameCounter - frameJumpCounter <= 16) {
-				if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
-					removeChild(playerClip);
-					playerClip = new PlayerJumpPeakThenFallAnimation();
-					addChild(playerClip);
-				}
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
-				// make sure the animation is facing the correct direction if the player changes it in mid air
-				if (isFacingRight) {
-					playerClip.scaleX = 1;
-					prevScaleX = 1;
-					playerClip.x = -2;
-					playerClip.y = -8;
-				} else {
-					playerClip.scaleX = -1;
-					prevScaleX = -1;
-					//This value might need to be changed, I think it might be off a few pixels
-					playerClip.x = 25;
-					playerClip.y = -8;
-				}
-			} else if (frameCounter - frameJumpCounter < 17) {
-				if (!(playerClip is PlayerJumpLandAnimation)) {
-					removeChild(playerClip);
-					playerClip = new PlayerJumpLandAnimation();
-					addChild(playerClip);
-				}
-				if (playerClip.currentFrame != playerClip.totalFrames)
-					playerClip.nextFrame();
-				// make sure the animation is facing the correct direction if the player changes it in mid air
-				if (isFacingRight) {
-					playerClip.scaleX = 1;
-					prevScaleX = 1;
-					playerClip.x = -2;
-					playerClip.y = -8;
-				} else {
-					playerClip.scaleX = -1;
-					prevScaleX = -1;
-					//This value might need to be changed, I think it might be off a few pixels
-					playerClip.x = 25;
-					playerClip.y = -8;
-				}
+					animateStandingStill();
 			} else {
-				isJumping = false;
+				animateJumpAndFall();
 			}
 		}
 
-		private function handleDeathAnimation():void {
+		/**
+		 * Switch animation
+		 */
+		private function switchTo(animation:MovieClip):void {
+			if (currentAnimation != animation || currentAnimationIsFacingRight != isFacingRight) {
+				currentAnimation.visible = false;
+				currentAnimation = animation;
+				currentAnimationIsFacingRight = isFacingRight;
+				if (isFacingRight) {
+					positionAnimationRight();
+				} else {
+					positionAnimationLeft();
+				}
+				currentAnimation.visible = true;
+				currentFrame = 1;
 
-			var directionChange:int = Math.random() * 10;
-
-			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
-				removeChild(playerClip);
-				playerClip = new PlayerJumpPeakThenFallAnimation();
-				playerClip.stop();
-				addChild(playerClip);
-				playerClip.gotoAndStop(3);
+				CONFIG::DEBUG {
+					currentAnimation.alpha = ANIMATION_ALPHA;
+				}
 			}
-
-			parent.addChild(this);
-			playerClip.rotation += 18;
-			playerClip.x += directionChange;
-			playerClip.y -= directionChange;
-
 		}
 
-
-		private function handleFalling():void {
-			trace("Made it inside falling");
-			if (!(playerClip is PlayerJumpPeakThenFallAnimation)) {
-				removeChild(playerClip);
-				playerClip = new PlayerJumpPeakThenFallAnimation();
-				addChild(playerClip);
-				playerClip.gotoAndStop(15)
+		private function positionAnimationRight():void {
+			currentAnimation.scaleX = 1;
+			switch (currentAnimation) {
+				case WALKING_ANIMATION:
+					currentAnimation.x = WALKING_ANIMATION_X_RIGHT;
+					currentAnimation.y = WALKING_ANIMATION_Y;
+					break;
+				case CRAWLING_ANIMATION:
+					currentAnimation.x = CRAWLING_ANIMATION_X_RIGHT;
+					currentAnimation.y = CRAWLING_ANIMATION_Y;
+					break;
+				case JUMP_UP_ANIMATION:
+					currentAnimation.x = JUMP_UP_ANIMATION_X_RIGHT;
+					currentAnimation.y = JUMP_UP_ANIMATION_Y;
+					break;
+				case JUMP_PEAK_FALL_ANIMATION:
+					currentAnimation.x = JUMP_PEAK_FALL_ANIMATION_X_RIGHT;
+					currentAnimation.y = JUMP_PEAK_FALL_ANIMATION_Y;
+					break;
+				case JUMP_LAND_ANIMATION:
+					currentAnimation.x = JUMP_LAND_ANIMATION_X_RIGHT;
+					currentAnimation.y = JUMP_LAND_ANIMATION_Y;
+					break;
 			}
+		}
 
+		private function positionAnimationLeft():void {
+			currentAnimation.scaleX = -1;
+			switch (currentAnimation) {
+				case WALKING_ANIMATION:
+					currentAnimation.x = WALKING_ANIMATION_X_LEFT;
+					currentAnimation.y = WALKING_ANIMATION_Y;
+					break;
+				case CRAWLING_ANIMATION:
+					currentAnimation.x = CRAWLING_ANIMATION_X_LEFT;
+					currentAnimation.y = CRAWLING_ANIMATION_Y;
+					break;
+				case JUMP_UP_ANIMATION:
+					currentAnimation.x = JUMP_UP_ANIMATION_X_LEFT;
+					currentAnimation.y = JUMP_UP_ANIMATION_Y;
+					break;
+				case JUMP_PEAK_FALL_ANIMATION:
+					currentAnimation.x = JUMP_PEAK_FALL_ANIMATION_X_LEFT;
+					currentAnimation.y = JUMP_PEAK_FALL_ANIMATION_Y;
+					break;
+				case JUMP_LAND_ANIMATION:
+					currentAnimation.x = JUMP_LAND_ANIMATION_X_LEFT;
+					currentAnimation.y = JUMP_LAND_ANIMATION_Y;
+					break;
+			}
+		}
 
-//			if (playerClip.currentFrame != playerClip.totalFrames)
-//				playerClip.nextFrame();
+		private function incrementFrameWithLoop():void {
+			currentFrame++;
+			if (currentFrame >= currentAnimation.totalFrames) {
+				currentFrame = 1;
+			}
+		}
 
+		private function incrementFrameNoLoop():void {
+			if (currentFrame < currentAnimation.totalFrames) {
+				currentFrame++;
+			}
+		}
 
-			// make sure the animation is facing the correct direction if the player changes it in mid air
-			if (isFacingRight) {
-				playerClip.scaleX = 1;
-				prevScaleX = 1;
-				playerClip.x = -2;
-				playerClip.y = -8;
+		private function animateStandingStill():void {
+			//jump land animation
+			if (currentAnimation == JUMP_PEAK_FALL_ANIMATION || currentAnimation == JUMP_UP_ANIMATION || currentAnimation == JUMP_LAND_ANIMATION) {
+				switchTo(JUMP_LAND_ANIMATION);
+				if (currentFrame <= currentAnimation.totalFrames) {
+					currentAnimation.gotoAndStop(currentFrame);
+					currentFrame++;
+					return;
+				}
+			}
+			//standing still animation
+			switchTo(WALKING_ANIMATION);
+			currentFrame = 1;
+			currentAnimation.gotoAndStop(currentFrame);
+		}
 
+		private function animateCrawlStill():void {
+			switchTo(CRAWLING_ANIMATION);
+			currentFrame = 1;
+			currentAnimation.gotoAndStop(currentFrame);
+		}
+
+		private function animateStandingWalking():void {
+			switchTo(WALKING_ANIMATION);
+			currentAnimation.gotoAndStop(currentFrame);
+			incrementFrameWithLoop();
+		}
+
+		private function animateCrawlWalking():void {
+			switchTo(CRAWLING_ANIMATION);
+			currentAnimation.gotoAndStop(currentFrame);
+			incrementFrameWithLoop();
+		}
+
+		private function animateJumpAndFall():void {
+			if (speedY < -PEAK_SPEED_THRESHOLD) {
+				switchTo(JUMP_UP_ANIMATION);
+				currentAnimation.gotoAndStop(currentFrame);
+				incrementFrameNoLoop();
+			} else if (speedY > 0 && (currentAnimation != JUMP_PEAK_FALL_ANIMATION || currentFrame < JUMP_PEAK_FRAME)) {
+				switchTo(JUMP_PEAK_FALL_ANIMATION);
+				currentFrame = JUMP_PEAK_FRAME;
+				currentAnimation.gotoAndStop(currentFrame);
+				incrementFrameNoLoop();
 			} else {
-				playerClip.scaleX = -1;
-				prevScaleX = -1;
-				//This value might need to be changed, I think it might be off a few pixels
-				playerClip.x = 25;
-				playerClip.y = -8;
+				switchTo(JUMP_PEAK_FALL_ANIMATION);
+				currentAnimation.gotoAndStop(currentFrame);
+				incrementFrameNoLoop();
 			}
-
+		}
+		
+		private function animateDeath():void {
+			if (!deathAnimation.visible) {
+				currentAnimation.visible = false;
+				deathAnimation.visible = true;
+				if (isFacingRight) {
+					deathAnimation.scaleX = 1;
+//					DEATH_ANIMATION.x = DEATH_ANIMATION_X_RIGHT;
+				} else {
+					deathAnimation.scaleX = -1;
+//					DEATH_ANIMATION.x = DEATH_ANIMATION_X_LEFT;
+				}
+				CONFIG::DEBUG {
+					DEATH_ANIMATION.alpha = ANIMATION_ALPHA;
+				}
+//				DEATH_ANIMATION.graphics.beginFill(0);
+//				DEATH_ANIMATION.graphics.drawRect(-2, -2, 4, 4);
+//				DEATH_ANIMATION.graphics.endFill();
+//				DEATH_ANIMATION.alpha = 0.1;
+			}
+			deathAnimation.x += deathSpeedX;
+			deathAnimation.y += deathSpeedY;
+			deathAnimation.rotation += deathRotation;
 		}
 
-		public function die():void {
-			trace("YOU DEAD");
+		public override function onKillEvent(level:Level):void {
 			isDead = true;
+			deathAnimation.x += hitbox.width / 2;
+			deathAnimation.y += hitbox.height / 2;
+			DEATH_SPRITE.x -= hitbox.width / 2;
+			DEATH_SPRITE.y -= hitbox.height / 2;
+			deathSpeedX = MAX_ADDITIONAL_SPEED * Math.random() + MIN_DEATH_SPEED;
+			if(Math.random() > 0.5)
+				deathSpeedX *= -1;
+			deathSpeedY = MAX_ADDITIONAL_SPEED * Math.random() + MIN_DEATH_SPEED;
+			if(Math.random() > 0.5)
+				deathSpeedY *= -1;
+			deathRotation = MAX_ADDITIONAL_ROTATION * Math.random() + MIN_DEATH_ROTATION;
+			if(Math.random() > 0.5)
+				deathRotation *= -1;
 		}
 	}
 }

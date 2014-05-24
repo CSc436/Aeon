@@ -27,7 +27,6 @@ package org.interguild.game.level {
 		
 		// Buttons for the pause menu
 		private var resumeButton:MovieClip;
-		//private var restartCheckpointButton:Button;
 		private var restartGameButton:MovieClip;
 		private var editorButton:MovieClip;
 		private var quitButton:MovieClip;
@@ -48,17 +47,6 @@ package org.interguild.game.level {
 			resumeButton.y = RESUME_Y;
 			addChild(resumeButton);
 			addButton(resumeButton);
-			
-			// Make button for restarting from a checkpoint
-			//			restartCheckpointButton = new Button();
-			//			restartCheckpointButton.label = "Restart from Checkpoint";
-			//			restartCheckpointButton.x = 350;
-			//			restartCheckpointButton.y = 175;
-			//			restartCheckpointButton.height = 25;
-			//			restartCheckpointButton.width = 150;
-			//			// Make this work once we actually have checkpoints in the game
-			//			//restartCheckpointButton.addEventListener(MouseEvent.CLICK, restartFromCheckpoint);
-			//			this.parent.addChild(restartCheckpointButton);
 			
 			// Make button for restarting from the beginning of a level
 			restartGameButton = new RestartButton();
@@ -94,15 +82,9 @@ package org.interguild.game.level {
 					break;
 				case TODO_RESTART:
 					this.stage.focus = stage;
-					// This is hardcoded right now, but we probably want some kind of
-					// global reference to the current file so that we know what level
-					// needs to be restarted
 					Aeon.getMe().playLastLevel();
 					break;
 				case TODO_LEVEL_EDITOR:
-					// Probably want to give the user some kind of dialog warning them
-					// that exiting to the editor will cause them to lose their progress
-					// in the current level
 					Aeon.getMe().gotoEditorPage();
 					break;
 				case TODO_QUIT:

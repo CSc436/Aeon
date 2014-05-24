@@ -5,11 +5,9 @@ package org.interguild.game.level {
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-	
+
 	import fl.controls.Button;
-	
-	import flexunit.utils.ArrayList;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
@@ -24,11 +22,14 @@ package org.interguild.game.level {
 	 * 		-The level itself
 	 */
 	public class LevelPage extends Sprite {
-		
-		//remote file
-		public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65180.txt";
-		//local file
-//		public static const TEST_LEVEL_FILE:String = "../gamesaves/coollevel.txt";
+
+		CONFIG::ONLINE {
+			public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65180.txt";
+		}
+
+		CONFIG::OFFLINE {
+			public static const TEST_LEVEL_FILE:String = "../gamesaves/deathtest.txt";
+		}
 
 		private var level:Level;
 		private var loader:LevelLoader;
@@ -77,8 +78,16 @@ package org.interguild.game.level {
 			pauseMenu.visible = false;
 			addChild(pauseMenu);
 		}
+		
+		/**
+		 * This is called when a new level is about to be loaded
+		 * and this one needs to shutdown
+		 */
+		public function shutdown():void{
+			level.pauseGame();
+		}
 
-		private function onLoadError(e:ArrayList):void {
+		private function onLoadError(e:Array):void {
 			Aeon.getMe().returnFromError(e, "LevelLoader");
 		}
 
@@ -124,36 +133,36 @@ package org.interguild.game.level {
 				pauseMenu.visible = false;
 			}
 		}
-		
+
 		public function onWonGame():void {
 			var header:TextField = new TextField();
 			var content:TextField = new TextField();
 			winDialog = new Sprite();
 			var rect:Shape = new Shape();
 			rect.graphics.lineStyle(1);
-			rect.graphics.beginFill(0X333333,1);
-			rect.graphics.drawRect(0,0,300,160);
+			rect.graphics.beginFill(0X333333, 1);
+			rect.graphics.drawRect(0, 0, 300, 160);
 			winDialog.addChild(rect);
 			//header box
 			var headerOutline:Shape = new Shape();
 			headerOutline.graphics.lineStyle(1);
-			headerOutline.graphics.drawRect(0,0, 300, 22);
+			headerOutline.graphics.drawRect(0, 0, 300, 22);
 			headerOutline.x = 0;
 			headerOutline.y = 0;
 			winDialog.addChild(headerOutline);
-			
+
 			//format header text
 			var headerFormat:TextFormat = new TextFormat();
 			headerFormat.bold = false;
 			headerFormat.color = 0x000000;
 			headerFormat.size = 14;
 			headerFormat.font = "Verdana";
-			
+
 			//format dialog text
 			var dialogFormat:TextFormat = new TextFormat();
 			dialogFormat.size = 12;
 			dialogFormat.font = "Verdana";
-			
+
 			//title of dialog box
 			var headerTxt:String = "VICTORY!!";
 			header = new TextField();
@@ -166,13 +175,13 @@ package org.interguild.game.level {
 			header.wordWrap = true;
 			header.multiline = false;
 			winDialog.addChild(header);
-			
+
 			var txt:String = "Congratulations, you've beaten the level!";
 			//outline for scrolling text area
 			var outline:Shape = new Shape();
 			outline.graphics.lineStyle(1);
-			outline.graphics.beginFill(0,0);
-			outline.graphics.drawRect(0,0, 275, 100);
+			outline.graphics.beginFill(0, 0);
+			outline.graphics.drawRect(0, 0, 275, 100);
 			outline.x = 5;
 			outline.y = 25;
 			winDialog.addChild(outline);
@@ -188,32 +197,31 @@ package org.interguild.game.level {
 			content.multiline = true;
 			content.setTextFormat(dialogFormat);
 			winDialog.addChild(content);
-			
+
 			//close dialog box
 			var close:Button = new Button();
 			close.label = "Close";
 			close.x = 100;
 			close.y = 130;
 			close.addEventListener(MouseEvent.CLICK, closeDialog, true, 0);
-			winDialog.addChild(close); 
-			
+			winDialog.addChild(close);
+
 			winDialog.x = Aeon.STAGE_WIDTH / 2 - winDialog.width / 2;
 			winDialog.y = Aeon.STAGE_HEIGHT / 2 - winDialog.height / 2;
-			
+
 			var aeon:Aeon = Aeon.getMe();
 			aeon.gotoMainMenu();
 			//this.addChild(winDialog);
 		}
-		
-		private function closeDialog(e:MouseEvent):void
-		{
-			
-				LevelPage(this).removeChild(winDialog);
-			
+
+		private function closeDialog(e:MouseEvent):void {
+
+			LevelPage(this).removeChild(winDialog);
+
 		}
-		
-		private function onSpacebar():void{
-			if(!pauseMenu.visible && !level.isRunning){
+
+		private function onSpacebar():void {
+			if (!pauseMenu.visible && !level.isRunning) {
 				showFullLevel();
 			}
 		}
