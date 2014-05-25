@@ -12,6 +12,7 @@ package org.interguild.loader {
 		
 		protected override function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void{
 			grid = new EditorLevel(lvlHeight, lvlWidth);
+			grid.title = title;
 			initializedCallback(grid);
 		}
 		

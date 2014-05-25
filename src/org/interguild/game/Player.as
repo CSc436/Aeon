@@ -159,6 +159,10 @@ package org.interguild.game {
 		public function landedOnGround():void {
 			isOnGround = true;
 		}
+		
+		public function get isStanding():Boolean{
+			return isOnGround;
+		}
 
 		public override function onGameLoop():void {
 			if (isDead) {

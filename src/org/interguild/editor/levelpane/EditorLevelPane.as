@@ -3,9 +3,9 @@ package org.interguild.editor.levelpane {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-
+	
 	import fl.containers.ScrollPane;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 
@@ -139,7 +139,9 @@ package org.interguild.editor.levelpane {
 			} else if (!zoomIn && zoomLevel > ZOOM_SUPER_MIN) {
 				zoomLevel -= ZOOM_SUPER_DELTA;
 			}
-			level.scaleX = level.scaleY = zoomLevel / 100;
+			var container:Sprite = Sprite(scroll.source);
+			container.scaleX = container.scaleY = zoomLevel / 100;
+			scroll.source = container;
 		}
 
 		/**

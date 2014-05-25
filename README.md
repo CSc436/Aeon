@@ -4,6 +4,7 @@ Aeon TODOs
 OTHER
 	-build custom version of game to load images from files
 		so that bernadette can iterate on images faster
+	-preloader
 
 LEVEL EDITOR
 	-When a selection is made, buttons for copy, cut, clear, and fill (?) should appear
@@ -11,16 +12,14 @@ LEVEL EDITOR
 		-then need to implement it
 	-figure out how to best handle too many tabs
 	-make editor scroll to follow the mouse when click and dragging
-	-press spacebar to click and drag everything to scroll
 	-implement undo/redo
-	-add zooming in/out
+	-design "Help" window
 
 GAME
-	-import new crawling animation //do at home, requires fonts and many programs
+	-ability to crawl slower
 	-ability to move camera with facingright and up and down
 	-refactor camera //do at home, may require research
 	-refactor how projectiles are thrown
-	-refactor how knockback is calculated
 	-refactor how mustCrawl is calculated
 	-steel arrows
 	-polish player controls

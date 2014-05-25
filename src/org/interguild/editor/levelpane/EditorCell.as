@@ -12,7 +12,7 @@ package org.interguild.editor.levelpane {
 		public static const CELL_WIDTH:uint = 32;
 		public static const CELL_HEIGHT:uint = 32;
 
-		public static const LINE_COLOR:uint = 0x777777;
+		public static const LINE_COLOR:uint = 0x444444;//0x777777;
 		private static const CELL_BG_COLOR:uint = 0x000000;
 
 		private var tileChar:String = TileList.ERASER_TOOL_CHAR;

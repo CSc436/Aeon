@@ -12,7 +12,7 @@ package org.interguild.game.tiles {
 	public class Terrain extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = 'x';
-		public static const EDITOR_ICON:BitmapData = new TerrainSprite();
+		public static const EDITOR_ICON:BitmapData = new TerrainWoodEditorSprite();
 
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = false;

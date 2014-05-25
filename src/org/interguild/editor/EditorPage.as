@@ -2,7 +2,6 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
 	import flash.net.FileReference;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
@@ -27,6 +26,8 @@ package org.interguild.editor {
 		private static const HINT_COLOR:uint = 0xFFFFFF;
 
 		private static var selectedTile:String;
+		//TODO, replace this with a simple check in the undo/redo feature
+		public static var hasMadeFirstChange:Boolean = false;
 
 		public static function get currentTile():String {
 			return selectedTile;
@@ -102,6 +103,7 @@ package org.interguild.editor {
 
 		public function newLevel():void {
 			levelPane.addLevel();
+			hasMadeFirstChange = true;
 		}
 
 		public function closeLevel():void {
@@ -117,6 +119,7 @@ package org.interguild.editor {
 			var levelcode:String = getLevelCode();
 			var filename:String = levelcode.substring(0, levelcode.indexOf("\n")) + ".txt";
 			file.save(levelcode, filename);
+			hasMadeFirstChange = true;
 		}
 
 		public function openFromFile():void {

@@ -1,6 +1,8 @@
 package org.interguild.editor.levelpane {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
+	
+	import org.interguild.editor.EditorPage;
 
 	public class EditorTabManager extends Sprite {
 
@@ -24,8 +26,13 @@ package org.interguild.editor.levelpane {
 		}
 
 		public function addTab(level:EditorLevel = null):void {
-			if (level == null)
+			var cTab:EditorTab = null;
+			
+			if (level == null){
 				level = new EditorLevel();
+			}else if(!EditorPage.hasMadeFirstChange){
+				cTab = currentTab;
+			}
 
 			var tab:EditorTab = new EditorTab(level, this);
 			tab.x = tabs.length * TAB_WIDTH;
@@ -34,6 +41,10 @@ package org.interguild.editor.levelpane {
 
 			switchToTab(tab);
 			addChild(tab);
+			
+			if(cTab){
+				closeLevel(cTab);
+			}
 		}
 
 		private function onTabClick(evt:MouseEvent):void {

@@ -83,7 +83,7 @@ package org.interguild.game.tiles {
 		}
 
 		public function finishTerrain():void {
-			terrainBG.graphics.beginBitmapFill(new TerrainSteelSprite());
+			terrainBG.graphics.beginBitmapFill(new TerrainWoodSprite());
 			for (var j:uint = 0; j < terrains.length; j++) {
 				if (terrains[j]) {
 					for (var i:uint = 0; i < terrains[j].length; i++) {

@@ -24,7 +24,7 @@ package org.interguild.game.level {
 	public class LevelPage extends Sprite {
 
 		CONFIG::ONLINE {
-			public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65180.txt";
+			public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65182.txt";
 		}
 
 		CONFIG::OFFLINE {

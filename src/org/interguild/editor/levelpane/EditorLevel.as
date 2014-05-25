@@ -131,6 +131,7 @@ package org.interguild.editor.levelpane {
 					//user is placing down a tile
 					clickCell(cell);
 				}
+				EditorPage.hasMadeFirstChange = true;
 			}
 		}
 

@@ -4,7 +4,7 @@ package org.interguild.game.collision {
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.Player;
@@ -234,23 +234,28 @@ package org.interguild.game.collision {
 			/*
 			 * HANDLE DESTRUCTIONS
 			 */
+			var destroyed:Boolean = false;
 			if (activeObject.canDestroy(otherObject)) {
 				toRemove(otherObject);
+				destroyed = true;
 			}
 			if (otherObject.canDestroy(activeObject)) {
 				toRemove(activeObject);
+				destroyed = true;
 			}
 			if (otherObject.isSolid() && activeObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
 				toRemove(activeObject);
+				destroyed = true;
 			}
 			if (activeObject.isSolid() && otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
 				toRemove(otherObject);
+				destroyed = true;
 			}
 
 			/*
 			* SOLID COLLISIONS
 			*/
-			if (activeObject.isSolid() && otherObject.isSolid()) {
+			if (activeObject.isSolid() && otherObject.isSolid() && !destroyed) {
 				//handle directions:
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
@@ -289,9 +294,9 @@ package org.interguild.game.collision {
 			* TODO: use getKnockback, rather than constants?
 			*/
 			if (p && otherObject.getKnockback() > 0) {
-				if (direction == Direction.DOWN) {
+				if (direction == Direction.DOWN || (!p.isStanding && p.speedY > 0)) {
 					activeObject.speedY = Player.KNOCKBACK_JUMP_SPEED;
-				} else if (direction == Direction.UP) {
+				} else if (direction == Direction.UP || (!p.isStanding && p.speedY < 0)) {
 					activeObject.speedY = 0;
 				} else if (direction == Direction.RIGHT) {
 					activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
@@ -340,6 +345,7 @@ package org.interguild.game.collision {
 					activeObjects.splice(index, 1);
 				}
 
+				r.finishGameLoop();
 				r.isActive = false;
 				updateObject(r, true);
 			}

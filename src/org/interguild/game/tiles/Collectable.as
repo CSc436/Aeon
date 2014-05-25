@@ -1,9 +1,10 @@
 package org.interguild.game.tiles {
 
 	import flash.display.Bitmap;
-
-	import org.interguild.Aeon;
 	import flash.display.BitmapData;
+	
+	import org.interguild.Aeon;
+	import org.interguild.game.collision.Destruction;
 
 	public class Collectable extends CollidableObject {
 
@@ -16,6 +17,7 @@ package org.interguild.game.tiles {
 		public function Collectable(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
+			destruction.destroyedBy(Destruction.PLAYER);
 			
 			addChild(new Bitmap(new CollectibleSprite()));
 		}
