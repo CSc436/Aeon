@@ -1,5 +1,4 @@
 package org.interguild.game.collision {
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -10,14 +9,11 @@ package org.interguild.game.collision {
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.Player;
 	import org.interguild.game.level.Level;
-	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
 
 	public class CollisionGrid extends Sprite {
 
@@ -43,11 +39,20 @@ package org.interguild.game.collision {
 			activeObjects = new Vector.<GameObject>();
 
 			jump = new Sound();
-			jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
-//			jump.load(new URLRequest("../assets/jump.mp3")); //local
+			CONFIG::ONLINE {
+				jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
+			}
+			CONFIG::OFFLINE {
+				jump.load(new URLRequest("../assets/jump.mp3")); //local
+			}
+
 			coin = new Sound();
-			coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
-//			coin.load(new URLRequest("../assets/coin.mp3")); //local
+			CONFIG::ONLINE {
+				coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
+			}
+			CONFIG::OFFLINE {
+				coin.load(new URLRequest("../assets/coin.mp3")); //local
+			}
 
 			//init 2D arra]y
 			grid = new Array(height);
@@ -133,22 +138,40 @@ package org.interguild.game.collision {
 			return Math.sqrt((distx * distx) + (disty * disty));
 		}
 
-		private function getSlope(p1:Point, p2:Point):Number {
-			return (p2.y - p1.y) / (p2.x - p1.x);
-		}
-
 		/**
 		 * Handle collisions!
 		 */
-		public function detectAndHandleCollisions(target:CollidableObject):Array {
+		public function detectAndHandleCollisions(target:CollidableObject):void {
 			if (target is Explosion) {
 				var e:Explosion = Explosion(target);
 				if (e.timeCounter >= 15)
 					toRemove(target);
 			}
 
-			//maintain a list of nearby objects, ordered by proximity
-			var objectsToTest:Array = new Array();
+			var objectsToTest:ObjectsToTestList = getNearbyObjects(target);
+			objectsToTest.prepareToIterate();
+			while (objectsToTest.hasNext()) {
+				var current:ObjectsToTestEntry = objectsToTest.next();
+
+				var other:CollidableObject = current.object;
+				var active:CollidableObject = target;
+
+				// HACKY STUFF BELOW //
+				if ((target is Player && Player(target).isDead) || (other is Player && Player(other).isDead))
+					continue;
+				// HACKY STUFF ABOVE //
+
+				if (!active.hasCollidedWith(other) && active.hitboxWrapper.intersects(other.hitboxWrapper)) {
+					handleCollision(active, other);
+				}
+			}
+		}
+
+		/**
+		 * Returns a list of nearby objects, ordered by proximity and other things.
+		 */
+		private function getNearbyObjects(target:CollidableObject):ObjectsToTestList {
+			var list:ObjectsToTestList = new ObjectsToTestList();
 
 			var gTiles:Vector.<GridTile> = target.myCollisionGridTiles;
 			var len:uint = gTiles.length;
@@ -166,258 +189,31 @@ package org.interguild.game.collision {
 						if (!target.hitbox.intersects(obj.hitbox)) {
 							distance = 0;
 						}
-
-						var toInsert:Array = new Array(distance, obj, obj.isActive);
-
-						//add to list, ordered by proximity to target
-						var alen:uint = objectsToTest.length;
-						var tmp:Array = null;
-						for (var k:uint = 0; k < alen; k++) {
-							//shifting elements down the array
-							if (tmp != null) {
-								var tmp2:Array = objectsToTest[k];
-								objectsToTest[k] = tmp;
-								tmp = tmp2;
-									// if to be inserted at this location
-							} else if ((!obj.isActive && objectsToTest[k][2]) || (distance < objectsToTest[k][0] && obj.isActive == objectsToTest[k][2])) {
-								tmp = objectsToTest[k];
-								objectsToTest[k] = toInsert;
-							}
-						}
-//						//finish shifting elements
-						if (tmp != null) {
-							objectsToTest[objectsToTest.length] = tmp;
-								//or insert element to end
-						} else {
-							objectsToTest[objectsToTest.length] = toInsert;
-						}
+						list.insertInOrder(new ObjectsToTestEntry(distance, obj));
 					}
 				}
 			}
-
-			//now we can test collisions between obj and target
-			//iterate
-			var mlen:uint = objectsToTest.length;
-			for (var m:uint = 0; m < mlen; m++) {
-				var other:CollidableObject = objectsToTest[m][1];
-				var active:CollidableObject = target;
-				
-				if(!(target is Player) && (other is Explosion || other is Arrow)){
-					var toSwap:CollidableObject = active;
-					active = other;
-					other = toSwap;
-				}
-				
-				CONFIG::DEBUG {
-					if (level.isDebuggingMode)
-						trace(other, "x: " + other.x, "y: " + other.y, "dist: " + objectsToTest[m][0]);
-				}
-
-				if (!active.hasCollidedWith(other) && active.hitboxWrapper.intersects(other.hitboxWrapper)) {
-					
-					CONFIG::DEBUG {
-						if (level.isDebuggingMode)
-							trace("	handling collision");
-					}
-						
-					handleCollision(active, other);
-				}
-			}
-			CONFIG::DEBUG {
-				if (level.isDebuggingMode)
-					trace("-----------------------");
-			}
-			return removalObjects;
-		}
-
-		private function determineDirection(activeObject:CollidableObject, otherObject:CollidableObject, activeBoxPrev:Rectangle, otherBoxPrev:Rectangle, activeBoxCurr:Rectangle, otherBoxCurr:Rectangle):uint {
-			if (activeBoxCurr.intersects(otherBoxPrev) || otherBoxCurr.intersects(activeBoxPrev)) {
-				/*
-				 * SIMPLE ONE-DIRECITON CASES
-				 */
-				if (!otherObject.isBlocked(Direction.UP) && activeBoxPrev.bottom <= otherBoxPrev.top && activeBoxCurr.bottom >= otherBoxCurr.top) {
-					/*
-					* --------------
-					* |activeObject|
-					* --------------
-					* |otherObject |
-					* --------------
-					*/
-					return Direction.DOWN;
-				} else if (!otherObject.isBlocked(Direction.DOWN) && activeBoxPrev.top >= otherBoxPrev.bottom && activeBoxCurr.top <= otherBoxCurr.bottom) {
-					/*
-					* --------------
-					* |otherObject |
-					* --------------
-					* |activeObject|
-					* --------------
-					*/
-					return Direction.UP;
-				} else if (!otherObject.isBlocked(Direction.LEFT) && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
-					/*
-					* |------------||-----------|
-					* |activeObject||otherObject|
-					* |------------||-----------|
-					*/
-					return Direction.RIGHT;
-				} else if (!otherObject.isBlocked(Direction.RIGHT) && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
-					/*
-					* |-----------||------------|
-					* |otherObject||activeObject|
-					* |-----------||------------|
-					*/
-					return Direction.LEFT;
-				}
-				// backup testing
-				var intsec:Rectangle;
-				if (activeBoxCurr.intersects(otherBoxPrev))
-					intsec = activeBoxCurr.intersection(otherBoxPrev);
-				else
-					intsec = otherBoxCurr.intersection(activeBoxPrev);
-				if (intsec.width > intsec.height) {
-					if (intsec.y > activeBoxCurr.y + activeBoxCurr.height / 2)
-						return Direction.DOWN;
-					else
-						return Direction.UP;
-				} else {
-					if (intsec.x > activeBoxCurr.x + activeBoxCurr.width / 2)
-						return Direction.RIGHT;
-					else
-						return Direction.LEFT;
-				}
-			} else {
-				/*
-				 * COMPLICATED CORNER CASES
-				 */
-				var slopeSelf:Number;
-				var slopeOther:Number
-				var basePoint:Point;
-				var selfPoint:Point;
-				var otherPoint:Point;
-				//going down-right	//compare top-right point to bottom-left point
-				if (activeBoxPrev.top <= otherBoxPrev.bottom && activeBoxCurr.top >= otherBoxCurr.bottom && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
-					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.top);
-					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.top);
-					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.bottom);
-					slopeSelf = getSlope(basePoint, selfPoint);
-					slopeOther = getSlope(basePoint, otherPoint);
-					if (slopeSelf <= slopeOther) {
-//						trace("CORNER CASE: on down-right");
-						return Direction.RIGHT;
-					}
-						//going down-left //compare top-left point to bottom-right point
-				} else if (activeBoxPrev.top <= otherBoxPrev.bottom && activeBoxCurr.top >= otherBoxCurr.bottom && activeBoxPrev.left <= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
-					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.top);
-					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.top);
-					otherPoint = new Point(otherBoxCurr.right, otherBoxCurr.bottom);
-					slopeSelf = getSlope(basePoint, selfPoint);
-					slopeOther = getSlope(basePoint, otherPoint);
-					if (slopeSelf <= slopeOther) {
-//						trace("CORNER CASE: on down-left");
-						return Direction.LEFT;
-					}
-						//going up-left //compare bottom-left point to top-right point
-				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.left >= otherBoxPrev.right && activeBoxCurr.left <= otherBoxCurr.right) {
-					basePoint = new Point(activeBoxPrev.left, activeBoxPrev.bottom);
-					selfPoint = new Point(activeBoxCurr.left, activeBoxCurr.bottom);
-					otherPoint = new Point(otherBoxCurr.right, otherBoxCurr.top);
-					slopeSelf = getSlope(basePoint, selfPoint);
-					slopeOther = getSlope(basePoint, otherPoint);
-					if (slopeSelf >= slopeOther) {
-//						trace("CORNER CASE: on up-left");
-						return Direction.LEFT;
-					}
-						//going up-right //compare bottom-right point to top-left point
-				} else if (activeBoxPrev.bottom >= otherBoxPrev.top && activeBoxCurr.bottom <= otherBoxCurr.top && activeBoxPrev.right <= otherBoxPrev.left && activeBoxCurr.right >= otherBoxCurr.left) {
-					basePoint = new Point(activeBoxPrev.right, activeBoxPrev.bottom);
-					selfPoint = new Point(activeBoxCurr.right, activeBoxCurr.bottom);
-					otherPoint = new Point(otherBoxCurr.left, otherBoxCurr.top);
-					slopeSelf = getSlope(basePoint, selfPoint);
-					slopeOther = getSlope(basePoint, otherPoint);
-					if (slopeSelf >= slopeOther) {
-//						trace("CORNER CASE: on up-right");
-						return Direction.RIGHT;
-					}
-				}
-			}
-			return Direction.NONE;
+			return list;
 		}
 
 		public function handleCollision(activeObject:CollidableObject, otherObject:CollidableObject):void {
 			activeObject.setCollidedWith(otherObject);
 			otherObject.setCollidedWith(activeObject);
 			var p:Player = null;
-			var a:Arrow = null;
-			var explosion:Explosion = null
 			var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
 			var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
 			var otherBoxCurr:Rectangle = otherObject.hitbox;
 
-			//NOTE: just because this method was called, it doesn't mean that there was a collision
-
 			// get dirction of collision
-			var direction:uint = determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
+			var direction:uint = Direction.determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
 			if (direction == Direction.NONE)
 				return;
 
+			//EVERYTHING BELOW THIS LINE IS DEFINITELY A COLLISION
+
 			if (activeObject is Player) {
 				p = Player(activeObject);
-			}
-			// Check to see if arrow is the culprit
-			if (activeObject is Arrow) {
-				a = Arrow(activeObject);
-			}
-			// Check to see if explosion is the culprit
-			if (activeObject is Explosion) {
-				explosion = Explosion(activeObject);
-			}else if(otherObject is Explosion){
-				explosion = Explosion(otherObject);
-			}
-			
-			if (!(otherObject is CollidableObject) || !(activeObject is CollidableObject)) {
-				//will never ever happen
-				throw new Error("Please handle non-CollidableObjects in special cases before this line.");
-			}
-
-//			trace("Object 1: "+activeObject.toString());
-//			trace("Object 2: "+otherObject.toString());
-
-			var activeTile:CollidableObject = CollidableObject(activeObject);
-			var otherTile:CollidableObject = CollidableObject(otherObject);
-
-			/*
-			* PLAYER HIT BY ARROW
-			*/
-			if (p && otherTile is Arrow) {
-				p.die();
-			}
-
-			if (p && otherTile is Explosion) {
-				p.die();
-			}
-
-			/*
-			* EXPLOSION DESTROYS SURROUNDINGS
-			*/
-			if ((explosion && !(otherTile is Collectable || otherTile is Terrain || otherTile is Explosion || otherTile is Arrow))) {
-				toRemove(otherObject);
-				if (explosion.timeCounter >= 15)
-					toRemove(activeObject);
-			} else if (explosion && explosion.timeCounter >= 15){
-				toRemove(activeObject);
-			}
-
-			/*
-			* ARROW HITS CRATE
-			*/
-			if ((a && otherTile.getDestructibility() == 2) || (a && otherTile is SteelCrate)) {
-				toRemove(otherObject);
-				toRemove(activeObject);
-			} else if (a && otherTile.getDestructibility() == 0 && !(otherTile is Explosion) && !(otherTile is FinishLine)) {
-				toRemove(activeObject);
-			} else if (a && otherTile is Explosion) {
-				trace("hi");
 			}
 
 			/*
@@ -427,51 +223,54 @@ package org.interguild.game.collision {
 				toRemove(otherObject);
 				level.grabbedCollectable();
 				coin.play();
-				/*
-				* PLAYER ENTERS ACTIVE PORTAL
-				*/
-			} else if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
+			}
+			/*
+			* PLAYER ENTERS ACTIVE PORTAL
+			*/
+			if (p && otherObject is FinishLine && FinishLine(otherObject).canWin()) {
 				level.onWonGame();
-				/*
-				* PLAYER HITS CRATE
-				*/
-			} else if (p && otherTile.getDestructibility() == 2) {
-				// knockback stuff:
-				if (otherTile.doesKnockback() > 0) {
-					if (direction == Direction.DOWN) {
-						p.speedY = Player.KNOCKBACK_JUMP_SPEED;
-					} else if (direction == Direction.UP) {
-						activeObject.speedY = 0;
-					} else if (direction == Direction.RIGHT) {
-						activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
-					} else if (direction == Direction.LEFT) {
-						activeObject.speedX = Player.KNOCKBACK_HORIZONTAL;
-					}
-				}
+			}
+
+			/*
+			 * HANDLE DESTRUCTIONS
+			 */
+			var destroyed:Boolean = false;
+			if (activeObject.canDestroy(otherObject)) {
 				toRemove(otherObject);
+				destroyed = true;
+			}
+			if (otherObject.canDestroy(activeObject)) {
+				toRemove(activeObject);
+				destroyed = true;
+			}
+			if (otherObject.isSolid() && activeObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
+				toRemove(activeObject);
+				destroyed = true;
+			}
+			if (activeObject.isSolid() && otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
+				toRemove(otherObject);
+				destroyed = true;
 			}
 
 			/*
 			* SOLID COLLISIONS
-			*/else if (activeTile.isSolid() && otherTile.isSolid()) {
+			*/
+			if (activeObject.isSolid() && otherObject.isSolid() && !destroyed) {
+				//handle directions:
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
-					if (p) {
-						p.isStanding = true;
-					} else if (otherObject is Player) { //player got crushed by falling solid object
-						trace("p = other");
-						Player(otherObject).die();
-							//return;
-					} else {
+					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
+						toRemove(otherObject);
+					} else if (p) { // player lands on object
+						p.landedOnGround();
+					} else { // something else lands on object
 						deactivateObjects.push(activeObject);
 					}
 				} else if (direction == Direction.UP) {
-					if (otherTile.isActive) {
-						if (p) { //player got crushed by falling solid object
-							trace("p = active");
-							p.die();
-								//return;
+					if (otherObject.isActive) {
+						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !activeObject.canDestroy(otherObject)) {
+							toRemove(activeObject);
 						} else {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
 							otherObject.speedY = 0;
@@ -489,48 +288,75 @@ package org.interguild.game.collision {
 				}
 			}
 
+			/*
+			* KNOCKBACK
+			*
+			* TODO: use getKnockback, rather than constants?
+			*/
+			if (p && otherObject.getKnockback() > 0) {
+				if (direction == Direction.DOWN || (!p.isStanding && p.speedY > 0)) {
+					activeObject.speedY = Player.KNOCKBACK_JUMP_SPEED;
+				} else if (direction == Direction.UP || (!p.isStanding && p.speedY < 0)) {
+					activeObject.speedY = 0;
+				} else if (direction == Direction.RIGHT) {
+					activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
+				} else if (direction == Direction.LEFT) {
+					activeObject.speedX = Player.KNOCKBACK_HORIZONTAL;
+				}
+			}
 
 			activeObject.updateHitBox();
 		}
-		
-		private function toRemove(obj:GameObject):void{
-			if(removalObjects.indexOf(obj) == -1){
+
+		/**
+		 * Called whenever an object is meant to die this frame.
+		 */
+		private function toRemove(obj:GameObject):void {
+			if (removalObjects.indexOf(obj) == -1) {
 				removalObjects.push(obj);
 			}
 		}
 
+		/**
+		 * Handle all of the objects that are meant to be destroyed
+		 * or deactivated this frame.
+		 */
 		public function handleRemovals(camera:Sprite):void {
 			for (var i:int = 0; i < removalObjects.length; i++) {
-				var r:GameObject = GameObject(removalObjects[i]);
+				var r:CollidableObject = CollidableObject(removalObjects[i]);
 
-				//remove from display list
-				camera.removeChild(DisplayObject(r));
-
-				//remove from grid tiles
-				if (r is CollidableObject) {
-					destroyObject(CollidableObject(r));
+				if (!(r is Player)) {
+					try {
+						camera.removeChild(r);
+					} catch (e:ArgumentError) {
+						trace(e);
+					}
 				}
+
+				destroyObject(r);
 			}
 			removalObjects = new Array();
 
 			for (i = 0; i < deactivateObjects.length; i++) {
-				r = GameObject(deactivateObjects[i]);
+				r = CollidableObject(deactivateObjects[i]);
 
 				var index:int = activeObjects.indexOf(r);
 				if (index != -1) {
 					activeObjects.splice(index, 1);
 				}
 
-				if (r is CollidableObject) {
-					var c:CollidableObject = CollidableObject(r);
-					c.isActive = false;
-					updateObject(c, true);
-				}
+				r.finishGameLoop();
+				r.isActive = false;
+				updateObject(r, true);
 			}
 			deactivateObjects = new Array();
 		}
 
-		public function destroyObject(obj:CollidableObject):void {
+		/**
+		 * Called by handleRemovals, when destroying objects
+		 * at the end of each game loop.
+		 */
+		private function destroyObject(obj:CollidableObject):void {
 			if (obj.isActive) {
 				//remove from active objects
 				var index:int = activeObjects.indexOf(obj);
@@ -557,22 +383,6 @@ package org.interguild.game.collision {
 			}
 			obj.clearGrids();
 			obj.onKillEvent(level);
-
-//			var tile:GridTile = toDestroy.myCollisionGridTiles[0];
-//			unblockNeighbors(tile.gridRow, tile.gridCol);
-//			if (inBounds(tile.gridRow - 1, tile.gridCol) && grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length > 0) {
-//				for (var i:int = 0; i < grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects.length; i++) {
-//					if (!(grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[i] is Player)) {
-//						var obj:CollidableObject = grid[tile.gridRow - 1][tile.gridCol].myCollisionObjects[0];
-//						level.activateObject(obj);
-//						obj.setUnblocked(Direction.UP);
-//					}
-//				}
-//			}
-		}
-
-		public function getGrid():Array {
-			return grid;
 		}
 
 		/**

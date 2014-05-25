@@ -1,6 +1,6 @@
 package org.interguild.game {
-	import com.greensock.TweenLite;
-	import com.greensock.easing.Back;
+//	import com.greensock.TweenLite;
+//	import com.greensock.easing.Back;
 
 	import flash.display.Sprite;
 
@@ -34,79 +34,79 @@ package org.interguild.game {
 			this.bg = bg;
 			this.levelWidth = w;
 			this.levelHeight = h;
-			TweenLite.defaultEase = Back.easeOut;
+//			TweenLite.defaultEase = Back.easeOut;
 		}
 //
-		/**
-		 * Main method that updates the camera based on what the player is doing. It recognizes, looking up, down and travelling
-		 * to left or right. The camera will not go outside the bounds of the level. It will not allow the player to look up if doing so
-		 * would put the camera outside the bounds of the level.
-		 */
-		public function updateCamera():void {
-			var cameraX:int = -player.x + Aeon.STAGE_WIDTH / 2.0 - player.width;
-			var cameraY:int = -player.y + Aeon.STAGE_HEIGHT / 2.0 - player.height;
-
-			// player has reached the right most side of the level
-			if (player.x > levelWidth - Aeon.STAGE_WIDTH / 2) {
-				cameraX = -levelWidth + Aeon.STAGE_WIDTH;
-			}
-			// player has reached the bottom most part of the level
-			if (player.y > levelHeight - Aeon.STAGE_HEIGHT / 2) {
-				cameraY = -levelHeight + Aeon.STAGE_HEIGHT;
-			}
-			// player has reached the left most side of the level
-			if (player.x < 0 + Aeon.STAGE_WIDTH / 2) {
-				cameraX = 0;
-			}
-			// player has reached the top most part of the level
-			if (player.y < 0 + Aeon.STAGE_HEIGHT / 2) {
-				cameraY = 0;
-			}
-
-			// camera will scroll upwards, only if player is standing on ground
-			if (player.isFacingUp && player.isStanding && player.y >= 0 + Aeon.STAGE_WIDTH / 2 + UPWARD_DISTANCE) {
-				TweenLite.to(this, LOOK_TWEEN_SPEED, {x: cameraX, y: cameraY + UPWARD_DISTANCE});
-			}
-			// camera will be to the right of the player for view
-			else if (player.isFacingRight && player.isStanding) {
-				TweenLite.to(this, TWEEN_SPEED, {x: cameraX - RIGHT_DISTANCE, y: cameraY});
-			}
-			// camera will be to the right of the player for view
-			else if (!player.isFacingRight && player.isStanding) {
-				TweenLite.to(this, TWEEN_SPEED, {x: cameraX + LEFT_DISTANCE, y: cameraY});
-			}
-			// camera will scroll downwards
-			else if (player.isCrouching && player.isStanding && player.y <= levelHeight - Aeon.STAGE_WIDTH / 2 - DOWNWARD_DISTANCE) {
-				TweenLite.to(this, LOOK_TWEEN_SPEED, {x: cameraX, y: cameraY - DOWNWARD_DISTANCE});
-			}
-			// recenter the camera
-			else {
-				TweenLite.to(this, RESET_TWEEN_SPEED, {x: cameraX, y: cameraY});
-			}
-		}
-
+//		/**
+//		 * Main method that updates the camera based on what the player is doing. It recognizes, looking up, down and travelling
+//		 * to left or right. The camera will not go outside the bounds of the level. It will not allow the player to look up if doing so
+//		 * would put the camera outside the bounds of the level.
+//		 */
 //		public function updateCamera():void {
-//			var cameraX:int = -player.x - player.width / 2 + Aeon.STAGE_WIDTH / 2.0;
-//			var cameraY:int = -player.y - player.height / 2 + Aeon.STAGE_HEIGHT / 2.0;
-//			
-//			//stop camera from going too far
-//			if (cameraX + width < Aeon.STAGE_WIDTH) {
-//				cameraX = Aeon.STAGE_WIDTH - width;
+//			var cameraX:int = -player.x + Aeon.STAGE_WIDTH / 2.0 - player.width;
+//			var cameraY:int = -player.y + Aeon.STAGE_HEIGHT / 2.0 - player.height;
+//
+//			// player has reached the right most side of the level
+//			if (player.x > levelWidth - Aeon.STAGE_WIDTH / 2) {
+//				cameraX = -levelWidth + Aeon.STAGE_WIDTH;
 //			}
-//			if ( cameraY + height < Aeon.STAGE_HEIGHT ) {
-//				cameraY = Aeon.STAGE_HEIGHT - height;
+//			// player has reached the bottom most part of the level
+//			if (player.y > levelHeight - Aeon.STAGE_HEIGHT / 2) {
+//				cameraY = -levelHeight + Aeon.STAGE_HEIGHT;
 //			}
-//			if (cameraX > 0) {
+//			// player has reached the left most side of the level
+//			if (player.x < 0 + Aeon.STAGE_WIDTH / 2) {
 //				cameraX = 0;
 //			}
-//			if (cameraY > 0) {
+//			// player has reached the top most part of the level
+//			if (player.y < 0 + Aeon.STAGE_HEIGHT / 2) {
 //				cameraY = 0;
 //			}
-//			
-//			bg.x += (cameraX - x) / 2;
-//			x = cameraX;
-//			y = cameraY;
+//
+////			// camera will scroll upwards, only if player is standing on ground
+////			if (player.isFacingUp && player.isStanding && player.y >= 0 + Aeon.STAGE_WIDTH / 2 + UPWARD_DISTANCE) {
+////				TweenLite.to(this, LOOK_TWEEN_SPEED, {x: cameraX, y: cameraY + UPWARD_DISTANCE});
+////			}
+////			// camera will be to the right of the player for view
+////			else if (player.isFacingRight && player.isStanding) {
+////				TweenLite.to(this, TWEEN_SPEED, {x: cameraX - RIGHT_DISTANCE, y: cameraY});
+////			}
+////			// camera will be to the right of the player for view
+////			else if (!player.isFacingRight && player.isStanding) {
+////				TweenLite.to(this, TWEEN_SPEED, {x: cameraX + LEFT_DISTANCE, y: cameraY});
+////			}
+////			// camera will scroll downwards
+////			else if (player.isCrouching && player.isStanding && player.y <= levelHeight - Aeon.STAGE_WIDTH / 2 - DOWNWARD_DISTANCE) {
+////				TweenLite.to(this, LOOK_TWEEN_SPEED, {x: cameraX, y: cameraY - DOWNWARD_DISTANCE});
+////			}
+//			// recenter the camera
+//			else {
+//				TweenLite.to(this, RESET_TWEEN_SPEED, {x: cameraX, y: cameraY});
+//			}
 //		}
+
+		public function updateCamera():void {
+			var cameraX:int = -player.x - player.width / 2 + Aeon.STAGE_WIDTH / 2.0;
+			var cameraY:int = -player.y - player.height / 2 + Aeon.STAGE_HEIGHT / 2.0;
+			
+			//stop camera from going too far
+			if (cameraX + levelWidth < Aeon.STAGE_WIDTH) {
+				cameraX = Aeon.STAGE_WIDTH - levelWidth;
+			}
+			if ( cameraY + levelHeight < Aeon.STAGE_HEIGHT ) {
+				cameraY = Aeon.STAGE_HEIGHT - levelHeight;
+			}
+			if (cameraX > 0) {
+				cameraX = 0;
+			}
+			if (cameraY > 0) {
+				cameraY = 0;
+			}
+			
+			bg.x += (cameraX - x) / 2;
+			x = cameraX;
+			y = cameraY;
+		}
 
 		public override function set x(n:Number):void {
 			super.x = n;

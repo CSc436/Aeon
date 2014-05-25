@@ -1,13 +1,15 @@
 package org.interguild.editor.tilelist {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
 	
 	import org.interguild.Aeon;
-	import org.interguild.editor.grid.EditorGridContainer;
+	import org.interguild.editor.EditorPage;
+	import org.interguild.editor.Hints;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
@@ -35,24 +37,29 @@ package org.interguild.editor.tilelist {
 		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
 
 		public static const SELECTION_TOOL_CHAR:String = "SELECTION";
-
-		private static var map:Object = new Object();
+		public static const ERASER_TOOL_CHAR:String = " ";
 		
+		private static var map:Object = new Object();
+
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
-
-		private var isUsingSelectionTool:Boolean;
+		
+		private var editor:EditorPage;
 
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
-
 		private var nextY:uint = 0; //used for adding tiles to the list
-		private var gridContainer:EditorGridContainer;
-		public function TileList() {
+		
+		private var scrollpane:ScrollPane
+		private var handToolRegion:Sprite;
+		private var lastClickY:Number;
+
+		public function TileList(editor:EditorPage) {
+			this.editor = editor;
 			x = POSITION_X;
 			y = POSITION_Y;
-			
+
 			//init bg
 			graphics.beginFill(BG_COLOR);
 			graphics.drawRoundRect(0, 0, BG_WIDTH, BG_HEIGHT, BG_CORNER_RADIUS, BG_CORNER_RADIUS);
@@ -73,24 +80,37 @@ package org.interguild.editor.tilelist {
 			list.graphics.endFill();
 
 			//init scroll page
-			var scrollpane:ScrollPane = new ScrollPane();
+			scrollpane = new ScrollPane();
 			scrollpane.source = list;
 			scrollpane.width = MASK_WIDTH + SCROLLBAR_WIDTH;
 			scrollpane.height = MASK_HEIGHT;
 			scrollpane.horizontalScrollPolicy = ScrollPolicy.OFF;
 			scrollpane.verticalScrollBar.pageScrollSize = 100;
 			addChild(scrollpane);
+			
+			//setup click-and-drag region
+			handToolRegion = new Sprite();
+			handToolRegion.graphics.beginFill(0, 0);
+			handToolRegion.graphics.drawRect(0, 0, list.width, list.height);
+			handToolRegion.graphics.endFill();
+			handToolRegion.visible = false;
+			handToolRegion.addEventListener(MouseEvent.MOUSE_DOWN, onDragMouseDown, false, 0, true);
+			list.addChild(handToolRegion);
 		}
 
 		private function initList():void {
 			map[SELECTION_TOOL_CHAR] = new SelectionToolSprite();
-			currentSelection = new TileListItem("Selection Tool", SELECTION_TOOL_CHAR);
-			currentSelection.select();
-			isUsingSelectionTool = true;
-			addItem(currentSelection);
+			addItem(new TileListItem("Selection Tool", SELECTION_TOOL_CHAR));
+
+			map[ERASER_TOOL_CHAR] = new EraserToolSprite();
+			addItem(new TileListItem("Eraser Tool", ERASER_TOOL_CHAR));
 
 			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
-			addItem(new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR));
+			currentSelection = new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR);
+			currentSelection.select();
+			EditorPage.currentTile = currentSelection.getCharCode();
+			addItem(currentSelection);
+
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
 			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
 
@@ -117,21 +137,28 @@ package org.interguild.editor.tilelist {
 
 			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
 			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
-			
+
 			map[DynamiteCrate.LEVEL_CODE_CHAR] = DynamiteCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteCrate.LEVEL_CODE_CHAR));
 		}
 
 		private function onClick(evt:MouseEvent):void {
+			editor.deselect();
 			if (evt.target is TileListItem) {
 				currentSelection.deselect();
-				isUsingSelectionTool = false;
+				var lastChar:String = currentSelection.getCharCode();
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
-				if (currentSelection.getCharCode() == SELECTION_TOOL_CHAR)
-					isUsingSelectionTool = true;
+				var curChar:String = currentSelection.getCharCode();
+				EditorPage.currentTile = curChar;
+				if(curChar == SELECTION_TOOL_CHAR){
+					editor.hintText = Hints.HINT_OLD_PASTE;
+				}else if(curChar == ERASER_TOOL_CHAR){
+					editor.hintText = Hints.HINT_HAND_TOOL;
+				}else{
+					editor.hintText = Hints.HINT_SHIFT_DRAWING;
+				}
 			}
-			gridContainer.setMultipleTiles();
 		}
 
 		private function addItem(i:TileListItem):void {
@@ -139,16 +166,33 @@ package org.interguild.editor.tilelist {
 			nextY += i.height;
 			list.addChild(i);
 		}
-
-		public function getActiveChar():String {
-			return currentSelection.getCharCode();
+		
+		/**
+		 * When spacebar is pressed, allow user to click-and-drag to scroll
+		 * through the level.
+		 */
+		public function set handToolEnabled(b:Boolean):void{
+			handToolRegion.visible = b;
 		}
-
-		public function isSelectionBox():Boolean {
-			return isUsingSelectionTool;
+		
+		private function onDragMouseDown(evt:MouseEvent):void{
+			lastClickY = evt.stageY;
+			stage.addEventListener(Event.ENTER_FRAME, onDrag, false, 0, true);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onDragMouseUp, false, 0, true);
 		}
-		public function addContainer(c:EditorGridContainer):void{
-			gridContainer = c;
+		
+		private function onDragMouseUp(evt:MouseEvent):void{
+			stage.removeEventListener(Event.ENTER_FRAME, onDrag);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onDragMouseUp);
+		}
+		
+		private function onDrag(evt:Event):void{
+			var curClickY:Number = stage.mouseY;
+			var delta:Number = curClickY - lastClickY;
+			
+			scrollpane.verticalScrollPosition -= delta;
+			
+			lastClickY = curClickY;
 		}
 	}
 }

@@ -5,8 +5,6 @@ package org.interguild.loader {
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
-	import flexunit.utils.ArrayList;
-	
 	public class Loader {
 		
 		private static const LOOPS_PER_TICK:uint = 250;
@@ -124,13 +122,13 @@ package org.interguild.loader {
 		 */
 		public function loadFromCode(levelCode:String, src:String):void {
 			var title:String;
-			var errors:ArrayList = new ArrayList();
+			var errors:Array = new Array();
 			
 			code = levelCode;
 			codeLength = code.length;
 			
 			if(code == null){
-				errors.addItem("Invalid Level Code; no level encoding.")
+				errors.push("Invalid Level Code; no level encoding.")
 				errorCallback(errors);
 				return;
 			}		
@@ -146,14 +144,14 @@ package org.interguild.loader {
 			
 			var length:int = levelCode.split("\n").length;
 			if(length < 3){
-				errors.addItem("Invalid Level Code; title, dimensions, followed by encoding.");
+				errors.push("Invalid Level Code; title, dimensions, followed by encoding.");
 			}
 			
 			//get title
 			var eol:int = code.indexOf("\n");
 			title = code.substr(0, eol);
 			if(title.length < 1){
-				errors.addItem("Invalid Encoding; first line must be level title.");
+				errors.push("Invalid Encoding; first line must be level title.");
 			}
 			code = code.substr(eol + 1);
 			
@@ -162,23 +160,23 @@ package org.interguild.loader {
 			var dimensionsLine:String = code.substr(0, eol);
 			var ix:int = dimensionsLine.indexOf("x");
 			if(ix == -1)
-				errors.addItem("Invalid Level Dimensions; input should be in the form #x#.");
+				errors.push("Invalid Level Dimensions; input should be in the form #x#.");
 			
 			if(dimensionsLine.substr(0, ix).length < 1)
-				errors.addItem("Invalid Level Dimensions; input should be in the form #x#.");
+				errors.push("Invalid Level Dimensions; input should be in the form #x#.");
 			levelWidth = Number(dimensionsLine.substr(0, ix));
 			
 			if(dimensionsLine.substr(ix + 1).length < 1)
-				errors.addItem("Invalid Level Dimensions; input should be in the form #x#.");
+				errors.push("Invalid Level Dimensions; input should be in the form #x#.");
 			levelHeight = Number(dimensionsLine.substr(ix + 1));
 			
 			code = code.substr(eol + 1);
 			
 			if (levelWidth <= 0 || levelHeight <= 0) {
-				errors.addItem("Invalid Level Dimensions; must be positive values.");
+				errors.push("Invalid Level Dimensions; must be positive values.");
 			}
 			
-			if (errors.length() > 0){
+			if (errors.length > 0){
 				errorCallback(errors);
 				return;
 			}

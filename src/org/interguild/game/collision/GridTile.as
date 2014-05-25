@@ -3,7 +3,6 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.Tile;
 
 	public class GridTile extends Sprite {
 

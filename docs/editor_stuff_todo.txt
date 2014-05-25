@@ -21,3 +21,15 @@ keys:
 	Ctrl+MouseWheel			zoom in/out
 	Ctrl+Enter			Test (Play Level)
 	Delete/Backspace		clear the tile
+	
+copy/paste
+	first make a selection
+	popup comes up with these buttons:
+		copy
+		cut
+		clear
+		fill?
+	click copy, selection is saved somewhere
+	immediately see copy preview in rollover. Next click will paste
+	can paste as many times as you want
+	after deselect, lose ability to paste until you hit the paste button? 

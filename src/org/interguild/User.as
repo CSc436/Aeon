@@ -28,21 +28,27 @@ package org.interguild {
 		 * Called by Aeon.as
 		 */
 		public static function init(onLoadCallback:Function):void {
-			var getFile:URLLoader = new URLLoader();
-			getFile.addEventListener(Event.COMPLETE, onFileLoad);
-			getFile.load(new URLRequest(GET_LOGIN_PAGE));
+			CONFIG::ONLINE {
+				var getFile:URLLoader = new URLLoader();
+				getFile.addEventListener(Event.COMPLETE, onFileLoad);
+				getFile.load(new URLRequest(GET_LOGIN_PAGE));
 
-			function onFileLoad(evt:Event):void {
-				var contents:String = String(evt.target.data);
-				if (contents != LOGGED_OUT_TEXT) {
-					isLoggedIn = true;
-					username = contents;
-					trace("LOGGED IN AS: " + username);
-				} else {
-					isLoggedIn = false;
-					username = "";
-					trace("NOT LOGGED IN");
+				function onFileLoad(evt:Event):void {
+					var contents:String = String(evt.target.data);
+					if (contents != LOGGED_OUT_TEXT) {
+						isLoggedIn = true;
+						username = contents;
+						trace("LOGGED IN AS: " + username);
+					} else {
+						isLoggedIn = false;
+						username = "";
+						trace("NOT LOGGED IN");
+					}
+					onLoadCallback();
 				}
+			}
+			CONFIG::OFFLINE {
+				isLoggedIn = false;
 				onLoadCallback();
 			}
 		}

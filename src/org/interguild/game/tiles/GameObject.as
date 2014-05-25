@@ -30,11 +30,9 @@ package org.interguild.game.tiles {
 		 * Updates the object for the current frame
 		 */
 		public function onGameLoop():void {
-			
 		}
 		
-		public function onKillEvent(level:Level):void {
-			
+		public function onKillEvent(level:Level):void {	
 		}
 		
 		public function finishGameLoop():void{
