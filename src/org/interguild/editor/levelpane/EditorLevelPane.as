@@ -1,8 +1,11 @@
 package org.interguild.editor.levelpane {
 	import flash.display.Sprite;
-
+	import flash.events.Event;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	
 	import fl.containers.ScrollPane;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 
@@ -23,6 +26,8 @@ package org.interguild.editor.levelpane {
 		private var currentLevel:EditorLevel;
 
 		private var scroll:ScrollPane;
+		private var lastClick:Point;
+		private var handToolRegion:Sprite;
 
 		public function EditorLevelPane(editor:EditorPage) {
 			this.editor = editor;
@@ -76,10 +81,12 @@ package org.interguild.editor.levelpane {
 				return;
 			}
 
+			//remember that level's scroll position
 			if (currentLevel != null) {
 				currentLevel.horizontalScrollPosition = scroll.horizontalScrollPosition;
 				currentLevel.verticalScrollPosition = scroll.verticalScrollPosition;
 
+				//can only be set if scrollpane used to have a currentLevel
 				scroll.horizontalScrollPosition = lvl.horizontalScrollPosition;
 				scroll.verticalScrollPosition = lvl.verticalScrollPosition;
 			}
@@ -101,11 +108,46 @@ package org.interguild.editor.levelpane {
 			container.graphics.drawRect(0, 0, 1, currentLevel.height + 1);
 			container.graphics.endFill();
 			scroll.source = container;
+			
+			//setup click-and-drag stuff
+			handToolRegion = new Sprite();
+			handToolRegion.graphics.beginFill(0, 0);
+			handToolRegion.graphics.drawRect(0, 0, container.width, container.height);
+			handToolRegion.graphics.endFill();
+			handToolRegion.visible = false;
+			handToolRegion.addEventListener(MouseEvent.MOUSE_DOWN, onDragMouseDown, false, 0, true);
+			container.addChild(handToolRegion);
+		}
+		
+		/**
+		 * When spacebar is pressed, allow user to click-and-drag to scroll
+		 * through the level.
+		 */
+		public function set handToolEnabled(b:Boolean):void{
+			handToolRegion.visible = b;
+		}
+		
+		private function onDragMouseDown(evt:MouseEvent):void{
+			lastClick = new Point(evt.stageX, evt.stageY);
+			stage.addEventListener(Event.ENTER_FRAME, onDrag, false, 0, true);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onDragMouseUp, false, 0, true);
+		}
+		
+		private function onDragMouseUp(evt:MouseEvent):void{
+			stage.removeEventListener(Event.ENTER_FRAME, onDrag);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onDragMouseUp);
+		}
+		
+		private function onDrag(evt:Event):void{
+			var curClick:Point = new Point(stage.mouseX, stage.mouseY);
+			var delta:Point = new Point(curClick.x - lastClick.x, curClick.y - lastClick.y);
+			
+			scroll.horizontalScrollPosition -= delta.x;
+			scroll.verticalScrollPosition -= delta.y;
+			
+			lastClick = curClick;
 		}
 
-		/**
-		 * resize the level
-		 */
 		public function resize(rows:int, cols:int):void {
 			currentLevel.resize(rows, cols);
 		}

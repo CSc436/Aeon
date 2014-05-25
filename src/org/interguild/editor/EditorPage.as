@@ -4,7 +4,9 @@ package org.interguild.editor {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
-
+	import flash.ui.Mouse;
+	import flash.ui.MouseCursor;
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.levelpane.EditorLevelPane;
 	import org.interguild.editor.tilelist.TileList;
@@ -164,6 +166,20 @@ package org.interguild.editor {
 		 */
 		private function getLevelCode():String {
 			return levelPane.level.getLevelCode();
+		}
+		
+		/**
+		 * When spacebar is pressed, allow user to click-and-drag to scroll
+		 * through the level.
+		 */
+		public function set handToolEnabled(b:Boolean):void{
+			if(b){
+				Mouse.cursor = MouseCursor.HAND;
+			}else{
+				Mouse.cursor = MouseCursor.AUTO;
+			}
+			levelPane.handToolEnabled = b;
+			tileList.handToolEnabled = b;
 		}
 
 		/**

@@ -82,6 +82,8 @@ package org.interguild.editor {
 							editor.toggleMenu();
 						break;
 					case 32: //spacebar
+						if(isNotDown)
+							editor.handToolEnabled = true;
 						break;
 				}
 			}
@@ -90,6 +92,8 @@ package org.interguild.editor {
 
 		private function onKeyUp(evt:KeyboardEvent):void {
 			isDown[evt.keyCode] = null;
+			if(evt.keyCode == 32) //spacebar
+				editor.handToolEnabled = false;
 		}
 	}
 }

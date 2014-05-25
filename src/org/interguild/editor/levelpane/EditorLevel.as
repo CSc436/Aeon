@@ -38,6 +38,7 @@ package org.interguild.editor.levelpane {
 		private var previewBD:BitmapData;
 		private var previewSquare:Sprite;
 		private var selectionSquare:SelectionHighlight;
+		private var lastMouseOverCell:EditorCell;
 
 		private var selectStart:Point;
 		private var selectEnd:Point;
@@ -112,10 +113,10 @@ package org.interguild.editor.levelpane {
 				selectStart = cell.getPoint();
 				selectEnd = selectStart;
 				// if user is pasting, and they aren't canceling it with shift key
-				if (pastePreview && !evt.shiftKey) {
-					paste(cell);
+				if (pastePreview) {
+					paste(cell, evt.shiftKey);
 						//if user is selecting, or they cancelled their paste with shift key
-				} else if (EditorPage.currentTile == TileList.SELECTION_TOOL_CHAR || (pastePreview && evt.shiftKey)) {
+				} else if (EditorPage.currentTile == TileList.SELECTION_TOOL_CHAR) {
 					isSelectDown = true;
 					if (pastePreview) {
 						removeChild(pastePreview);
@@ -152,9 +153,11 @@ package org.interguild.editor.levelpane {
 		private function onOver(evt:MouseEvent):void {
 			if (evt.target is EditorCell) {
 				var cell:EditorCell = EditorCell(evt.target);
+				lastMouseOverCell = cell;
 
 				//user is moving around the pastePreview before pasting
 				if (pastePreview) {
+					pastePreview.visible = true;
 					pastePreview.x = cell.x;
 					pastePreview.y = cell.y;
 					addChild(pastePreview);
@@ -349,6 +352,8 @@ package org.interguild.editor.levelpane {
 		private function onOut(evt:MouseEvent):void {
 			//if user's mouse leaves level, hide preview
 			previewSprite.visible = false;
+			if(pastePreview)
+				pastePreview.visible = false;
 		}
 
 		/**
@@ -402,6 +407,8 @@ package org.interguild.editor.levelpane {
 			//finalize preview image
 			pastePreview = new Bitmap(image);
 			pastePreview.alpha = PREVIEW_ALPHA;
+			pastePreview.x = lastMouseOverCell.x;
+			pastePreview.y = lastMouseOverCell.y;
 			pastePreviewOld = pastePreview;
 			addChild(pastePreview);
 
@@ -428,7 +435,7 @@ package org.interguild.editor.levelpane {
 		/**
 		 * Assumes there's something that you can paste.
 		 */
-		private function paste(cell:EditorCell):void {
+		private function paste(cell:EditorCell, isForgiving:Boolean):void {
 			var pasteLoc:Point = cell.getPoint();
 
 			var iy:int = pasteLoc.y;
@@ -441,7 +448,8 @@ package org.interguild.editor.levelpane {
 					iy++;
 				} else {
 					var c:EditorCell = EditorCell(cells[iy][ix]);
-					clickCell(c, char);
+					if(char != " " || (char == " " && !isForgiving))
+						clickCell(c, char);
 					ix++;
 				}
 				i++;

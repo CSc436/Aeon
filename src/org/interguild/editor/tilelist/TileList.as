@@ -1,11 +1,13 @@
 package org.interguild.editor.tilelist {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
-
+	import flash.geom.Point;
+	
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.game.Player;
@@ -42,12 +44,16 @@ package org.interguild.editor.tilelist {
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
+		
+		private var editor:EditorPage;
 
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
 		private var nextY:uint = 0; //used for adding tiles to the list
-
-		private var editor:EditorPage;
+		
+		private var scrollpane:ScrollPane
+		private var handToolRegion:Sprite;
+		private var lastClickY:Number;
 
 		public function TileList(editor:EditorPage) {
 			this.editor = editor;
@@ -74,20 +80,29 @@ package org.interguild.editor.tilelist {
 			list.graphics.endFill();
 
 			//init scroll page
-			var scrollpane:ScrollPane = new ScrollPane();
+			scrollpane = new ScrollPane();
 			scrollpane.source = list;
 			scrollpane.width = MASK_WIDTH + SCROLLBAR_WIDTH;
 			scrollpane.height = MASK_HEIGHT;
 			scrollpane.horizontalScrollPolicy = ScrollPolicy.OFF;
 			scrollpane.verticalScrollBar.pageScrollSize = 100;
 			addChild(scrollpane);
+			
+			//setup click-and-drag region
+			handToolRegion = new Sprite();
+			handToolRegion.graphics.beginFill(0, 0);
+			handToolRegion.graphics.drawRect(0, 0, list.width, list.height);
+			handToolRegion.graphics.endFill();
+			handToolRegion.visible = false;
+			handToolRegion.addEventListener(MouseEvent.MOUSE_DOWN, onDragMouseDown, false, 0, true);
+			list.addChild(handToolRegion);
 		}
 
 		private function initList():void {
 			map[SELECTION_TOOL_CHAR] = new SelectionToolSprite();
 			addItem(new TileListItem("Selection Tool", SELECTION_TOOL_CHAR));
 
-			map[ERASER_TOOL_CHAR] = new SelectionToolSprite();
+			map[ERASER_TOOL_CHAR] = new EraserToolSprite();
 			addItem(new TileListItem("Eraser Tool", ERASER_TOOL_CHAR));
 
 			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
@@ -142,6 +157,34 @@ package org.interguild.editor.tilelist {
 			i.y = nextY;
 			nextY += i.height;
 			list.addChild(i);
+		}
+		
+		/**
+		 * When spacebar is pressed, allow user to click-and-drag to scroll
+		 * through the level.
+		 */
+		public function set handToolEnabled(b:Boolean):void{
+			handToolRegion.visible = b;
+		}
+		
+		private function onDragMouseDown(evt:MouseEvent):void{
+			lastClickY = evt.stageY;
+			stage.addEventListener(Event.ENTER_FRAME, onDrag, false, 0, true);
+			stage.addEventListener(MouseEvent.MOUSE_UP, onDragMouseUp, false, 0, true);
+		}
+		
+		private function onDragMouseUp(evt:MouseEvent):void{
+			stage.removeEventListener(Event.ENTER_FRAME, onDrag);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, onDragMouseUp);
+		}
+		
+		private function onDrag(evt:Event):void{
+			var curClickY:Number = stage.mouseY;
+			var delta:Number = curClickY - lastClickY;
+			
+			scrollpane.verticalScrollPosition -= delta;
+			
+			lastClickY = curClickY;
 		}
 	}
 }

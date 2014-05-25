@@ -1,6 +1,10 @@
 Aeon TODOs
 ====
 
+OTHER
+	-build custom version of game to load images from files
+		so that bernadette can iterate on images faster
+
 LEVEL EDITOR
 	-When a selection is made, buttons for copy, cut, clear, and fill (?) should appear
 		-need to design how this will look like
@@ -23,3 +27,11 @@ GAME
 	-polish how objects fall
 	-optimize explosions
 	-implement dynamite projectiles
+
+THINGS TO CONVEY TO USERS
+	-keyboard shortcuts
+	-Shift+Click to draw squares
+	-Shift+Paste to not paste blank squares
+	-Click Paste to load in a previous copy
+	-Hold spacebar for the hand tool
+	-hand tool works in tile list
