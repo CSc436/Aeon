@@ -66,6 +66,12 @@ package org.interguild.editor {
 					case 13: //CTRL + ENTER
 						editor.playLevel();
 						break;
+					case 189: //CTROL + -
+						editor.zoomOut();
+						break;
+					case 187:
+						editor.zoomIn();
+						break;
 					default:
 						trace(evt.keyCode);
 						break;

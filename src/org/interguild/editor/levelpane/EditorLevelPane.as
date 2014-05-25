@@ -3,9 +3,9 @@ package org.interguild.editor.levelpane {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
-	
+
 	import fl.containers.ScrollPane;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 
@@ -64,7 +64,7 @@ package org.interguild.editor.levelpane {
 		public function closeLevel():void {
 			tabMan.closeLevel();
 		}
-		
+
 		public function closeAllLevels():void {
 			tabMan.closeAllLevels();
 		}
@@ -109,7 +109,7 @@ package org.interguild.editor.levelpane {
 			container.graphics.drawRect(0, 0, 1, currentLevel.height + 1);
 			container.graphics.endFill();
 			scroll.source = container;
-			
+
 			//setup click-and-drag stuff
 			handToolRegion = new Sprite();
 			handToolRegion.graphics.beginFill(0, 0);
@@ -119,33 +119,55 @@ package org.interguild.editor.levelpane {
 			handToolRegion.addEventListener(MouseEvent.MOUSE_DOWN, onDragMouseDown, false, 0, true);
 			container.addChild(handToolRegion);
 		}
-		
+
+		private static const ZOOM_MIN:Number = 10;
+		private static const ZOOM_SUPER_MIN:Number = 1;
+		private static const ZOOM_MAX:Number = 100;
+		private static const ZOOM_DELTA:Number = 10;
+		private static const ZOOM_SUPER_DELTA:Number = 1;
+
+		private var zoomLevel:uint = 100;
+
+
+		public function zoom(zoomIn:Boolean):void {
+			if (zoomIn && zoomLevel < ZOOM_MIN) {
+				zoomLevel += ZOOM_SUPER_DELTA;
+			} else if (zoomIn && zoomLevel < ZOOM_MAX) {
+				zoomLevel += ZOOM_DELTA;
+			} else if (!zoomIn && zoomLevel > ZOOM_MIN) {
+				zoomLevel -= ZOOM_DELTA;
+			} else if (!zoomIn && zoomLevel > ZOOM_SUPER_MIN) {
+				zoomLevel -= ZOOM_SUPER_DELTA;
+			}
+			level.scaleX = level.scaleY = zoomLevel / 100;
+		}
+
 		/**
 		 * When spacebar is pressed, allow user to click-and-drag to scroll
 		 * through the level.
 		 */
-		public function set handToolEnabled(b:Boolean):void{
+		public function set handToolEnabled(b:Boolean):void {
 			handToolRegion.visible = b;
 		}
-		
-		private function onDragMouseDown(evt:MouseEvent):void{
+
+		private function onDragMouseDown(evt:MouseEvent):void {
 			lastClick = new Point(evt.stageX, evt.stageY);
 			stage.addEventListener(Event.ENTER_FRAME, onDrag, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onDragMouseUp, false, 0, true);
 		}
-		
-		private function onDragMouseUp(evt:MouseEvent):void{
+
+		private function onDragMouseUp(evt:MouseEvent):void {
 			stage.removeEventListener(Event.ENTER_FRAME, onDrag);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onDragMouseUp);
 		}
-		
-		private function onDrag(evt:Event):void{
+
+		private function onDrag(evt:Event):void {
 			var curClick:Point = new Point(stage.mouseX, stage.mouseY);
 			var delta:Point = new Point(curClick.x - lastClick.x, curClick.y - lastClick.y);
-			
+
 			scroll.horizontalScrollPosition -= delta.x;
 			scroll.verticalScrollPosition -= delta.y;
-			
+
 			lastClick = curClick;
 		}
 

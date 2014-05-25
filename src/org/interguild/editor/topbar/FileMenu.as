@@ -88,6 +88,12 @@ package org.interguild.editor.topbar {
 			popup.addItem(new FileMenuItem("Deselect", "Ctrl+D", function(evt:MouseEvent):void {
 				editor.deselect();
 			}));
+			popup.addItem(new FileMenuItem("Zoom In", "Ctrl++", function(evt:MouseEvent):void {
+				editor.zoomIn();
+			}));
+			popup.addItem(new FileMenuItem("Zoom Out", "Ctrl+-", function(evt:MouseEvent):void {
+				editor.zoomOut();
+			}));
 			popup.addItem(new FileMenuItem("Exit to Main Menu", "", function(evt:MouseEvent):void {
 				editor.gotoMainMenu();
 			}));

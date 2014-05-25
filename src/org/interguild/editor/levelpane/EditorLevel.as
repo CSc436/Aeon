@@ -17,8 +17,8 @@ package org.interguild.editor.levelpane {
 	 */
 	public class EditorLevel extends Sprite {
 
-		private static const DEFAULT_WIDTH:uint = 40;
-		private static const DEFAULT_HEIGHT:uint = 40;
+		private static const DEFAULT_WIDTH:uint = 30;
+		private static const DEFAULT_HEIGHT:uint = 30;
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 		

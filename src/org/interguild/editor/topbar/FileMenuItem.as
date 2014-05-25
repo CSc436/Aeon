@@ -72,7 +72,7 @@ package org.interguild.editor.topbar {
 			
 			//init events
 			addEventListener(MouseEvent.MOUSE_OVER, onMouseOver, false, 0, true);
-			addEventListener(MouseEvent.CLICK, onClick, true, 0, true);
+			addEventListener(MouseEvent.CLICK, onClick, true);
 		}
 		
 		private function onMouseOver(evt:MouseEvent):void{

@@ -233,6 +233,14 @@ package org.interguild.editor {
 			topBar.hideMenu();
 			trace("TODO");
 		}
+		
+		public function zoomIn():void{
+			levelPane.zoom(true);
+		}
+		
+		public function zoomOut():void{
+			levelPane.zoom(false);
+		}
 
 		/**
 		 * When Esc is pressed, open the file menu, so that the
