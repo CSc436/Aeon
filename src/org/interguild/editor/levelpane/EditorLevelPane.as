@@ -18,6 +18,7 @@ package org.interguild.editor.levelpane {
 		private static const BORDER_WIDTH:uint = 1;
 		private static const BG_COLOR:uint = 0x115867;
 
+		private static const HINTS_TEXT_HEIGHT:uint = 20;
 		private static const WIDTH:uint = 636;
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
 
@@ -48,7 +49,7 @@ package org.interguild.editor.levelpane {
 			scroll.x = BORDER_WIDTH;
 			scroll.y = BORDER_WIDTH;
 			scroll.width = WIDTH;
-			scroll.height = HEIGHT;
+			scroll.height = HEIGHT - HINTS_TEXT_HEIGHT;
 			addChild(scroll);
 
 			//init tabs

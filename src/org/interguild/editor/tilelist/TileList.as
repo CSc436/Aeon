@@ -3,13 +3,13 @@ package org.interguild.editor.tilelist {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
 	
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
 	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
+	import org.interguild.editor.Hints;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
@@ -38,7 +38,7 @@ package org.interguild.editor.tilelist {
 
 		public static const SELECTION_TOOL_CHAR:String = "SELECTION";
 		public static const ERASER_TOOL_CHAR:String = " ";
-
+		
 		private static var map:Object = new Object();
 
 		public static function getIcon(charCode:String):BitmapData {
@@ -149,7 +149,15 @@ package org.interguild.editor.tilelist {
 				var lastChar:String = currentSelection.getCharCode();
 				currentSelection = TileListItem(evt.target);
 				currentSelection.select();
-				EditorPage.currentTile = currentSelection.getCharCode();;
+				var curChar:String = currentSelection.getCharCode();
+				EditorPage.currentTile = curChar;
+				if(curChar == SELECTION_TOOL_CHAR){
+					editor.hintText = Hints.HINT_OLD_PASTE;
+				}else if(curChar == ERASER_TOOL_CHAR){
+					editor.hintText = Hints.HINT_HAND_TOOL;
+				}else{
+					editor.hintText = Hints.HINT_SHIFT_DRAWING;
+				}
 			}
 		}
 

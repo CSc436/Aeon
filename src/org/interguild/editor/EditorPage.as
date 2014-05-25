@@ -4,6 +4,9 @@ package org.interguild.editor {
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.net.FileReference;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	
@@ -18,6 +21,10 @@ package org.interguild.editor {
 	public class EditorPage extends Sprite {
 
 		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+		
+		private static const HINT_FONT:String = "Verdana";
+		private static const HINT_SIZE:Number = 12;
+		private static const HINT_COLOR:uint = 0xFFFFFF;
 
 		private static var selectedTile:String;
 
@@ -35,6 +42,7 @@ package org.interguild.editor {
 		private var topBar:TopBar;
 		private var levelPane:EditorLevelPane;
 		private var tileList:TileList
+		private var hint:TextField;
 
 		/**
 		 * Creates grid holder and populates it with objects.
@@ -49,6 +57,8 @@ package org.interguild.editor {
 
 			levelPane = new EditorLevelPane(this);
 			addChild(levelPane);
+			
+			initHintText();
 
 			loader = new EditorLoader();
 			loader.addInitializedListener(levelPane.addLevel);
@@ -64,6 +74,30 @@ package org.interguild.editor {
 			graphics.beginFill(BACKGROUND_COLOR);
 			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
 			graphics.endFill();
+		}
+		
+		private function initHintText():void{
+			var tip:TextField = new TextField();
+			tip.autoSize = TextFieldAutoSize.LEFT;
+			tip.defaultTextFormat = new TextFormat(HINT_FONT, HINT_SIZE, HINT_COLOR, true, true);
+			tip.selectable = false;
+			tip.text = "Tip: ";
+			tip.y = Aeon.STAGE_HEIGHT - tip.height - 1;
+			tip.x = 2;
+			addChild(tip);
+			
+			hint = new TextField();
+			hint.autoSize = TextFieldAutoSize.LEFT;
+			hint.defaultTextFormat = new TextFormat(HINT_FONT, HINT_SIZE, HINT_COLOR);
+			hint.selectable = false;
+			hint.y = tip.y;
+			hint.x = tip.x + tip.width;
+			hint.text = Hints.HINT_SHIFT_DRAWING;
+			addChild(hint);
+		}
+		
+		public function set hintText(s:String):void{
+			hint.text = s;
 		}
 
 		public function newLevel():void {
@@ -132,6 +166,7 @@ package org.interguild.editor {
 		public function copy():void {
 			topBar.hideMenu();
 			levelPane.level.copy();
+			hintText = Hints.HINT_SHIFT_PASTE;
 		}
 
 		public function cut():void {

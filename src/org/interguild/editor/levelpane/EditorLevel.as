@@ -21,7 +21,7 @@ package org.interguild.editor.levelpane {
 		private static const DEFAULT_HEIGHT:uint = 40;
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
-
+		
 		private static var untitledCount:uint = 1;
 		private static var clipboard:String;
 		private static var pastePreview:Bitmap;

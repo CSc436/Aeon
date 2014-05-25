@@ -30,8 +30,8 @@ GAME
 
 THINGS TO CONVEY TO USERS
 	-keyboard shortcuts
-	-Shift+Click to draw squares
+//	-Shift+Click to draw squares
 	-Shift+Paste to not paste blank squares
 	-Click Paste to load in a previous copy
-	-Hold spacebar for the hand tool
+//	-Hold spacebar for the hand tool
 	-hand tool works in tile list
