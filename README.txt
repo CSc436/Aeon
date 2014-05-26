@@ -5,6 +5,7 @@ THIS WEEK'S PLAN:
 	
 [x]	1) implement editor icons in TopBar, and tooltips
 		-make version that loads images from local file for Bernadette
+	1.5) have pastepreview show Eraser Tool icons
 [ ]	2) design level properties screen
 [ ]	3) design better jump-to-start screen
 [ ]	4) design "Help" window for editor

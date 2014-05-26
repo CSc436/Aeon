@@ -19,7 +19,7 @@ package org.interguild.editor {
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 
-		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+		public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 		
 		private static const HINT_FONT:String = "Verdana";
 		private static const HINT_SIZE:Number = 12;
