@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -22,6 +22,7 @@ package org.interguild.editor.levelpane {
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 		private static const PREVIEW_SHIFT_ALPHA:Number = 0.75;
+		private static const PREVIEW_SHIFT_COLOR:uint = 0xFF660000; // ARGB format
 
 		private static var untitledCount:uint = 1;
 		private static var clipboard:String;
@@ -420,7 +421,7 @@ package org.interguild.editor.levelpane {
 						if (cell.char == TileList.ERASER_TOOL_CHAR) {
 							sizeToCopy.x = locToCopy.x;
 							sizeToCopy.y = locToCopy.y;
-							imageShift.fillRect(sizeToCopy, 0xFFCC0000);
+							imageShift.fillRect(sizeToCopy, PREVIEW_SHIFT_COLOR);
 //							imageShift.copyPixels(bdToCopy, sizeToCopy, locToCopy);
 						} else {
 							image.copyPixels(bdToCopy, sizeToCopy, locToCopy);
