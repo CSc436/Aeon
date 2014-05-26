@@ -303,12 +303,12 @@ package org.interguild.editor.levelpane {
 					previewCell(cell);
 					break;
 				default:
-					cell.setTile(char);
 					if (char == Player.LEVEL_CODE_CHAR) {
 						if (currentPlayerTile != null)
 							currentPlayerTile.clearTile(isMouseDown);
 						currentPlayerTile = cell;
 					}
+					cell.setTile(char);
 					break;
 			}
 		}

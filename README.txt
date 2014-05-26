@@ -1,16 +1,15 @@
 Aeon TODOs
 
-THIS WEEK'S PLAN:
+TODAY'S PLAN:
 	Work on tasks that are best suited to main machine.
 	
 [x]	1) implement editor icons in TopBar, and tooltips
 		-make version that loads images from local file for Bernadette
-[x]	1.5) make pastepreview more intuitive
-	1.75) if you paste player on top of themselves, it breaks
-[ ]	2) design level properties screen
-[ ]	3) design better jump-to-start screen
-[ ]	4) design "Help" window for editor
-	5) 
+[x]	2) make pastepreview more intuitive
+[x]	3) if you paste player on top of themselves, it breaks
+[ ]	4) implement level properties screen
+[ ]	5) design better jump-to-start screen
+[ ]	6) design "Help" window for editor
 
 
 ART
