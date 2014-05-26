@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -21,11 +21,22 @@ package org.interguild.editor.levelpane {
 		private static const DEFAULT_HEIGHT:uint = 30;
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
-		
+		private static const PREVIEW_SHIFT_ALPHA:Number = 0.75;
+
 		private static var untitledCount:uint = 1;
 		private static var clipboard:String;
 		private static var pastePreview:Bitmap;
 		private static var pastePreviewOld:Bitmap;
+		private static var shiftPreview:Bitmap;
+		private static var shiftPreviewOld:Bitmap;
+		private static var shiftDown:Boolean;
+
+		public static function set isShiftDown(b:Boolean):void {
+			shiftDown = b;
+			if (pastePreview) {
+				shiftPreview.visible = shiftDown;
+			}
+		}
 
 		private var levelTitle:String;
 
@@ -120,7 +131,9 @@ package org.interguild.editor.levelpane {
 					isSelectDown = true;
 					if (pastePreview) {
 						removeChild(pastePreview);
+						removeChild(shiftPreview);
 						pastePreview = null;
+						shiftPreview = null;
 					}
 					previewSelection(cell);
 						//if user is shift-clicking a tile
@@ -159,8 +172,12 @@ package org.interguild.editor.levelpane {
 				//user is moving around the pastePreview before pasting
 				if (pastePreview) {
 					pastePreview.visible = true;
+					shiftPreview.visible = shiftDown;
 					pastePreview.x = cell.x;
 					pastePreview.y = cell.y;
+					shiftPreview.x = cell.x;
+					shiftPreview.y = cell.y;
+					addChild(shiftPreview);
 					addChild(pastePreview);
 				} else {
 					//if user started pressing shift too late, pretend like they pressed it on time
@@ -295,7 +312,7 @@ package org.interguild.editor.levelpane {
 					break;
 			}
 		}
-		
+
 		/**
 		 * Used by EditorLoader when loading in a level.
 		 */
@@ -315,7 +332,9 @@ package org.interguild.editor.levelpane {
 			selectionSquare.visible = false;
 			if (!onCopy && pastePreview) {
 				removeChild(pastePreview);
+				removeChild(shiftPreview);
 				pastePreview = null;
+				shiftPreview = null;
 			}
 		}
 
@@ -353,17 +372,19 @@ package org.interguild.editor.levelpane {
 		private function onOut(evt:MouseEvent):void {
 			//if user's mouse leaves level, hide preview
 			previewSprite.visible = false;
-			if(pastePreview)
+			if (pastePreview){
 				pastePreview.visible = false;
+				shiftPreview.visible = false;
+			}
 		}
 
 		/**
 		 * Assumes there is an active selection made.
 		 */
 		public function copy(toCut:Boolean = false):void {
-			if(!selectionSquare.visible)
+			if (!selectionSquare.visible)
 				return;
-			
+
 			//selection boundaries
 			var top:int = Math.min(selectStart.y, selectEnd.y);
 			var left:int = Math.min(selectStart.x, selectEnd.x);
@@ -381,6 +402,7 @@ package org.interguild.editor.levelpane {
 			//will store copy data as text, and create image preview of clipboard
 			clipboard = "";
 			var image:BitmapData = new BitmapData(width, height, true, 0x00000000);
+			var imageShift:BitmapData = new BitmapData(width, height, true, 0x00000000);
 
 			//iterate through copy region
 			for (var iy:int = top; iy <= bottom; iy++) {
@@ -394,8 +416,15 @@ package org.interguild.editor.levelpane {
 					var sizeToCopy:Rectangle = new Rectangle(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
 					var locToCopy:Point = new Point((ix - left) * EditorCell.CELL_WIDTH, (iy - top) * EditorCell.CELL_HEIGHT);
 					var bdToCopy:BitmapData = TileList.getIcon(cell.char);
-					if (cell.char != TileList.ERASER_TOOL_CHAR && bdToCopy != null) {
-						image.copyPixels(bdToCopy, sizeToCopy, locToCopy);
+					if (bdToCopy != null) {
+						if (cell.char == TileList.ERASER_TOOL_CHAR) {
+							sizeToCopy.x = locToCopy.x;
+							sizeToCopy.y = locToCopy.y;
+							imageShift.fillRect(sizeToCopy, 0xFFCC0000);
+//							imageShift.copyPixels(bdToCopy, sizeToCopy, locToCopy);
+						} else {
+							image.copyPixels(bdToCopy, sizeToCopy, locToCopy);
+						}
 					}
 
 					//if cutting, delete the cell
@@ -405,12 +434,21 @@ package org.interguild.editor.levelpane {
 				clipboard += "\n";
 			}
 
-			//finalize preview image
+			//finalize preview images
 			pastePreview = new Bitmap(image);
 			pastePreview.alpha = PREVIEW_ALPHA;
 			pastePreview.x = lastMouseOverCell.x;
 			pastePreview.y = lastMouseOverCell.y;
 			pastePreviewOld = pastePreview;
+
+			shiftPreview = new Bitmap(imageShift);
+			shiftPreview.alpha = PREVIEW_SHIFT_ALPHA;
+			shiftPreview.x = lastMouseOverCell.x;
+			shiftPreview.y = lastMouseOverCell.y;
+			shiftPreviewOld = shiftPreview;
+			shiftPreview.visible = shiftDown;
+
+			addChild(shiftPreview);
 			addChild(pastePreview);
 
 			//make the selection go away so that user can paste
@@ -420,15 +458,17 @@ package org.interguild.editor.levelpane {
 		public function cut():void {
 			copy(true); // ~~magic~~ // :o
 		}
-		
+
 		/**
 		 * When user presses "Paste" load in the last thing
 		 * on the clipboard so that they can paste it.
 		 */
-		public function prepareToPaste():void{
-			if(pastePreviewOld){
+		public function prepareToPaste():void {
+			if (pastePreviewOld) {
 				deselect();
 				pastePreview = pastePreviewOld;
+				shiftPreview = shiftPreviewOld;
+				addChild(shiftPreview);
 				addChild(pastePreview);
 			}
 		}
@@ -436,7 +476,7 @@ package org.interguild.editor.levelpane {
 		/**
 		 * Assumes there's something that you can paste.
 		 */
-		private function paste(cell:EditorCell, isForgiving:Boolean):void {
+		private function paste(cell:EditorCell, pasteBlanks:Boolean):void {
 			var pasteLoc:Point = cell.getPoint();
 
 			var iy:int = pasteLoc.y;
@@ -447,29 +487,29 @@ package org.interguild.editor.levelpane {
 				if (char == "\n") {
 					ix = pasteLoc.x;
 					iy++;
-				} else {
+				} else if (iy < rows && ix < cols && iy >= 0 && ix >= 0) {
 					var c:EditorCell = EditorCell(cells[iy][ix]);
-					if(char != " " || (char == " " && !isForgiving))
+					if (char != " " || pasteBlanks)
 						clickCell(c, char);
 					ix++;
 				}
 				i++;
 			}
 		}
-		
+
 		/**
 		 * Delete everything inside a selection
 		 */
-		public function deleteSelection():void{
-			if(!selectionSquare.visible)
+		public function deleteSelection():void {
+			if (!selectionSquare.visible)
 				return;
-			
+
 			//selection boundaries
 			var top:int = Math.min(selectStart.y, selectEnd.y);
 			var left:int = Math.min(selectStart.x, selectEnd.x);
 			var bottom:int = Math.max(selectStart.y, selectEnd.y);
 			var right:int = Math.max(selectStart.x, selectEnd.x);
-			
+
 			//iterate through copy region
 			for (var iy:int = top; iy <= bottom; iy++) {
 				for (var ix:int = left; ix <= right; ix++) {
