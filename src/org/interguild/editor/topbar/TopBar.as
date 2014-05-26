@@ -81,14 +81,14 @@ package org.interguild.editor.topbar {
 			loadIcon(REDO_ICON, "Redo", function(evt:MouseEvent):void{
 				editor.redo();
 			});
-			loadIcon(LEVEL_PROPS_ICON, "Level Properties", function(evt:MouseEvent):void{
-				trace("TODO");
-			});
 			loadIcon(ZOOM_IN_ICON, "Zoom In", function(evt:MouseEvent):void{
 				editor.zoomIn();
 			});
 			loadIcon(ZOOM_OUT_ICON, "Zoom Out", function(evt:MouseEvent):void{
 				editor.zoomOut();
+			});
+			loadIcon(LEVEL_PROPS_ICON, "Level Properties", function(evt:MouseEvent):void{
+				trace("TODO");
 			});
 			loadIcon(HELP_ICON, "Help", function(evt:MouseEvent):void{
 				trace("TODO");

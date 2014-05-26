@@ -11,29 +11,26 @@ package org.interguild.editor.tilelist {
 
 	public class TileListItem extends Sprite {
 
-		private static const PADDING_LEFT:uint = 16;
-		private static const PADDING_Y:uint = 14;
-		private static const BORDER_PADDING:uint = PADDING_LEFT / 2;
+		private static const PADDING_LEFT:uint = 14;
+		private static const PADDING_Y:uint = 8;
 
 		private static const CLICK_AREA_WIDTH:uint = TileList.MASK_WIDTH;
 		private static const CLICK_AREA_HEIGHT:uint = Aeon.TILE_HEIGHT + (2 * PADDING_Y);
 
 		private static const OVER_COLOR:uint = 0x1e6c7d;
-		private static const OVER_CORNER_RADIUS:uint = 10;
-		private static const OVER_WIDTH:uint = CLICK_AREA_WIDTH - (2 * BORDER_PADDING);
-		private static const OVER_HEIGHT:uint = CLICK_AREA_HEIGHT;
+		private static const SELECTED_COLOR:uint = 0x0188a4;
 
 		private static const ICON_BORDER_COLOR:uint = 0x222222;
 		private static const ICON_BORDER_WIDTH:uint = 1;
 
 		private static const LABEL_FONT:String = "Verdana";
 		private static const LABEL_COLOR:uint = 0xFFFFFF;
-		private static const LABEL_SIZE:uint = 14;
+		private static const LABEL_SIZE:uint = 13;
 		private static const LABEL_PADDING_LEFT:uint = 57;
-		private static const LABEL_PADDING_TOP:uint = 19;
+		private static const LABEL_PADDING_TOP:uint = 13;
 
 		private var overBG:Sprite;
-		private var selectedBG:Bitmap;
+		private var selectedBG:Sprite;
 
 		private var isSelected:Boolean;
 		private var code:String;
@@ -47,15 +44,16 @@ package org.interguild.editor.tilelist {
 			//init rollover highlight
 			overBG = new Sprite();
 			overBG.graphics.beginFill(OVER_COLOR);
-			overBG.graphics.drawRoundRect(BORDER_PADDING, 0, OVER_WIDTH, OVER_HEIGHT, OVER_CORNER_RADIUS, OVER_CORNER_RADIUS);
+			overBG.graphics.drawRect(0, 0, CLICK_AREA_WIDTH, CLICK_AREA_HEIGHT);
 			overBG.graphics.endFill();
 			overBG.visible = false;
 			addChild(overBG);
-
+			
 			//init selected highlight
-			selectedBG = new Bitmap(new TileSelectedSprite());
-			selectedBG.x = BORDER_PADDING;
-			selectedBG.y = OVER_HEIGHT / 2 - selectedBG.height / 2;
+			selectedBG = new Sprite();
+			selectedBG.graphics.beginFill(SELECTED_COLOR);
+			selectedBG.graphics.drawRect(0, 1, CLICK_AREA_WIDTH, CLICK_AREA_HEIGHT);
+			selectedBG.graphics.endFill();
 			selectedBG.visible = false;
 			addChild(selectedBG);
 
@@ -92,6 +90,17 @@ package org.interguild.editor.tilelist {
 
 			//init events
 			addEventListener(MouseEvent.MOUSE_OVER, onMouseOver, false, 0, true);
+		}
+		
+		public function drawBottomBorder():void{
+			var border:Sprite = new Sprite();
+			border.graphics.beginFill(0x08434f);
+			border.graphics.drawRect(0, CLICK_AREA_HEIGHT, CLICK_AREA_WIDTH, 1);
+			border.graphics.endFill();
+			border.graphics.beginFill(0x166e81);
+			border.graphics.drawRect(0, CLICK_AREA_HEIGHT+1, CLICK_AREA_WIDTH, 1);
+			border.graphics.endFill();
+			addChild(border);
 		}
 
 		private function onMouseOver(evt:MouseEvent):void {

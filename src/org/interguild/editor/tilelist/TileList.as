@@ -24,7 +24,7 @@ package org.interguild.editor.tilelist {
 		private static const POSITION_X:uint = 655;
 		private static const POSITION_Y:uint = 89;
 
-		private static const BORDER_PADDING:uint = 8;
+		private static const BORDER_PADDING:uint = 0;
 		private static const SCROLLBAR_WIDTH:uint = 15;
 
 		//TileListItem references this:
@@ -32,7 +32,7 @@ package org.interguild.editor.tilelist {
 		private static const MASK_HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y; // - (2 * PADDING_Y);
 
 		private static const BG_COLOR:uint = 0x115867;
-		private static const BG_CORNER_RADIUS:uint = 20;
+		private static const BG_CORNER_RADIUS:uint = 14;
 		private static const BG_WIDTH:uint = MASK_WIDTH + (BG_CORNER_RADIUS * 2);
 		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
 
@@ -49,7 +49,10 @@ package org.interguild.editor.tilelist {
 
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
-		private var nextY:uint = 0; //used for adding tiles to the list
+		
+		//used for adding tiles to the list
+		private var nextY:uint = 0;
+		private var lastItem:TileListItem;
 		
 		private var scrollpane:ScrollPane
 		private var handToolRegion:Sprite;
@@ -62,7 +65,7 @@ package org.interguild.editor.tilelist {
 
 			//init bg
 			graphics.beginFill(BG_COLOR);
-			graphics.drawRoundRect(0, 0, BG_WIDTH, BG_HEIGHT, BG_CORNER_RADIUS, BG_CORNER_RADIUS);
+			graphics.drawRect(0, 0, BG_WIDTH, BG_HEIGHT);
 			graphics.endFill();
 
 			//init list item container
@@ -87,6 +90,16 @@ package org.interguild.editor.tilelist {
 			scrollpane.horizontalScrollPolicy = ScrollPolicy.OFF;
 			scrollpane.verticalScrollBar.pageScrollSize = 100;
 			addChild(scrollpane);
+			
+			//setup rounded corner overlay
+			var corner:Sprite = new Sprite();
+			corner.graphics.beginFill(EditorPage.BACKGROUND_COLOR);
+			corner.graphics.moveTo(0, 0);
+			corner.graphics.lineTo(BG_CORNER_RADIUS, 0);
+			corner.graphics.curveTo(0, 0, 0, BG_CORNER_RADIUS);
+			corner.graphics.lineTo(0, 0);
+			corner.graphics.endFill();
+			addChild(corner);
 			
 			//setup click-and-drag region
 			handToolRegion = new Sprite();
@@ -162,6 +175,10 @@ package org.interguild.editor.tilelist {
 		}
 
 		private function addItem(i:TileListItem):void {
+			if(lastItem != null)
+				lastItem.drawBottomBorder();
+			lastItem = i;
+			
 			i.y = nextY;
 			nextY += i.height;
 			list.addChild(i);
