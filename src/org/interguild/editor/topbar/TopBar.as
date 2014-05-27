@@ -88,7 +88,7 @@ package org.interguild.editor.topbar {
 				editor.zoomOut();
 			});
 			loadIcon(LEVEL_PROPS_ICON, "Level Properties", function(evt:MouseEvent):void{
-				trace("TODO");
+				editor.showLevelProperties();
 			});
 			loadIcon(HELP_ICON, "Help", function(evt:MouseEvent):void{
 				trace("TODO");

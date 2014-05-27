@@ -44,6 +44,7 @@ package org.interguild.editor {
 		private var levelPane:EditorLevelPane;
 		private var tileList:TileList
 		private var hint:TextField;
+		private var levelProps:LevelPropertiesScreen;
 
 		/**
 		 * Creates grid holder and populates it with objects.
@@ -65,10 +66,14 @@ package org.interguild.editor {
 			loader.addInitializedListener(levelPane.addLevel);
 			loader.addErrorListener(onLoadError);
 
-			// must be initialized last so that overlay can cover everything
+			// these must be initialized last so that overlay can cover everything
 			// and disable editor mouse evemts for certain menus
+			
 			topBar = new TopBar(this);
 			addChild(topBar);
+			
+			levelProps = new LevelPropertiesScreen(keys);
+			addChild(levelProps);
 		}
 
 		private function initBG():void {
@@ -157,6 +162,10 @@ package org.interguild.editor {
 
 		private function returnFromError(e:Array):void {
 			Aeon.getMe().returnFromError(e, "Editor");
+		}
+		
+		public function showLevelProperties():void{
+			levelProps.visible = true;
 		}
 
 		/**

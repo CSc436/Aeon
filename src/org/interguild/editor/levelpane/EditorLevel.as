@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -373,7 +373,7 @@ package org.interguild.editor.levelpane {
 		private function onOut(evt:MouseEvent):void {
 			//if user's mouse leaves level, hide preview
 			previewSprite.visible = false;
-			if (pastePreview){
+			if (pastePreview) {
 				pastePreview.visible = false;
 				shiftPreview.visible = false;
 			}
@@ -422,7 +422,6 @@ package org.interguild.editor.levelpane {
 							sizeToCopy.x = locToCopy.x;
 							sizeToCopy.y = locToCopy.y;
 							imageShift.fillRect(sizeToCopy, PREVIEW_SHIFT_COLOR);
-//							imageShift.copyPixels(bdToCopy, sizeToCopy, locToCopy);
 						} else {
 							image.copyPixels(bdToCopy, sizeToCopy, locToCopy);
 						}
