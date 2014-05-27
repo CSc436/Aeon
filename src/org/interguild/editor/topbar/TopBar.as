@@ -7,7 +7,7 @@ package org.interguild.editor.topbar {
 	import flash.net.URLRequest;
 	
 	import org.interguild.editor.EditorPage;
-	import org.interguild.menu.FancyButton;
+	import org.interguild.components.FancyButton;
 
 	public class TopBar extends Sprite {
 

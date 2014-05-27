@@ -15,6 +15,7 @@ package org.interguild.editor {
 	import org.interguild.editor.topbar.TopBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
+	import org.interguild.editor.levelprops.LevelPropertiesScreen;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
