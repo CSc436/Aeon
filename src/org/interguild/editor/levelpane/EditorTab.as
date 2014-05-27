@@ -21,6 +21,8 @@
 		private var activeBG:Bitmap;
 		private var inactiveBG:Bitmap;
 		private var isActive:Boolean;
+		
+		private var title:TextField;
 
 		private var closeNormal:Bitmap;
 		private var closeOver:Bitmap;
@@ -30,7 +32,8 @@
 		private var myLevel:EditorLevel;
 
 		public function EditorTab(level:EditorLevel, tabMan:EditorTabManager) {
-			this.myLevel = level;
+			myLevel = level;
+			myLevel.tab = this;
 
 			//init main tab color
 			activeBG = new Bitmap(new TabActiveSprite());
@@ -44,7 +47,7 @@
 
 			//init title
 			var format:TextFormat = new TextFormat(FONT_FAMILY, FONT_SIZE, FONT_COLOR);
-			var title:TextField = new TextField();
+			title = new TextField();
 			title.defaultTextFormat = format;
 			title.x = FONT_X;
 			title.y = FONT_Y;
@@ -74,6 +77,14 @@
 			closeButton.addChild(closeOver);
 
 			addEventListener(MouseEvent.MOUSE_OVER, onTabOver, false, 0, true);
+		}
+		
+		public function updateTitle():void{
+			title.text = myLevel.title;
+		}
+		
+		public function updateScrollPane():void{
+			tabMan.updateScrollPane();
 		}
 
 		private function onTabOver(evt:MouseEvent):void {

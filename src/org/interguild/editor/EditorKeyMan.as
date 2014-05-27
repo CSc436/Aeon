@@ -66,16 +66,19 @@ package org.interguild.editor {
 						if (isNotDown)
 							editor.paste();
 						break;
+					case 65: //CTRL + A
+						editor.selectAll();
+						break;
 					case 68: //CTRL + D
 						editor.deselect();
 						break;
 					case 13: //CTRL + ENTER
 						editor.playLevel();
 						break;
-					case 189: //CTROL + -
+					case 189: //CTRL + -
 						editor.zoomOut();
 						break;
-					case 187:
+					case 187: //CTRL + +
 						editor.zoomIn();
 						break;
 					default:

@@ -5,7 +5,8 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
+	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
@@ -17,8 +18,9 @@ package org.interguild.editor.levelpane {
 	 */
 	public class EditorLevel extends Sprite {
 
-		private static const DEFAULT_WIDTH:uint = 30;
-		private static const DEFAULT_HEIGHT:uint = 30;
+		private static const DEFAULT_WIDTH:uint = 25;
+		private static const DEFAULT_HEIGHT:uint = 25;
+		private static const MAX_SIZE:uint = 9999;
 
 		private static const PREVIEW_ALPHA:Number = 0.5;
 		private static const PREVIEW_SHIFT_ALPHA:Number = 0.75;
@@ -39,6 +41,7 @@ package org.interguild.editor.levelpane {
 			}
 		}
 
+		private var myTab:EditorTab;
 		private var levelTitle:String;
 
 		private var cells:Array;
@@ -103,9 +106,13 @@ package org.interguild.editor.levelpane {
 			addChild(selectionSquare);
 
 			this.addEventListener(MouseEvent.MOUSE_DOWN, onDown, false, 0, true);
-			this.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
+			Aeon.STAGE.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OVER, onOver, true, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OUT, onOut, false, 0, true);
+		}
+		
+		public function set tab(t:EditorTab):void{
+			myTab = t;
 		}
 
 		public function get title():String {
@@ -113,7 +120,98 @@ package org.interguild.editor.levelpane {
 		}
 
 		public function set title(s:String):void {
+			if(s == null || s.length == 0){
+				s = "UNTITLED";
+			}
 			levelTitle = s;
+			if(myTab){
+				myTab.updateTitle();
+			}
+		}
+
+		public function get widthInTiles():uint {
+			return cols;
+		}
+
+		public function get heightInTiles():uint {
+			return rows;
+		}
+		
+		public function resize(newRows:uint, newCols:uint):void {
+			if(newRows == 0){
+				newRows = 1;
+			}else if(newRows > MAX_SIZE){
+				newRows = MAX_SIZE;
+			}
+			if(newCols == 0){
+				newCols = 1;
+			}else if(newCols > MAX_SIZE){
+				newCols = MAX_SIZE;
+			}
+			
+			var i:uint, j:uint;
+			var c:EditorCell;
+			var row:Array;
+			
+			if (newRows > rows) {
+				//add rows
+				for (i = rows; i < newRows; i++) {
+					row = new Array(cols);
+					for (j = 0; j < cols; j++) {
+						c = new EditorCell();
+						c.x = j * c.width;
+						c.y = i * c.height;
+						row[j] = c;
+						this.addChild(c);
+					}
+					cells.push(row);
+				}
+			} else if (newRows < rows) {
+				//remove rows
+				
+				//first remove children
+				for (i = newRows; i < rows; i++) {
+					for (j = 0; j < cols; j++) {
+						c = cells[i][j];
+						removeChild(c);
+					}
+				}
+				
+				//now remove the rows
+				cells.splice(newRows);
+			}
+			rows = newRows;
+			
+			if (newCols > cols) {
+				//add columns
+				for (i = 0; i < rows; i++) {
+					row = cells[i];
+					for (j = cols; j < newCols; j++) {
+						c = new EditorCell();
+						c.x = j * c.width;
+						c.y = i * c.height;
+						row.push(c);
+						this.addChild(c);
+					}
+				}
+			} else if (newCols < cols) {
+				//remove cols
+				for (i = 0; i < rows; i++) {
+					row = cells[i];
+					
+					//remove children first
+					for (j = newCols; j < cols; j++) {
+						c = row[j];
+						removeChild(c);
+					}
+					
+					//remove cols
+					row.splice(newCols);
+				}
+			}
+			cols = newCols;
+			
+			myTab.updateScrollPane();
 		}
 
 		private function onDown(evt:MouseEvent):void {
@@ -308,7 +406,7 @@ package org.interguild.editor.levelpane {
 						if (currentPlayerTile != null)
 							currentPlayerTile.clearTile(isMouseDown);
 						currentPlayerTile = cell;
-					}else{
+					} else {
 						currentPlayerTile = null;
 					}
 					cell.setTile(char);
@@ -325,6 +423,16 @@ package org.interguild.editor.levelpane {
 			} else {
 				throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
 			}
+		}
+		
+		public function selectAll():void{
+			deselect();
+			isSelectDown = true;
+			selectStart = new Point(0, 0);
+			selectEnd = new Point(cols - 1, rows - 1);
+			previewSelection(null);
+			selectionSquare.visible = true;
+			isSelectDown = false;
 		}
 
 		/**
@@ -569,70 +677,6 @@ package org.interguild.editor.levelpane {
 					this.addChild(c);
 				}
 			}
-		}
-
-		public function resize(newRows:uint, newCols:uint):void {
-			var i:uint, j:uint;
-			var c:EditorCell;
-			var row:Array;
-
-			if (newRows > rows) {
-				//add rows
-				for (i = rows; i < newRows; i++) {
-					row = new Array(cols);
-					for (j = 0; j < cols; j++) {
-						c = new EditorCell();
-						c.x = j * c.width;
-						c.y = i * c.height;
-						row[j] = c;
-						this.addChild(c);
-					}
-					cells.push(row);
-				}
-			} else if (newRows < rows) {
-				//remove rows
-
-				//first remove children
-				for (i = newRows; i < rows; i++) {
-					for (j = 0; j < cols; j++) {
-						c = cells[i][j];
-						removeChild(c);
-					}
-				}
-
-				//now remove the rows
-				cells.splice(newRows);
-			}
-			rows = newRows;
-
-			if (newCols > cols) {
-				//add columns
-				for (i = 0; i < rows; i++) {
-					row = cells[i];
-					for (j = cols; j < newCols; j++) {
-						c = new EditorCell();
-						c.x = j * c.width;
-						c.y = i * c.height;
-						row.push(c);
-						this.addChild(c);
-					}
-				}
-			} else if (newCols < cols) {
-				//remove cols
-				for (i = 0; i < rows; i++) {
-					row = cells[i];
-
-					//remove children first
-					for (j = newCols; j < cols; j++) {
-						c = row[j];
-						removeChild(c);
-					}
-
-					//remove cols
-					row.splice(newCols);
-				}
-			}
-			cols = newCols;
 		}
 
 		public function getLevelCode():String {

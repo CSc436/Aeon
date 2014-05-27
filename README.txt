@@ -15,6 +15,7 @@ TODAY'S PLAN:
 	-add context menus to level editor
 	-add Ctrl+Mousewheel zoom
 	-add zoom to focus on mouse position
+	-kill player/objects for falling out of the world.
 
 ART
 	-build custom version of game to load images from files
@@ -34,6 +35,7 @@ LEVEL EDITOR
 	-implement undo/redo
 	-design "Help" window
 	-save/publish level to the forums
+		-should warn players about backwards compatibility
 
 MENUS
 	-preloader

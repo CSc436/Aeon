@@ -85,6 +85,9 @@ package org.interguild.editor.topbar {
 			popup.addItem(new FileMenuItem("Paste", "Ctrl+V", function(evt:MouseEvent):void {
 				editor.paste();
 			}));
+			popup.addItem(new FileMenuItem("Select All", "Ctrl+A", function(evt:MouseEvent):void {
+				editor.selectAll();
+			}));
 			popup.addItem(new FileMenuItem("Deselect", "Ctrl+D", function(evt:MouseEvent):void {
 				editor.deselect();
 			}));

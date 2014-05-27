@@ -72,7 +72,7 @@ package org.interguild.editor {
 			topBar = new TopBar(this);
 			addChild(topBar);
 			
-			levelProps = new LevelPropertiesScreen(keys);
+			levelProps = new LevelPropertiesScreen(keys, levelPane);
 			addChild(levelProps);
 		}
 
@@ -200,6 +200,10 @@ package org.interguild.editor {
 			levelPane.level.deleteSelection();
 		}
 
+		public function selectAll():void {
+			levelPane.level.selectAll();
+		}
+		
 		/**
 		 * TileList notifies EditorLevel when it's time to deselect
 		 */

@@ -36,7 +36,9 @@ package org.interguild.editor.levelpane {
 
 			var tab:EditorTab = new EditorTab(level, this);
 			tab.x = tabs.length * TAB_WIDTH;
+			tab.doubleClickEnabled = true;
 			tab.addEventListener(MouseEvent.CLICK, onTabClick, false, 0, true);
+			tab.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick, false, 0, true);
 			tabs.push(tab);
 
 			switchToTab(tab);
@@ -46,10 +48,18 @@ package org.interguild.editor.levelpane {
 				closeLevel(cTab);
 			}
 		}
+		
+		public function updateScrollPane():void{
+			levelPane.updateScrollPane();
+		}
 
 		private function onTabClick(evt:MouseEvent):void {
 			var tab:EditorTab = EditorTab(evt.target);
 			switchToTab(tab);
+		}
+		
+		private function onDoubleClick(evt:MouseEvent):void{
+			levelPane.showLevelProperties();
 		}
 
 		private function switchToTab(tab:EditorTab):void {

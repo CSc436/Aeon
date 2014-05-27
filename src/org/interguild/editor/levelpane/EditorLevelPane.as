@@ -15,12 +15,21 @@ package org.interguild.editor.levelpane {
 		private static const POSITION_Y:uint = 89;
 
 		private static const BORDER_COLOR:uint = 0x222222;
-		private static const BORDER_WIDTH:uint = 1;
+		private static const BORDER_WIDTH:uint = 0;//1;
 		private static const BG_COLOR:uint = 0x115867;
 
 		private static const HINTS_TEXT_HEIGHT:uint = 20;
 		private static const WIDTH:uint = 636;
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
+		
+		private static const ZOOM_DEFAULT:uint = 100;
+		private static const ZOOM_MIN:uint = 10;
+		private static const ZOOM_SUPER_MIN:uint = 1;
+		private static const ZOOM_MAX:uint = 100;
+		private static const ZOOM_DELTA:uint = 10;
+		private static const ZOOM_SUPER_DELTA:uint = 1;
+		
+		private var zoomLevel:uint = 100;
 
 		private var editor:EditorPage;
 		private var tabMan:EditorTabManager;
@@ -56,6 +65,10 @@ package org.interguild.editor.levelpane {
 			tabMan = new EditorTabManager(this);
 			addChild(tabMan);
 		}
+		
+		public function updateScrollPane():void{
+			level = currentLevel;
+		}
 
 		public function addLevel(level:EditorLevel = null):void {
 			tabMan.addTab(level);
@@ -67,6 +80,14 @@ package org.interguild.editor.levelpane {
 
 		public function closeAllLevels():void {
 			tabMan.closeAllLevels();
+		}
+		
+		public function showLevelProperties():void{
+			editor.showLevelProperties();
+		}
+		
+		public function renameLevel(s:String):void{
+			level.title = s;
 		}
 
 		public function get level():EditorLevel {
@@ -120,15 +141,6 @@ package org.interguild.editor.levelpane {
 			container.addChild(handToolRegion);
 		}
 
-		private static const ZOOM_MIN:Number = 10;
-		private static const ZOOM_SUPER_MIN:Number = 1;
-		private static const ZOOM_MAX:Number = 100;
-		private static const ZOOM_DELTA:Number = 10;
-		private static const ZOOM_SUPER_DELTA:Number = 1;
-
-		private var zoomLevel:uint = 100;
-
-
 		public function zoom(zoomIn:Boolean):void {
 			if (zoomIn && zoomLevel < ZOOM_MIN) {
 				zoomLevel += ZOOM_SUPER_DELTA;
@@ -171,10 +183,6 @@ package org.interguild.editor.levelpane {
 			scroll.verticalScrollPosition -= delta.y;
 
 			lastClick = curClick;
-		}
-
-		public function resize(rows:int, cols:int):void {
-			currentLevel.resize(rows, cols);
 		}
 	}
 }
