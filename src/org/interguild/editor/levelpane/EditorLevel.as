@@ -308,6 +308,8 @@ package org.interguild.editor.levelpane {
 						if (currentPlayerTile != null)
 							currentPlayerTile.clearTile(isMouseDown);
 						currentPlayerTile = cell;
+					}else{
+						currentPlayerTile = null;
 					}
 					cell.setTile(char);
 					break;

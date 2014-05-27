@@ -7,10 +7,14 @@ TODAY'S PLAN:
 		-make version that loads images from local file for Bernadette
 [x]	2) make pastepreview more intuitive
 [x]	3) if you paste player on top of themselves, it breaks
+	-lower volume
 [ ]	4) implement level properties screen
 [ ]	5) design better jump-to-start screen
 [ ]	6) design "Help" window for editor
 
+	-add context menus to level editor
+	-add Ctrl+Mousewheel zoom
+	-add zoom to focus on mouse position
 
 ART
 	-build custom version of game to load images from files
