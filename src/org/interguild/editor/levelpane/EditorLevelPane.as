@@ -8,6 +8,7 @@ package org.interguild.editor.levelpane {
 	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
+	import org.interguild.editor.tilelist.TileList;
 
 	public class EditorLevelPane extends Sprite {
 
@@ -115,6 +116,7 @@ package org.interguild.editor.levelpane {
 			currentLevel = lvl;
 			currentLevel.x = 1;
 			currentLevel.y = 1;
+			TileList.setTerrainType(currentLevel.terrainType);
 
 			var container:Sprite = new Sprite();
 			container.addChild(currentLevel);

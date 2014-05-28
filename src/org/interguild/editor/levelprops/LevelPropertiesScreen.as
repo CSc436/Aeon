@@ -1,6 +1,8 @@
 package org.interguild.editor.levelprops {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
@@ -16,6 +18,8 @@ package org.interguild.editor.levelprops {
 	import org.interguild.editor.EditorKeyMan;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.editor.levelpane.EditorLevelPane;
+	import org.interguild.game.level.LevelBackground;
+	import org.interguild.game.tiles.Terrain;
 
 	public class LevelPropertiesScreen extends Sprite {
 
@@ -80,6 +84,10 @@ package org.interguild.editor.levelprops {
 		private static const SHADOW_BLUE_Y:Number = 1;
 		private static const SHADOW_STRENGTH:Number = 1;
 
+		private static const DROPDOWN_INPUT_X:uint = 170;
+		private static const TERRAIN_INPUT_Y:uint = 185;
+		private static const BG_INPUT_Y:uint = 247;
+
 		private var keys:EditorKeyMan;
 		private var levelPane:EditorLevelPane;
 		private var currentLevel:EditorLevel;
@@ -87,6 +95,10 @@ package org.interguild.editor.levelprops {
 		private var titleInput:TextInput;
 		private var sizeWidthInput:TextInput;
 		private var sizeHeightInput:TextInput;
+		private var terrainType:PictureMenu;
+		private var backgroundType:PictureMenu;
+		private var originalTerrainID:uint;
+		private var originalBackgroundID:uint;
 
 		private var okayButton:FancyButton;
 		private var cancelButton:FancyButton;
@@ -285,25 +297,60 @@ package org.interguild.editor.levelprops {
 
 			this.addEventListener(MouseEvent.CLICK, onFocusClick);
 		}
-		
-		private static const TERRAIN_INPUT_X:uint = 170;
-		private static const TERRAIN_INPUT_Y:uint = 185;
-		
-		private var terrainType:PictureMenu;
-		
-		private function initDropdowns():void{
+
+		private function initDropdowns():void {
+			//terrain type:
 			terrainType = new PictureMenu(this);
-			terrainType.addItem(new TerrainSteelSprite(), "Steel Terrain");
-			terrainType.addItem(new TerrainWoodSprite(), "Wood Terrain");
+			var i:uint = 0;
+			var image:BitmapData;
+			var name:String;
+			while (true) {
+				image = Terrain.getTerrainImage(i);
+				name = Terrain.getName(i);
+				if (image == null || name == null)
+					break;
+				terrainType.addItem(i, image, name);
+				i++;
+			}
 			addChild(terrainType);
-			terrainType.x = TERRAIN_INPUT_X - WINDOW_X; //must be done after addChild();
+			terrainType.x = DROPDOWN_INPUT_X - WINDOW_X; //must be done after addChild();
 			terrainType.y = TERRAIN_INPUT_Y - WINDOW_Y;
+			terrainType.addEventListener(Event.CHANGE, onPictureMenuChange);
+
+			//background type:
+			backgroundType = new PictureMenu(this);
+			i = 0;
+			while (true) {
+				image = LevelBackground.getThumbnail(i);
+				name = LevelBackground.getName(i);
+				if (image == null || name == null)
+					break;
+				backgroundType.addItem(i, image, name);
+				i++;
+			}
+			addChild(backgroundType);
+			backgroundType.x = DROPDOWN_INPUT_X - WINDOW_X; //must be done after addChild();
+			backgroundType.y = BG_INPUT_Y - WINDOW_Y;
+			backgroundType.addEventListener(Event.CHANGE, onPictureMenuChange);
+		}
+		
+		private function onPictureMenuChange(evt:Event):void{
+			if(evt.target == terrainType){
+				//show terrain preview
+				levelPane.level.terrainType = terrainType.currentID;
+			}else{
+				//show bg preview
+				
+			}
 		}
 
 		private function updateForms():void {
 			titleInput.text = String(currentLevel.title);
 			sizeWidthInput.text = String(currentLevel.widthInTiles);
 			sizeHeightInput.text = String(currentLevel.heightInTiles);
+			terrainType.currentID = currentLevel.terrainType;
+			backgroundType.currentID = currentLevel.backgroundType;
+			originalTerrainID = currentLevel.terrainType;
 		}
 
 		private function onFocusClick(evt:MouseEvent):void {
@@ -316,10 +363,12 @@ package org.interguild.editor.levelprops {
 			visible = false;
 			currentLevel.title = titleInput.text;
 			currentLevel.resize(Number(sizeHeightInput.text), Number(sizeWidthInput.text));
+			currentLevel.backgroundType = backgroundType.currentID;
 		}
 
 		public function cancel(evt:MouseEvent = null):void {
 			visible = false;
+			currentLevel.terrainType = originalTerrainID;
 		}
 
 		public override function set visible(value:Boolean):void {
@@ -336,7 +385,7 @@ package org.interguild.editor.levelprops {
 		}
 
 		private function onKey(evt:KeyboardEvent):void {
-			switch(evt.keyCode){
+			switch (evt.keyCode) {
 				case 27: // Esc
 					visible = false;
 					break;

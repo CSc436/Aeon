@@ -5,11 +5,12 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Terrain;
 
 	/**
 	 * Responsible for:
@@ -17,6 +18,8 @@ package org.interguild.editor.levelpane {
 	 *   -managing the mouse events for it
 	 */
 	public class EditorLevel extends Sprite {
+
+		public static var forceChange:Boolean = false;
 
 		private static const DEFAULT_WIDTH:uint = 25;
 		private static const DEFAULT_HEIGHT:uint = 25;
@@ -43,6 +46,8 @@ package org.interguild.editor.levelpane {
 
 		private var myTab:EditorTab;
 		private var levelTitle:String;
+		private var terrainID:uint = 0;
+		private var backgroundID:uint = 0;
 
 		private var cells:Array;
 		private var cols:uint = 0;
@@ -92,6 +97,10 @@ package org.interguild.editor.levelpane {
 			}
 			initGridCells();
 
+			//init terrain
+			terrainID = 1; //to force it to update
+			terrainType = 0;
+
 			//init preview
 			previewSprite = new Sprite();
 			previewSprite.alpha = PREVIEW_ALPHA;
@@ -110,8 +119,8 @@ package org.interguild.editor.levelpane {
 			this.addEventListener(MouseEvent.MOUSE_OVER, onOver, true, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OUT, onOut, false, 0, true);
 		}
-		
-		public function set tab(t:EditorTab):void{
+
+		public function set tab(t:EditorTab):void {
 			myTab = t;
 		}
 
@@ -120,14 +129,45 @@ package org.interguild.editor.levelpane {
 		}
 
 		public function set title(s:String):void {
-			if(s == null || s.length == 0){
+			if (s == null || s.length == 0) {
 				s = "UNTITLED";
 			}
 			levelTitle = s;
-			if(myTab){
+			if (myTab) {
 				myTab.updateTitle();
 			}
 		}
+
+		public function get terrainType():uint {
+			return terrainID;
+		}
+
+		public function set terrainType(id:uint):void {
+			if (terrainID != id) {
+				terrainID = id;
+				TileList.setTerrainType(id);
+
+				for (var r:uint = 0; r < rows; r++) {
+					for (var c:uint = 0; c < cols; c++) {
+						var cell:EditorCell = EditorCell(cells[r][c]);
+						if (cell.char == Terrain.LEVEL_CODE_CHAR) {
+							cell.redraw();
+						}
+					}
+				}
+			}
+		}
+
+		public function get backgroundType():uint {
+			return backgroundID;
+		}
+
+		public function set backgroundType(id:uint):void {
+			if (backgroundID != id) {
+				backgroundID = id;
+			}
+		}
+
 
 		public function get widthInTiles():uint {
 			return cols;
@@ -136,23 +176,23 @@ package org.interguild.editor.levelpane {
 		public function get heightInTiles():uint {
 			return rows;
 		}
-		
+
 		public function resize(newRows:uint, newCols:uint):void {
-			if(newRows == 0){
+			if (newRows == 0) {
 				newRows = 1;
-			}else if(newRows > MAX_SIZE){
+			} else if (newRows > MAX_SIZE) {
 				newRows = MAX_SIZE;
 			}
-			if(newCols == 0){
+			if (newCols == 0) {
 				newCols = 1;
-			}else if(newCols > MAX_SIZE){
+			} else if (newCols > MAX_SIZE) {
 				newCols = MAX_SIZE;
 			}
-			
+
 			var i:uint, j:uint;
 			var c:EditorCell;
 			var row:Array;
-			
+
 			if (newRows > rows) {
 				//add rows
 				for (i = rows; i < newRows; i++) {
@@ -168,7 +208,7 @@ package org.interguild.editor.levelpane {
 				}
 			} else if (newRows < rows) {
 				//remove rows
-				
+
 				//first remove children
 				for (i = newRows; i < rows; i++) {
 					for (j = 0; j < cols; j++) {
@@ -176,12 +216,12 @@ package org.interguild.editor.levelpane {
 						removeChild(c);
 					}
 				}
-				
+
 				//now remove the rows
 				cells.splice(newRows);
 			}
 			rows = newRows;
-			
+
 			if (newCols > cols) {
 				//add columns
 				for (i = 0; i < rows; i++) {
@@ -198,19 +238,19 @@ package org.interguild.editor.levelpane {
 				//remove cols
 				for (i = 0; i < rows; i++) {
 					row = cells[i];
-					
+
 					//remove children first
 					for (j = newCols; j < cols; j++) {
 						c = row[j];
 						removeChild(c);
 					}
-					
+
 					//remove cols
 					row.splice(newCols);
 				}
 			}
 			cols = newCols;
-			
+
 			myTab.updateScrollPane();
 		}
 
@@ -318,8 +358,9 @@ package org.interguild.editor.levelpane {
 				return;
 
 			//if we need to update the preview images
-			if (previewChar != currentChar) {
+			if (previewChar != currentChar || EditorLevel.forceChange) {
 				previewChar = currentChar;
+				EditorLevel.forceChange = false;
 				var bd:BitmapData = TileList.getIcon(previewChar);
 				if (bd == null)
 					return;
@@ -380,6 +421,7 @@ package org.interguild.editor.levelpane {
 					previewSquare.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
 					previewSquare.graphics.endFill();
 					previewSquare.visible = true;
+					addChild(previewSquare);
 				}
 			}
 		}
@@ -424,8 +466,8 @@ package org.interguild.editor.levelpane {
 				throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
 			}
 		}
-		
-		public function selectAll():void{
+
+		public function selectAll():void {
 			deselect();
 			isSelectDown = true;
 			selectStart = new Point(0, 0);
@@ -682,7 +724,7 @@ package org.interguild.editor.levelpane {
 		public function getLevelCode():String {
 			var s:String = "";
 			s += levelTitle + "\n";
-			s += cols + "x" + rows + "\n";
+			s += cols + "x" + rows + "|" + terrainID + "|" + backgroundID + "\n";
 
 			for (var r:uint = 0; r < rows; r++) {
 				for (var c:uint = 0; c < cols; c++) {

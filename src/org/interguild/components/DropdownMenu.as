@@ -115,12 +115,15 @@ package org.interguild.components {
 				hidePopup();
 		}
 
-		private function showPopup():void {
+		protected function showPopup():void {
 			popup.visible = true;
 			clickArea.visible = true;
+			if(parent){
+				parent.addChild(this);
+			}
 		}
 
-		private function hidePopup(evt:MouseEvent = null):void {
+		protected function hidePopup(evt:MouseEvent = null):void {
 			popup.visible = false;
 			clickArea.visible = false;
 		}

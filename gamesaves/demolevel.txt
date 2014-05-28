@@ -1,5 +1,5 @@
 Demo Level
-14x30
+14x30|1|0
 xxxxxxxxxxxxxx
 xxxxx  xxxxxxx
 xx      xxxxxx

@@ -6,7 +6,7 @@ package org.interguild.editor.tilelist {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
+
 	import org.interguild.Aeon;
 
 	public class TileListItem extends Sprite {
@@ -31,14 +31,13 @@ package org.interguild.editor.tilelist {
 
 		private var overBG:Sprite;
 		private var selectedBG:Sprite;
+		private var icon:Bitmap;
 
 		private var isSelected:Boolean;
 		private var code:String;
-		private var icon:BitmapData;
 
 		public function TileListItem(name:String, code:String) {
 			this.code = code;
-			this.icon = TileList.getIcon(code);
 			this.mouseChildren = false;
 
 			//init rollover highlight
@@ -48,7 +47,7 @@ package org.interguild.editor.tilelist {
 			overBG.graphics.endFill();
 			overBG.visible = false;
 			addChild(overBG);
-			
+
 			//init selected highlight
 			selectedBG = new Sprite();
 			selectedBG.graphics.beginFill(SELECTED_COLOR);
@@ -58,15 +57,12 @@ package org.interguild.editor.tilelist {
 			addChild(selectedBG);
 
 			//init icon
-			var img:Bitmap = new Bitmap(icon);
-			img.x = PADDING_LEFT;
-			img.y = PADDING_Y;
-			addChild(img);
+			changeIcon(TileList.getIcon(code));
 
 			//draw border
 			var border:Sprite = new Sprite();
 			border.graphics.beginFill(ICON_BORDER_COLOR);
-			border.graphics.drawRect(img.x - ICON_BORDER_WIDTH, img.y - ICON_BORDER_WIDTH, img.width + (2 * ICON_BORDER_WIDTH), img.height + (2 * ICON_BORDER_WIDTH));
+			border.graphics.drawRect(icon.x - ICON_BORDER_WIDTH, icon.y - ICON_BORDER_WIDTH, icon.width + (2 * ICON_BORDER_WIDTH), icon.height + (2 * ICON_BORDER_WIDTH));
 			border.graphics.endFill();
 			addChildAt(border, numChildren - 1);
 
@@ -91,14 +87,23 @@ package org.interguild.editor.tilelist {
 			//init events
 			addEventListener(MouseEvent.MOUSE_OVER, onMouseOver, false, 0, true);
 		}
-		
-		public function drawBottomBorder():void{
+
+		public function changeIcon(newIcon:BitmapData):void {
+			if (icon)
+				removeChild(icon);
+			icon = new Bitmap(newIcon);
+			icon.x = PADDING_LEFT;
+			icon.y = PADDING_Y;
+			addChild(icon);
+		}
+
+		public function drawBottomBorder():void {
 			var border:Sprite = new Sprite();
 			border.graphics.beginFill(0x08434f);
 			border.graphics.drawRect(0, CLICK_AREA_HEIGHT, CLICK_AREA_WIDTH, 1);
 			border.graphics.endFill();
 			border.graphics.beginFill(0x166e81);
-			border.graphics.drawRect(0, CLICK_AREA_HEIGHT+1, CLICK_AREA_WIDTH, 1);
+			border.graphics.drawRect(0, CLICK_AREA_HEIGHT + 1, CLICK_AREA_WIDTH, 1);
 			border.graphics.endFill();
 			addChild(border);
 		}
@@ -115,24 +120,20 @@ package org.interguild.editor.tilelist {
 			addEventListener(MouseEvent.MOUSE_OVER, onMouseOver, false, 0, true);
 			overBG.visible = false;
 		}
-		
-		public function select():void{
+
+		public function select():void {
 			isSelected = true;
 			selectedBG.visible = true;
 			overBG.visible = false;
 		}
-		
-		public function deselect():void{
+
+		public function deselect():void {
 			isSelected = false;
 			selectedBG.visible = false;
 		}
-		
-		public function getCharCode():String{
+
+		public function getCharCode():String {
 			return code;
-		}
-		
-		public function getIcon():BitmapData{
-			return icon;
 		}
 	}
 }

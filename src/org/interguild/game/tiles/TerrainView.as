@@ -1,7 +1,8 @@
 package org.interguild.game.tiles {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
-
+	
 	import org.interguild.Aeon;
 
 	public class TerrainView extends Sprite {
@@ -31,10 +32,13 @@ package org.interguild.game.tiles {
 
 		private var w:int;
 		private var h:int;
+		
+		private var terrainImage:BitmapData
 
 		public function TerrainView(w:int, h:int) {
 			this.w = w;
 			this.h = h;
+			this.terrainImage = Terrain.getTerrainImage(0);
 
 			terrainBG = new Sprite();
 			addChild(terrainBG);
@@ -43,6 +47,10 @@ package org.interguild.game.tiles {
 			rightBorders = [[]];
 			leftBorders = [[]];
 			bottomBorders = [[]];
+		}
+		
+		public function set terrainType(id:uint):void{
+			terrainImage = Terrain.getTerrainImage(id);
 		}
 
 		public function drawTerrainAt(x:Number, y:Number):void {
@@ -83,7 +91,8 @@ package org.interguild.game.tiles {
 		}
 
 		public function finishTerrain():void {
-			terrainBG.graphics.beginBitmapFill(new TerrainWoodSprite());
+			//draw main pattern
+			terrainBG.graphics.beginBitmapFill(terrainImage);
 			for (var j:uint = 0; j < terrains.length; j++) {
 				if (terrains[j]) {
 					for (var i:uint = 0; i < terrains[j].length; i++) {
@@ -95,8 +104,10 @@ package org.interguild.game.tiles {
 			}
 			terrainBG.graphics.endFill();
 
+			//get ready to draw borders
 			terrainBG.graphics.beginFill(BORDER_COLOR);
 
+			//draw top borders
 			for (j = 0; j < topBorders.length; j++) {
 				if (topBorders[j]) {
 					for (i = 0; i < topBorders[j].length; i++) {
@@ -110,6 +121,7 @@ package org.interguild.game.tiles {
 				}
 			}
 
+			//draw bottom borders
 			for (j = 0; j < bottomBorders.length; j++) {
 				if (bottomBorders[j]) {
 					for (i = 0; i < bottomBorders[j].length; i++) {
@@ -119,6 +131,8 @@ package org.interguild.game.tiles {
 					}
 				}
 			}
+			
+			//draw right borders
 			for (j = 0; j < rightBorders.length; j++) {
 				if (rightBorders[j]) {
 					for (i = 0; i < rightBorders[j].length; i++) {
@@ -129,6 +143,7 @@ package org.interguild.game.tiles {
 				}
 			}
 			
+			//draw left borders
 			for (j = 0; j < leftBorders.length; j++) {
 				if (leftBorders[j]) {
 					for (i = 0; i < leftBorders[j].length; i++) {

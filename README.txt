@@ -12,9 +12,12 @@ TODAY'S PLAN:
 [ ]	5) design better jump-to-start screen
 [ ]	6) design "Help" window for editor
 
-	-add context menus to level editor
+	-editing dimensions should not delete old data.
+	-pressing tab should not trigger everything with buttonMode = true;
+	-warn players when closing an unsaved level
 	-add Ctrl+Mousewheel zoom
 	-add zoom to focus on mouse position
+	-add context menus to level editor
 	-kill player/objects for falling out of the world.
 
 ART

@@ -3,6 +3,8 @@ package org.interguild.editor.tilelist {
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
@@ -10,6 +12,7 @@ package org.interguild.editor.tilelist {
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.Hints;
+	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
@@ -40,9 +43,21 @@ package org.interguild.editor.tilelist {
 		public static const ERASER_TOOL_CHAR:String = " ";
 		
 		private static var map:Object = new Object();
+		private static var terrainItem:TileListItem;
 
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
+		}
+		
+		public static function setTerrainType(id:uint):void{
+			var img:BitmapData = new BitmapData(32, 32);
+			img.copyPixels(Terrain.getTerrainImage(id), new Rectangle(0, 0, 32, 32), new Point(0, 0));
+			
+			map[Terrain.LEVEL_CODE_CHAR] = img;
+			EditorLevel.forceChange = true;
+			if(terrainItem){
+				terrainItem.changeIcon(img);
+			}
 		}
 		
 		private var editor:EditorPage;
@@ -118,10 +133,11 @@ package org.interguild.editor.tilelist {
 			map[ERASER_TOOL_CHAR] = new EraserToolSprite();
 			addItem(new TileListItem("Eraser Tool", ERASER_TOOL_CHAR));
 
-			map[Terrain.LEVEL_CODE_CHAR] = Terrain.EDITOR_ICON;
+			setTerrainType(0);
 			currentSelection = new TileListItem("Terrain", Terrain.LEVEL_CODE_CHAR);
 			currentSelection.select();
 			EditorPage.currentTile = currentSelection.getCharCode();
+			terrainItem = currentSelection;
 			addItem(currentSelection);
 
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;

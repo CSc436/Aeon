@@ -15,9 +15,9 @@ package org.interguild.loader {
 
 	/**
 	 * Takes in a level encoding and constructs a level.
-	 * 
+	 *
 	 * HOW TO USE
-	 * 
+	 *
 	 * 1. Create new LevelLoader
 	 * 2. Set up all of the Listeners (callbacks) that you want.
 	 *    (see Listener functions below)
@@ -25,11 +25,12 @@ package org.interguild.loader {
 	public class LevelLoader extends Loader {
 
 		private var level:Level;
-		
-		protected override function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void{
+
+		protected override function setLevelInfo():void {
 			//create the level
-			level = new Level(lvlWidth, lvlHeight);
-			level.title = title;
+			level = new Level(this.levelWidth, this.levelHeight, backgroundType);
+			level.title = this.title;
+			level.terrainType = this.terrainType;
 			initializedCallback(level);
 		}
 
@@ -88,8 +89,8 @@ package org.interguild.loader {
 					break;
 			}
 		}
-		
-		protected override function finishLoading():void{
+
+		protected override function finishLoading():void {
 			level.finishLoading();
 		}
 	}

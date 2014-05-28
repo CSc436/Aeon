@@ -4,20 +4,22 @@ package org.interguild.loader {
 
 	public class EditorLoader extends Loader {
 		
-		private var grid:EditorLevel;
+		private var level:EditorLevel;
 		
 		public function EditorLoader() {
 			super();
 		}
 		
-		protected override function setLevelInfo(title:String, lvlWidth:uint, lvlHeight:uint):void{
-			grid = new EditorLevel(lvlHeight, lvlWidth);
-			grid.title = title;
-			initializedCallback(grid);
+		protected override function setLevelInfo():void{
+			level = new EditorLevel(this.levelWidth, this.levelHeight);
+			level.title = this.title;
+			level.terrainType = this.terrainType;
+			level.backgroundType = this.backgroundType;
+			initializedCallback(level);
 		}
 		
 		protected override function initObject(curChar:String, px:int, py:int):void {
-			grid.setTileAt(curChar, py, px);
+			level.setTileAt(curChar, py, px);
 		}
 	}
 }

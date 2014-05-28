@@ -63,14 +63,14 @@ package org.interguild.game.level {
 			private var slowDownText:TextField;
 		}
 
-		public function Level(lvlWidth:Number, lvlHeight:Number) {
+		public function Level(lvlWidth:Number, lvlHeight:Number, bgID:uint) {
 			collectableCount = 0;
 			w = lvlWidth;
 			h = lvlHeight;
 			myTitle = "Untitled";
 
 			//init background
-			bg = new LevelBackground(widthInPixels, heightInPixels);
+			bg = new LevelBackground(widthInPixels, heightInPixels, bgID);
 			addChild(bg);
 
 			//init portals list
@@ -114,6 +114,10 @@ package org.interguild.game.level {
 				slowDownText.visible = false;
 				addChild(slowDownText);
 			}
+		}
+		
+		public function set terrainType(id:uint):void{
+			tv.terrainType = id;
 		}
 
 		public function finishLoading():void {

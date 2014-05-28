@@ -60,6 +60,13 @@ package org.interguild.editor.levelpane {
 				addChild(border);
 			}
 		}
+		
+		public function redraw():void{
+			removeChildren();
+			var icon:BitmapData = TileList.getIcon(tileChar);
+			addChild(new Bitmap(icon));
+			addChild(border);
+		}
 
 		public function clearTile(clearFromPLayer:Boolean = false):void {
 			if (clearFromPLayer && tileBeforePlayer != TileList.ERASER_TOOL_CHAR) {
