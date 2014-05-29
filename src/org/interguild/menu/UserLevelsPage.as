@@ -4,11 +4,12 @@ package org.interguild.menu {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-
+	
 	import fl.controls.TextInput;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
+	import org.interguild.components.BetterTextInput;
 
 	public class UserLevelsPage extends Sprite {
 
@@ -29,7 +30,7 @@ package org.interguild.menu {
 			wrapper.addChild(instructionText);
 
 			//init input field
-			input = new TextInput();
+			input = new BetterTextInput();
 			input.width = 60;
 			input.x = instructionText.width + 10;
 			input.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
