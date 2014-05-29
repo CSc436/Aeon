@@ -22,7 +22,7 @@ package org.interguild.components {
 			nextY = PADDING_Y;
 		}
 		
-		internal function addItem(i:DropdownMenuItem):void {
+		internal function addItem(i:DropdownMenuElement):void {
 			i.x = PADDING_X;
 			i.y = nextY;
 			addChild(i);

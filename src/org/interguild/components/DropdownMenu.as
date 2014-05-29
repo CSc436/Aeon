@@ -8,13 +8,47 @@ package org.interguild.components {
 	import org.interguild.Aeon;
 
 	/**
-	 * Treat this like an abstract class.
+	 * The following UML is not ASdoc friendly:
 	 *
-	 * When extending call the following functions in the constructor:
+	 * 		----------------     inherits from	  ======================
+	 * 		| DropdownMenu | <------------------- [your class goes here]
+	 * 		----------------					  ======================
+	 * 				|
+	 * 				|uses
+	 * 				|
+	 * 				V
+	 * 		---------------------	 contains	-----------------------
+	 * 		| DropdownMenuPopup | <>----------- | DropdownMenuElement |
+	 * 		--------------------- 				-----------------------
+	 * 														^
+	 * 														|
+	 * 										  inherits from |
+	 * 														|
+	 * 						---------------------------------
+	 * 						|						  |
+	 * 						|						  |
+	 * 			--------------------		-----------------------
+	 * 			| DropdownMenuItem |		| DropdownMenuDivider |
+	 * 			--------------------		-----------------------
+	 * 					^							^
+	 * 					|							|
+	 * 					| inherits from				| inherits from
+	 * 					|							|
+	 * 			=====================		======================
+	 * 			[your class goes here]		[your class goes here]
+	 * 			=====================		======================
+	 *
+	 * Treat the DropdownMenu classes as abstract classes. If you want
+	 * to make your own menu, make classes that extend:
+	 * 		-DropdownMenu
+	 * 		-DropdownMenuItem
+	 * 		-DropdownMenuDivider
+	 *
+	 * When extending DropdownMenu call the following functions in your constructor:
 	 * 		initButton();
 	 */
 	public class DropdownMenu extends Sprite {
-		
+
 		private static const DEFAULT_BG_COLOR:uint = 0xFFFFFF;
 
 		private var button:Sprite;
@@ -31,8 +65,8 @@ package org.interguild.components {
 			initClickArea();
 			initPopup();
 		}
-		
-		protected function get backgroundColor():uint{
+
+		protected function get backgroundColor():uint {
 			return DEFAULT_BG_COLOR;
 		}
 
@@ -65,22 +99,22 @@ package org.interguild.components {
 			clickArea.visible = false;
 			addChild(clickArea);
 		}
-		
-		public override function set x(n:Number):void{
+
+		public override function set x(n:Number):void {
 			super.x = n;
 			clickArea.x = -n;
 			var p:DisplayObjectContainer = parent;
-			while(p){
+			while (p) {
 				clickArea.x -= p.x;
 				p = p.parent;
 			}
 		}
-		
-		public override function set y(n:Number):void{
+
+		public override function set y(n:Number):void {
 			super.y = n;
 			clickArea.y = -n;
 			var p:DisplayObjectContainer = parent;
-			while(p){
+			while (p) {
 				clickArea.y -= p.y;
 				p = p.parent;
 			}
@@ -94,8 +128,8 @@ package org.interguild.components {
 			popup.visible = false;
 			addChild(popup);
 		}
-		
-		protected function addItem(i:DropdownMenuItem):void{
+
+		protected function addItem(i:DropdownMenuElement):void {
 			popup.addItem(i);
 		}
 
@@ -118,7 +152,7 @@ package org.interguild.components {
 		protected function showPopup():void {
 			popup.visible = true;
 			clickArea.visible = true;
-			if(parent){
+			if (parent) {
 				parent.addChild(this);
 			}
 		}

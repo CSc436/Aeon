@@ -10,10 +10,10 @@ package org.interguild.editor.topbar {
 	public class ToolTip extends Sprite {
 
 		private static const TEXT_FONT:String = "Arial";
-		private static const TEXT_SIZE:Number = 12;
+		private static const TEXT_SIZE:Number = 13;
 		private static const TEXT_COLOR:uint = 0xFFFFFF;
 
-		private static const BG_COLOR:uint = 0x333333;
+		private static const BG_COLOR:uint = 0x4b4b4b;
 
 		private var checked:Boolean;
 

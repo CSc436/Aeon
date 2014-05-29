@@ -19,12 +19,12 @@ package org.interguild.editor.levelprops {
 		private static const TEXT_COLOR:uint = 0x000000; //black
 		private static const TEXT_COLOR_OVER:uint = 0xFFFFFF; //white
 
-		private static const IMG_PADDING_TOP:uint = 4;
-		private static const IMG_PADDING_LEFT:uint = 4;
-		private static const IMG_PADDING_RIGHT:uint = 4;
+		private static const IMG_PADDING_Y:uint = 6;
+		private static const IMG_PADDING_LEFT:uint = 6;
+		private static const IMG_PADDING_RIGHT:uint = 6;
 		private static const TEXT_PADDING_TOP:uint = 12;
 
-		private static const BG_HEIGHT:uint = 32 + 2 + (2 * IMG_PADDING_TOP) + 1;
+		private static const BG_HEIGHT:uint = 32 + 2 + (2 * IMG_PADDING_Y) + 1;
 		private static const BG_WIDTH:uint = 150;
 
 		private var myID:uint;
@@ -43,7 +43,7 @@ package org.interguild.editor.levelprops {
 			bdata.copyPixels(image, new Rectangle(0, 0, image.width, image.height), new Point(1, 1));
 			var bm:Bitmap = new Bitmap(bdata);
 			bm.x = IMG_PADDING_LEFT;
-			bm.y = IMG_PADDING_TOP;
+			bm.y = IMG_PADDING_Y;
 			addChildAt(bm, 1);
 
 			//init formats

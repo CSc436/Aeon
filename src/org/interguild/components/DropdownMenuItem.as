@@ -2,10 +2,11 @@ package org.interguild.components {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 
-	public class DropdownMenuItem extends Sprite {
+	public class DropdownMenuItem extends DropdownMenuElement {
 
 		private static const DEFAULT_BG_HEIGHT:uint = 25;
 		private static const DEFAULT_BG_WIDTH:uint = 200;
+		private static const CORNER_RADIUS:uint = 6; //teal
 		private static const BG_COLOR_OVER:uint = 0x115867; //teal
 
 		private var rolloverBG:Sprite;
@@ -14,7 +15,7 @@ package org.interguild.components {
 			//init rollover bg
 			rolloverBG = new Sprite();
 			rolloverBG.graphics.beginFill(BG_COLOR_OVER);
-			rolloverBG.graphics.drawRect(0, 0, bgWidth, bgHeight);
+			rolloverBG.graphics.drawRoundRect(0, 0, bgWidth, bgHeight, CORNER_RADIUS, CORNER_RADIUS);
 			rolloverBG.graphics.endFill();
 			rolloverBG.visible = false;
 			addChild(rolloverBG);

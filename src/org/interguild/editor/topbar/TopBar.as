@@ -66,25 +66,25 @@ package org.interguild.editor.topbar {
 			addChild(iconClick);
 
 			//all the icons
-			loadIcon(NEW_LEVEL_ICON, "New Level", function(evt:MouseEvent):void{
+			loadIcon(NEW_LEVEL_ICON, "New Level (Ctrl+N)", function(evt:MouseEvent):void{
 				editor.newLevel();
 			});
-			loadIcon(OPEN_LEVEL_ICON, "Open Level", function(evt:MouseEvent):void{
+			loadIcon(OPEN_LEVEL_ICON, "Open Level (Ctrl+O)", function(evt:MouseEvent):void{
 				editor.openFromFile();
 			});
-			loadIcon(SAVE_LEVEL_ICON, "Save Level", function(evt:MouseEvent):void{
+			loadIcon(SAVE_LEVEL_ICON, "Save Level (Ctrl+S)", function(evt:MouseEvent):void{
 				editor.saveToFile();
 			});
-			loadIcon(UNDO_ICON, "Undo", function(evt:MouseEvent):void{
+			loadIcon(UNDO_ICON, "Undo (Ctrl+Z)", function(evt:MouseEvent):void{
 				editor.undo();
 			});
-			loadIcon(REDO_ICON, "Redo", function(evt:MouseEvent):void{
+			loadIcon(REDO_ICON, "Redo (Ctrl+Y)", function(evt:MouseEvent):void{
 				editor.redo();
 			});
-			loadIcon(ZOOM_IN_ICON, "Zoom In", function(evt:MouseEvent):void{
+			loadIcon(ZOOM_IN_ICON, "Zoom In (Ctrl++)", function(evt:MouseEvent):void{
 				editor.zoomIn();
 			});
-			loadIcon(ZOOM_OUT_ICON, "Zoom Out", function(evt:MouseEvent):void{
+			loadIcon(ZOOM_OUT_ICON, "Zoom Out (Ctrl+–)", function(evt:MouseEvent):void{
 				editor.zoomOut();
 			});
 			loadIcon(LEVEL_PROPS_ICON, "Level Properties", function(evt:MouseEvent):void{
