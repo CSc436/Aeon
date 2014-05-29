@@ -67,6 +67,7 @@ package org.interguild.editor.levelpane {
 				currentTab.deactivate();
 			tab.activate();
 			currentTab = tab;
+			addChild(currentTab);//move to top
 			levelPane.level = tab.level;
 		}
 

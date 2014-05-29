@@ -95,8 +95,8 @@ package org.interguild.editor.levelprops {
 		private var titleInput:TextInput;
 		private var sizeWidthInput:TextInput;
 		private var sizeHeightInput:TextInput;
-		private var terrainType:PictureMenu;
-		private var backgroundType:PictureMenu;
+		private var terrainDropdown:PictureMenu;
+		private var backgroundDropdown:PictureMenu;
 		private var originalTerrainID:uint;
 		private var originalBackgroundID:uint;
 
@@ -300,7 +300,7 @@ package org.interguild.editor.levelprops {
 
 		private function initDropdowns():void {
 			//terrain type:
-			terrainType = new PictureMenu(this);
+			terrainDropdown = new PictureMenu(this);
 			var i:uint = 0;
 			var image:BitmapData;
 			var name:String;
@@ -309,38 +309,38 @@ package org.interguild.editor.levelprops {
 				name = Terrain.getName(i);
 				if (image == null || name == null)
 					break;
-				terrainType.addItem(i, image, name);
+				terrainDropdown.addItem(i, image, name);
 				i++;
 			}
-			addChild(terrainType);
-			terrainType.x = DROPDOWN_INPUT_X - WINDOW_X; //must be done after addChild();
-			terrainType.y = TERRAIN_INPUT_Y - WINDOW_Y;
-			terrainType.addEventListener(Event.CHANGE, onPictureMenuChange);
+			addChild(terrainDropdown);
+			terrainDropdown.x = DROPDOWN_INPUT_X - WINDOW_X; //must be done after addChild();
+			terrainDropdown.y = TERRAIN_INPUT_Y - WINDOW_Y;
+			terrainDropdown.addEventListener(Event.CHANGE, onPictureMenuChange);
 
 			//background type:
-			backgroundType = new PictureMenu(this);
+			backgroundDropdown = new PictureMenu(this);
 			i = 0;
 			while (true) {
 				image = LevelBackground.getThumbnail(i);
 				name = LevelBackground.getName(i);
 				if (image == null || name == null)
 					break;
-				backgroundType.addItem(i, image, name);
+				backgroundDropdown.addItem(i, image, name);
 				i++;
 			}
-			addChild(backgroundType);
-			backgroundType.x = DROPDOWN_INPUT_X - WINDOW_X; //must be done after addChild();
-			backgroundType.y = BG_INPUT_Y - WINDOW_Y;
-			backgroundType.addEventListener(Event.CHANGE, onPictureMenuChange);
+			addChild(backgroundDropdown);
+			backgroundDropdown.x = DROPDOWN_INPUT_X - WINDOW_X; //must be done after addChild();
+			backgroundDropdown.y = BG_INPUT_Y - WINDOW_Y;
+			backgroundDropdown.addEventListener(Event.CHANGE, onPictureMenuChange);
 		}
 		
 		private function onPictureMenuChange(evt:Event):void{
-			if(evt.target == terrainType){
+			if(evt.target == terrainDropdown){
 				//show terrain preview
-				levelPane.level.terrainType = terrainType.currentID;
+				currentLevel.terrainType = terrainDropdown.currentID;
 			}else{
 				//show bg preview
-				
+				currentLevel.backgroundType = backgroundDropdown.currentID;
 			}
 		}
 
@@ -348,9 +348,10 @@ package org.interguild.editor.levelprops {
 			titleInput.text = String(currentLevel.title);
 			sizeWidthInput.text = String(currentLevel.widthInTiles);
 			sizeHeightInput.text = String(currentLevel.heightInTiles);
-			terrainType.currentID = currentLevel.terrainType;
-			backgroundType.currentID = currentLevel.backgroundType;
+			terrainDropdown.currentID = currentLevel.terrainType;
+			backgroundDropdown.currentID = currentLevel.backgroundType;
 			originalTerrainID = currentLevel.terrainType;
+			originalBackgroundID = currentLevel.backgroundType;
 		}
 
 		private function onFocusClick(evt:MouseEvent):void {
@@ -363,12 +364,12 @@ package org.interguild.editor.levelprops {
 			visible = false;
 			currentLevel.title = titleInput.text;
 			currentLevel.resize(Number(sizeHeightInput.text), Number(sizeWidthInput.text));
-			currentLevel.backgroundType = backgroundType.currentID;
 		}
 
 		public function cancel(evt:MouseEvent = null):void {
 			visible = false;
 			currentLevel.terrainType = originalTerrainID;
+			currentLevel.backgroundType = originalBackgroundID;
 		}
 
 		public override function set visible(value:Boolean):void {

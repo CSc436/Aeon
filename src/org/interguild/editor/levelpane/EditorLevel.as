@@ -66,6 +66,7 @@ package org.interguild.editor.levelpane {
 
 		private var scrollPosX:Number = 0;
 		private var scrollPosY:Number = 0;
+		private var scrollZoom:uint = 100;
 
 		private var undoList:Array;
 		private var redoList:Array;
@@ -165,6 +166,7 @@ package org.interguild.editor.levelpane {
 		public function set backgroundType(id:uint):void {
 			if (backgroundID != id) {
 				backgroundID = id;
+				myTab.updateScrollPane();
 			}
 		}
 
@@ -704,6 +706,14 @@ package org.interguild.editor.levelpane {
 
 		public function set verticalScrollPosition(n:Number):void {
 			scrollPosY = n;
+		}
+
+		public function get zoomLevel():uint {
+			return scrollZoom;
+		}
+
+		public function set zoomLevel(n:uint):void {
+			scrollZoom = n;
 		}
 
 		private function initGridCells():void {
