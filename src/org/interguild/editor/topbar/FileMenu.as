@@ -16,7 +16,7 @@ package org.interguild.editor.topbar {
 		private var editor:EditorPage;
 
 		public function FileMenu(editor:EditorPage) {
-			super();
+			super(true);
 			this.editor = editor;
 			this.x = POSITION_X;
 			this.y = POSITION_Y;
@@ -44,6 +44,12 @@ package org.interguild.editor.topbar {
 			addItem(new FileMenuItem("Close All", "", function(evt:MouseEvent):void {
 				editor.closeAllLevels();
 			}));
+			
+			addItem(new DropdownMenuDivider());
+			
+			addItem(new FileMenuItem("Edit Level Properties", "", function(evt:MouseEvent):void {
+				editor.showLevelProperties();
+			}));
 
 			addItem(new DropdownMenuDivider());
 
@@ -68,12 +74,9 @@ package org.interguild.editor.topbar {
 
 			addItem(new DropdownMenuDivider());
 
-//			addItem(new FileMenuItem("Zoom In", "Ctrl++", function(evt:MouseEvent):void {
-//				editor.zoomIn();
-//			}));
-//			addItem(new FileMenuItem("Zoom Out", "Ctrl+-", function(evt:MouseEvent):void {
-//				editor.zoomOut();
-//			}));
+			addItem(new FileMenuItem("How to Use the Editor", "", function(evt:MouseEvent):void {
+				editor.showHelpScreen();
+			}));
 			addItem(new FileMenuItem("Exit to Main Menu", "", function(evt:MouseEvent):void {
 				editor.gotoMainMenu();
 			}));

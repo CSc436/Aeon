@@ -6,6 +6,7 @@ package org.interguild.components {
 	import flash.events.MouseEvent;
 	
 	import org.interguild.Aeon;
+	import org.interguild.editor.EditorPage;
 
 	/**
 	 * The following UML is not ASdoc friendly:
@@ -61,8 +62,8 @@ package org.interguild.components {
 		/**
 		 * Treat this like an abstract class. Do not instantiate it directly.
 		 */
-		public function DropdownMenu() {
-			initClickArea();
+		public function DropdownMenu(showOverlay:Boolean) {
+			initClickArea(showOverlay);
 			initPopup();
 		}
 
@@ -88,9 +89,12 @@ package org.interguild.components {
 			popup.y = button.y + button.height;
 		}
 
-		private function initClickArea():void {
+		private function initClickArea(showOverlay:Boolean):void {
 			clickArea = new Sprite();
-			clickArea.graphics.beginFill(0, 0);
+			var overlayAlpha:Number = 0;
+			if(showOverlay)
+				overlayAlpha = EditorPage.OVERLAY_ALPHA;
+			clickArea.graphics.beginFill(0, overlayAlpha);
 			clickArea.graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
 			clickArea.graphics.endFill();
 

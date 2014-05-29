@@ -11,7 +11,6 @@ package org.interguild.editor.tilelist {
 	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
-	import org.interguild.editor.Hints;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
@@ -180,13 +179,6 @@ package org.interguild.editor.tilelist {
 				currentSelection.select();
 				var curChar:String = currentSelection.getCharCode();
 				EditorPage.currentTile = curChar;
-				if(curChar == SELECTION_TOOL_CHAR){
-					editor.hintText = Hints.HINT_OLD_PASTE;
-				}else if(curChar == ERASER_TOOL_CHAR){
-					editor.hintText = Hints.HINT_HAND_TOOL;
-				}else{
-					editor.hintText = Hints.HINT_SHIFT_DRAWING;
-				}
 			}
 		}
 

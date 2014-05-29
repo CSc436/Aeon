@@ -3,29 +3,24 @@ package org.interguild.editor {
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.net.FileReference;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	
 	import org.interguild.Aeon;
+	import org.interguild.editor.help.EditorHelpScreen;
 	import org.interguild.editor.levelpane.EditorLevelPane;
+	import org.interguild.editor.levelprops.LevelPropertiesScreen;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.editor.topbar.TopBar;
 	import org.interguild.loader.EditorLoader;
 	import org.interguild.loader.Loader;
-	import org.interguild.editor.levelprops.LevelPropertiesScreen;
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 
 		public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+		public static const OVERLAY_ALPHA:Number = 0.25;
 		
-		private static const HINT_FONT:String = "Verdana";
-		private static const HINT_SIZE:Number = 12;
-		private static const HINT_COLOR:uint = 0xFFFFFF;
-
 		private static var selectedTile:String;
 		//TODO, replace this with a simple check in the undo/redo feature
 		public static var hasMadeFirstChange:Boolean = false;
@@ -44,8 +39,8 @@ package org.interguild.editor {
 		private var topBar:TopBar;
 		private var levelPane:EditorLevelPane;
 		private var tileList:TileList
-		private var hint:TextField;
 		private var levelProps:LevelPropertiesScreen;
+		private var help:EditorHelpScreen;
 
 		/**
 		 * Creates grid holder and populates it with objects.
@@ -61,8 +56,6 @@ package org.interguild.editor {
 			levelPane = new EditorLevelPane(this);
 			addChild(levelPane);
 			
-			initHintText();
-
 			loader = new EditorLoader();
 			loader.addInitializedListener(levelPane.addLevel);
 			loader.addErrorListener(onLoadError);
@@ -75,36 +68,15 @@ package org.interguild.editor {
 			
 			levelProps = new LevelPropertiesScreen(keys, levelPane);
 			addChild(levelProps);
+			
+			help = new EditorHelpScreen();
+			addChild(help);
 		}
 
 		private function initBG():void {
 			graphics.beginFill(BACKGROUND_COLOR);
 			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
 			graphics.endFill();
-		}
-		
-		private function initHintText():void{
-			var tip:TextField = new TextField();
-			tip.autoSize = TextFieldAutoSize.LEFT;
-			tip.defaultTextFormat = new TextFormat(HINT_FONT, HINT_SIZE, HINT_COLOR, true, true);
-			tip.selectable = false;
-			tip.text = "Tip: ";
-			tip.y = Aeon.STAGE_HEIGHT - tip.height - 1;
-			tip.x = 2;
-			addChild(tip);
-			
-			hint = new TextField();
-			hint.autoSize = TextFieldAutoSize.LEFT;
-			hint.defaultTextFormat = new TextFormat(HINT_FONT, HINT_SIZE, HINT_COLOR);
-			hint.selectable = false;
-			hint.y = tip.y;
-			hint.x = tip.x + tip.width;
-			hint.text = Hints.HINT_SHIFT_DRAWING;
-			addChild(hint);
-		}
-		
-		public function set hintText(s:String):void{
-			hint.text = s;
 		}
 
 		public function newLevel():void {
@@ -168,6 +140,10 @@ package org.interguild.editor {
 		public function showLevelProperties():void{
 			levelProps.visible = true;
 		}
+		
+		public function showHelpScreen():void{
+			help.visible = true;
+		}
 
 		/**
 		 * This function returns to the title menu
@@ -179,7 +155,6 @@ package org.interguild.editor {
 		public function copy():void {
 			topBar.hideMenu();
 			levelPane.level.copy();
-			hintText = Hints.HINT_SHIFT_PASTE;
 		}
 
 		public function cut():void {

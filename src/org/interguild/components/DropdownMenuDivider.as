@@ -3,7 +3,7 @@ package org.interguild.components {
 
 	public class DropdownMenuDivider extends DropdownMenuElement {
 		
-		private static const DEFAULT_HEIGHT:uint = 15;
+		private static const DEFAULT_HEIGHT:uint = 11;
 		private static const DEFAULT_WIDTH:uint = 200;
 		
 		private static const LINE_WIDTH:Number = 0.9; //percent

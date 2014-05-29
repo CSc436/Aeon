@@ -91,7 +91,7 @@ package org.interguild.editor.topbar {
 				editor.showLevelProperties();
 			});
 			loadIcon(HELP_ICON, "Help", function(evt:MouseEvent):void{
-				trace("TODO");
+				editor.showHelpScreen();
 			});
 		}
 

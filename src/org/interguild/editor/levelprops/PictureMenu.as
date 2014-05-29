@@ -27,6 +27,7 @@ package org.interguild.editor.levelprops {
 		private var items:Array;
 
 		public function PictureMenu(props:LevelPropertiesScreen) {
+			super(false);
 			this.props = props;
 			this.items = [];
 

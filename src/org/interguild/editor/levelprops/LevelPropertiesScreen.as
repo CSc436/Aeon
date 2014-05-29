@@ -15,7 +15,9 @@ package org.interguild.editor.levelprops {
 	import org.interguild.Aeon;
 	import org.interguild.components.BetterTextInput;
 	import org.interguild.components.FancyButton;
+	import org.interguild.components.SquareButton;
 	import org.interguild.editor.EditorKeyMan;
+	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.editor.levelpane.EditorLevelPane;
 	import org.interguild.game.level.LevelBackground;
@@ -32,22 +34,15 @@ package org.interguild.editor.levelprops {
 		private static const BUTTON_HEIGHT:Number = 37;
 		private static const BUTTON_Y:Number = 325;
 
-		private static const OKAY_BG_COLOR_UP:uint = 0x116e79; //0x008173;
-		private static const OKAY_BG_COLOR_OVER:uint = 0x1498a8; //0x009b8b;
+		private static const OKAY_BG_COLOR_UP:uint = 0x116e79;
+		private static const OKAY_BG_COLOR_OVER:uint = 0x1498a8;
 		private static const OKAY_BORDER_COLOR:uint = 0x48daff;
-		private static const OKAY_TEXT_X:uint = 20;
 		private static const OKAY_X:uint = 72;
 
 		private static const CANCEL_BG_COLOR_UP:uint = 0x4b4b4b;
 		private static const CANCEL_BG_COLOR_OVER:uint = 0x676767;
 		private static const CANCEL_BORDER_COLOR:uint = 0x9e9e9e;
-		private static const CANCEL_TEXT_X:uint = 14;
 		private static const CANCEL_X:uint = 168;
-
-		private static const BUTTON_FONT_FAMILY:String = "Verdana";
-		private static const BUTTON_FONT_COLOR:uint = 0xf1f1f1;
-		private static const BUTTON_TEXT_Y:uint = 8;
-		private static const BUTTON_SIZE:uint = 14;
 
 		private static const TEXT_FONT:String = "Verdana";
 		private static const TEXT_SIZE:Number = 14;
@@ -109,8 +104,7 @@ package org.interguild.editor.levelprops {
 
 			centerSelf();
 			initBG();
-			initOkayButton();
-			initCancelButton();
+			initButtons();
 			initText();
 			initTextInputs();
 			initDropdowns();
@@ -125,7 +119,7 @@ package org.interguild.editor.levelprops {
 
 		private function initBG():void {
 			//inivsibile region to capture mouse events
-			graphics.beginFill(0, 0);
+			graphics.beginFill(0, EditorPage.OVERLAY_ALPHA);
 			graphics.drawRect(-x, -y, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
 			graphics.endFill();
 
@@ -136,78 +130,20 @@ package org.interguild.editor.levelprops {
 			addChild(bg);
 		}
 
-		private function drawButtonBorder(button:Sprite, color:uint, alpha:Number = 1):void {
-			button.graphics.beginFill(color, alpha);
-			button.graphics.drawRect(0, 0, BUTTON_WIDTH + 2, BUTTON_HEIGHT + 2);
-			button.graphics.endFill();
-		}
-
-		private function drawButtonBG(button:Sprite, color:uint, alpha:Number = 1):void {
-			button.graphics.beginFill(color, alpha);
-			button.graphics.drawRect(1, 1, BUTTON_WIDTH, BUTTON_HEIGHT);
-			button.graphics.endFill();
-		}
-
-		private function initOkayButton():void {
-			var upState:Sprite = new Sprite();
-			drawButtonBorder(upState, OKAY_BORDER_COLOR);
-			drawButtonBG(upState, OKAY_BG_COLOR_UP);
-
-			var overState:Sprite = new Sprite();
-			drawButtonBorder(overState, OKAY_BORDER_COLOR);
-			drawButtonBG(overState, OKAY_BG_COLOR_OVER);
-
-			var hitState:Sprite = new Sprite();
-			drawButtonBorder(hitState, OKAY_BORDER_COLOR, 0);
-			drawButtonBG(hitState, OKAY_BG_COLOR_UP, 0);
-
-			okayButton = new FancyButton(upState, overState, hitState);
+		private function initButtons():void {
+			okayButton = new SquareButton("Okay", OKAY_BG_COLOR_UP, OKAY_BG_COLOR_OVER, OKAY_BORDER_COLOR, BUTTON_WIDTH, BUTTON_HEIGHT);
 			okayButton.x = OKAY_X - WINDOW_X;
 			okayButton.y = BUTTON_Y - WINDOW_Y;
 			okayButton.addEventListener(MouseEvent.CLICK, okay);
 			addChild(okayButton);
-
-			var text:TextField = new TextField();
-			text.autoSize = TextFieldAutoSize.LEFT;
-			text.defaultTextFormat = new TextFormat(BUTTON_FONT_FAMILY, BUTTON_SIZE, BUTTON_FONT_COLOR);
-			text.selectable = false;
-			text.mouseEnabled = false;
-			text.text = "Okay";
-			text.x = okayButton.x + OKAY_TEXT_X;
-			text.y = okayButton.y + BUTTON_TEXT_Y;
-			addChild(text);
-		}
-
-		private function initCancelButton():void {
-			var upState:Sprite = new Sprite();
-			drawButtonBorder(upState, CANCEL_BORDER_COLOR);
-			drawButtonBG(upState, CANCEL_BG_COLOR_UP);
-
-			var overState:Sprite = new Sprite();
-			drawButtonBorder(overState, CANCEL_BORDER_COLOR);
-			drawButtonBG(overState, CANCEL_BG_COLOR_OVER);
-
-			var hitState:Sprite = new Sprite();
-			drawButtonBorder(hitState, CANCEL_BORDER_COLOR, 0);
-			drawButtonBG(hitState, CANCEL_BG_COLOR_UP, 0);
-
-			cancelButton = new FancyButton(upState, overState, hitState);
+			
+			cancelButton = new SquareButton("Cancel", CANCEL_BG_COLOR_UP, CANCEL_BG_COLOR_OVER, CANCEL_BORDER_COLOR, BUTTON_WIDTH, BUTTON_HEIGHT);
 			cancelButton.x = CANCEL_X - WINDOW_X;
 			cancelButton.y = BUTTON_Y - WINDOW_Y;
 			cancelButton.addEventListener(MouseEvent.CLICK, cancel);
 			addChild(cancelButton);
-
-			var text:TextField = new TextField();
-			text.autoSize = TextFieldAutoSize.LEFT;
-			text.defaultTextFormat = new TextFormat(BUTTON_FONT_FAMILY, BUTTON_SIZE, BUTTON_FONT_COLOR);
-			text.selectable = false;
-			text.mouseEnabled = false;
-			text.text = "Cancel";
-			text.x = cancelButton.x + CANCEL_TEXT_X;
-			text.y = cancelButton.y + BUTTON_TEXT_Y;
-			addChild(text);
 		}
-
+		
 		private function initText():void {
 			var format:TextFormat = new TextFormat(TEXT_FONT, TEXT_SIZE, TEXT_COLOR);
 			var dropShadow:DropShadowFilter = new DropShadowFilter(SHADOW_DISTANCE, SHADOW_ANGLE, SHADOW_COLOR, SHADOW_ALPHA, SHADOW_BLUR_X, SHADOW_BLUE_Y, SHADOW_STRENGTH);
@@ -336,10 +272,8 @@ package org.interguild.editor.levelprops {
 		
 		private function onPictureMenuChange(evt:Event):void{
 			if(evt.target == terrainDropdown){
-				//show terrain preview
 				currentLevel.terrainType = terrainDropdown.currentID;
 			}else{
-				//show bg preview
 				currentLevel.backgroundType = backgroundDropdown.currentID;
 			}
 		}

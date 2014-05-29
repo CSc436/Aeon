@@ -1,5 +1,4 @@
 package org.interguild.editor.levelpane {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -20,10 +19,9 @@ package org.interguild.editor.levelpane {
 		private static const POSITION_Y:uint = 89;
 
 		private static const BORDER_COLOR:uint = 0x222222;
-		private static const BORDER_WIDTH:uint = 1;
+		private static const BORDER_WIDTH:uint = 0;
 		private static const BG_COLOR:uint = 0x115867;
 
-		private static const HINTS_TEXT_HEIGHT:uint = 20;
 		private static const WIDTH:uint = 636;
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
 		private static var VIEWPORT_WIDTH:uint = 0; //to be calculated
@@ -74,13 +72,13 @@ package org.interguild.editor.levelpane {
 			scroll.x = BORDER_WIDTH;
 			scroll.y = BORDER_WIDTH;
 			scroll.width = WIDTH;
-			scroll.height = HEIGHT - HINTS_TEXT_HEIGHT;
+			scroll.height = HEIGHT;
 			addChild(scroll);
 			
 			//calculate viewport sizes when scrollbar is active
 			var scrollBarWidth:Number = scroll.verticalScrollBar.width;
 			VIEWPORT_WIDTH = WIDTH - scrollBarWidth;
-			VIEWPORT_HEIGHT = HEIGHT - HINTS_TEXT_HEIGHT - scrollBarWidth;
+			VIEWPORT_HEIGHT = HEIGHT - scrollBarWidth;
 			
 			//init blue square that covers scrollpane's bottom-right corner
 			cornerCover = new Sprite();
@@ -160,9 +158,9 @@ package org.interguild.editor.levelpane {
 			container.graphics.drawRect(0, 0, Math.max(VIEWPORT_WIDTH, currentLevel.width), Math.max(VIEWPORT_HEIGHT, currentLevel.height));
 			container.graphics.endFill();
 			//add a border to the top and left sides of the grid
-			container.graphics.beginFill(EditorCell.LINE_COLOR, EditorCell.LINE_ALPHA);
+			container.graphics.beginFill(EditorCell.LINE_COLOR);//, EditorCell.LINE_ALPHA);
 			container.graphics.drawRect(0, 0, currentLevel.width + 1, 1);
-			container.graphics.drawRect(0, 0, 1, currentLevel.height + 1);
+			container.graphics.drawRect(0, 1, 1, currentLevel.height);
 			container.graphics.endFill();
 			scroll.source = container;
 
@@ -198,20 +196,12 @@ package org.interguild.editor.levelpane {
 
 			var bg:BitmapData = LevelBackground.getBackground(id);
 			var matrix:Matrix = new Matrix();
-
-			var scaleH:Number = scroll.width / bg.width;
-			var scaleV:Number = scroll.height / bg.height;
+			var scaleV:Number = scroll.height / bg.height + 0.0000000001; //roundoff errors
 			var newWidth:Number;
 			var newHeight:Number;
-			if (scaleV < scaleH) {
-				matrix.scale(scaleV, scaleV);
-				newWidth = bg.width * scaleV;
-				newHeight = bg.height * scaleV;
-			} else {
-				matrix.scale(scaleH, scaleH);
-				newWidth = bg.width * scaleH;
-				newHeight = bg.height * scaleH;
-			}
+			matrix.scale(scaleV, scaleV);
+			newWidth = bg.width * scaleV;
+			newHeight = bg.height * scaleV;
 			var bd:BitmapData = new BitmapData(newWidth, newHeight);
 			bd.draw(bg, matrix);
 

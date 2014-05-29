@@ -1,0 +1,18 @@
+HOW TO USE THE LEVEL EDITOR
+
+Placing Tiles
+=============
+-Select tiles from the list on the right and place them on the grid.
+-Click and drag to place several tiles.
+-Hold SHIFT while placing tiles to draw a square of tiles.
+
+The Select Tool
+===============
+-Use the select tool to copy, cut, or delete sections of your level.
+-If you click on File > Paste (or press Ctrl+V) you will be able to bring back the last copy that you made.
+-When pasting, blank tiles are usually ignored. Hold SHIFT if you want blank tiles to be pasted as well.
+
+Other Tips
+==========
+-Press and hold SPACEBAR to use the Hand Tool, which lets you scroll through the level by click-and-dragging. You can also use the hand tool to scroll through the tile list.
+-You can edit your level's name, size, and colors by going to File > Edit Level Properties, or by double-clicking on your level's name.
