@@ -6,9 +6,9 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-
+	
 	import fl.containers.ScrollPane;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
@@ -26,6 +26,8 @@ package org.interguild.editor.levelpane {
 		private static const HINTS_TEXT_HEIGHT:uint = 20;
 		private static const WIDTH:uint = 636;
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
+		private static var VIEWPORT_WIDTH:uint = 0; //to be calculated
+		private static var VIEWPORT_HEIGHT:uint = 0; //to be calculated
 
 		private static const ZOOM_DEFAULT:uint = 100;
 		private static const ZOOM_MIN:uint = 10;
@@ -43,6 +45,7 @@ package org.interguild.editor.levelpane {
 		private var scroll:ScrollPane;
 		private var levelBG:Sprite;
 		private var levelBGID:int = -1;
+		private var cornerCover:Sprite;
 		private var lastClick:Point;
 		private var handToolRegion:Sprite;
 
@@ -65,7 +68,7 @@ package org.interguild.editor.levelpane {
 			levelBG.x = BORDER_WIDTH;
 			levelBG.y = BORDER_WIDTH;
 			addChild(levelBG);
-
+			
 			//init scrollpane
 			scroll = new ScrollPane();
 			scroll.x = BORDER_WIDTH;
@@ -73,6 +76,19 @@ package org.interguild.editor.levelpane {
 			scroll.width = WIDTH;
 			scroll.height = HEIGHT - HINTS_TEXT_HEIGHT;
 			addChild(scroll);
+			
+			//calculate viewport sizes when scrollbar is active
+			var scrollBarWidth:Number = scroll.verticalScrollBar.width;
+			VIEWPORT_WIDTH = WIDTH - scrollBarWidth;
+			VIEWPORT_HEIGHT = HEIGHT - HINTS_TEXT_HEIGHT - scrollBarWidth;
+			
+			//init blue square that covers scrollpane's bottom-right corner
+			cornerCover = new Sprite();
+			cornerCover.graphics.beginFill(BG_COLOR);
+			cornerCover.graphics.drawRect(VIEWPORT_WIDTH+1, VIEWPORT_HEIGHT+1, scrollBarWidth, scrollBarWidth);
+			cornerCover.graphics.endFill();
+			cornerCover.visible = false;
+			addChildAt(cornerCover, 1);
 
 			//init tabs
 			tabMan = new EditorTabManager(this);
@@ -118,7 +134,7 @@ package org.interguild.editor.levelpane {
 
 			var doZoom:Boolean = false;
 			//remember that level's scroll position
-			if (currentLevel != null) {
+			if (currentLevel != null && currentLevel != lvl) {
 				doZoom = true;
 				currentLevel.horizontalScrollPosition = scroll.horizontalScrollPosition;
 				currentLevel.verticalScrollPosition = scroll.verticalScrollPosition;
@@ -136,13 +152,13 @@ package org.interguild.editor.levelpane {
 			this.backgroundType = currentLevel.backgroundType;
 
 			var container:Sprite = new Sprite();
+			container.addEventListener(MouseEvent.MOUSE_DOWN, currentLevel.onDownElsewhere);
 			container.addChild(currentLevel);
+
 			//if the editor is smaller than the scrollpane, do this so that mouse wheel events still work nicely
-			if (container.width < WIDTH) {
-				container.graphics.beginFill(0, 0);
-				container.graphics.drawRect(0, 0, WIDTH - 16, currentLevel.height);
-				container.graphics.endFill();
-			}
+			container.graphics.beginFill(0, 0);
+			container.graphics.drawRect(0, 0, Math.max(VIEWPORT_WIDTH, currentLevel.width), Math.max(VIEWPORT_HEIGHT, currentLevel.height));
+			container.graphics.endFill();
 			//add a border to the top and left sides of the grid
 			container.graphics.beginFill(EditorCell.LINE_COLOR, EditorCell.LINE_ALPHA);
 			container.graphics.drawRect(0, 0, currentLevel.width + 1, 1);
@@ -169,8 +185,15 @@ package org.interguild.editor.levelpane {
 		}
 
 		public function set backgroundType(id:uint):void {
+			if (currentLevel.width > VIEWPORT_WIDTH && currentLevel.height > VIEWPORT_HEIGHT) {
+				cornerCover.visible = true;
+			}else{
+				cornerCover.visible = false;
+			}
+			
 			if (levelBGID == id)
 				return;
+			
 			levelBGID = id;
 
 			var bg:BitmapData = LevelBackground.getBackground(id);
@@ -196,10 +219,6 @@ package org.interguild.editor.levelpane {
 			levelBG.graphics.beginBitmapFill(bd);
 			levelBG.graphics.drawRect(0, 0, scroll.width, scroll.height);
 			levelBG.graphics.endFill();
-			levelBG.graphics.beginFill(BG_COLOR);
-			var scrollBarWidth:Number = scroll.verticalScrollBar.width;
-			levelBG.graphics.drawRect(scroll.width - scrollBarWidth, scroll.height - scrollBarWidth, scrollBarWidth, scrollBarWidth);
-			levelBG.graphics.endFill();
 		}
 
 		public function zoom(zoomIn:Boolean):void {
@@ -217,8 +236,8 @@ package org.interguild.editor.levelpane {
 
 		private function zoomTo(n:uint):void {
 			var container:Sprite = Sprite(scroll.source);
-			container.scaleX = container.scaleY = n / 100;
-			scroll.source = container;
+			currentLevel.scaleX = currentLevel.scaleY = n / 100;
+			level = currentLevel;
 		}
 
 		/**

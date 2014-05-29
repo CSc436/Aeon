@@ -256,6 +256,25 @@ package org.interguild.editor.levelpane {
 			myTab.updateScrollPane();
 		}
 
+		public function onDownElsewhere(evt:MouseEvent):void {
+			if (evt.target != parent)
+				return;
+			previewSprite.visible = false;
+			isMouseDown = true;
+			selectionSquare.visible = false;
+			selectStart = new Point(Math.floor(evt.localX / scaleX / 32), Math.floor(evt.localY / scaleY / 32));
+			selectEnd = selectStart;
+			if (EditorPage.currentTile == TileList.SELECTION_TOOL_CHAR) {
+				isSelectDown = true;
+				if (pastePreview) {
+					removeChild(pastePreview);
+					removeChild(shiftPreview);
+					pastePreview = null;
+					shiftPreview = null;
+				}
+			}
+		}
+
 		private function onDown(evt:MouseEvent):void {
 			if (evt.target is EditorCell) {
 				var cell:EditorCell = EditorCell(evt.target);
@@ -354,12 +373,25 @@ package org.interguild.editor.levelpane {
 		 * image, as well as the image used for the shift-click preview.
 		 */
 		private function previewCell(cell:EditorCell):void {
-			var currentChar:String = EditorPage.currentTile;
 			//if selection tool, don't show a preview
-			if (currentChar == TileList.SELECTION_TOOL_CHAR)
+			if (EditorPage.currentTile == TileList.SELECTION_TOOL_CHAR)
 				return;
 
 			//if we need to update the preview images
+			updatePreviews();
+
+			//move preview image
+			previewSprite.visible = true;
+			cell.addChild(previewSprite);
+		}
+
+		/**
+		 * Updates both the single-cell preview and the shift-click
+		 * preview images.
+		 */
+		private function updatePreviews():void {
+			var currentChar:String = EditorPage.currentTile;
+
 			if (previewChar != currentChar || EditorLevel.forceChange) {
 				previewChar = currentChar;
 				EditorLevel.forceChange = false;
@@ -372,15 +404,11 @@ package org.interguild.editor.levelpane {
 				previewSprite.addChild(new Bitmap(bd));
 
 				//update shift-click preview image data
-				previewBD = new BitmapData(cell.width, cell.height, true, 0x00000000);
+				previewBD = new BitmapData(EditorCell.CELL_WIDTH, EditorCell.CELL_HEIGHT, true, 0x00000000);
 				var sourceRect:Rectangle = new Rectangle(0, 0, EditorCell.CELL_WIDTH - 1, EditorCell.CELL_HEIGHT - 1);
 				var destPoint:Point = new Point(0, 0);
 				previewBD.copyPixels(bd, sourceRect, destPoint);
 			}
-
-			//move preview image
-			previewSprite.visible = true;
-			cell.addChild(previewSprite);
 		}
 
 		/**
@@ -388,6 +416,14 @@ package org.interguild.editor.levelpane {
 		 * and the selection tool's highlight box.
 		 */
 		private function previewSelection(cell:EditorCell):void {
+			//if selection started off the grid
+			if (selectStart.y >= rows) {
+				selectStart.y = rows - 1;
+			}
+			if (selectStart.x >= cols) {
+				selectStart.x = cols - 1;
+			}
+
 			//if shift-click selection is only one tile, show single-cell preview image
 			if (selectStart.equals(selectEnd) && !isSelectDown) {
 				previewSquare.visible = false;
@@ -418,6 +454,7 @@ package org.interguild.editor.levelpane {
 					selectionSquare.visible = true;
 					addChild(selectionSquare);
 				} else { //if shift-clicking, show preview
+					updatePreviews();
 					previewSquare.graphics.clear();
 					previewSquare.graphics.beginBitmapFill(previewBD);
 					previewSquare.graphics.drawRect(rect.x, rect.y, rect.width, rect.height);
@@ -641,7 +678,7 @@ package org.interguild.editor.levelpane {
 				if (char == "\n") {
 					ix = pasteLoc.x;
 					iy++;
-				} else if (iy < rows && ix < cols && iy >= 0 && ix >= 0) {
+				} else if (inBounds(iy, ix)) {
 					var c:EditorCell = EditorCell(cells[iy][ix]);
 					if (char != " " || pasteBlanks)
 						clickCell(c, char);
@@ -714,6 +751,10 @@ package org.interguild.editor.levelpane {
 
 		public function set zoomLevel(n:uint):void {
 			scrollZoom = n;
+		}
+
+		private function inBounds(r:int, c:int):Boolean {
+			return r < rows && c < cols && r >= 0 && c >= 0;
 		}
 
 		private function initGridCells():void {
