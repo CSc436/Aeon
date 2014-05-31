@@ -10,7 +10,7 @@
 		private static const CLOSE_BUTTON_X:uint = 113;
 		private static const CLOSE_BUTTON_Y:uint = 7;
 
-		private static const FONT_COLOR:uint = 0x000000;
+		private static const FONT_COLOR:uint = 0xFFFFFF;
 		private static const FONT_SIZE:uint = 15;
 		private static const FONT_FAMILY:String = "Arial";
 		private static const FONT_X:uint = 10;

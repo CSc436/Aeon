@@ -1,4 +1,4 @@
-package org.interguild.game.level {
+package org.interguild.game {
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	

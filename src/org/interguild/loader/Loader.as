@@ -5,7 +5,7 @@ package org.interguild.loader {
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
-	import org.interguild.game.level.LevelBackground;
+	import org.interguild.game.LevelBackground;
 	import org.interguild.game.tiles.Terrain;
 
 	public class Loader {

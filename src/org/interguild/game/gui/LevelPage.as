@@ -1,4 +1,4 @@
-package org.interguild.game.level {
+package org.interguild.game.gui {
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -12,6 +12,7 @@ package org.interguild.game.level {
 	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
 	import org.interguild.loader.LevelLoader;
+	import org.interguild.game.Level;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.

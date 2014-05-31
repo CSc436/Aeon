@@ -39,16 +39,16 @@ package org.interguild.editor.topbar {
 		public function TopBar(editor:EditorPage) {
 			this.editor = editor;
 
-			initBG();
+//			initBG();
 			initIcons();
 			initButtons();
 			initFileButton();
 		}
 
-		private function initBG():void {
-			var bg:Bitmap = new Bitmap(new EditorTopBarSprite());
-			addChild(bg);
-		}
+//		private function initBG():void {
+//			var bg:Bitmap = new Bitmap(new EditorTopBarSprite());
+//			addChild(bg);
+//		}
 
 		private function initIcons():void {
 			//rollover image
@@ -160,8 +160,8 @@ package org.interguild.editor.topbar {
 			hit.graphics.lineTo(25, 1);
 			hit.graphics.endFill();
 			var playGameButton:FancyButton = new FancyButton(up, over, hit);
-			playGameButton.x = 545;
-			playGameButton.y = 18;
+			playGameButton.x = 546;
+			playGameButton.y = 19;
 			playGameButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				editor.playLevel();
 			});
@@ -179,8 +179,8 @@ package org.interguild.editor.topbar {
 			hit.graphics.lineTo(25, 1);
 			hit.graphics.endFill();
 			var publishButton:FancyButton = new FancyButton(up, over, hit);
-			publishButton.x = 734;
-			publishButton.y = 18;
+			publishButton.x = 735;
+			publishButton.y = 19;
 			//todo make button publish to website
 			addChild(publishButton);
 		}

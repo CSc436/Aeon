@@ -1,4 +1,6 @@
 package org.interguild.editor {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
@@ -18,7 +20,7 @@ package org.interguild.editor {
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
 
-		public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+		//public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 		public static const OVERLAY_ALPHA:Number = 0.25;
 		
 		private static var selectedTile:String;
@@ -72,11 +74,16 @@ package org.interguild.editor {
 			help = new EditorHelpScreen();
 			addChild(help);
 		}
+		
+		private var myBG:BitmapData;
 
 		private function initBG():void {
-			graphics.beginFill(BACKGROUND_COLOR);
-			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
-			graphics.endFill();
+			myBG = new EditorBG();
+			addChild(new Bitmap(myBG));
+		}
+		
+		public function getBG():BitmapData{
+			return myBG;
 		}
 
 		public function newLevel():void {

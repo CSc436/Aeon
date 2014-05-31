@@ -20,7 +20,7 @@ package org.interguild.editor.levelprops {
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.editor.levelpane.EditorLevelPane;
-	import org.interguild.game.level.LevelBackground;
+	import org.interguild.game.LevelBackground;
 	import org.interguild.game.tiles.Terrain;
 
 	public class LevelPropertiesScreen extends Sprite {

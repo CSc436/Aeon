@@ -5,13 +5,13 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-	
+
 	import fl.containers.ScrollPane;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
-	import org.interguild.game.level.LevelBackground;
+	import org.interguild.game.LevelBackground;
 
 	public class EditorLevelPane extends Sprite {
 
@@ -20,7 +20,7 @@ package org.interguild.editor.levelpane {
 
 		private static const BORDER_COLOR:uint = 0x222222;
 		private static const BORDER_WIDTH:uint = 0;
-		private static const BG_COLOR:uint = 0x115867;
+		private static const BG_COLOR:uint = 0x999999;
 
 		private static const WIDTH:uint = 636;
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
@@ -57,16 +57,16 @@ package org.interguild.editor.levelpane {
 			graphics.beginFill(BORDER_COLOR);
 			graphics.drawRect(0, 0, WIDTH + (2 * BORDER_WIDTH), HEIGHT + (2 * BORDER_WIDTH));
 			graphics.endFill();
-			graphics.beginFill(BG_COLOR);
-			graphics.drawRect(BORDER_WIDTH, BORDER_WIDTH, WIDTH, HEIGHT);
-			graphics.endFill();
+//			graphics.beginFill(BG_COLOR);
+//			graphics.drawRect(BORDER_WIDTH, BORDER_WIDTH, WIDTH, HEIGHT);
+//			graphics.endFill();
 
 			//init level background
 			levelBG = new Sprite();
 			levelBG.x = BORDER_WIDTH;
 			levelBG.y = BORDER_WIDTH;
 			addChild(levelBG);
-			
+
 			//init scrollpane
 			scroll = new ScrollPane();
 			scroll.x = BORDER_WIDTH;
@@ -74,16 +74,16 @@ package org.interguild.editor.levelpane {
 			scroll.width = WIDTH;
 			scroll.height = HEIGHT;
 			addChild(scroll);
-			
+
 			//calculate viewport sizes when scrollbar is active
 			var scrollBarWidth:Number = scroll.verticalScrollBar.width;
 			VIEWPORT_WIDTH = WIDTH - scrollBarWidth;
 			VIEWPORT_HEIGHT = HEIGHT - scrollBarWidth;
-			
+
 			//init blue square that covers scrollpane's bottom-right corner
 			cornerCover = new Sprite();
 			cornerCover.graphics.beginFill(BG_COLOR);
-			cornerCover.graphics.drawRect(VIEWPORT_WIDTH+1, VIEWPORT_HEIGHT+1, scrollBarWidth, scrollBarWidth);
+			cornerCover.graphics.drawRect(VIEWPORT_WIDTH + 1, VIEWPORT_HEIGHT + 1, scrollBarWidth, scrollBarWidth);
 			cornerCover.graphics.endFill();
 			cornerCover.visible = false;
 			addChildAt(cornerCover, 1);
@@ -158,7 +158,7 @@ package org.interguild.editor.levelpane {
 			container.graphics.drawRect(0, 0, Math.max(VIEWPORT_WIDTH, currentLevel.width), Math.max(VIEWPORT_HEIGHT, currentLevel.height));
 			container.graphics.endFill();
 			//add a border to the top and left sides of the grid
-			container.graphics.beginFill(EditorCell.LINE_COLOR);//, EditorCell.LINE_ALPHA);
+			container.graphics.beginFill(EditorCell.LINE_COLOR); //, EditorCell.LINE_ALPHA);
 			container.graphics.drawRect(0, 0, currentLevel.width + 1, 1);
 			container.graphics.drawRect(0, 1, 1, currentLevel.height);
 			container.graphics.endFill();
@@ -185,13 +185,13 @@ package org.interguild.editor.levelpane {
 		public function set backgroundType(id:uint):void {
 			if (currentLevel.width > VIEWPORT_WIDTH && currentLevel.height > VIEWPORT_HEIGHT) {
 				cornerCover.visible = true;
-			}else{
+			} else {
 				cornerCover.visible = false;
 			}
-			
+
 			if (levelBGID == id)
 				return;
-			
+
 			levelBGID = id;
 
 			var bg:BitmapData = LevelBackground.getBackground(id);

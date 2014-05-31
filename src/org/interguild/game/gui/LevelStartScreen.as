@@ -1,4 +1,4 @@
-package org.interguild.game.level {
+package org.interguild.game.gui {
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;

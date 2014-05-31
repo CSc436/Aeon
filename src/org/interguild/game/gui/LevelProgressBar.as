@@ -1,4 +1,4 @@
-package org.interguild.game.level {
+package org.interguild.game.gui {
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;

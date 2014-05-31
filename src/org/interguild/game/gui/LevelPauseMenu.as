@@ -1,4 +1,4 @@
-package org.interguild.game.level {
+package org.interguild.game.gui {
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	
@@ -11,10 +11,11 @@ package org.interguild.game.level {
 		private static const CENTER_X:Number = Aeon.STAGE_WIDTH / 2;
 		private static const CENTER_Y:Number = Aeon.STAGE_HEIGHT / 2;
 		
-		private static const SPACING_Y:uint = 55;
-		private static const RESUME_Y:uint = 206;
+		private static const SPACING_Y:uint = 56;
+		private static const RESUME_Y:uint = 165;
 		private static const RESTART_Y:uint = RESUME_Y + SPACING_Y;
-		private static const LEVEL_EDITOR_Y:uint = RESTART_Y + SPACING_Y;
+		private static const CHECKPOINTS_Y:uint = RESTART_Y + SPACING_Y;
+		private static const LEVEL_EDITOR_Y:uint = CHECKPOINTS_Y + SPACING_Y;
 		private static const QUIT_Y:uint = LEVEL_EDITOR_Y + SPACING_Y;
 		
 		private static const SELECTOR_X:int = -111;
@@ -22,17 +23,19 @@ package org.interguild.game.level {
 		
 		private static const TODO_RESUME:uint = 0x0;
 		private static const TODO_RESTART:uint = 0x1;
-		private static const TODO_LEVEL_EDITOR:uint = 0x2;
-		private static const TODO_QUIT:uint = 0x3;
+		private static const TODO_CHECKPOINTS:uint = 0x2;
+		private static const TODO_LEVEL_EDITOR:uint = 0x3;
+		private static const TODO_QUIT:uint = 0x4;
 		
 		// Buttons for the pause menu
 		private var resumeButton:MovieClip;
 		private var restartGameButton:MovieClip;
+		private var checkpointsButton:MovieClip;
 		private var editorButton:MovieClip;
 		private var quitButton:MovieClip;
 		
 		public function LevelPauseMenu() {
-			super(SELECTOR_X, SELECTOR_Y);
+			super(CENTER_X, SELECTOR_Y);
 			
 			//init bg
 			var bg:Bitmap = new Bitmap(new PauseMenuBG());
@@ -55,6 +58,14 @@ package org.interguild.game.level {
 			restartGameButton.y = RESTART_Y;
 			addChild(restartGameButton);
 			addButton(restartGameButton);
+			
+			// Make button for going to the level editor
+			checkpointsButton = new CheckpointsButton();
+			checkpointsButton.buttonMode = true;
+			checkpointsButton.x = CENTER_X;
+			checkpointsButton.y = CHECKPOINTS_Y;
+			addChild(checkpointsButton);
+			addButton(checkpointsButton);
 			
 			// Make button for going to the level editor
 			editorButton = new LevelEditorPauseButton();
@@ -83,6 +94,9 @@ package org.interguild.game.level {
 				case TODO_RESTART:
 					this.stage.focus = stage;
 					Aeon.getMe().playLastLevel();
+					break;
+				case TODO_CHECKPOINTS:
+					trace("check the point");
 					break;
 				case TODO_LEVEL_EDITOR:
 					Aeon.getMe().gotoEditorPage();

@@ -8,7 +8,7 @@ package org.interguild.game.collision {
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.Player;
-	import org.interguild.game.level.Level;
+	import org.interguild.game.Level;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;

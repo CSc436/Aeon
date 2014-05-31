@@ -1,6 +1,6 @@
 package org.interguild.game.tiles {
 	import flash.display.Sprite;
-	import org.interguild.game.level.Level;
+	import org.interguild.game.Level;
 
 	/**
 	 * Treat this like an abstract class. Defines general

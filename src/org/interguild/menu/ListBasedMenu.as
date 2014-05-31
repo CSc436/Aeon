@@ -24,11 +24,7 @@ package org.interguild.menu {
 		
 		private var isEnabled:Boolean = true;
 		
-		public function ListBasedMenu(selectorOffsetX:int, selectorOffsetY:int) {
-			offsetX = selectorOffsetX;
-			offsetY = selectorOffsetY;
-			
-			
+		public function ListBasedMenu(centerX:int, selectorOffsetY:int) {			
 			//init selectors
 			buttonSelect = new Bitmap(new MenuButtonSelectBG());
 			buttonClick = new Bitmap(new MenuButtonClickBG());
@@ -36,6 +32,9 @@ package org.interguild.menu {
 			buttonClick.visible = false;
 			addChild(buttonSelect);
 			addChild(buttonClick);
+			
+			offsetX = centerX - buttonSelect.width / 2;
+			offsetY = selectorOffsetY;
 			
 			listOfButtons = new Array();
 			
@@ -56,14 +55,14 @@ package org.interguild.menu {
 		}
 		
 		protected function selectItem(t:MovieClip):void {
-			buttonSelect.x = t.x + offsetX;
+			buttonSelect.x = offsetX;
 			buttonSelect.y = t.y + offsetY;
 			buttonSelect.visible = true;
 			buttonClick.visible = false;
 		}
 		
 		protected function simMouseDown(t:MovieClip):void {
-			buttonClick.x = t.x + offsetX;
+			buttonClick.x = offsetX;
 			buttonClick.y = t.y + offsetY;
 			buttonClick.visible = true;
 			buttonSelect.visible = false;

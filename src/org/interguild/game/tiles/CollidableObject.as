@@ -7,7 +7,7 @@ package org.interguild.game.tiles {
 	
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
-	import org.interguild.game.level.Level;
+	import org.interguild.game.Level;
 
 	/**
 	 * Treat this class as an abstract class. It provides the

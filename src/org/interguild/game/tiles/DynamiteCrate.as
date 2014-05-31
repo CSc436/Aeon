@@ -6,7 +6,7 @@ package org.interguild.game.tiles {
 
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
-	import org.interguild.game.level.Level;
+	import org.interguild.game.Level;
 
 	public class DynamiteCrate extends CollidableObject {
 		private static const GRAVITY:uint = 4;

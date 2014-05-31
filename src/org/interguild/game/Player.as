@@ -7,7 +7,6 @@ package org.interguild.game {
 	import org.interguild.Aeon;
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.Destruction;
-	import org.interguild.game.level.Level;
 	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {

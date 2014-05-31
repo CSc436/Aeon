@@ -10,7 +10,7 @@ package org.interguild {
 	}
 
 	import org.interguild.editor.EditorPage;
-	import org.interguild.game.level.LevelPage;
+	import org.interguild.game.gui.LevelPage;
 
 	import org.interguild.loader.ErrorDialog;
 	import flash.system.Security;
@@ -21,11 +21,9 @@ package org.interguild {
 
 	/**
 	 * Responsible for managing all of the menu transitions.
-	 * 
+	 *
 	 */
-
 	[SWF(backgroundColor = "0x999999", width = "900", height = "500", frameRate = "30")]
-
 	public class Aeon extends Sprite {
 
 		private static var instance:Aeon;
@@ -37,8 +35,8 @@ package org.interguild {
 		public static function getMe():Aeon {
 			return instance;
 		}
-		
-		public static function get STAGE():Stage{
+
+		public static function get STAGE():Stage {
 			return instance.stage;
 		}
 
@@ -48,9 +46,9 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 900;
 		public static const STAGE_HEIGHT:uint = 500;
 
-		private static const BG_COLOR:uint = 0x000b17;
-		private static const BORDER_COLOR:uint = 0x000b17; //no border
-		
+		private static const BG_COLOR:uint = 0x134c7d;
+		private static const BORDER_COLOR:uint = BG_COLOR; //no border
+
 		private var lastLevel:String;
 		private var wasLastLevelCode:Boolean;
 
@@ -92,7 +90,7 @@ package org.interguild {
 			editorPage = new EditorPage(stage);
 			editorPage.visible = false;
 			addChild(editorPage);
-			
+
 			//init user levels page
 			userLevelsPage = new UserLevelsPage();
 			userLevelsPage.visible = false;
@@ -116,7 +114,7 @@ package org.interguild {
 			mainMenu.visible = true;
 			currentPage = mainMenu;
 		}
-		
+
 		public function gotoUserLevels():void {
 			hideCurrentPage();
 			userLevelsPage.visible = true;
@@ -157,9 +155,9 @@ package org.interguild {
 			this.addChild(levelPage);
 			currentPage = levelPage;
 		}
-		
-		public function playLastLevel():void{
-			if(wasLastLevelCode)
+
+		public function playLastLevel():void {
+			if (wasLastLevelCode)
 				playLevelCode(lastLevel);
 			else
 				playLevelFile(lastLevel);

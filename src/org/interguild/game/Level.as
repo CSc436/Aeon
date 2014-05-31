@@ -1,4 +1,4 @@
-package org.interguild.game.level {
+package org.interguild.game {
 	import flash.display.Sprite;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
@@ -10,14 +10,13 @@ package org.interguild.game.level {
 		import flash.text.TextFormat;
 	}
 	import org.interguild.Aeon;
-	import org.interguild.game.Camera;
-	import org.interguild.game.Player;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.FinishLine;
+	import org.interguild.game.gui.LevelHUD;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -114,6 +113,12 @@ package org.interguild.game.level {
 				slowDownText.visible = false;
 				addChild(slowDownText);
 			}
+		}
+		
+		public function deconstruct():void{
+			timer.stop();
+			timer.removeEventListener(TimerEvent.TIMER, onGameLoop);
+			timer = null;
 		}
 		
 		public function set terrainType(id:uint):void{

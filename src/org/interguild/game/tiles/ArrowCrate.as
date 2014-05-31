@@ -7,7 +7,7 @@ package org.interguild.game.tiles {
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.collision.Direction;
-	import org.interguild.game.level.Level;
+	import org.interguild.game.Level;
 
 	public class ArrowCrate extends CollidableObject {
 

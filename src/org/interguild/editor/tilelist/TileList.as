@@ -5,10 +5,10 @@ package org.interguild.editor.tilelist {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
@@ -23,8 +23,8 @@ package org.interguild.editor.tilelist {
 
 	public class TileList extends Sprite {
 
-		private static const POSITION_X:uint = 655;
-		private static const POSITION_Y:uint = 89;
+		private static const POSITION_X:uint = 656;
+		private static const POSITION_Y:uint = 90;
 
 		private static const BORDER_PADDING:uint = 0;
 		private static const SCROLLBAR_WIDTH:uint = 15;
@@ -33,41 +33,41 @@ package org.interguild.editor.tilelist {
 		internal static const MASK_WIDTH:uint = Aeon.STAGE_WIDTH - POSITION_X - SCROLLBAR_WIDTH;
 		private static const MASK_HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y; // - (2 * PADDING_Y);
 
-		private static const BG_COLOR:uint = 0x115867;
-		private static const BG_CORNER_RADIUS:uint = 14;
-		private static const BG_WIDTH:uint = MASK_WIDTH + (BG_CORNER_RADIUS * 2);
-		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
+//		private static const BG_COLOR:uint = 0x115867;
+		private static const BG_CORNER_RADIUS:uint = 10;
+//		private static const BG_WIDTH:uint = MASK_WIDTH + (BG_CORNER_RADIUS * 2);
+//		private static const BG_HEIGHT:uint = MASK_HEIGHT + (BG_CORNER_RADIUS * 2);
 
 		public static const SELECTION_TOOL_CHAR:String = "SELECTION";
 		public static const ERASER_TOOL_CHAR:String = " ";
-		
+
 		private static var map:Object = new Object();
 		private static var terrainItem:TileListItem;
 
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
-		
-		public static function setTerrainType(id:uint):void{
+
+		public static function setTerrainType(id:uint):void {
 			var img:BitmapData = new BitmapData(32, 32);
 			img.copyPixels(Terrain.getTerrainImage(id), new Rectangle(0, 0, 32, 32), new Point(0, 0));
-			
+
 			map[Terrain.LEVEL_CODE_CHAR] = img;
 			EditorLevel.forceChange = true;
-			if(terrainItem){
+			if (terrainItem) {
 				terrainItem.changeIcon(img);
 			}
 		}
-		
+
 		private var editor:EditorPage;
 
 		private var list:Sprite;
 		private var currentSelection:TileListItem;
-		
+
 		//used for adding tiles to the list
 		private var nextY:uint = 0;
 		private var lastItem:TileListItem;
-		
+
 		private var scrollpane:ScrollPane
 		private var handToolRegion:Sprite;
 		private var lastClickY:Number;
@@ -78,9 +78,9 @@ package org.interguild.editor.tilelist {
 			y = POSITION_Y;
 
 			//init bg
-			graphics.beginFill(BG_COLOR);
-			graphics.drawRect(0, 0, BG_WIDTH, BG_HEIGHT);
-			graphics.endFill();
+//			graphics.beginFill(BG_COLOR);
+//			graphics.drawRect(0, 0, BG_WIDTH, BG_HEIGHT);
+//			graphics.endFill();
 
 			//init list item container
 			list = new Sprite();
@@ -104,17 +104,19 @@ package org.interguild.editor.tilelist {
 			scrollpane.horizontalScrollPolicy = ScrollPolicy.OFF;
 			scrollpane.verticalScrollBar.pageScrollSize = 100;
 			addChild(scrollpane);
-			
+
 			//setup rounded corner overlay
 			var corner:Sprite = new Sprite();
-			corner.graphics.beginFill(EditorPage.BACKGROUND_COLOR);
+			var bmd:BitmapData = new BitmapData(BG_CORNER_RADIUS, BG_CORNER_RADIUS);
+			bmd.copyPixels(editor.getBG(), new Rectangle(x, y, BG_CORNER_RADIUS, BG_CORNER_RADIUS), new Point(0, 0));
+			corner.graphics.beginBitmapFill(bmd);
 			corner.graphics.moveTo(0, 0);
 			corner.graphics.lineTo(BG_CORNER_RADIUS, 0);
 			corner.graphics.curveTo(0, 0, 0, BG_CORNER_RADIUS);
 			corner.graphics.lineTo(0, 0);
 			corner.graphics.endFill();
 			addChild(corner);
-			
+
 			//setup click-and-drag region
 			handToolRegion = new Sprite();
 			handToolRegion.graphics.beginFill(0, 0);
@@ -183,40 +185,40 @@ package org.interguild.editor.tilelist {
 		}
 
 		private function addItem(i:TileListItem):void {
-			if(lastItem != null)
+			if (lastItem != null)
 				lastItem.drawBottomBorder();
 			lastItem = i;
-			
+
 			i.y = nextY;
 			nextY += i.height;
 			list.addChild(i);
 		}
-		
+
 		/**
 		 * When spacebar is pressed, allow user to click-and-drag to scroll
 		 * through the level.
 		 */
-		public function set handToolEnabled(b:Boolean):void{
+		public function set handToolEnabled(b:Boolean):void {
 			handToolRegion.visible = b;
 		}
-		
-		private function onDragMouseDown(evt:MouseEvent):void{
+
+		private function onDragMouseDown(evt:MouseEvent):void {
 			lastClickY = evt.stageY;
 			stage.addEventListener(Event.ENTER_FRAME, onDrag, false, 0, true);
 			stage.addEventListener(MouseEvent.MOUSE_UP, onDragMouseUp, false, 0, true);
 		}
-		
-		private function onDragMouseUp(evt:MouseEvent):void{
+
+		private function onDragMouseUp(evt:MouseEvent):void {
 			stage.removeEventListener(Event.ENTER_FRAME, onDrag);
 			stage.removeEventListener(MouseEvent.MOUSE_UP, onDragMouseUp);
 		}
-		
-		private function onDrag(evt:Event):void{
+
+		private function onDrag(evt:Event):void {
 			var curClickY:Number = stage.mouseY;
 			var delta:Number = curClickY - lastClickY;
-			
+
 			scrollpane.verticalScrollPosition -= delta;
-			
+
 			lastClickY = curClickY;
 		}
 	}
