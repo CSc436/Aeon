@@ -6,7 +6,7 @@ package org.interguild.editor.tilelist {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
+
 	import org.interguild.Aeon;
 
 	public class TileListItem extends Sprite {
@@ -17,8 +17,8 @@ package org.interguild.editor.tilelist {
 		private static const CLICK_AREA_WIDTH:uint = TileList.MASK_WIDTH;
 		private static const CLICK_AREA_HEIGHT:uint = Aeon.TILE_HEIGHT + (2 * PADDING_Y);
 
-		private static const OVER_COLOR:uint = 0x1abddd;
-		private static const OVER_ALPHA:Number = 0.5;
+		private static const OVER_COLOR:uint = 0x2c93b1;
+		private static const OVER_ALPHA:Number = 1;
 		private static const SELECTED_COLOR:uint = 0x0c4d68;
 		private static const SELECTED_ALPHA:Number = 0.5;
 
@@ -30,9 +30,9 @@ package org.interguild.editor.tilelist {
 		private static const LABEL_SIZE:uint = 13;
 		private static const LABEL_PADDING_LEFT:uint = 57;
 		private static const LABEL_PADDING_TOP:uint = 13;
-		
-		private static const DIVIDER_LIGHT:uint = 0x16b4d1;
-		private static const DIVIDER_DARK:uint = 0x0c7f96;
+
+		private static const DIVIDER_LIGHT:uint = 0x209ed1;
+		private static const DIVIDER_DARK:uint = 0x0f5571;
 
 		private var overBG:Sprite;
 		private var selectedBG:Sprite;
@@ -56,7 +56,7 @@ package org.interguild.editor.tilelist {
 			//init selected highlight
 			selectedBG = new Sprite();
 			selectedBG.graphics.beginFill(SELECTED_COLOR, SELECTED_ALPHA);
-			selectedBG.graphics.drawRect(0, 0, CLICK_AREA_WIDTH, CLICK_AREA_HEIGHT+1);
+			selectedBG.graphics.drawRect(0, 0, CLICK_AREA_WIDTH, CLICK_AREA_HEIGHT + 1);
 			selectedBG.graphics.endFill();
 			selectedBG.visible = false;
 			addChild(selectedBG);
@@ -71,6 +71,9 @@ package org.interguild.editor.tilelist {
 			border.graphics.endFill();
 			addChildAt(border, numChildren - 1);
 
+			//drop shadow
+//			var dropShadow:DropShadowFilter = new DropShadowFilter(2, 60, 0, 0.75, 2, 2, 1, BitmapFilterQuality.HIGH);
+
 			//init label
 			var label:TextField = new TextField();
 			var format:TextFormat = new TextFormat(LABEL_FONT, LABEL_SIZE, LABEL_COLOR);
@@ -79,6 +82,7 @@ package org.interguild.editor.tilelist {
 			label.y = LABEL_PADDING_TOP;
 			label.autoSize = TextFieldAutoSize.LEFT;
 			label.text = name;
+//			label.filters = [dropShadow];
 			addChild(label);
 
 			//init click area

@@ -160,7 +160,7 @@ package org.interguild.editor.topbar {
 			hit.graphics.lineTo(25, 1);
 			hit.graphics.endFill();
 			var playGameButton:FancyButton = new FancyButton(up, over, hit);
-			playGameButton.x = 546;
+			playGameButton.x = 549;
 			playGameButton.y = 19;
 			playGameButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void {
 				editor.playLevel();
@@ -179,7 +179,7 @@ package org.interguild.editor.topbar {
 			hit.graphics.lineTo(25, 1);
 			hit.graphics.endFill();
 			var publishButton:FancyButton = new FancyButton(up, over, hit);
-			publishButton.x = 735;
+			publishButton.x = 738;
 			publishButton.y = 19;
 			//todo make button publish to website
 			addChild(publishButton);

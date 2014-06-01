@@ -23,8 +23,8 @@ package org.interguild.editor.tilelist {
 
 	public class TileList extends Sprite {
 
-		private static const POSITION_X:uint = 656;
-		private static const POSITION_Y:uint = 90;
+		private static const POSITION_X:uint = 655;
+		private static const POSITION_Y:uint = 89;
 
 		private static const BORDER_PADDING:uint = 0;
 		private static const SCROLLBAR_WIDTH:uint = 15;
