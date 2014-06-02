@@ -10,7 +10,8 @@ package org.interguild.loader {
 
 	public class Loader {
 
-		private static const INVALID_FILE:String = "Invalid Level Code.";
+		private static const INVALID_FILE:String = "File could not be found.";
+		private static const INVALID_CODE:String = "Invalid Level Code.";
 		private static const INVALID_DIMENSIONS_FORMAT:String = "Invalid Level Dimensions.\nThey should in the form 30x30, for example.\nYour file had: ";
 		private static const INVALID_DIMENSIONS_NUMBERS:String = "Invalid Level Dimensions.\nThey must be positive integer values.\nYour file had: ";
 		private static const INVALID_TERRAIN:String = "Invalid Terrain Type: ";
@@ -156,7 +157,7 @@ package org.interguild.loader {
 		}
 
 		private function parseLevelInfo():void {
-			if (code == null || code.length == 0) {
+			if (code == null || code == "null" || code.length == 0) {
 				errors.push(INVALID_FILE)
 				return;
 			}
@@ -172,7 +173,7 @@ package org.interguild.loader {
 			//get title
 			var eol:int = code.indexOf("\n");
 			if (eol == -1) {
-				errors.push(INVALID_FILE);
+				errors.push(INVALID_CODE);
 				return;
 			}
 			title = code.substr(0, eol);
@@ -224,13 +225,13 @@ package org.interguild.loader {
 				return;
 			}
 			terrainType = n;
-			
+
 			//use default background if not specified
 			if (info.length < 3) {
 				backgroundType = 0;
 				return;
 			}
-			
+
 			//get background type
 			n = Number(info[2]);
 			if (isNaN(n) || LevelBackground.getThumbnail(n) == null) {
@@ -314,38 +315,49 @@ package org.interguild.loader {
 					py += 1;
 					break;
 				case "=":
-					var number:String = "";
-					//first get all the digits of the number
-					var nextChar:String = code.charAt(i + 1);
-					while (!isNaN(Number(nextChar)) && i + 1 < codeLength) {
-						number += nextChar;
-						i++;
-						nextChar = code.charAt(i + 1);
-						switch (nextChar) {
-							case " ":
-							case "\r":
-							case "\n":
-								nextChar = "x"; //definitely NaN
-								break;
-						}
-					}
-					var n:Number = Number(number) - 1;
-					if (!isNaN(n)) {
-						//then create N tiles
-						for (var k:uint = 0; k < n; k++) {
-							parseChar(prevChar);
-						}
-					}
+					//ignore
 					break;
 				default:
-					//if off the map, do nothing
-					if (px < levelWidth && py < levelHeight) {
+					if (isNumber(curChar)) {
+						var numberString:String = curChar;
+						//first get all the digits of the number
+						var nextChar:String = code.charAt(i + 1);
+						while (isNumber(nextChar) && i + 1 < codeLength) {
+							numberString += nextChar;
+							i++;
+							nextChar = code.charAt(i + 1);
+							
+						}
+						//subtract 1, because first tile was already made
+						var n:Number = Number(numberString) - 1;
+						if (!isNaN(n)) {
+							//then create N tiles
+							for (var k:uint = 0; k < n; k++) {
+								parseChar(prevChar);
+							}
+						}
+						return;
+					} else if (px < levelWidth && py < levelHeight) {
+						//create tile, only if not off map
 						initObject(curChar, px, py);
 						px += 1;
 					}
 					break;
 			}
 			prevChar = curChar;
+		}
+		
+		private function isNumber(s:String):Boolean{
+			//special case: whitespace characters get trimmed by isNaN()
+			var isWhitespace:Boolean = false;
+			switch (s) {
+				case " ":
+				case "\r":
+				case "\n":
+					isWhitespace = true;
+					break;
+			}
+			return !(isWhitespace || isNaN(Number(s)));
 		}
 
 		/**

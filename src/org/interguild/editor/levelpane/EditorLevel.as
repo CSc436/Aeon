@@ -777,11 +777,53 @@ package org.interguild.editor.levelpane {
 			s += levelTitle + "\n";
 			s += cols + "x" + rows + "|" + terrainID + "|" + backgroundID + "\n";
 
+			var numNewLines:uint = 0; //number of consecutive blank lines
 			for (var r:uint = 0; r < rows; r++) {
+				var comboChar:String = "";
+				var comboCount:uint = 1;
+				var currentLine:String = "";
+				var hasSomething:Boolean = false;
 				for (var c:uint = 0; c < cols; c++) {
-					s += EditorCell(cells[r][c]).char;
+					var newChar:String = EditorCell(cells[r][c]).char;
+					if (newChar != " ")
+						hasSomething = true;
+
+					if (comboChar == newChar) {
+						comboCount++;
+					} else {
+						//clear combo char count
+						if (comboCount == 2) {
+							currentLine += comboChar;
+						} else if (comboCount > 2) {
+							currentLine += comboCount;
+						}
+
+						//write new character to result
+						currentLine += newChar;
+
+						//prepare next combo count
+						comboChar = newChar;
+						comboCount = 1;
+					}
 				}
-				s += "\n";
+				if (comboCount > 0 && comboChar == " ") {
+					currentLine = currentLine.substr(0, currentLine.length - 1);
+				} else if (comboCount == 2) {
+					currentLine += comboChar;
+				} else if (comboCount > 2) {
+					currentLine += comboCount;
+				}
+				if (hasSomething) {
+					if (numNewLines == 2) {
+						s += "\n";
+					} else if (numNewLines > 2) {
+						s += numNewLines;
+					}
+					s += currentLine + "\n";
+					numNewLines = 1;
+				} else {
+					numNewLines++;
+				}
 			}
 			return s;
 		}

@@ -4,6 +4,7 @@ package org.interguild.editor {
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.net.FileReference;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
@@ -111,12 +112,17 @@ package org.interguild.editor {
 			var filereader:FileReference = new FileReference();
 			filereader.addEventListener(Event.SELECT, selectHandler);
 			filereader.addEventListener(Event.COMPLETE, loadCompleteHandler);
+			filereader.addEventListener(IOErrorEvent.IO_ERROR, loadCompleteHandler);
 			filereader.browse(); // ask user for file
 
 			function selectHandler(event:Event):void {
 				filereader.removeEventListener(Event.SELECT, selectHandler);
 				filereader.load();
 			}
+			
+//			function errorHandler(evt:IOErrorEvent):void{
+//				trace(evt);
+//			}
 
 			function loadCompleteHandler(event:Event):void {
 				filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
