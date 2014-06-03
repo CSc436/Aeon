@@ -3,6 +3,7 @@ package org.interguild.game.gui {
 	import flash.display.MovieClip;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 	import org.interguild.menu.ListBasedMenu;
 
@@ -38,7 +39,7 @@ package org.interguild.game.gui {
 			super(CENTER_X, SELECTOR_Y);
 			
 			//init bg
-			var bg:Bitmap = new Bitmap(new PauseMenuBG());
+			var bg:Bitmap = new Bitmap(Assets.PAUSE_MENU_BG);
 			bg.x = CENTER_X - bg.width / 2;
 			bg.y = CENTER_Y - bg.height / 2;
 			addChildAt(bg, 0);

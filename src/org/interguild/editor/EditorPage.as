@@ -10,6 +10,7 @@ package org.interguild.editor {
 	import flash.ui.MouseCursor;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.editor.help.EditorHelpScreen;
 	import org.interguild.editor.levelpane.EditorLevelPane;
 	import org.interguild.editor.levelprops.LevelPropertiesScreen;
@@ -79,7 +80,7 @@ package org.interguild.editor {
 		private var myBG:BitmapData;
 
 		private function initBG():void {
-			myBG = new EditorBG();
+			myBG = Assets.EDITOR_BG;
 			addChild(new Bitmap(myBG));
 		}
 		

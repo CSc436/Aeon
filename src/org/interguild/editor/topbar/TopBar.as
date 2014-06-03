@@ -6,8 +6,9 @@ package org.interguild.editor.topbar {
 	import flash.events.MouseEvent;
 	import flash.net.URLRequest;
 	
-	import org.interguild.editor.EditorPage;
+	import org.interguild.Assets;
 	import org.interguild.components.FancyButton;
+	import org.interguild.editor.EditorPage;
 
 	public class TopBar extends Sprite {
 
@@ -39,16 +40,10 @@ package org.interguild.editor.topbar {
 		public function TopBar(editor:EditorPage) {
 			this.editor = editor;
 
-//			initBG();
 			initIcons();
 			initButtons();
 			initFileButton();
 		}
-
-//		private function initBG():void {
-//			var bg:Bitmap = new Bitmap(new EditorTopBarSprite());
-//			addChild(bg);
-//		}
 
 		private function initIcons():void {
 			//rollover image
@@ -149,8 +144,8 @@ package org.interguild.editor.topbar {
 			var hit:Sprite;
 
 			//init play level button
-			up = new Bitmap(new PlayLevelButtonSprite());
-			over = new Bitmap(new PlayLevelRolloverSprite());
+			up = new Bitmap(Assets.PLAY_LEVEL_BUTTON);
+			over = new Bitmap(Assets.PLAY_LEVEL_ROLLOVER);
 			hit = new Sprite();
 			hit.graphics.beginFill(0, 0); //define button's hit region
 			hit.graphics.moveTo(25, 1);

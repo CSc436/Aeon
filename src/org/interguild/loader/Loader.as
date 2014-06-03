@@ -5,6 +5,7 @@ package org.interguild.loader {
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
 	
+	import org.interguild.Assets;
 	import org.interguild.game.LevelBackground;
 	import org.interguild.game.tiles.Terrain;
 
@@ -220,7 +221,7 @@ package org.interguild.loader {
 
 			//get terrain type
 			var n:Number = Number(info[1]);
-			if (isNaN(n) || Terrain.getTerrainImage(n) == null) {
+			if (isNaN(n) || Assets.getTerrainImage(n) == null) {
 				errors.push(INVALID_TERRAIN + "'" + info[1] + "'");
 				return;
 			}
@@ -234,7 +235,7 @@ package org.interguild.loader {
 
 			//get background type
 			n = Number(info[2]);
-			if (isNaN(n) || LevelBackground.getThumbnail(n) == null) {
+			if (isNaN(n) || Assets.getBGThumbnail(n) == null) {
 				errors.push(INVALID_BACKGROUND + "'" + info[1] + "'");
 				return;
 			}

@@ -5,6 +5,8 @@ package org.interguild.game.gui {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
+	
+	import org.interguild.Assets;
 
 	public class LevelHUD extends Sprite {
 		public static const XCOORD:uint = 10;
@@ -28,8 +30,7 @@ package org.interguild.game.gui {
 			drawContainer();
 			container.addChild(rect);
 
-			var icon:CollectibleSprite = new CollectibleSprite();
-			iconBM = new Bitmap(icon);
+			iconBM = new Bitmap(Assets.TREASURE_SPRITE);
 			iconBM.x = XCOORD + XCOORDICON;
 			iconBM.y = YCOORD + YCOORDICON;
 			container.addChild(iconBM);

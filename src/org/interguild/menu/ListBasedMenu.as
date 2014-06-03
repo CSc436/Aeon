@@ -5,6 +5,8 @@ package org.interguild.menu {
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	
+	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 
 	public class ListBasedMenu extends Sprite {
@@ -26,8 +28,8 @@ package org.interguild.menu {
 		
 		public function ListBasedMenu(centerX:int, selectorOffsetY:int) {			
 			//init selectors
-			buttonSelect = new Bitmap(new MenuButtonSelectBG());
-			buttonClick = new Bitmap(new MenuButtonClickBG());
+			buttonSelect = new Bitmap(Assets.MENU_BTN_SELECT);
+			buttonClick = new Bitmap(Assets.MENU_BTN_CLICK);
 			buttonSelect.visible = false;
 			buttonClick.visible = false;
 			addChild(buttonSelect);

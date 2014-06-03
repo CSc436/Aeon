@@ -9,6 +9,7 @@ package org.interguild.editor.help {
 	import flash.text.TextFormat;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.components.SquareButton;
 	import org.interguild.editor.EditorPage;
 
@@ -160,7 +161,7 @@ package org.interguild.editor.help {
 			bg.filters = [dropShadow];
 
 			//title
-			var title:Bitmap = new Bitmap(new HelpTitle());
+			var title:Bitmap = new Bitmap(Assets.HELP_TITLE);
 			title.x = WINDOW_WIDTH / 2 - title.width / 2;
 			title.y = TITLE_Y;
 			addChild(title);

@@ -4,9 +4,9 @@ package org.interguild.menu {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
+
 	import fl.controls.TextInput;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
 	import org.interguild.components.BetterTextInput;
@@ -33,7 +33,6 @@ package org.interguild.menu {
 			input = new BetterTextInput();
 			input.width = 60;
 			input.x = instructionText.width + 10;
-			input.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
 			wrapper.addChild(input);
 
 			//init hint text
@@ -55,7 +54,17 @@ package org.interguild.menu {
 			if (evt.keyCode == 13) { //pressed Enter
 				var id:Number = Number(input.text);
 				Aeon.getMe().playLevelFile(INTERGUILD.ORG + "/levels/levels/" + id + ".txt");
+			} else if (evt.keyCode == 27) { //pressed Esc
+				Aeon.getMe().gotoMainMenu();
 			}
+		}
+
+		public override function set visible(b:Boolean):void {
+			super.visible = b;
+			if (b)
+				Aeon.STAGE.addEventListener(KeyboardEvent.KEY_DOWN, onKeyDown, false, 0, true);
+			else
+				Aeon.STAGE.removeEventListener(KeyboardEvent.KEY_DOWN, onKeyDown);
 		}
 	}
 }

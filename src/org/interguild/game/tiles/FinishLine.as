@@ -1,13 +1,14 @@
 package org.interguild.game.tiles {
 	import flash.display.Bitmap;
-
-	import org.interguild.Aeon;
 	import flash.display.BitmapData;
+	
+	import org.interguild.Aeon;
+	import org.interguild.Assets;
 
 	public class FinishLine extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = 'f';
-		public static const EDITOR_ICON:BitmapData = new FinishLineSprite();
+		public static const EDITOR_ICON:BitmapData = Assets.FINISH_LINE;
 
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;
@@ -20,8 +21,8 @@ package org.interguild.game.tiles {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			
-			inactive = new Bitmap(new StartLineSprite());
-			active = new Bitmap(new FinishLineSprite());
+			inactive = new Bitmap(Assets.STARTING_LINE);
+			active = new Bitmap(Assets.FINISH_LINE);
 			addChild(inactive);
 			can_win = false;
 		}

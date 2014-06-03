@@ -5,11 +5,12 @@ package org.interguild.editor.tilelist {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import fl.containers.ScrollPane;
 	import fl.controls.ScrollPolicy;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.game.Player;
@@ -50,7 +51,7 @@ package org.interguild.editor.tilelist {
 
 		public static function setTerrainType(id:uint):void {
 			var img:BitmapData = new BitmapData(32, 32);
-			img.copyPixels(Terrain.getTerrainImage(id), new Rectangle(0, 0, 32, 32), new Point(0, 0));
+			img.copyPixels(Assets.getTerrainImage(id), new Rectangle(0, 0, 32, 32), new Point(0, 0));
 
 			map[Terrain.LEVEL_CODE_CHAR] = img;
 			EditorLevel.forceChange = true;
@@ -128,10 +129,10 @@ package org.interguild.editor.tilelist {
 		}
 
 		private function initList():void {
-			map[SELECTION_TOOL_CHAR] = new SelectionToolSprite();
+			map[SELECTION_TOOL_CHAR] = Assets.SELECTION_TOOL_SPRITE;
 			addItem(new TileListItem("Selection Tool", SELECTION_TOOL_CHAR));
 
-			map[ERASER_TOOL_CHAR] = new EraserToolSprite();
+			map[ERASER_TOOL_CHAR] = Assets.ERASER_TOOL_SPRITE;
 			addItem(new TileListItem("Eraser Tool", ERASER_TOOL_CHAR));
 
 			setTerrainType(0);

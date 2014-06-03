@@ -4,11 +4,12 @@ package org.interguild.game.tiles {
 	import flash.display.BitmapData;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 
 	public class WoodCrate extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = 'w';
-		public static const EDITOR_ICON:BitmapData = new WoodenCrateSprite();
+		public static const EDITOR_ICON:BitmapData = Assets.WOOD_CRATE;
 
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
@@ -19,7 +20,7 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			CollidableObject.setWoodenCrateDestruction(this);
 			
-			addChild(new Bitmap(new WoodenCrateSprite()));
+			addChild(new Bitmap(Assets.WOOD_CRATE));
 		}
 	}
 }

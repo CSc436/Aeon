@@ -13,6 +13,7 @@ package org.interguild.editor.levelprops {
 	import fl.controls.TextInput;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.components.BetterTextInput;
 	import org.interguild.components.FancyButton;
 	import org.interguild.components.SquareButton;
@@ -124,7 +125,7 @@ package org.interguild.editor.levelprops {
 			graphics.endFill();
 
 			//image
-			var bg:Bitmap = new Bitmap(new LevelPropertiesBG());
+			var bg:Bitmap = new Bitmap(Assets.LEVEL_PROPERTIES_BG);
 			bg.x = -WINDOW_X;
 			bg.y = -WINDOW_Y;
 			addChild(bg);
@@ -136,14 +137,14 @@ package org.interguild.editor.levelprops {
 			okayButton.y = BUTTON_Y - WINDOW_Y;
 			okayButton.addEventListener(MouseEvent.CLICK, okay);
 			addChild(okayButton);
-			
+
 			cancelButton = new SquareButton("Cancel", CANCEL_BG_COLOR_UP, CANCEL_BG_COLOR_OVER, CANCEL_BORDER_COLOR, BUTTON_WIDTH, BUTTON_HEIGHT);
 			cancelButton.x = CANCEL_X - WINDOW_X;
 			cancelButton.y = BUTTON_Y - WINDOW_Y;
 			cancelButton.addEventListener(MouseEvent.CLICK, cancel);
 			addChild(cancelButton);
 		}
-		
+
 		private function initText():void {
 			var format:TextFormat = new TextFormat(TEXT_FONT, TEXT_SIZE, TEXT_COLOR);
 			var dropShadow:DropShadowFilter = new DropShadowFilter(SHADOW_DISTANCE, SHADOW_ANGLE, SHADOW_COLOR, SHADOW_ALPHA, SHADOW_BLUR_X, SHADOW_BLUE_Y, SHADOW_STRENGTH);
@@ -241,8 +242,8 @@ package org.interguild.editor.levelprops {
 			var image:BitmapData;
 			var name:String;
 			while (true) {
-				image = Terrain.getTerrainImage(i);
-				name = Terrain.getName(i);
+				image = Assets.getTerrainImage(i);
+				name = Assets.getTerrainName(i);
 				if (image == null || name == null)
 					break;
 				terrainDropdown.addItem(i, image, name);
@@ -257,8 +258,8 @@ package org.interguild.editor.levelprops {
 			backgroundDropdown = new PictureMenu(this);
 			i = 0;
 			while (true) {
-				image = LevelBackground.getThumbnail(i);
-				name = LevelBackground.getName(i);
+				image = Assets.getBGThumbnail(i);
+				name = Assets.getBGName(i);
 				if (image == null || name == null)
 					break;
 				backgroundDropdown.addItem(i, image, name);
@@ -269,11 +270,11 @@ package org.interguild.editor.levelprops {
 			backgroundDropdown.y = BG_INPUT_Y - WINDOW_Y;
 			backgroundDropdown.addEventListener(Event.CHANGE, onPictureMenuChange);
 		}
-		
-		private function onPictureMenuChange(evt:Event):void{
-			if(evt.target == terrainDropdown){
+
+		private function onPictureMenuChange(evt:Event):void {
+			if (evt.target == terrainDropdown) {
 				currentLevel.terrainType = terrainDropdown.currentID;
-			}else{
+			} else {
 				currentLevel.backgroundType = backgroundDropdown.currentID;
 			}
 		}

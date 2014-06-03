@@ -4,6 +4,7 @@ package org.interguild.game.tiles {
 	import flash.display.Sprite;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 
 	public class TerrainView extends Sprite {
 		
@@ -38,7 +39,7 @@ package org.interguild.game.tiles {
 		public function TerrainView(w:int, h:int) {
 			this.w = w;
 			this.h = h;
-			this.terrainImage = Terrain.getTerrainImage(0);
+			this.terrainImage = Assets.getTerrainImage(0);
 
 			terrainBG = new Sprite();
 			addChild(terrainBG);
@@ -50,7 +51,7 @@ package org.interguild.game.tiles {
 		}
 		
 		public function set terrainType(id:uint):void{
-			terrainImage = Terrain.getTerrainImage(id);
+			terrainImage = Assets.getTerrainImage(id);
 		}
 
 		public function drawTerrainAt(x:Number, y:Number):void {

@@ -1,6 +1,5 @@
 package org.interguild.menu {
 	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
@@ -12,8 +11,9 @@ package org.interguild.menu {
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.User;
 	import org.interguild.game.gui.LevelPage;
 
@@ -75,10 +75,10 @@ package org.interguild.menu {
 
 		private function initMainItems():void {
 			//init bg image
-			this.addChildAt(new Bitmap(new MainMenuBG()), 0); //numChildren - 1);
+			this.addChildAt(new Bitmap(Assets.MAIN_MENU_BG), 0); //numChildren - 1);
 
 			//init logo image
-			var logo:MovieClip = new AeonLogo();
+			var logo:MovieClip = Assets.AEON_LOGO;
 			logo.x = CENTER_X;
 			logo.y = LOGO_Y;
 			this.addChild(logo);

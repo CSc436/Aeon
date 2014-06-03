@@ -5,6 +5,8 @@
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
+	import org.interguild.Assets;
+
 	public class EditorTab extends Sprite {
 
 		private static const CLOSE_BUTTON_X:uint = 113;
@@ -21,7 +23,7 @@
 		private var activeBG:Bitmap;
 		private var inactiveBG:Bitmap;
 		private var isActive:Boolean;
-		
+
 		private var title:TextField;
 
 		private var closeNormal:Bitmap;
@@ -36,13 +38,13 @@
 			myLevel.tab = this;
 
 			//init main tab color
-			activeBG = new Bitmap(new TabActiveSprite());
+			activeBG = new Bitmap(Assets.TAB_ACTIVE_SPRITE);
 			activeBG.visible = false;
 			addChild(activeBG);
 			this.tabMan = tabMan;
 
 			//init inactive tab color
-			inactiveBG = new Bitmap(new TabInactiveSprite());
+			inactiveBG = new Bitmap(Assets.TAB_INACTIVE_SPRITE);
 			addChild(inactiveBG);
 
 			//init title
@@ -68,22 +70,22 @@
 			addChild(closeButton);
 
 			//init default close button
-			closeNormal = new Bitmap(new TabCloseButtonSprite());
+			closeNormal = new Bitmap(Assets.TAB_CLOSE_BUTTON_SPRITE);
 			closeButton.addChild(closeNormal);
 
 			//init rollover close button
-			closeOver = new Bitmap(new TabCloseOverSprite());
+			closeOver = new Bitmap(Assets.TAB_CLOSE_OVER_SPRITE);
 			closeOver.visible = false;
 			closeButton.addChild(closeOver);
 
 			addEventListener(MouseEvent.MOUSE_OVER, onTabOver, false, 0, true);
 		}
-		
-		public function updateTitle():void{
+
+		public function updateTitle():void {
 			title.text = myLevel.title;
 		}
-		
-		public function updateScrollPane():void{
+
+		public function updateScrollPane():void {
 			tabMan.updateScrollPane();
 		}
 

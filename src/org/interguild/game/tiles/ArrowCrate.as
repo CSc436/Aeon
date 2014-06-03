@@ -3,11 +3,12 @@ package org.interguild.game.tiles {
 	import flash.display.BitmapData;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.INTERGUILD;
-	import org.interguild.game.collision.Direction;
 	import org.interguild.game.Level;
+	import org.interguild.game.collision.Direction;
 
 	public class ArrowCrate extends CollidableObject {
 
@@ -16,10 +17,10 @@ package org.interguild.game.tiles {
 		public static const LEVEL_CODE_CHAR_LEFT:String = '<';
 		public static const LEVEL_CODE_CHAR_UP:String = '^';
 
-		public static const EDITOR_ICON_RIGHT:BitmapData = new LightningBoxRight();
-		public static const EDITOR_ICON_LEFT:BitmapData = new LightningBoxLeft();
-		public static const EDITOR_ICON_UP:BitmapData = new LightningBoxUp();
-		public static const EDITOR_ICON_DOWN:BitmapData = new LightningBoxDown();
+		public static const EDITOR_ICON_RIGHT:BitmapData = Assets.ARROW_CRATE_RIGHT;
+		public static const EDITOR_ICON_LEFT:BitmapData = Assets.ARROW_CRATE_LEFT;
+		public static const EDITOR_ICON_UP:BitmapData = Assets.ARROW_CRATE_UP;
+		public static const EDITOR_ICON_DOWN:BitmapData = Assets.ARROW_CRATE_DOWN;
 
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = false;
@@ -40,16 +41,16 @@ package org.interguild.game.tiles {
 			this.direction = direction;
 			switch (direction) {
 				case Direction.RIGHT:
-					addChild(new Bitmap(new LightningBoxRight()));
+					addChild(new Bitmap(Assets.ARROW_CRATE_RIGHT));
 					break;
 				case Direction.DOWN:
-					addChild(new Bitmap(new LightningBoxDown()));
+					addChild(new Bitmap(Assets.ARROW_CRATE_DOWN));
 					break;
 				case Direction.LEFT:
-					addChild(new Bitmap(new LightningBoxLeft()));
+					addChild(new Bitmap(Assets.ARROW_CRATE_LEFT));
 					break;
 				case Direction.UP:
-					addChild(new Bitmap(new LightningBoxUp()));
+					addChild(new Bitmap(Assets.ARROW_CRATE_UP));
 					break;
 			}
 

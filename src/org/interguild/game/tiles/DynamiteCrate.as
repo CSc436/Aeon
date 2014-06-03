@@ -3,8 +3,9 @@ package org.interguild.game.tiles {
 	import flash.display.BitmapData;
 	import flash.media.Sound;
 	import flash.net.URLRequest;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.INTERGUILD;
 	import org.interguild.game.Level;
 
@@ -13,7 +14,7 @@ package org.interguild.game.tiles {
 		private static const MAX_FALL_SPEED:Number = 6;
 
 		public static const LEVEL_CODE_CHAR:String = 'd';
-		public static const EDITOR_ICON:BitmapData = new WoodenDynamiteSprite();
+		public static const EDITOR_ICON:BitmapData = Assets.DYNAMITE_WOOD_CRATE;
 
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
@@ -26,7 +27,7 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			CollidableObject.setWoodenCrateDestruction(this);
 
-			addChild(new Bitmap(new WoodenDynamiteSprite()));
+			addChild(new Bitmap(Assets.DYNAMITE_WOOD_CRATE));
 			exp = new Sound();
 			CONFIG::ONLINE {
 				exp.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Explosion.mp3"));

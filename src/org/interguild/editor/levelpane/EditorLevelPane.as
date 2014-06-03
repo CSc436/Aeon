@@ -5,13 +5,13 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-
+	
 	import fl.containers.ScrollPane;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
-	import org.interguild.game.LevelBackground;
 
 	public class EditorLevelPane extends Sprite {
 
@@ -194,7 +194,7 @@ package org.interguild.editor.levelpane {
 
 			levelBGID = id;
 
-			var bg:BitmapData = LevelBackground.getBackground(id);
+			var bg:BitmapData = Assets.getBGImge(id);
 			var matrix:Matrix = new Matrix();
 			var scaleV:Number = scroll.height / bg.height + 0.0000000001; //roundoff errors
 			var newWidth:Number;

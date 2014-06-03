@@ -9,41 +9,11 @@ package org.interguild.game.tiles {
 
 	import org.interguild.Aeon;
 
+	/**
+	 * 
+	 * @author Livio
+	 */
 	public class Terrain extends CollidableObject {
-
-		private static var TT_MAP:Array;
-		private static var TT_BITMAP:uint = 0;
-		private static var TT_NAME:uint = 1;
-
-		private static function initMap():void {
-			TT_MAP = [];
-			TT_MAP.push([new TerrainWoodSprite(), "Wood Pattern"]);
-			TT_MAP.push([new TerrainSteelSprite(), "Steel Pattern"]);
-		}
-		
-		private static function isInBounds(id:Number):Boolean {
-			if (TT_MAP == null)
-				initMap();
-
-			if (isNaN(id) || id < 0 || id >= TT_MAP.length)
-				return false;
-			else
-				return true;
-		}
-
-		public static function getTerrainImage(id:Number):BitmapData {
-			if (!isInBounds(id))
-				return null;
-
-			return TT_MAP[id][TT_BITMAP];
-		}
-
-		public static function getName(id:Number):String {
-			if (!isInBounds(id))
-				return null;
-
-			return TT_MAP[id][TT_NAME];
-		}
 
 		public static const LEVEL_CODE_CHAR:String = 'x';
 

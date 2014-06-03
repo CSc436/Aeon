@@ -5,6 +5,7 @@ package org.interguild.game {
 	import flash.display.MovieClip;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.tiles.CollidableObject;
@@ -16,7 +17,7 @@ package org.interguild.game {
 		}
 
 		public static const LEVEL_CODE_CHAR:String = '#';
-		public static const EDITOR_ICON:BitmapData = new StartingPositionSprite();
+		public static const EDITOR_ICON:BitmapData = Assets.PLAYER_EDITOR_SPRITE;
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
 		private static const DEATH_DELAY:uint = 40;
@@ -64,7 +65,7 @@ package org.interguild.game {
 		private static const JUMP_LAND_ANIMATION_X_LEFT:int = 32;
 		private static const JUMP_LAND_ANIMATION_Y:int = -13;
 		
-		private static const DEATH_SPRITE:Bitmap = new Bitmap(new PlayerDeathSprite());
+		private static const DEATH_SPRITE:Bitmap = new Bitmap(Assets.PLAYER_DEATH_SPRITE);
 		private static const DEATH_ANIMATION_X_RIGHT:int = -8;
 		private static const DEATH_ANIMATION_X_LEFT:int = 32;
 		private static const DEATH_ANIMATION_Y:int = -13;

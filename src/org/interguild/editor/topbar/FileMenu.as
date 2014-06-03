@@ -1,7 +1,8 @@
 package org.interguild.editor.topbar {
 	import flash.display.Bitmap;
 	import flash.events.MouseEvent;
-
+	
+	import org.interguild.Assets;
 	import org.interguild.components.DropdownMenu;
 	import org.interguild.components.DropdownMenuDivider;
 	import org.interguild.editor.EditorPage;
@@ -21,7 +22,7 @@ package org.interguild.editor.topbar {
 			this.x = POSITION_X;
 			this.y = POSITION_Y;
 
-			initButton(new Bitmap(new FileButtonSprite()), new Bitmap(new FileMouseOverSprite()));
+			initButton(new Bitmap(Assets.FILE_BUTTON_SPRITE), new Bitmap(Assets.FILE_MOUSE_OEVER_SPRITE));
 
 			addItem(new FileMenuItem("New Level", "Ctrl+N", function(evt:MouseEvent):void {
 				editor.newLevel();
