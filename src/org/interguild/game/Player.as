@@ -3,10 +3,11 @@ package org.interguild.game {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.KeyMan;
+	import org.interguild.SoundMan;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.tiles.CollidableObject;
 
@@ -29,8 +30,10 @@ package org.interguild.game {
 
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
+		private static const MAX_CRAWL_SPEED:Number = 3;
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
-		private static const RUN_FRICTION:Number = 2;
+		private static const GROUND_FRICTION:Number = MAX_RUN_SPEED;
+		private static const AIR_FRICTION:Number = 1;
 		private static const JUMP_SPEED:Number = -21.5;
 
 		public static const KNOCKBACK_JUMP_SPEED:Number = -14;
@@ -64,7 +67,7 @@ package org.interguild.game {
 		private static const JUMP_LAND_ANIMATION_X_RIGHT:int = -8;
 		private static const JUMP_LAND_ANIMATION_X_LEFT:int = 32;
 		private static const JUMP_LAND_ANIMATION_Y:int = -13;
-		
+
 		private static const DEATH_SPRITE:Bitmap = new Bitmap(Assets.PLAYER_DEATH_SPRITE);
 		private static const DEATH_ANIMATION_X_RIGHT:int = -8;
 		private static const DEATH_ANIMATION_X_LEFT:int = 32;
@@ -75,6 +78,7 @@ package org.interguild.game {
 		private static const MAX_ADDITIONAL_ROTATION:Number = 4;
 
 		private var keys:KeyMan;
+		private var sounds:SoundMan;
 
 		private var currentAnimation:MovieClip;
 		private var currentAnimationIsFacingRight:Boolean;
@@ -106,6 +110,7 @@ package org.interguild.game {
 			initAnimations();
 
 			keys = KeyMan.getMe();
+			sounds = SoundMan.getMe();
 			isFacingRight = true;
 			isActive = true;
 			isDead = false;
@@ -159,8 +164,8 @@ package org.interguild.game {
 		public function landedOnGround():void {
 			isOnGround = true;
 		}
-		
-		public function get isStanding():Boolean{
+
+		public function get isStanding():Boolean {
 			return isOnGround;
 		}
 
@@ -195,7 +200,10 @@ package org.interguild.game {
 				isFacingRight = false;
 				isRunning = true;
 			} else if (speedX < 0) {
-				speedX += RUN_FRICTION;
+				if (isOnGround)
+					speedX += GROUND_FRICTION;
+				else
+					speedX += AIR_FRICTION;
 				if (speedX > 0)
 					speedX = 0;
 			}
@@ -205,7 +213,10 @@ package org.interguild.game {
 				isFacingRight = true;
 				isRunning = true;
 			} else if (speedX > 0) {
-				speedX -= RUN_FRICTION;
+				if (isOnGround)
+					speedX -= GROUND_FRICTION;
+				else
+					speedX -= AIR_FRICTION;
 				if (speedX < 0)
 					speedX = 0;
 			}
@@ -233,6 +244,7 @@ package org.interguild.game {
 			if (keys.isKeySpace && isOnGround && !pressedJump) {
 				speedY = JUMP_SPEED;
 				pressedJump = true;
+				sounds.playSound(SoundMan.JUMP_SOUND);
 			}
 			if (pressedJump && !keys.isKeySpace) {
 				pressedJump = false;
@@ -247,10 +259,16 @@ package org.interguild.game {
 			if (speedY > MAX_FALL_SPEED) {
 				speedY = MAX_FALL_SPEED;
 			}
-			if (speedX > MAX_RUN_SPEED) {
-				speedX = MAX_RUN_SPEED;
-			} else if (speedX < -MAX_RUN_SPEED) {
-				speedX = -MAX_RUN_SPEED;
+
+			var maxSpeed:Number;
+			if (isCrawling)
+				maxSpeed = MAX_CRAWL_SPEED;
+			else
+				maxSpeed = MAX_RUN_SPEED;
+			if (speedX > maxSpeed) {
+				speedX = maxSpeed;
+			} else if (speedX < -maxSpeed) {
+				speedX = -maxSpeed;
 			}
 		}
 
@@ -415,7 +433,7 @@ package org.interguild.game {
 				incrementFrameNoLoop();
 			}
 		}
-		
+
 		private function animateDeath():void {
 			if (!deathAnimation.visible) {
 				currentAnimation.visible = false;
@@ -448,13 +466,13 @@ package org.interguild.game {
 			DEATH_SPRITE.x -= hitbox.width / 2;
 			DEATH_SPRITE.y -= hitbox.height / 2;
 			deathSpeedX = MAX_ADDITIONAL_SPEED * Math.random() + MIN_DEATH_SPEED;
-			if(Math.random() > 0.5)
+			if (Math.random() > 0.5)
 				deathSpeedX *= -1;
 			deathSpeedY = MAX_ADDITIONAL_SPEED * Math.random() + MIN_DEATH_SPEED;
-			if(Math.random() > 0.5)
+			if (Math.random() > 0.5)
 				deathSpeedY *= -1;
 			deathRotation = MAX_ADDITIONAL_ROTATION * Math.random() + MIN_DEATH_ROTATION;
-			if(Math.random() > 0.5)
+			if (Math.random() > 0.5)
 				deathRotation *= -1;
 		}
 	}

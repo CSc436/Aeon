@@ -6,7 +6,7 @@ package org.interguild.game.tiles {
 	
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
-	import org.interguild.INTERGUILD;
+	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 
 	public class DynamiteCrate extends CollidableObject {
@@ -20,7 +20,7 @@ package org.interguild.game.tiles {
 		private static const HAS_GRAVITY:Boolean = true;
 		private static const KNOCKBACK_AMOUNT:int = 5;
 
-		public var exp:Sound;
+		private var sounds:SoundMan;
 
 		public function DynamiteCrate(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
@@ -28,13 +28,7 @@ package org.interguild.game.tiles {
 			CollidableObject.setWoodenCrateDestruction(this);
 
 			addChild(new Bitmap(Assets.DYNAMITE_WOOD_CRATE));
-			exp = new Sound();
-			CONFIG::ONLINE {
-				exp.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/Explosion.mp3"));
-			}
-			CONFIG::OFFLINE {
-				exp.load(new URLRequest("../assets/Explosion.mp3"));
-			}
+			sounds = SoundMan.getMe();
 		}
 
 		public override function onGameLoop():void {
@@ -59,7 +53,7 @@ package org.interguild.game.tiles {
 			var explosion:Explosion = new Explosion(newX, newY);
 			level.createCollidableObject(explosion);
 			explosion.parentDestroyed = true;
-			exp.play();
+			sounds.playSound(SoundMan.EXPLOSION_SOUND);
 		}
 	}
 }

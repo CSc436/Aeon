@@ -2,11 +2,9 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import flash.media.Sound;
-	import flash.net.URLRequest;
 	
 	import org.interguild.Aeon;
-	import org.interguild.INTERGUILD;
+	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.Collectable;
@@ -25,34 +23,18 @@ package org.interguild.game.collision {
 
 		private var removalObjects:Array;
 		private var deactivateObjects:Array;
-
-		private var jump:Sound;
-		private var coin:Sound;
+		
+		private var sounds:SoundMan;
 
 		public function CollisionGrid(width:int, height:int, level:Level) {
 			this.level = level;
+			sounds = SoundMan.getMe();
 			removalObjects = new Array();
 			deactivateObjects = new Array();
 
 			//init lists
 			allObjects = new Vector.<GameObject>();
 			activeObjects = new Vector.<GameObject>();
-
-			jump = new Sound();
-			CONFIG::ONLINE {
-				jump.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/jump.mp3")); //remote
-			}
-			CONFIG::OFFLINE {
-				jump.load(new URLRequest("../assets/jump.mp3")); //local
-			}
-
-			coin = new Sound();
-			CONFIG::ONLINE {
-				coin.load(new URLRequest(INTERGUILD.ORG + "/aeon_demo/coin.mp3")); //remote
-			}
-			CONFIG::OFFLINE {
-				coin.load(new URLRequest("../assets/coin.mp3")); //local
-			}
 
 			//init 2D arra]y
 			grid = new Array(height);
@@ -224,7 +206,7 @@ package org.interguild.game.collision {
 			if (p && otherObject is Collectable) {
 				toRemove(otherObject);
 				level.grabbedCollectable();
-				coin.play();
+				sounds.playSound(SoundMan.TREASURE_COLLECT_SOUND);
 			}
 			/*
 			* PLAYER ENTERS ACTIVE PORTAL
