@@ -1,10 +1,7 @@
 package org.interguild {
 	import flash.display.Stage;
-	import flash.events.Event;
 	import flash.events.KeyboardEvent;
-	import flash.events.TimerEvent;
 	import flash.media.Sound;
-	import flash.net.URLRequest;
 	import flash.utils.Timer;
 
 	public class KeyMan {
@@ -24,6 +21,7 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
+		public var isKeyR:Boolean = false;
 		
 		public var walkingSound:Sound;
 		public var walkSoundPlaying:Boolean = false;
@@ -31,6 +29,7 @@ package org.interguild {
 
 		public var spacebarCallback:Function;
 		private var escapeCallback:Function;
+		private var restartCallback:Function;
 		private var menuCallback:Function;
 		CONFIG::DEBUG{
 			private var debugToggleCallback:Function;
@@ -50,6 +49,11 @@ package org.interguild {
 					if(escapeCallback && !isKeyEsc)
 						escapeCallback();
 					isKeyEsc = true;
+					break;
+				case 82: // R key
+					if(restartCallback && !isKeyR)
+						restartCallback();
+					isKeyR = true;
 					break;
 				case 39: //right arrow key
 					isKeyRight = true;
@@ -94,6 +98,8 @@ package org.interguild {
 				case 27: //Esc key
 					isKeyEsc = false;
 					break;
+				case 82: // R key
+					isKeyR = false;
 				case 39: //right arrow key
 					isKeyRight = false;
 					break;
@@ -123,6 +129,10 @@ package org.interguild {
 
 		public function addSpacebarListener(cb:Function):void {
 			spacebarCallback = cb;
+		}
+		
+		public function addRestartListener(f:Function):void {
+			restartCallback = f;
 		}
 
 		public function addMenuCallback(cb:Function):void {

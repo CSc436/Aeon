@@ -9,7 +9,6 @@ package org.interguild.game.gui {
 	import fl.controls.Button;
 
 	import org.interguild.Aeon;
-	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
 	import org.interguild.loader.LevelLoader;
 	import org.interguild.game.Level;
@@ -79,12 +78,12 @@ package org.interguild.game.gui {
 			pauseMenu.visible = false;
 			addChild(pauseMenu);
 		}
-		
+
 		/**
 		 * This is called when a new level is about to be loaded
 		 * and this one needs to shutdown
 		 */
-		public function shutdown():void{
+		public function shutdown():void {
 			level.pauseGame();
 		}
 
@@ -99,6 +98,7 @@ package org.interguild.game.gui {
 			var keys:KeyMan = KeyMan.getMe();
 			keys.addSpacebarListener(onSpacebar);
 			keys.addEscapeListener(onPauseGame);
+			keys.addRestartListener(onRestartGame);
 		}
 
 		private function showPreviewLevel():void {
@@ -133,6 +133,11 @@ package org.interguild.game.gui {
 				}
 				pauseMenu.visible = false;
 			}
+		}
+
+		private function onRestartGame():void {
+			this.stage.focus = stage;
+			Aeon.getMe().playLastLevel();
 		}
 
 		public function onWonGame():void {

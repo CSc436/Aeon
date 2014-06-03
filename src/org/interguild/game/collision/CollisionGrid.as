@@ -7,8 +7,8 @@ package org.interguild.game.collision {
 	
 	import org.interguild.Aeon;
 	import org.interguild.INTERGUILD;
-	import org.interguild.game.Player;
 	import org.interguild.game.Level;
+	import org.interguild.game.Player;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
@@ -93,9 +93,7 @@ package org.interguild.game.collision {
 		 * you only take up one grid tile.
 		 */
 		public function updateObject(o:CollidableObject, blockNeighbors:Boolean):void {
-			var inGrids:Array = new Array();
 			var box:Rectangle = o.hitbox;
-			var row:int, col:int;
 			var gridTile:GridTile;
 
 			var top:int = box.top / Aeon.TILE_HEIGHT;
@@ -113,9 +111,9 @@ package org.interguild.game.collision {
 			o.clearGrids();
 
 			//add new grids
-			for (row = top; row <= bottom; row++) {
+			for (var row:int = top; row <= bottom; row++) {
 				if (row >= 0 && row < grid.length) {
-					for (col = left; col <= right; col++) {
+					for (var col:int = left; col <= right; col++) {
 						if (col >= 0 && col < grid[0].length) {
 							gridTile = grid[row][col];
 							gridTile.addObject(o);
@@ -126,6 +124,10 @@ package org.interguild.game.collision {
 						}
 					}
 				}
+			}
+			
+			if(!o.isInGridTiles()){
+				toRemove(o);
 			}
 		}
 
@@ -322,6 +324,7 @@ package org.interguild.game.collision {
 		 * or deactivated this frame.
 		 */
 		public function handleRemovals(camera:Sprite):void {
+			//removals:
 			for (var i:int = 0; i < removalObjects.length; i++) {
 				var r:CollidableObject = CollidableObject(removalObjects[i]);
 
@@ -337,6 +340,7 @@ package org.interguild.game.collision {
 			}
 			removalObjects = new Array();
 
+			//deactivations:
 			for (i = 0; i < deactivateObjects.length; i++) {
 				r = CollidableObject(deactivateObjects[i]);
 

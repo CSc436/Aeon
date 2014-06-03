@@ -441,6 +441,7 @@ package org.interguild.game {
 		}
 
 		public override function onKillEvent(level:Level):void {
+			trace("YOU DEAD");
 			isDead = true;
 			deathAnimation.x += hitbox.width / 2;
 			deathAnimation.y += hitbox.height / 2;

@@ -5,9 +5,9 @@ package org.interguild.game.tiles {
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 	
+	import org.interguild.game.Level;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
-	import org.interguild.game.Level;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -196,6 +196,14 @@ package org.interguild.game.tiles {
 			} else {
 				myGrids[index] = g;
 			}
+		}
+		
+		/**
+		 * Returns true if the CollidableObject is within the bounds
+		 * of the level.
+		 */
+		public function isInGridTiles():Boolean{
+			return myGrids.length > 0;
 		}
 
 		/**

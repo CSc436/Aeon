@@ -323,7 +323,8 @@ package org.interguild.game {
 			}
 
 			//update everyone's positions
-			collisionGrid.updateObject(player, false);
+			if (!player.isDead)
+				collisionGrid.updateObject(player, false);
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
 				var obj:GameObject = collisionGrid.activeObjects[i];
@@ -333,7 +334,8 @@ package org.interguild.game {
 			}
 
 			//test and handle collisions
-			collisionGrid.detectAndHandleCollisions(player);
+			if (!player.isDead)
+				collisionGrid.detectAndHandleCollisions(player);
 			len = collisionGrid.activeObjects.length;
 			for (i = 0; i < len; i++) {
 				collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
