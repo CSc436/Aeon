@@ -172,8 +172,8 @@ package org.interguild {
 		public function hideCurrentPage():void {
 			currentPage.visible = false;
 			if (currentPage == levelPage) {
-				levelPage.shutdown();
 				removeChild(levelPage);
+				levelPage.deconstruct();
 				levelPage = null;
 			}
 		}

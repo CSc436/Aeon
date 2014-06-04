@@ -12,8 +12,6 @@ package org.interguild.game {
 	 * It takes the player as a reference so it can update it's location based on the players coordinates.
 	 */
 	public class Camera extends Sprite {
-		private var player:Player;
-
 		private static const UPWARD_DISTANCE:uint = 125;
 		private static const LEFT_DISTANCE:uint = 0;
 		private static const RIGHT_DISTANCE:uint = 0;
@@ -26,6 +24,7 @@ package org.interguild.game {
 		private var levelWidth:int;
 		private var levelHeight:int;
 
+		private var player:Player;
 		private var bg:LevelBackground;
 
 		public function Camera(player:Player, bg:LevelBackground, w:Number, h:Number) {
@@ -83,6 +82,11 @@ package org.interguild.game {
 //				TweenLite.to(this, RESET_TWEEN_SPEED, {x: cameraX, y: cameraY});
 //			}
 //		}
+		
+		public function deconstruct():void{
+			removeChildren();
+			player = null;
+		}
 
 		public function updateCamera():void {
 			var cameraX:int = -player.x - player.width / 2 + Aeon.STAGE_WIDTH / 2.0;

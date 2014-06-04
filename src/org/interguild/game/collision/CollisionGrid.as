@@ -23,7 +23,7 @@ package org.interguild.game.collision {
 
 		private var removalObjects:Array;
 		private var deactivateObjects:Array;
-		
+
 		private var sounds:SoundMan;
 
 		public function CollisionGrid(width:int, height:int, level:Level) {
@@ -51,6 +51,22 @@ package org.interguild.game.collision {
 					}
 				}
 			}
+		}
+
+		public function deconstruct():void {
+			var rows:uint = grid.length;
+			var cols:uint = grid[0].length;
+			for (var r:uint = 0; r < rows; r++) {
+				for(var c:uint = 0; c < cols; c++){
+					GridTile(grid[r][c]).deconstruct();
+					grid[r][c] = null;
+				}
+			}
+			grid = null;
+			allObjects = null;
+			activeObjects = null;
+			removalObjects = null;
+			deactivateObjects = null;
 		}
 
 		private function inBounds(row:int, col:int):Boolean {
@@ -107,8 +123,8 @@ package org.interguild.game.collision {
 					}
 				}
 			}
-			
-			if(!o.isInGridTiles()){
+
+			if (!o.isInGridTiles()) {
 				toRemove(o);
 			}
 		}

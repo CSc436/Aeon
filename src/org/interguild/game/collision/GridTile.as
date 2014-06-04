@@ -23,6 +23,11 @@ package org.interguild.game.collision {
 				graphics.endFill();
 			}
 		}
+		
+		public function deconstruct():void{
+			myStuff = null;
+			grid = null;
+		}
 
 		public function get gridRow():uint {
 			return row;

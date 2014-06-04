@@ -9,6 +9,11 @@ package org.interguild.game.gui {
 
 	public class LevelPauseMenu extends ListBasedMenu {
 		
+		private static const instance:LevelPauseMenu = new LevelPauseMenu();
+		public static function getMe():LevelPauseMenu{
+			return instance;
+		}
+		
 		private static const CENTER_X:Number = Aeon.STAGE_WIDTH / 2;
 		private static const CENTER_Y:Number = Aeon.STAGE_HEIGHT / 2;
 		

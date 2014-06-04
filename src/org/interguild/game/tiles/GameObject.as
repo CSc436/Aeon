@@ -20,6 +20,7 @@ package org.interguild.game.tiles {
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS
+		 * Create a subclass instead.
 		 */
 		public function GameObject(_x:Number, _y:Number) {
 			newX = startX = x = _x;

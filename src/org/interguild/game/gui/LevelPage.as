@@ -52,6 +52,16 @@ package org.interguild.game.gui {
 			loader.addErrorListener(onLoadError);
 			loader.addCompletionListener(onLoadComplete);
 		}
+		
+		public function deconstruct():void{
+			loader.forgetMe();
+			loader = null;
+			progressBar = null;
+			startScreen = null;
+			pauseMenu = null;
+			level.deconstruct();
+			level = null;
+		}
 
 		public function playLevelFromFile(file:String):void {
 			loader.loadFromFile(file);
@@ -74,17 +84,9 @@ package org.interguild.game.gui {
 			addChild(level);
 
 			//init pause menu on top of level
-			pauseMenu = new LevelPauseMenu();
+			pauseMenu = LevelPauseMenu.getMe();
 			pauseMenu.visible = false;
 			addChild(pauseMenu);
-		}
-
-		/**
-		 * This is called when a new level is about to be loaded
-		 * and this one needs to shutdown
-		 */
-		public function shutdown():void {
-			level.pauseGame();
 		}
 
 		private function onLoadError(e:Array):void {
@@ -93,6 +95,7 @@ package org.interguild.game.gui {
 
 		private function onLoadComplete():void {
 			removeChild(progressBar);
+			progressBar = null;
 			startScreen.loadComplete();
 
 			var keys:KeyMan = KeyMan.getMe();

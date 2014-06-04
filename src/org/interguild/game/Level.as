@@ -119,6 +119,18 @@ package org.interguild.game {
 			timer.stop();
 			timer.removeEventListener(TimerEvent.TIMER, onGameLoop);
 			timer = null;
+			
+			camera.deconstruct();
+			removeChild(camera);
+			camera = null;
+			
+			portals = null;
+			player = null;
+			
+			collisionGrid.deconstruct();
+			collisionGrid = null;
+			
+			removeChildren();
 		}
 		
 		public function set terrainType(id:uint):void{

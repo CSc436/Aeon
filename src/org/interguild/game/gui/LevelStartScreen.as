@@ -1,7 +1,5 @@
 package org.interguild.game.gui {
-	import flash.display.MovieClip;
 	import flash.display.Sprite;
-	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	import flash.text.AntiAliasType;
 	import flash.text.TextField;
@@ -10,7 +8,6 @@ package org.interguild.game.gui {
 	import flash.text.TextFormatAlign;
 
 	import org.interguild.Aeon;
-	import org.interguild.KeyMan;
 
 	public class LevelStartScreen extends Sprite {
 

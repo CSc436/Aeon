@@ -41,6 +41,18 @@ package org.interguild.loader {
 
 		public function Loader() {
 		}
+		
+		/**
+		 * Clears all callback references for garbage collection
+		 */
+		public function forgetMe():void{
+			initializedCallback = null;
+			progressCallback = null;
+			errorCallback = null;
+			loadingCompleteCallback = null;
+			levelParsedCallback = null;
+			errors = null;
+		}
 
 		/*******************************
 		 * LISTENER/CALLBACK FUNCTIONS *
