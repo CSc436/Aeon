@@ -9,8 +9,11 @@ package org.interguild.game.gui {
 
 	public class LevelPauseMenu extends ListBasedMenu {
 		
-		private static const instance:LevelPauseMenu = new LevelPauseMenu();
+		private static var instance:LevelPauseMenu = null;
 		public static function getMe():LevelPauseMenu{
+			if(instance == null){
+				instance = new LevelPauseMenu();
+			}
 			return instance;
 		}
 		

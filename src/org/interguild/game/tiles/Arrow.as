@@ -7,9 +7,6 @@ package org.interguild.game.tiles {
 
 
 	public class Arrow extends CollidableObject {
-		private var direction:int;
-		public var parentDestroyed:Boolean;
-
 		public static const LEVEL_CODE_CHAR:String = 'a';
 
 		private static const IS_SOLID:Boolean = false;
@@ -23,9 +20,7 @@ package org.interguild.game.tiles {
 			destruction.destroyWithMarker(Destruction.ARROWS);
 			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
 
-			this.direction = direction;
-			this.isActive = true;
-			parentDestroyed = false;
+			this.isActive = false;
 			
 			//init animation
 			var anim:MovieClip = new LightningArrowAnimation();
@@ -59,25 +54,5 @@ package org.interguild.game.tiles {
 					break;
 			}
 		}
-
-//		public override function onGameLoop():void {
-//			if (parentDestroyed) {
-//				switch (direction) {
-//					case Direction.RIGHT:
-//						newX += 6;
-//						break;
-//					case Direction.DOWN:
-//						newY += 6;
-//						break;
-//					case Direction.LEFT:
-//						newX -= 6;
-//						break;
-//					case Direction.UP:
-//						newY -= 6;
-//						break;
-//				}
-//				updateHitBox();
-//			}
-//		}
 	}
 }

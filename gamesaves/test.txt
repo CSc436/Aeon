@@ -1,12 +1,12 @@
 Untitled-1
-50x50|0|0
+25x25|0|0
 x25
+x 7v< 14x
 x 23x
+x 7> d 13x
 x 23x
-x 23x
-x 23x
-x 23x
-x 23x
+x 3#  > ^ 14x
+x  x12 9x
 x 23x
 x 23x
 x 23x
@@ -25,4 +25,3 @@ x 23x
 x 23x
 x 23x
 x25
-25x11

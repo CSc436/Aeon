@@ -76,7 +76,7 @@ package org.interguild.game {
 			portals = new Vector.<FinishLine>();
 
 			//init player and camera
-			player = new Player()
+			player = new Player();
 			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
 			camera.addChild(player);
@@ -142,6 +142,11 @@ package org.interguild.game {
 			hud.updateMax(collectableCount);
 			if (hud.maxCollected == 0)
 				openPortal();
+			saveCheckpoint();
+		}
+		
+		public function saveCheckpoint():void{
+			
 		}
 
 		public function grabbedCollectable():void {
@@ -230,8 +235,8 @@ package org.interguild.game {
 			collisionGrid.updateObject(player, false);
 		}
 
-		public function createCollidableObject(tile:CollidableObject):void {
-			collisionGrid.addObject(tile);
+		public function createCollidableObject(tile:CollidableObject, fakeObject:Boolean = false):void {
+			collisionGrid.addObject(tile, fakeObject);
 			camera.addChild(tile);
 			if (tile is Collectable)
 				collectableCount++;
@@ -373,6 +378,10 @@ package org.interguild.game {
 					if (s)
 						debugSprite.addChild(s);
 				}
+			}
+				
+			if(player.timeToRestart){
+				Aeon.getMe().playLastLevel();
 			}
 		}
 	}

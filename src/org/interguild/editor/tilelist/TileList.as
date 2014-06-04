@@ -16,7 +16,7 @@ package org.interguild.editor.tilelist {
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.DynamiteCrate;
+	import org.interguild.game.tiles.DynamiteWoodCrate;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.SteelCrate;
 	import org.interguild.game.tiles.Terrain;
@@ -169,8 +169,8 @@ package org.interguild.editor.tilelist {
 			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
 			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
 
-			map[DynamiteCrate.LEVEL_CODE_CHAR] = DynamiteCrate.EDITOR_ICON;
-			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteCrate.LEVEL_CODE_CHAR));
+			map[DynamiteWoodCrate.LEVEL_CODE_CHAR] = DynamiteWoodCrate.EDITOR_ICON;
+			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteWoodCrate.LEVEL_CODE_CHAR));
 		}
 
 		private function onClick(evt:MouseEvent):void {

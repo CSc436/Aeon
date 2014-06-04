@@ -1,7 +1,7 @@
 package org.interguild.game.tiles {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.SoundMan;
@@ -31,12 +31,13 @@ package org.interguild.game.tiles {
 
 		private var sounds:SoundMan;
 
-		public function ArrowCrate(x:int, y:int, direction:int) {
+		public function ArrowCrate(x:int, y:int, direction:int, arrow:Arrow) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			CollidableObject.setWoodenCrateDestruction(this);
 
-			sounds = SoundMan.getMe();
+			this.sounds = SoundMan.getMe();
+			this.arrow = arrow;
 			this.direction = direction;
 			switch (direction) {
 				case Direction.RIGHT:
@@ -57,11 +58,10 @@ package org.interguild.game.tiles {
 			this.yPos = y;
 		}
 
-		public override function onKillEvent(level:Level):void {
-			arrow = new Arrow(xPos, yPos, direction);
-			level.createCollidableObject(arrow);
-			this.arrow.parentDestroyed = true;
+		public override function onKillEvent(level:Level):Array {
+			arrow.moveTo(xPos, yPos);
 			sounds.playSound(SoundMan.ARROW_FIRING_SOUND);
+			return [arrow];
 		}
 	}
 }

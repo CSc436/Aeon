@@ -2,7 +2,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
@@ -18,8 +18,8 @@ package org.interguild.game.collision {
 		private var level:Level;
 		private var grid:Array;
 
-		private var allObjects:Vector.<GameObject>;
-		public var activeObjects:Vector.<GameObject>;
+		private var allObjects:Array;
+		public var activeObjects:Array;
 
 		private var removalObjects:Array;
 		private var deactivateObjects:Array;
@@ -33,8 +33,8 @@ package org.interguild.game.collision {
 			deactivateObjects = new Array();
 
 			//init lists
-			allObjects = new Vector.<GameObject>();
-			activeObjects = new Vector.<GameObject>();
+			allObjects = new Array;
+			activeObjects = new Array;
 
 			//init 2D arra]y
 			grid = new Array(height);
@@ -57,7 +57,7 @@ package org.interguild.game.collision {
 			var rows:uint = grid.length;
 			var cols:uint = grid[0].length;
 			for (var r:uint = 0; r < rows; r++) {
-				for(var c:uint = 0; c < cols; c++){
+				for (var c:uint = 0; c < cols; c++) {
 					GridTile(grid[r][c]).deconstruct();
 					grid[r][c] = null;
 				}
@@ -73,11 +73,12 @@ package org.interguild.game.collision {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
 
-		public function addObject(tile:CollidableObject):void {
+		public function addObject(tile:CollidableObject, fakeObject:Boolean):void {
 			allObjects.push(tile);
 			if (tile.isActive)
 				activeObjects.push(tile);
-			updateObject(tile, !tile.isActive);
+			if (!fakeObject)
+				updateObject(tile, !tile.isActive);
 		}
 
 		/**
@@ -384,7 +385,15 @@ package org.interguild.game.collision {
 				}
 			}
 			obj.clearGrids();
-			obj.onKillEvent(level);
+			var toActivate:Array = obj.onKillEvent(level);
+			if (toActivate != null) {
+				var len:uint = toActivate.length;
+				for (var i:uint = 0; i < len; i++) {
+					var o:CollidableObject = toActivate[i];
+					o.isActive = true;
+					activeObjects.push(o);
+				}
+			}
 		}
 
 		/**

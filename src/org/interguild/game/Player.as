@@ -3,7 +3,7 @@ package org.interguild.game {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.KeyMan;
@@ -185,11 +185,13 @@ package org.interguild.game {
 		}
 
 		private var deathTimer:uint = 0;
+		
+		public var timeToRestart:Boolean = false;
 
 		private function updateDeath():void {
 			deathTimer++;
 			if (deathTimer >= DEATH_DELAY) {
-				Aeon.getMe().playLastLevel();
+				timeToRestart = true;
 			}
 		}
 
@@ -458,7 +460,7 @@ package org.interguild.game {
 			deathAnimation.rotation += deathRotation;
 		}
 
-		public override function onKillEvent(level:Level):void {
+		public override function onKillEvent(level:Level):Array{
 			trace("YOU DEAD");
 			isDead = true;
 			deathAnimation.x += hitbox.width / 2;
@@ -474,6 +476,7 @@ package org.interguild.game {
 			deathRotation = MAX_ADDITIONAL_ROTATION * Math.random() + MIN_DEATH_ROTATION;
 			if (Math.random() > 0.5)
 				deathRotation *= -1;
+			return null;
 		}
 	}
 }

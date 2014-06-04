@@ -1,5 +1,6 @@
 package org.interguild.game.tiles {
 	import flash.display.Sprite;
+	
 	import org.interguild.game.Level;
 
 	/**
@@ -33,7 +34,12 @@ package org.interguild.game.tiles {
 		public function onGameLoop():void {
 		}
 		
-		public function onKillEvent(level:Level):void {	
+		/**
+		 * Called when this object is destroyed. Returns an
+		 * array of objects that need to be activated.
+		 */
+		public function onKillEvent(level:Level):Array {
+			return null;
 		}
 		
 		public function finishGameLoop():void{

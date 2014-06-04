@@ -54,6 +54,7 @@ package org.interguild.game.gui {
 		}
 		
 		public function deconstruct():void{
+			KeyMan.getMe().forgetMe();
 			loader.forgetMe();
 			loader = null;
 			progressBar = null;

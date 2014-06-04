@@ -1,7 +1,7 @@
 package org.interguild.game.tiles {
 
 	import flash.display.MovieClip;
-	
+
 	import org.interguild.game.collision.Destruction;
 
 	public class Explosion extends CollidableObject {
@@ -12,7 +12,6 @@ package org.interguild.game.tiles {
 		private static const HAS_GRAVITY:Boolean = false;
 
 		private var direction:int;
-		public var parentDestroyed:Boolean;
 
 		public var timeCounter:int = 0;
 		public var exp:MovieClip;
@@ -22,8 +21,7 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			destruction.destroyedBy(Destruction.NOTHING);
 			destruction.destroyWithMarker(Destruction.EXPLOSIONS);
-			isActive = true;
-			parentDestroyed = false;
+			isActive = false;
 
 			//init animation
 			exp = new ExplosionAnimation();
@@ -34,10 +32,8 @@ package org.interguild.game.tiles {
 		}
 
 		public override function onGameLoop():void {
-			if (parentDestroyed) {
-				timeCounter++;
-				exp.gotoAndStop(timeCounter);
-			}
+			timeCounter++;
+			exp.gotoAndStop(timeCounter);
 		}
 	}
 }

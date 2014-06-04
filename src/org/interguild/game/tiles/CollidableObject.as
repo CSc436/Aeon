@@ -70,6 +70,12 @@ package org.interguild.game.tiles {
 			this.knockback = knockback;
 			this.buoyancy = buoyancy;
 		}
+		
+		public function moveTo(_x:Number, _y:Number):void{
+			x = newX = _x;
+			y = newY = _y;
+			updateHitBox();
+		}
 
 //		/**
 //		 * returns value indicating whether or not
