@@ -8,6 +8,7 @@ package org.interguild.game.tiles {
 	import org.interguild.game.Level;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
+	import flash.display.DisplayObject;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -31,6 +32,11 @@ package org.interguild.game.tiles {
 		public static function setSteelCrateDestruction(obj:CollidableObject):void{
 			obj.destruction.destroyedBy(Destruction.ARROWS);
 			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
+		}
+		
+		CONFIG::DEBUG {
+			private static const HITBOX_COLOR:uint = 0xFF0000;
+			private static const SPRITE_ALPHA:Number = 0.5;
 		}
 
 		private var myGrids:Vector.<GridTile>;
@@ -59,6 +65,25 @@ package org.interguild.game.tiles {
 			justCollided = new Dictionary(true);
 			sideBlocked = [false, false, false, false];
 			active = false;
+		}
+		
+		CONFIG::DEBUG {
+			protected function showHitBox():void {
+				graphics.clear();
+				graphics.beginFill(HITBOX_COLOR);
+				graphics.drawRect(0, 0, hitbox.width, hitbox.height);
+				graphics.endFill();
+			}
+			
+			public override function addChild(child:DisplayObject):DisplayObject{
+				child.alpha = SPRITE_ALPHA;
+				return super.addChild(child);
+			}
+			
+			public override function addChildAt(child:DisplayObject, index:int):DisplayObject{
+				child.alpha = SPRITE_ALPHA;
+				return super.addChildAt(child, index);
+			}
 		}
 
 		/**

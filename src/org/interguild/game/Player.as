@@ -141,16 +141,7 @@ package org.interguild.game {
 
 			//draw hit box
 			CONFIG::DEBUG {
-				drawHitBox();
-			}
-		}
-
-		CONFIG::DEBUG {
-			private function drawHitBox():void {
-				graphics.clear();
-				graphics.beginFill(SPRITE_COLOR);
-				graphics.drawRect(0, 0, hitbox.width, hitbox.height);
-				graphics.endFill();
+				showHitBox();
 			}
 		}
 
@@ -230,7 +221,7 @@ package org.interguild.game {
 				hitbox.height = CRAWLING_HEIGHT;
 				isCrawling = true;
 				CONFIG::DEBUG {
-					drawHitBox();
+					showHitBox();
 				}
 			} else if (!keys.isKeyDown && isCrawling) {
 				//stop crawling
@@ -238,7 +229,7 @@ package org.interguild.game {
 				hitbox.height = STANDING_HEIGHT;
 				isCrawling = false;
 				CONFIG::DEBUG {
-					drawHitBox();
+					showHitBox();
 				}
 			}
 
@@ -442,18 +433,12 @@ package org.interguild.game {
 				deathAnimation.visible = true;
 				if (isFacingRight) {
 					deathAnimation.scaleX = 1;
-//					DEATH_ANIMATION.x = DEATH_ANIMATION_X_RIGHT;
 				} else {
 					deathAnimation.scaleX = -1;
-//					DEATH_ANIMATION.x = DEATH_ANIMATION_X_LEFT;
 				}
 				CONFIG::DEBUG {
-					DEATH_ANIMATION.alpha = ANIMATION_ALPHA;
+					deathAnimation.alpha = ANIMATION_ALPHA;
 				}
-//				DEATH_ANIMATION.graphics.beginFill(0);
-//				DEATH_ANIMATION.graphics.drawRect(-2, -2, 4, 4);
-//				DEATH_ANIMATION.graphics.endFill();
-//				DEATH_ANIMATION.alpha = 0.1;
 			}
 			deathAnimation.x += deathSpeedX;
 			deathAnimation.y += deathSpeedY;

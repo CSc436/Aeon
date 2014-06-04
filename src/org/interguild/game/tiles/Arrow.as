@@ -12,10 +12,16 @@ package org.interguild.game.tiles {
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;
 		
+		private static const HITBOX_WIDTH:int = 16;
+		private static const HITBOX_HEIGHT:int = 6;
+		
 		private static const FLY_SPEED:uint = 6;
+		
+		private var direction:uint;
+		private var anim:MovieClip;
 
 		public function Arrow(x:int, y:int, direction:int) {
-			super(x, y, 1, 1);
+			super(x, y, HITBOX_WIDTH, HITBOX_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			destruction.destroyWithMarker(Destruction.ARROWS);
 			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
@@ -23,10 +29,11 @@ package org.interguild.game.tiles {
 			this.isActive = false;
 			
 			//init animation
-			var anim:MovieClip = new LightningArrowAnimation();
+			anim = new LightningArrowAnimation();
 			addChild(anim);
 			
 			//init direction of arrow
+			this.direction = direction;
 			switch (direction) {
 				case Direction.RIGHT:
 					anim.rotation = 90;
@@ -47,12 +54,37 @@ package org.interguild.game.tiles {
 					newY += 20;
 					speedY = FLY_SPEED;
 					break;
-				default:
+				default: //up
 					newY -= 20;
 					speedY = -FLY_SPEED;
 					//animation is already facing up
 					break;
 			}
+			CONFIG::DEBUG{
+				showHitBox();
+			}
+		}
+		
+		public override function moveTo(_x:Number, _y:Number):void{
+			anim.x += HITBOX_WIDTH / 2 - anim.width / 2;
+			anim.y += HITBOX_HEIGHT / 2 - anim.height / 2;
+			_x += 16 - HITBOX_WIDTH / 2;
+			_y += 16 - HITBOX_HEIGHT / 2;
+			switch (direction) {
+				case Direction.RIGHT:
+					anim.x -= 4;
+					break;
+				case Direction.LEFT:
+					anim.x += 4;
+					break;
+				case Direction.DOWN:
+					anim.y += 4;
+					break;
+				default: //up
+					anim.y -= 4;
+					break;
+			}
+			super.moveTo(_x, _y);
 		}
 	}
 }
