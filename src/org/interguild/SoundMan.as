@@ -51,16 +51,16 @@ package org.interguild {
 		public function playSound(id:uint):void {
 			switch (id) {
 				case JUMP_SOUND:
-					jump.play();
+//					jump.play();
 					break;
 				case TREASURE_COLLECT_SOUND:
-					treasure.play();
+//					treasure.play();
 					break;
 				case ARROW_FIRING_SOUND:
-					arrowFiring.play();
+//					arrowFiring.play();
 					break;
 				case EXPLOSION_SOUND:
-					explosion.play();
+//					explosion.play();
 					break;
 			}
 		}

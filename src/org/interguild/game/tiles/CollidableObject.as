@@ -4,7 +4,7 @@ package org.interguild.game.tiles {
 	}
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	
+
 	import org.interguild.game.Level;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
@@ -22,18 +22,18 @@ package org.interguild.game.tiles {
 
 		private static const GRAVITY:Number = Level.GRAVITY;
 		private static const MAX_FALL_SPEED:Number = 6;
-		
-		public static function setWoodenCrateDestruction(obj:CollidableObject):void{
+
+		public static function setWoodenCrateDestruction(obj:CollidableObject):void {
 			obj.destruction.destroyedBy(Destruction.ARROWS);
 			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
 			obj.destruction.destroyedBy(Destruction.PLAYER);
 		}
-		
-		public static function setSteelCrateDestruction(obj:CollidableObject):void{
+
+		public static function setSteelCrateDestruction(obj:CollidableObject):void {
 			obj.destruction.destroyedBy(Destruction.ARROWS);
 			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
 		}
-		
+
 		CONFIG::DEBUG {
 			private static const HITBOX_COLOR:uint = 0xFF0000;
 			private static const SPRITE_ALPHA:Number = 0.5;
@@ -45,6 +45,7 @@ package org.interguild.game.tiles {
 		private var justCollided:Dictionary;
 		private var sideBlocked:Array;
 		private var active:Boolean;
+		private var dead:Boolean;
 
 		protected var destruction:Destruction;
 		private var solid:Boolean = true;
@@ -66,7 +67,7 @@ package org.interguild.game.tiles {
 			sideBlocked = [false, false, false, false];
 			active = false;
 		}
-		
+
 		CONFIG::DEBUG {
 			protected function showHitBox():void {
 				graphics.clear();
@@ -74,13 +75,13 @@ package org.interguild.game.tiles {
 				graphics.drawRect(0, 0, hitbox.width, hitbox.height);
 				graphics.endFill();
 			}
-			
-			public override function addChild(child:DisplayObject):DisplayObject{
+
+			public override function addChild(child:DisplayObject):DisplayObject {
 				child.alpha = SPRITE_ALPHA;
 				return super.addChild(child);
 			}
-			
-			public override function addChildAt(child:DisplayObject, index:int):DisplayObject{
+
+			public override function addChildAt(child:DisplayObject, index:int):DisplayObject {
 				child.alpha = SPRITE_ALPHA;
 				return super.addChildAt(child, index);
 			}
@@ -95,25 +96,13 @@ package org.interguild.game.tiles {
 			this.knockback = knockback;
 			this.buoyancy = buoyancy;
 		}
-		
-		public function moveTo(_x:Number, _y:Number):void{
+
+		public function moveTo(_x:Number, _y:Number):void {
 			x = newX = _x;
 			y = newY = _y;
 			updateHitBox();
 		}
 
-//		/**
-//		 * returns value indicating whether or not
-//		 * a tile should be destroyed and by what.
-//		 *
-//		 * 0 = indestructible (terrain)
-//		 * 1 = destructible by arrows and dynamite (steel)
-//		 * 2 = destructible by arrows, dynamite and touch (wooden)
-//		 *
-//		 */
-//		public function getDestructibility():int {
-//			return destruct;
-//		}
 
 		/**
 		 * Will this object destroy that other object?
@@ -121,9 +110,19 @@ package org.interguild.game.tiles {
 		public function canDestroy(other:CollidableObject):Boolean {
 			return destruction.canDestroy(other.destruction);
 		}
-		
-		public function isDestroyedBy(constant:uint):Boolean{
+
+		public function isDestroyedBy(constant:uint):Boolean {
 			return destruction.isDestroyedBy(constant);
+		}
+
+		public function set markedForDeath(b:Boolean):void {
+			dead = b;
+			speedX = speedY = 0;
+			visible = false;
+		}
+
+		public function get markedForDeath():Boolean {
+			return dead;
 		}
 
 		/**
@@ -228,12 +227,12 @@ package org.interguild.game.tiles {
 				myGrids[index] = g;
 			}
 		}
-		
+
 		/**
 		 * Returns true if the CollidableObject is within the bounds
 		 * of the level.
 		 */
-		public function isInGridTiles():Boolean{
+		public function isInGridTiles():Boolean {
 			return myGrids.length > 0;
 		}
 

@@ -2,7 +2,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
@@ -11,7 +11,6 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
-	import org.interguild.game.tiles.GameObject;
 
 	public class CollisionGrid extends Sprite {
 
@@ -21,16 +20,17 @@ package org.interguild.game.collision {
 		private var allObjects:Array;
 		public var activeObjects:Array;
 
-		private var removalObjects:Array;
+		private var delays:DelayManager;
 		private var deactivateObjects:Array;
+
 
 		private var sounds:SoundMan;
 
 		public function CollisionGrid(width:int, height:int, level:Level) {
 			this.level = level;
 			sounds = SoundMan.getMe();
-			removalObjects = new Array();
 			deactivateObjects = new Array();
+			delays = new DelayManager();
 
 			//init lists
 			allObjects = new Array;
@@ -65,8 +65,8 @@ package org.interguild.game.collision {
 			grid = null;
 			allObjects = null;
 			activeObjects = null;
-			removalObjects = null;
 			deactivateObjects = null;
+			delays = null;
 		}
 
 		private function inBounds(row:int, col:int):Boolean {
@@ -126,7 +126,7 @@ package org.interguild.game.collision {
 			}
 
 			if (!o.isInGridTiles()) {
-				toRemove(o);
+				delays.onDeath(o);
 			}
 		}
 
@@ -146,7 +146,7 @@ package org.interguild.game.collision {
 			if (target is Explosion) {
 				var e:Explosion = Explosion(target);
 				if (e.timeCounter >= 15)
-					toRemove(target);
+					delays.onDeath(target);
 			}
 
 			var objectsToTest:ObjectsToTestList = getNearbyObjects(target);
@@ -221,7 +221,7 @@ package org.interguild.game.collision {
 			* PLAYER GRABS COLLECTABLE
 			*/
 			if (p && otherObject is Collectable) {
-				toRemove(otherObject);
+				delays.onDeath(otherObject);
 				level.grabbedCollectable();
 				sounds.playSound(SoundMan.TREASURE_COLLECT_SOUND);
 			}
@@ -237,41 +237,41 @@ package org.interguild.game.collision {
 			 */
 			var destroyed:Boolean = false;
 			if (activeObject.canDestroy(otherObject)) {
-				toRemove(otherObject);
+				delays.onDeath(otherObject);
 				destroyed = true;
 			}
 			if (otherObject.canDestroy(activeObject)) {
-				toRemove(activeObject);
+				delays.onDeath(activeObject);
 				destroyed = true;
 			}
 			if (otherObject.isSolid() && activeObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
-				toRemove(activeObject);
+				delays.onDeath(activeObject);
 				destroyed = true;
 			}
 			if (activeObject.isSolid() && otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
-				toRemove(otherObject);
+				delays.onDeath(otherObject);
 				destroyed = true;
 			}
 
 			/*
 			* SOLID COLLISIONS
 			*/
-			if (activeObject.isSolid() && otherObject.isSolid() && !destroyed) {
+			if (activeObject.isSolid() && otherObject.isSolid()) {
 				//handle directions:
 				if (direction == Direction.DOWN) {
 					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					activeObject.speedY = 0;
 					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
-						toRemove(otherObject);
-					} else if (p) { // player lands on object
+						delays.onDeath(otherObject);
+					} else if (p && !destroyed) { // player lands on object
 						p.landedOnGround();
-					} else { // something else lands on object
+					} else if (p == null) { // something else lands on object
 						deactivateObjects.push(activeObject);
 					}
 				} else if (direction == Direction.UP) {
 					if (otherObject.isActive) {
 						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !activeObject.canDestroy(otherObject)) {
-							toRemove(activeObject);
+							delays.onDeath(activeObject);
 						} else {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
 							otherObject.speedY = 0;
@@ -310,20 +310,12 @@ package org.interguild.game.collision {
 		}
 
 		/**
-		 * Called whenever an object is meant to die this frame.
-		 */
-		private function toRemove(obj:GameObject):void {
-			if (removalObjects.indexOf(obj) == -1) {
-				removalObjects.push(obj);
-			}
-		}
-
-		/**
 		 * Handle all of the objects that are meant to be destroyed
 		 * or deactivated this frame.
 		 */
 		public function handleRemovals(camera:Sprite):void {
 			//removals:
+			var removalObjects:Array = delays.getDeaths();
 			for (var i:int = 0; i < removalObjects.length; i++) {
 				var r:CollidableObject = CollidableObject(removalObjects[i]);
 
@@ -337,7 +329,6 @@ package org.interguild.game.collision {
 
 				destroyObject(r);
 			}
-			removalObjects = new Array();
 
 			//deactivations:
 			for (i = 0; i < deactivateObjects.length; i++) {
@@ -353,6 +344,17 @@ package org.interguild.game.collision {
 				updateObject(r, true);
 			}
 			deactivateObjects = new Array();
+
+			//activations:
+			var toActivate:Array = delays.getActivations();
+			for (i = 0; i < toActivate.length; i++) {
+				var tile:GridTile = toActivate[i];
+				var wasGravible:Boolean = tile.isGravible();
+				tile.activate();
+				if (wasGravible && inBounds(tile.gridRow - 1, tile.gridCol)) {
+					delays.onActivate(grid[tile.gridRow - 1][tile.gridCol]);
+				}
+			}
 		}
 
 		/**
@@ -372,16 +374,8 @@ package org.interguild.game.collision {
 				updateBlockedNeighbors(tile.gridRow, tile.gridCol);
 
 				//activate all above tiles
-				while (true) {
-					if (inBounds(tile.gridRow - 1, tile.gridCol)) {
-						tile = grid[tile.gridRow - 1][tile.gridCol];
-						var toBreak:Boolean = !tile.isGravible();
-						tile.activate();
-						if (toBreak)
-							break;
-					} else {
-						break;
-					}
+				if (inBounds(tile.gridRow - 1, tile.gridCol)) {
+					delays.onActivate(grid[tile.gridRow - 1][tile.gridCol]);
 				}
 			}
 			obj.clearGrids();

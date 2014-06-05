@@ -114,26 +114,26 @@ package org.interguild.game {
 				addChild(slowDownText);
 			}
 		}
-		
-		public function deconstruct():void{
+
+		public function deconstruct():void {
 			timer.stop();
 			timer.removeEventListener(TimerEvent.TIMER, onGameLoop);
 			timer = null;
-			
+
 			camera.deconstruct();
 			removeChild(camera);
 			camera = null;
-			
+
 			portals = null;
 			player = null;
-			
+
 			collisionGrid.deconstruct();
 			collisionGrid = null;
-			
+
 			removeChildren();
 		}
-		
-		public function set terrainType(id:uint):void{
+
+		public function set terrainType(id:uint):void {
 			tv.terrainType = id;
 		}
 
@@ -144,9 +144,9 @@ package org.interguild.game {
 				openPortal();
 			saveCheckpoint();
 		}
-		
-		public function saveCheckpoint():void{
-			
+
+		public function saveCheckpoint():void {
+
 		}
 
 		public function grabbedCollectable():void {
@@ -342,12 +342,11 @@ package org.interguild.game {
 			//update everyone's positions
 			if (!player.isDead)
 				collisionGrid.updateObject(player, false);
+			var obj:CollidableObject;
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
-				var obj:GameObject = collisionGrid.activeObjects[i];
-				if (obj is CollidableObject) {
-					collisionGrid.updateObject(CollidableObject(obj), false);
-				}
+				obj = collisionGrid.activeObjects[i];
+				collisionGrid.updateObject(CollidableObject(obj), false);
 			}
 
 			//test and handle collisions
@@ -355,7 +354,8 @@ package org.interguild.game {
 				collisionGrid.detectAndHandleCollisions(player);
 			len = collisionGrid.activeObjects.length;
 			for (i = 0; i < len; i++) {
-				collisionGrid.detectAndHandleCollisions(CollidableObject(collisionGrid.activeObjects[i]));
+				obj = collisionGrid.activeObjects[i];
+				collisionGrid.detectAndHandleCollisions(obj);
 			}
 		}
 
@@ -364,7 +364,8 @@ package org.interguild.game {
 			player.finishGameLoop();
 			var len:uint = collisionGrid.activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
-				GameObject(collisionGrid.activeObjects[i]).finishGameLoop();
+				var obj:GameObject = collisionGrid.activeObjects[i];
+				obj.finishGameLoop();
 			}
 
 			//update camera
@@ -379,8 +380,8 @@ package org.interguild.game {
 						debugSprite.addChild(s);
 				}
 			}
-				
-			if(player.timeToRestart){
+
+			if (player.timeToRestart) {
 				Aeon.getMe().playLastLevel();
 			}
 		}

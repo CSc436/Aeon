@@ -15,19 +15,15 @@ package org.interguild.game.tiles {
 		private static const HITBOX_WIDTH:int = 16;
 		private static const HITBOX_HEIGHT:int = 6;
 		
-		private static const FLY_SPEED:uint = 6;
+		private static const FLY_SPEED:uint = 8;
+		private static const ANIM_OFFSET_FROM_CENTER:uint = 4;
+		private static const POS_OFFSET_FROM_CENTER:uint = 8;
 		
 		private var direction:uint;
 		private var anim:MovieClip;
+		private var hwidth:Number, hheight:Number;
 
 		public function Arrow(x:int, y:int, direction:int) {
-			super(x, y, HITBOX_WIDTH, HITBOX_HEIGHT);
-			setProperties(IS_SOLID, HAS_GRAVITY);
-			destruction.destroyWithMarker(Destruction.ARROWS);
-			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
-
-			this.isActive = false;
-			
 			//init animation
 			anim = new LightningArrowAnimation();
 			addChild(anim);
@@ -38,50 +34,69 @@ package org.interguild.game.tiles {
 				case Direction.RIGHT:
 					anim.rotation = 90;
 					anim.x += anim.height;
-					newX += 20;
 					speedX = FLY_SPEED;
+					hwidth = HITBOX_WIDTH;
+					hheight = HITBOX_HEIGHT;
 					break;
 				case Direction.LEFT:
 					anim.rotation = -90;
 					anim.y += anim.width;
-					newX -= 20;
 					speedX = -FLY_SPEED;
+					hwidth = HITBOX_WIDTH;
+					hheight = HITBOX_HEIGHT;
 					break;
 				case Direction.DOWN:
 					anim.rotation = 180;
 					anim.x += anim.width;
 					anim.y += anim.height;
-					newY += 20;
 					speedY = FLY_SPEED;
+					hheight = HITBOX_WIDTH;
+					hwidth = HITBOX_HEIGHT;
 					break;
 				default: //up
-					newY -= 20;
 					speedY = -FLY_SPEED;
+					hheight = HITBOX_WIDTH;
+					hwidth = HITBOX_HEIGHT;
 					//animation is already facing up
 					break;
 			}
+			super(x, y, hwidth, hheight);
+			setProperties(IS_SOLID, HAS_GRAVITY);
+			destruction.destroyWithMarker(Destruction.ARROWS);
+			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
+
+			this.isActive = false;
+			
 			CONFIG::DEBUG{
 				showHitBox();
 			}
 		}
 		
 		public override function moveTo(_x:Number, _y:Number):void{
-			anim.x += HITBOX_WIDTH / 2 - anim.width / 2;
-			anim.y += HITBOX_HEIGHT / 2 - anim.height / 2;
-			_x += 16 - HITBOX_WIDTH / 2;
-			_y += 16 - HITBOX_HEIGHT / 2;
 			switch (direction) {
 				case Direction.RIGHT:
-					anim.x -= 4;
+					anim.x += hwidth / 2 - anim.width / 2 - ANIM_OFFSET_FROM_CENTER;
+					anim.y += hheight / 2 - anim.height / 2;
+					_x += 16 - hwidth / 2 + POS_OFFSET_FROM_CENTER;
+					_y += 16 - hheight / 2;
 					break;
 				case Direction.LEFT:
-					anim.x += 4;
+					anim.x += hwidth / 2 - anim.width / 2 + ANIM_OFFSET_FROM_CENTER;
+					anim.y += hheight / 2 - anim.height / 2;
+					_x += 16 - hwidth / 2 - POS_OFFSET_FROM_CENTER;
+					_y += 16 - hheight / 2;
 					break;
 				case Direction.DOWN:
-					anim.y += 4;
+					anim.x += hwidth / 2 - anim.width / 2;
+					anim.y += hheight / 2 - anim.height / 2 - ANIM_OFFSET_FROM_CENTER;
+					_x += 16 - hwidth / 2;
+					_y += 16 - hheight / 2 + POS_OFFSET_FROM_CENTER;
 					break;
 				default: //up
-					anim.y -= 4;
+					anim.x += hwidth / 2 - anim.width / 2;
+					anim.y += hheight / 2 - anim.height / 2 + ANIM_OFFSET_FROM_CENTER;
+					_x += 16 - hwidth / 2;
+					_y += 16 - hheight / 2 - POS_OFFSET_FROM_CENTER;
 					break;
 			}
 			super.moveTo(_x, _y);

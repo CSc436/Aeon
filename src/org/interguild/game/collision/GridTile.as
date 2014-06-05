@@ -10,6 +10,7 @@ package org.interguild.game.collision {
 		private var row:uint;
 		private var col:uint;
 		private var grid:CollisionGrid;
+		public var markedForActivation:Boolean;
 
 		public function GridTile(r:uint, c:uint, g:CollisionGrid) {
 			row = r;
