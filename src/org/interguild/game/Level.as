@@ -17,6 +17,7 @@ package org.interguild.game {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.gui.LevelHUD;
+	import flash.utils.getTimer;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -60,6 +61,7 @@ package org.interguild.game {
 			private var debugSprite:Sprite = new Sprite();
 			private var isSlowdown:Boolean = false;
 			private var slowDownText:TextField;
+			private var fpsText:TextField;
 		}
 
 		public function Level(lvlWidth:Number, lvlHeight:Number, bgID:uint) {
@@ -112,6 +114,17 @@ package org.interguild.game {
 				slowDownText.y = Aeon.STAGE_HEIGHT - slowDownText.height - 5;
 				slowDownText.visible = false;
 				addChild(slowDownText);
+
+				fpsText = new TextField();
+				fpsText.defaultTextFormat = new TextFormat("Impact", 24, 0xFFFFFF);
+				fpsText.autoSize = TextFieldAutoSize.LEFT;
+				fpsText.selectable = false;
+				fpsText.background = true;
+				fpsText.backgroundColor = 0;
+				fpsText.text = "0.00 FPS";
+				fpsText.x = 5;
+				fpsText.y = 5;
+				addChild(fpsText);
 			}
 		}
 
@@ -160,10 +173,12 @@ package org.interguild.game {
 		}
 
 		public function hideBackground():void {
+			player.isInPreview = true;
 			bg.visible = false;
 		}
 
 		public function showBackground():void {
+			player.isInPreview = false;
 			bg.visible = true;
 		}
 
@@ -314,6 +329,32 @@ package org.interguild.game {
 			collisions();
 			collisionGrid.handleRemovals(camera);
 			cleanup();
+
+			CONFIG::DEBUG {
+				updateMetrics();
+			}
+		}
+
+		CONFIG::DEBUG {
+			private var lastTime:uint;
+			private var currentSum:Number =0;
+			private var countPerAverage:uint = 10;
+			private var counter:uint = 0;
+
+			private function updateMetrics():void {
+				var currentTime:uint = getTimer();
+				var period:uint = currentTime - lastTime;
+				var freq:Number = 1000 / period; //Math.round(100 / period) / 100;
+				currentSum += freq;
+				counter++;
+				if (counter >= countPerAverage) {
+					var average:Number = Math.round(100 * currentSum / countPerAverage) / 100;
+					fpsText.text = average + " FPS";
+					currentSum = 0;
+					counter = 0;
+				}
+				lastTime = currentTime;
+			}
 		}
 
 		private function update():void {

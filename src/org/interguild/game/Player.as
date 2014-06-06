@@ -4,7 +4,6 @@ package org.interguild.game {
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 
-	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 	import org.interguild.SoundMan;
@@ -92,6 +91,8 @@ package org.interguild.game {
 
 		private var isOnGround:Boolean;
 		private var isCrawling:Boolean;
+		private var isPreview:Boolean;
+
 		private var currentFrame:uint = 1;
 
 		//TODO: refactor, should not be public
@@ -145,6 +146,13 @@ package org.interguild.game {
 			}
 		}
 
+		public function set isInPreview(b:Boolean):void {
+			isPreview = b;
+			if (b) {
+				updateAnimation();
+			}
+		}
+
 		public function setStartPosition(sx:Number, sy:Number):void {
 			x = newX = startX = sx;
 			y = newY = startY = sy - hitbox.height + 32;
@@ -164,6 +172,7 @@ package org.interguild.game {
 			if (isDead) {
 				updateDeath();
 			} else {
+				updateMustCrawl();
 				updateKeys();
 				updateGravity();
 				updateMaxSpeeds();
@@ -184,6 +193,12 @@ package org.interguild.game {
 			if (deathTimer >= DEATH_DELAY) {
 				timeToRestart = true;
 			}
+		}
+		
+		private function updateMustCrawl():void{
+			if(!isOnGround)
+				return;
+//			this.myCollisionGridTiles
 		}
 
 		private function updateKeys():void {
@@ -279,7 +294,7 @@ package org.interguild.game {
 					animateCrawlWalking();
 				else
 					animateStandingWalking();
-			} else if (isOnGround) {
+			} else if (isOnGround || isPreview) {
 				if (isCrawling)
 					animateCrawlStill();
 				else

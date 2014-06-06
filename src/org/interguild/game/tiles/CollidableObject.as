@@ -23,7 +23,7 @@ package org.interguild.game.tiles {
 	public class CollidableObject extends GameObject {
 
 		private static const GRAVITY:Number = Level.GRAVITY;
-		private static const MAX_FALL_SPEED:Number = 6;
+		private static const MAX_FALL_SPEED:Number = 14;
 		private static const FALL_TILT_ANGLE:Number = 10;
 
 //		private static const FALL_TILT_ANGLE_MAX:Number = 14;
