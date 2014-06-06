@@ -1,5 +1,4 @@
 package org.interguild.game.tiles {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	
 	import org.interguild.Aeon;
@@ -41,16 +40,16 @@ package org.interguild.game.tiles {
 			this.direction = direction;
 			switch (direction) {
 				case Direction.RIGHT:
-					addChild(new Bitmap(Assets.ARROW_CRATE_RIGHT));
+					setFaces(Assets.ARROW_CRATE_RIGHT);
 					break;
 				case Direction.DOWN:
-					addChild(new Bitmap(Assets.ARROW_CRATE_DOWN));
+					setFaces(Assets.ARROW_CRATE_DOWN);
 					break;
 				case Direction.LEFT:
-					addChild(new Bitmap(Assets.ARROW_CRATE_LEFT));
+					setFaces(Assets.ARROW_CRATE_LEFT);
 					break;
 				case Direction.UP:
-					addChild(new Bitmap(Assets.ARROW_CRATE_UP));
+					setFaces(Assets.ARROW_CRATE_UP);
 					break;
 			}
 

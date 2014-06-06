@@ -1,7 +1,7 @@
 package org.interguild.editor.levelpane {
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-
+	
 	import org.interguild.editor.EditorPage;
 
 	public class EditorTabManager extends Sprite {
@@ -47,6 +47,7 @@ package org.interguild.editor.levelpane {
 
 			if (cTab) {
 				closeLevel(cTab);
+				EditorPage.hasMadeFirstChange = true;
 			}
 		}
 

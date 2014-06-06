@@ -7,7 +7,7 @@ x 6s9 8x
 x 6s9 8x
 x 6>9 8x
 x 4# 18x
-x  x15 6x
+x  x5 7x3 6x
 x 23x
 x 23x
 x 23x

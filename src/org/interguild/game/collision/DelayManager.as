@@ -4,11 +4,12 @@ package org.interguild.game.collision {
 
 	public class DelayManager {
 
-		private static const DEATH_DELAY:uint = 4;
-		private static const ACTIVATION_DELAY:uint = 6;
+		private static const DEATH_DELAY:uint = 5;
+		private static const ACTIVATION_DELAY:uint = 10;
 
 		private var deathList:Array;
 		private var deathTimer:uint = 0;
+		
 		private var activateList:Array;
 		private var activateTimer:uint = 0;
 

@@ -1,6 +1,5 @@
 package org.interguild.game.tiles {
 
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	
 	import org.interguild.Aeon;
@@ -21,7 +20,7 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT, IS_BUOYANT);
 			CollidableObject.setSteelCrateDestruction(this);
 			
-			addChild(new Bitmap(Assets.STEEL_CRATE));
+			setFaces(Assets.STEEL_CRATE);
 		}
 	}
 }

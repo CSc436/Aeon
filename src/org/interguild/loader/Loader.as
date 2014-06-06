@@ -4,10 +4,8 @@ package org.interguild.loader {
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
-	
+
 	import org.interguild.Assets;
-	import org.interguild.game.LevelBackground;
-	import org.interguild.game.tiles.Terrain;
 
 	public class Loader {
 
@@ -37,15 +35,20 @@ package org.interguild.loader {
 		protected var backgroundType:uint;
 		protected var encoding:String;
 
+		private var i:uint = 0;
+		private var px:int = 0;
+		private var py:int = 0;
+		private var prevChar:String;
+
 		private var errors:Array;
 
 		public function Loader() {
 		}
-		
+
 		/**
 		 * Clears all callback references for garbage collection
 		 */
-		public function forgetMe():void{
+		public function forgetMe():void {
 			initializedCallback = null;
 			progressCallback = null;
 			errorCallback = null;
@@ -164,6 +167,10 @@ package org.interguild.loader {
 
 			setLevelInfo();
 
+			i = 0;
+			px = 0;
+			py = 0;
+			prevChar = null;
 			timer = new Timer(10);
 			timer.addEventListener(TimerEvent.TIMER, onTimer);
 			timer.start();
@@ -174,14 +181,6 @@ package org.interguild.loader {
 				errors.push(INVALID_FILE)
 				return;
 			}
-			//trim leading whitespaces (buggy)
-//			var i:int = 0;
-//			var ch:String = code.charAt(i);
-//			while (ch == "\n" || ch == " " || ch.concat(code.charAt(i + 1)) == "\r\n") {
-//				i++;
-//				code = code.substring(1);
-//				ch = code.charAt(i);
-//			}
 
 			//get title
 			var eol:int = code.indexOf("\n");
@@ -190,10 +189,6 @@ package org.interguild.loader {
 				return;
 			}
 			title = code.substr(0, eol);
-//			if (title.length < 1) {
-//				errors.push("Invalid Level Code: Your level must have a title.");
-//				return;
-//			}
 			code = code.substr(eol + 1);
 
 			//get level info
@@ -273,11 +268,6 @@ package org.interguild.loader {
 			loadFromCode(evt.target.data, "LevelLoader");
 		}
 
-		private var i:uint = 0;
-		private var px:int = 0;
-		private var py:int = 0;
-		private var prevChar:String;
-
 		/**
 		 * We use a timer so that we can interrupt the loading code every once in
 		 * a while in order to display progress to the screen.
@@ -339,7 +329,7 @@ package org.interguild.loader {
 							numberString += nextChar;
 							i++;
 							nextChar = code.charAt(i + 1);
-							
+
 						}
 						//subtract 1, because first tile was already made
 						var n:Number = Number(numberString) - 1;
@@ -359,8 +349,8 @@ package org.interguild.loader {
 			}
 			prevChar = curChar;
 		}
-		
-		private function isNumber(s:String):Boolean{
+
+		private function isNumber(s:String):Boolean {
 			//special case: whitespace characters get trimmed by isNaN()
 			var isWhitespace:Boolean = false;
 			switch (s) {

@@ -9,6 +9,8 @@ package org.interguild.game.tiles {
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
 	import flash.display.DisplayObject;
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -22,6 +24,10 @@ package org.interguild.game.tiles {
 
 		private static const GRAVITY:Number = Level.GRAVITY;
 		private static const MAX_FALL_SPEED:Number = 6;
+		private static const FALL_TILT_ANGLE:Number = 10;
+
+//		private static const FALL_TILT_ANGLE_MAX:Number = 14;
+//		private static const FALL_TILT_ANGLE_MIN:Number = 5;
 
 		public static function setWoodenCrateDestruction(obj:CollidableObject):void {
 			obj.destruction.destroyedBy(Destruction.ARROWS);
@@ -52,6 +58,9 @@ package org.interguild.game.tiles {
 		private var gravity:Boolean = true;
 		private var knockback:int = 0;
 		private var buoyancy:Boolean = false;
+
+		private var tiltFace:Sprite;
+		private var normalFace:Bitmap;
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS. Please instantiate
@@ -97,6 +106,29 @@ package org.interguild.game.tiles {
 			this.buoyancy = buoyancy;
 		}
 
+		protected function setFaces(normal:BitmapData, falling:BitmapData = null):void {
+			//normal
+			normalFace = new Bitmap(normal);
+			addChild(normalFace);
+
+			//falling
+			if (falling == null)
+				falling = normal;
+			var face:Bitmap = new Bitmap(falling);
+			face.x = -face.width / 2;
+			face.y = -face.height / 2;
+			tiltFace = new Sprite();
+			tiltFace.addChild(face);
+			tiltFace.rotation = FALL_TILT_ANGLE;
+//			tiltFace.rotation = FALL_TILT_ANGLE_MIN + (Math.random() * (FALL_TILT_ANGLE_MAX - FALL_TILT_ANGLE_MIN));
+//			if (Math.random() > 0.5)
+//				tiltFace.rotation *= -1;
+			tiltFace.x = 16;
+			tiltFace.y = 16;
+			tiltFace.visible = false;
+			addChild(tiltFace);
+		}
+
 		public function moveTo(_x:Number, _y:Number):void {
 			x = newX = _x;
 			y = newY = _y;
@@ -118,7 +150,7 @@ package org.interguild.game.tiles {
 		public function set markedForDeath(b:Boolean):void {
 			dead = b;
 			speedX = speedY = 0;
-			visible = false;
+//			visible = false;
 		}
 
 		public function get markedForDeath():Boolean {
@@ -318,6 +350,15 @@ package org.interguild.game.tiles {
 			if (b != active)
 				sideBlocked = [false, false, false, false];
 			active = b;
+			if (tiltFace) {
+				if (active) {
+					tiltFace.visible = true;
+					normalFace.visible = false;
+				} else {
+					tiltFace.visible = false;
+					normalFace.visible = true;
+				}
+			}
 		}
 
 		public function get isActive():Boolean {
