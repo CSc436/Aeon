@@ -148,23 +148,35 @@ package org.interguild.editor.tilelist {
 			map[WoodCrate.LEVEL_CODE_CHAR] = WoodCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Crate", WoodCrate.LEVEL_CODE_CHAR));
 
-			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
-			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
+			map[ArrowCrate.LEVEL_CODE_CHAR_WOOD_RIGHT] = ArrowCrate.EDITOR_ICON_WOOD_RIGHT;
+			addItem(new TileListItem("Arrow Crate Right", ArrowCrate.LEVEL_CODE_CHAR_WOOD_RIGHT));
 
-			map[ArrowWoodCrate.LEVEL_CODE_CHAR_RIGHT] = ArrowWoodCrate.EDITOR_ICON_RIGHT;
-			addItem(new TileListItem("Arrow Crate Right", ArrowWoodCrate.LEVEL_CODE_CHAR_RIGHT));
+			map[ArrowCrate.LEVEL_CODE_CHAR_WOOD_LEFT] = ArrowCrate.EDITOR_ICON_WOOD_LEFT;
+			addItem(new TileListItem("Arrow Crate Left", ArrowCrate.LEVEL_CODE_CHAR_WOOD_LEFT));
 
-			map[ArrowWoodCrate.LEVEL_CODE_CHAR_LEFT] = ArrowWoodCrate.EDITOR_ICON_LEFT;
-			addItem(new TileListItem("Arrow Crate Left", ArrowWoodCrate.LEVEL_CODE_CHAR_LEFT));
+			map[ArrowCrate.LEVEL_CODE_CHAR_WOOD_UP] = ArrowCrate.EDITOR_ICON_WOOD_UP;
+			addItem(new TileListItem("Arrow Crate Up", ArrowCrate.LEVEL_CODE_CHAR_WOOD_UP));
 
-			map[ArrowWoodCrate.LEVEL_CODE_CHAR_UP] = ArrowWoodCrate.EDITOR_ICON_UP;
-			addItem(new TileListItem("Arrow Crate Up", ArrowWoodCrate.LEVEL_CODE_CHAR_UP));
-
-			map[ArrowWoodCrate.LEVEL_CODE_CHAR_DOWN] = ArrowWoodCrate.EDITOR_ICON_DOWN;
-			addItem(new TileListItem("Arrow Crate Down", ArrowWoodCrate.LEVEL_CODE_CHAR_DOWN));
+			map[ArrowCrate.LEVEL_CODE_CHAR_WOOD_DOWN] = ArrowCrate.EDITOR_ICON_WOOD_DOWN;
+			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_WOOD_DOWN));
 
 			map[DynamiteWoodCrate.LEVEL_CODE_CHAR] = DynamiteWoodCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteWoodCrate.LEVEL_CODE_CHAR));
+			
+			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
+			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT] = ArrowCrate.EDITOR_ICON_WOOD_RIGHT;
+			addItem(new TileListItem("Steel Arrow Right", ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT] = ArrowCrate.EDITOR_ICON_WOOD_LEFT;
+			addItem(new TileListItem("Steel Arrow Left", ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP] = ArrowCrate.EDITOR_ICON_WOOD_UP;
+			addItem(new TileListItem("Steel Arrow Up", ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP));
+			
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN] = ArrowCrate.EDITOR_ICON_WOOD_DOWN;
+			addItem(new TileListItem("Steel Arrow Down", ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN));
 			
 			map[DynamiteSteelCrate.LEVEL_CODE_CHAR] = DynamiteSteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Dynamite Crate", DynamiteSteelCrate.LEVEL_CODE_CHAR));

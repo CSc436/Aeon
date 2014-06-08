@@ -52,10 +52,14 @@ package org.interguild {
 		public static const STEEL_CRATE:BitmapData = new SteelCrateSprite();
 		public static const WOOD_CRATE:BitmapData = new WoodenCrateSprite();
 
-		public static const ARROW_CRATE_RIGHT:BitmapData = new LightningBoxRight();
-		public static const ARROW_CRATE_LEFT:BitmapData = new LightningBoxLeft();
-		public static const ARROW_CRATE_UP:BitmapData = new LightningBoxUp();
-		public static const ARROW_CRATE_DOWN:BitmapData = new LightningBoxDown();
+		public static const ARROW_CRATE_WOOD_RIGHT:BitmapData = new LightningBoxRight();
+		public static const ARROW_CRATE_WOOD_LEFT:BitmapData = new LightningBoxLeft();
+		public static const ARROW_CRATE_WOOD_UP:BitmapData = new LightningBoxUp();
+		public static const ARROW_CRATE_WOOD_DOWN:BitmapData = new LightningBoxDown();
+		public static const ARROW_CRATE_STEEL_RIGHT:BitmapData = new LightningBoxRight();
+		public static const ARROW_CRATE_STEEL_LEFT:BitmapData = new LightningBoxLeft();
+		public static const ARROW_CRATE_STEEL_UP:BitmapData = new LightningBoxUp();
+		public static const ARROW_CRATE_STEEL_DOWN:BitmapData = new LightningBoxDown();
 
 		public static const DYNAMITE_WOOD_CRATE:BitmapData = new WoodenDynamiteSprite();
 

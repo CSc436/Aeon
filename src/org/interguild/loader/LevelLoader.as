@@ -54,28 +54,32 @@ package org.interguild.loader {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowWoodCrate.LEVEL_CODE_CHAR_RIGHT:
+				case ArrowCrate.LEVEL_CODE_CHAR_WOOD_RIGHT:
+				case ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.RIGHT);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowWoodCrate(px, py, Direction.RIGHT, arrow);
+					tile = new ArrowCrate(px, py, Direction.RIGHT, arrow, curChar == ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowWoodCrate.LEVEL_CODE_CHAR_DOWN:
+				case ArrowCrate.LEVEL_CODE_CHAR_WOOD_DOWN:
+				case ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.DOWN);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowWoodCrate(px, py, Direction.DOWN, arrow);
+					tile = new ArrowCrate(px, py, Direction.DOWN, arrow, curChar == ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowWoodCrate.LEVEL_CODE_CHAR_LEFT:
+				case ArrowCrate.LEVEL_CODE_CHAR_WOOD_LEFT:
+				case ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.LEFT);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowWoodCrate(px, py, Direction.LEFT, arrow);
+					tile = new ArrowCrate(px, py, Direction.LEFT, arrow, curChar == ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowWoodCrate.LEVEL_CODE_CHAR_UP:
+				case ArrowCrate.LEVEL_CODE_CHAR_WOOD_UP:
+				case ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.UP);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowWoodCrate(px, py, Direction.UP, arrow);
+					tile = new ArrowCrate(px, py, Direction.UP, arrow, curChar == ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP);
 					level.createCollidableObject(tile);
 					break;
 				case Collectable.LEVEL_CODE_CHAR:

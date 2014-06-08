@@ -3,6 +3,10 @@ ArrowWoodCrate (Right)	>
 ArrowWoodCrate (Left)	<
 ArrowWoodCrate (Up)		^
 ArrowWoodCrate (Down)	v
+ArrowSteelCrate (Right)	]
+ArrowSteelCrate (Left)	[
+ArrowSteelCrate (Up)	T
+ArrowSteelCrate (Down)	H
 Collectable				c
 DynamiteSteelCrate		D
 DynamiteStick			[none]

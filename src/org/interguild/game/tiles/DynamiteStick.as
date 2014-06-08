@@ -18,7 +18,7 @@ package org.interguild.game.tiles {
 		private static const WIDTH:uint = 16;
 		private static const HEIGHT:uint = 16;
 		private static const POS_OFFSET_X:int = 16 - WIDTH / 2;
-		private static const POS_OFFSET_Y:int = 16 - HEIGHT / 2;
+		private static const POS_OFFSET_Y:int = 0;
 
 		private static const INIT_SPEED_Y:Number = -12;
 		private static const INIT_SPEED_X:Number = 8;
