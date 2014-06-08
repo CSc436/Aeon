@@ -77,8 +77,11 @@ package org.interguild.game {
 			//init portals list
 			portals = new Vector.<FinishLine>();
 
+			//init collision grid
+			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
+
 			//init player and camera
-			player = new Player();
+			player = new Player(collisionGrid);
 			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
 			camera.addChild(player);
@@ -86,9 +89,6 @@ package org.interguild.game {
 			//init Terrain view
 			tv = TerrainView.init(widthInPixels, heightInPixels);
 			camera.addChild(tv);
-
-			//init collision grid
-			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
 
 			//init level hud
 			hud = new LevelHUD();
@@ -264,10 +264,15 @@ package org.interguild.game {
 			CONFIG::DEBUG {
 				camera.addChildAt(collisionGrid, 1);
 				camera.addChild(debugSprite);
+
+				if (isSlowdown) {
+					player.pressedJump = true;
+					onGameLoop(null);
+					return;
+				}
 			}
 
 			player.pressedJump = true;
-
 			timer.start();
 		}
 
@@ -337,7 +342,7 @@ package org.interguild.game {
 
 		CONFIG::DEBUG {
 			private var lastTime:uint;
-			private var currentSum:Number =0;
+			private var currentSum:Number = 0;
 			private var countPerAverage:uint = 10;
 			private var counter:uint = 0;
 

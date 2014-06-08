@@ -2,8 +2,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	import org.interguild.Aeon;
+
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
@@ -22,7 +21,6 @@ package org.interguild.game.collision {
 
 		private var delays:DelayManager;
 		private var deactivateObjects:Array;
-
 
 		private var sounds:SoundMan;
 
@@ -69,6 +67,14 @@ package org.interguild.game.collision {
 			delays = null;
 		}
 
+		public function needToCrawl(r:uint, c:uint):Boolean {
+			if (!inBounds(r, c))
+				return false;
+
+			var tile:GridTile = grid[r][c];
+			return tile.needToCrawl();
+		}
+
 		private function inBounds(row:int, col:int):Boolean {
 			return (row >= 0 && row < grid.length && col >= 0 && col < grid[0].length);
 		}
@@ -95,10 +101,10 @@ package org.interguild.game.collision {
 			var box:Rectangle = o.hitbox;
 			var gridTile:GridTile;
 
-			var top:int = box.top / Aeon.TILE_HEIGHT;
-			var left:int = box.left / Aeon.TILE_WIDTH;
-			var bottom:int = (box.bottom - 1) / Aeon.TILE_HEIGHT;
-			var right:int = (box.right - 1) / Aeon.TILE_WIDTH;
+			var top:int = box.top / 32;
+			var left:int = box.left / 32;
+			var bottom:int = (box.bottom - 1) / 32;
+			var right:int = (box.right - 1) / 32;
 			if (o is Player) {
 				top--;
 				left--;
@@ -179,7 +185,7 @@ package org.interguild.game.collision {
 			//iterate through all of the Collision GridTiles that the target is in
 			for (var i:uint = 0; i < len; i++) {
 				var tile:GridTile = gTiles[i];
-				var gObjs:Vector.<CollidableObject> = tile.myCollisionObjects;
+				var gObjs:Array = tile.myCollisionObjects;
 				var olen:uint = gObjs.length;
 				//interate through all of the objects in each GridTile
 				for (var j:uint = 0; j < olen; j++) {
@@ -264,7 +270,7 @@ package org.interguild.game.collision {
 					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
 						delays.onDeath(otherObject);
 					} else if (p && !destroyed) { // player lands on object
-						p.landedOnGround();
+						p.landedOnGround(otherBoxCurr.top);
 					} else if (p == null) { // something else lands on object
 						deactivateObjects.push(activeObject);
 					}
@@ -276,7 +282,7 @@ package org.interguild.game.collision {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
 							otherObject.speedY = 0;
 						}
-					} else {
+					} else if (!(p && p.isStanding)) {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
 					}

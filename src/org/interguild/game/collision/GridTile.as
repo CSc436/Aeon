@@ -6,7 +6,7 @@ package org.interguild.game.collision {
 
 	public class GridTile extends Sprite {
 
-		private var myStuff:Vector.<CollidableObject>;
+		private var myStuff:Array;
 		private var row:uint;
 		private var col:uint;
 		private var grid:CollisionGrid;
@@ -17,7 +17,7 @@ package org.interguild.game.collision {
 			col = c;
 			grid = g;
 			mouseEnabled = false;
-			myStuff = new Vector.<CollidableObject>();
+			myStuff = new Array();
 			CONFIG::DEBUG {
 				graphics.beginFill(0xCCCCCC, 0.5);
 				graphics.drawRect(0, 0, 31, 31);
@@ -64,7 +64,7 @@ package org.interguild.game.collision {
 			}
 		}
 
-		public function get myCollisionObjects():Vector.<CollidableObject> {
+		public function get myCollisionObjects():Array {
 			return myStuff;
 		}
 
@@ -126,7 +126,17 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(o is CollidableObject && !o.isActive && o.isGravible())
+				if(!o.isActive && o.isGravible())
+					return true;
+			}
+			return false;
+		}
+		
+		public function needToCrawl():Boolean{
+			var len:uint = myStuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = myStuff[i];
+				if(o is CollidableObject && !o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER))
 					return true;
 			}
 			return false;

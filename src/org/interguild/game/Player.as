@@ -3,11 +3,14 @@ package org.interguild.game {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-
+	import flash.geom.Rectangle;
+	
 	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 	import org.interguild.SoundMan;
+	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.Destruction;
+	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {
@@ -91,7 +94,11 @@ package org.interguild.game {
 
 		private var isOnGround:Boolean;
 		private var isCrawling:Boolean;
+		private var mustCrawl:Boolean;
+		private var mustCrawlY:uint;
 		private var isPreview:Boolean;
+
+		private var grid:CollisionGrid;
 
 		private var currentFrame:uint = 1;
 
@@ -100,7 +107,7 @@ package org.interguild.game {
 		public var isFacingRight:Boolean;
 		public var pressedJump:Boolean;
 
-		public function Player() {
+		public function Player(grid:CollisionGrid) {
 			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			destruction.destroyedBy(Destruction.ARROWS);
@@ -110,6 +117,7 @@ package org.interguild.game {
 
 			initAnimations();
 
+			this.grid = grid;
 			keys = KeyMan.getMe();
 			sounds = SoundMan.getMe();
 			isFacingRight = true;
@@ -160,8 +168,9 @@ package org.interguild.game {
 			finishGameLoop();
 		}
 
-		public function landedOnGround():void {
+		public function landedOnGround(groundY:Number):void {
 			isOnGround = true;
+			mustCrawlY = (groundY / 32) - 2;
 		}
 
 		public function get isStanding():Boolean {
@@ -194,11 +203,18 @@ package org.interguild.game {
 				timeToRestart = true;
 			}
 		}
-		
-		private function updateMustCrawl():void{
-			if(!isOnGround)
+
+		private function updateMustCrawl():void {
+			if (!isOnGround)
 				return;
-//			this.myCollisionGridTiles
+			var mybox:Rectangle = this.hitbox;
+			var left:Number = mybox.left / 32;
+			var right:Number = (mybox.right - 1) / 32;
+
+			mustCrawl = grid.needToCrawl(mustCrawlY, left);
+			if (!mustCrawl && left != right) {
+				mustCrawl = grid.needToCrawl(mustCrawlY, right);
+			}
 		}
 
 		private function updateKeys():void {
@@ -230,7 +246,8 @@ package org.interguild.game {
 			}
 
 			//crawl
-			if (keys.isKeyDown && !isCrawling && isOnGround) {
+			var doCrawl:Boolean = keys.isKeyDown || mustCrawl;
+			if (doCrawl && !isCrawling && isOnGround) {
 				//start crawling
 				newY += (STANDING_HEIGHT - CRAWLING_HEIGHT);
 				hitbox.height = CRAWLING_HEIGHT;
@@ -238,7 +255,7 @@ package org.interguild.game {
 				CONFIG::DEBUG {
 					showHitBox();
 				}
-			} else if (!keys.isKeyDown && isCrawling) {
+			} else if (!doCrawl && isCrawling) {
 				//stop crawling
 				newY -= (STANDING_HEIGHT - CRAWLING_HEIGHT);
 				hitbox.height = STANDING_HEIGHT;
