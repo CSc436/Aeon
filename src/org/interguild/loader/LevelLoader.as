@@ -82,6 +82,10 @@ package org.interguild.loader {
 					tile = new Collectable(px, py);
 					level.createCollidableObject(tile);
 					break;
+				case Platform.LEVEL_CODE_CHAR:
+					tile = new Platform(px, py);
+					level.createCollidableObject(tile);
+					break;
 				case DynamiteWoodCrate.LEVEL_CODE_CHAR:
 					explosion = new Explosion(FAKE_X, FAKE_Y);
 					level.createCollidableObject(explosion, true);

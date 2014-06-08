@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
@@ -75,7 +75,7 @@ package org.interguild.editor.levelpane {
 		private var isShiftMouseDown:Boolean;
 		private var isSelectDown:Boolean;
 
-		public function EditorLevel(numRows:uint = 0, numCols:uint = 0) {
+		public function EditorLevel(numRows:uint = 0, numCols:uint = 0, generateBorder:Boolean = true) {
 			//init dimensions
 			cols = numCols;
 			rows = numRows;
@@ -92,11 +92,7 @@ package org.interguild.editor.levelpane {
 			redoList = new Array();
 
 			//init 2D array
-			cells = new Array(rows);
-			for (var i:uint = 0; i < rows; i++) {
-				cells[i] = new Array(cols);
-			}
-			initGridCells();
+			initGridCells(generateBorder);
 
 			//init terrain
 			terrainID = 1; //to force it to update
@@ -501,9 +497,9 @@ package org.interguild.editor.levelpane {
 		public function setTileAt(char:String, row:uint, col:uint):void {
 			if (row < rows && col < cols) {
 				clickCell(EditorCell(cells[row][col]), char);
-			} else {
+			}/* else {
 				throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
-			}
+			}*/
 		}
 
 		public function selectAll():void {
@@ -757,13 +753,15 @@ package org.interguild.editor.levelpane {
 			return r < rows && c < cols && r >= 0 && c >= 0;
 		}
 
-		private function initGridCells():void {
+		private function initGridCells(generateBorder:Boolean):void {
+			cells = new Array(rows);
 			for (var i:uint = 0; i < rows; i++) {
+				cells[i] = new Array(cols);
 				for (var j:uint = 0; j < cols; j++) {
 					var c:EditorCell = new EditorCell();
 					c.x = j * c.width;
 					c.y = i * c.height;
-					if (i == 0 || j == 0 || i == rows - 1 || j == cols - 1) {
+					if (generateBorder && (i == 0 || j == 0 || i == rows - 1 || j == cols - 1)) {
 						c.setTile("x");
 					}
 					cells[i][j] = c;

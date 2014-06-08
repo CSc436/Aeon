@@ -3,6 +3,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.Platform;
 
 	public class GridTile extends Sprite {
 
@@ -100,7 +101,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if (!o.isActive)
+				if (!o.isActive && !(o is Platform))
 					return true;
 			}
 			return false;
@@ -136,7 +137,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(o is CollidableObject && !o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER))
+				if(!o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER) && !(o is Platform))
 					return true;
 			}
 			return false;

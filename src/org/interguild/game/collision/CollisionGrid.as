@@ -2,7 +2,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
@@ -11,6 +11,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.DynamiteWoodCrate;
 	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
+	import org.interguild.game.tiles.Platform;
 
 	public class CollisionGrid extends Sprite {
 
@@ -213,16 +214,20 @@ package org.interguild.game.collision {
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
 			var otherBoxCurr:Rectangle = otherObject.hitbox;
 
-			// get dirction of collision
-			var direction:uint = Direction.determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
-			if (direction == Direction.NONE)
-				return;
-
-			//EVERYTHING BELOW THIS LINE IS DEFINITELY A COLLISION
-
 			if (activeObject is Player) {
 				p = Player(activeObject);
 			}
+			var isPlatform:Boolean = p && otherObject is Platform;
+
+			// get dirction of collision
+			var direction:uint = Direction.determineDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
+			if (isPlatform && direction != Direction.DOWN && Platform(otherObject).countsCollision(activeObject, activeBoxCurr)) {
+				direction = Direction.DOWN;
+			}
+			if (direction == Direction.NONE && !activeBoxCurr.intersects(otherBoxCurr))
+				return;
+
+			//EVERYTHING BELOW THIS LINE IS DEFINITELY A COLLISION
 
 			/*
 			* PLAYER GRABS COLLECTABLE
@@ -244,7 +249,7 @@ package org.interguild.game.collision {
 			 */
 			var destroyed:Boolean = false;
 			if (activeObject.canDestroy(otherObject)) {
-				if(p && otherObject is DynamiteWoodCrate){
+				if (p && otherObject is DynamiteWoodCrate) {
 					DynamiteWoodCrate(otherObject).killedByPlayer(direction, activeBoxCurr);
 				}
 				delays.onDeath(otherObject);
@@ -278,7 +283,7 @@ package org.interguild.game.collision {
 					} else if (p == null) { // something else lands on object
 						deactivateObjects.push(activeObject);
 					}
-				} else if (direction == Direction.UP) {
+				} else if (direction == Direction.UP && !isPlatform) {
 					if (otherObject.isActive) {
 						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !activeObject.canDestroy(otherObject)) {
 							delays.onDeath(activeObject);
@@ -290,10 +295,10 @@ package org.interguild.game.collision {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
 					}
-				} else if (direction == Direction.RIGHT) {
+				} else if (direction == Direction.RIGHT && !isPlatform) {
 					activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
 					activeObject.speedX = 0;
-				} else if (direction == Direction.LEFT) {
+				} else if (direction == Direction.LEFT && !isPlatform) {
 					activeObject.newX = otherBoxCurr.right;
 					activeObject.speedX = 0;
 				}
@@ -409,13 +414,14 @@ package org.interguild.game.collision {
 			//top
 			var bx:int = col;
 			var by:int = row - 1;
+			var isNotPlatform:Boolean = !(o is Platform);
 			if (inBounds(by, bx)) {
 				gridTile = grid[by][bx];
 				if (o) {
-					gridTile.block(Direction.DOWN);
-					if (gridTile.isBlocking()) {
+					if (isNotPlatform)
+						gridTile.block(Direction.DOWN);
+					if (gridTile.isBlocking())
 						o.setBlocked(Direction.UP);
-					}
 				} else {
 					gridTile.unblock(Direction.DOWN);
 				}
@@ -426,10 +432,10 @@ package org.interguild.game.collision {
 			if (inBounds(by, bx)) {
 				gridTile = grid[by][bx];
 				if (o) {
-					gridTile.block(Direction.UP);
-					if (gridTile.isBlocking()) {
+					if (isNotPlatform)
+						gridTile.block(Direction.UP);
+					if (gridTile.isBlocking())
 						o.setBlocked(Direction.DOWN);
-					}
 				} else {
 					gridTile.unblock(Direction.UP);
 				}
@@ -441,10 +447,10 @@ package org.interguild.game.collision {
 			if (inBounds(by, bx)) {
 				gridTile = grid[by][bx];
 				if (o) {
-					gridTile.block(Direction.LEFT);
-					if (gridTile.isBlocking()) {
+					if (isNotPlatform)
+						gridTile.block(Direction.LEFT);
+					if (gridTile.isBlocking())
 						o.setBlocked(Direction.RIGHT);
-					}
 				} else {
 					gridTile.unblock(Direction.LEFT);
 				}
@@ -455,10 +461,10 @@ package org.interguild.game.collision {
 			if (inBounds(by, bx)) {
 				gridTile = grid[by][bx];
 				if (o) {
-					gridTile.block(Direction.RIGHT);
-					if (gridTile.isBlocking()) {
+					if (isNotPlatform)
+						gridTile.block(Direction.RIGHT);
+					if (gridTile.isBlocking())
 						o.setBlocked(Direction.LEFT);
-					}
 				} else {
 					gridTile.unblock(Direction.RIGHT);
 				}

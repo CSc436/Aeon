@@ -10,7 +10,7 @@ package org.interguild.game.tiles {
 	import org.interguild.Aeon;
 
 	/**
-	 * 
+	 *
 	 * @author Livio
 	 */
 	public class Terrain extends CollidableObject {
@@ -24,15 +24,19 @@ package org.interguild.game.tiles {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
 
-			//debugging labels
-			CONFIG::DEBUG {
-				var tf:TextField = new TextField();
-				tf.defaultTextFormat = new TextFormat("Arial", 5, 0x000000);
-				tf.autoSize = TextFieldAutoSize.LEFT;
-				tf.selectable = false;
-				tf.text = "(" + x + ", " + y + ")";
-				addChild(tf);
-			}
+//			//debugging labels
+//			CONFIG::DEBUG {
+//				var tf:TextField = new TextField();
+//				tf.defaultTextFormat = new TextFormat("Arial", 5, 0x000000);
+//				tf.autoSize = TextFieldAutoSize.LEFT;
+//				tf.selectable = false;
+//				tf.text = "(" + x + ", " + y + ")";
+//				addChild(tf);
+//			}
+//			CONFIG::NODEBUG{
+//				visible = false;
+//			}
+			visible = false;
 
 			TerrainView.getMe().drawTerrainAt(x, y);
 		}

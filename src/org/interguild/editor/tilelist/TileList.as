@@ -168,6 +168,9 @@ package org.interguild.editor.tilelist {
 			
 			map[DynamiteSteelCrate.LEVEL_CODE_CHAR] = DynamiteSteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Dynamite Crate", DynamiteSteelCrate.LEVEL_CODE_CHAR));
+			
+			map[Platform.LEVEL_CODE_CHAR] = Platform.EDITOR_ICON;
+			addItem(new TileListItem("Wooden Platform", Platform.LEVEL_CODE_CHAR));
 		}
 
 		private function onClick(evt:MouseEvent):void {

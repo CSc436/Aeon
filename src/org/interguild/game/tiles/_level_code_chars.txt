@@ -9,6 +9,7 @@ DynamiteStick			[none]
 DynamiteWoodCrate		d
 Explosion				[none]
 FinishLine				f
+Platform				-
 SteelCrate				s
 Terrain					x
 WoodCrate				w

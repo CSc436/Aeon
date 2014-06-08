@@ -1,8 +1,9 @@
 package org.interguild.game.collision {
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.Platform;
 
 	public class Direction {
 
@@ -19,7 +20,7 @@ package org.interguild.game.collision {
 			var dir:uint;
 			if (activeBoxCurr.intersects(otherBoxPrev) || otherBoxCurr.intersects(activeBoxPrev)) {
 				dir = simpleDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
-				if (dir == Direction.NONE)
+				if (dir == Direction.NONE && !(otherObject is Platform))
 					return simpleBackupDirection(activeObject, otherObject, activeBoxPrev, otherBoxPrev, activeBoxCurr, otherBoxCurr);
 				else
 					return dir;

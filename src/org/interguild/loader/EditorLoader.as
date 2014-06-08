@@ -11,7 +11,7 @@ package org.interguild.loader {
 		}
 		
 		protected override function setLevelInfo():void{
-			level = new EditorLevel(this.levelWidth, this.levelHeight);
+			level = new EditorLevel(this.levelHeight, this.levelWidth, false);
 			level.title = this.title;
 			level.terrainType = this.terrainType;
 			level.backgroundType = this.backgroundType;
