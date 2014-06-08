@@ -4,7 +4,20 @@ package org.interguild.loader {
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.Direction;
-	import org.interguild.game.tiles.*;
+	import org.interguild.game.tiles.Arrow;
+	import org.interguild.game.tiles.ArrowCrate;
+	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.DynamiteSteelCrate;
+	import org.interguild.game.tiles.DynamiteStick;
+	import org.interguild.game.tiles.DynamiteWoodCrate;
+	import org.interguild.game.tiles.Explosion;
+	import org.interguild.game.tiles.FinishLine;
+	import org.interguild.game.tiles.Platform;
+	import org.interguild.game.tiles.SecretArea;
+	import org.interguild.game.tiles.SteelCrate;
+	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.WoodCrate;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -44,6 +57,10 @@ package org.interguild.loader {
 					break;
 				case Terrain.LEVEL_CODE_CHAR:
 					tile = new Terrain(px, py);
+					level.createCollidableObject(tile);
+					break;
+				case SecretArea.LEVEL_CODE_CHAR:
+					tile = new SecretArea(px, py);
 					level.createCollidableObject(tile);
 					break;
 				case WoodCrate.LEVEL_CODE_CHAR:

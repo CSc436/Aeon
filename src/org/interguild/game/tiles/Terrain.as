@@ -18,11 +18,11 @@ package org.interguild.game.tiles {
 		public static const LEVEL_CODE_CHAR:String = 'x';
 
 		private static const IS_SOLID:Boolean = true;
-		private static const HAS_GRAVITY:Boolean = false;
+		private static const NO_GRAVITY:Boolean = false;
 
 		public function Terrain(x:int, y:int) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
-			setProperties(IS_SOLID, HAS_GRAVITY);
+			setProperties(IS_SOLID, NO_GRAVITY);
 
 //			//debugging labels
 //			CONFIG::DEBUG {

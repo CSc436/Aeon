@@ -4,6 +4,7 @@ package org.interguild.game.collision {
 	
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Platform;
+	import org.interguild.game.tiles.SecretArea;
 
 	public class GridTile extends Sprite {
 
@@ -137,7 +138,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(!o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER) && !(o is Platform))
+				if(!o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER) && !(o is Platform) && !(o is SecretArea))
 					return true;
 			}
 			return false;

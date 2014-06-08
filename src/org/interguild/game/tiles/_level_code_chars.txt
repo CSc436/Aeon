@@ -14,6 +14,7 @@ DynamiteWoodCrate		d
 Explosion				[none]
 FinishLine				f
 Platform				-
+SecretArea				z
 SteelCrate				s
 Terrain					x
 WoodCrate				w

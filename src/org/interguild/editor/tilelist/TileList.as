@@ -14,7 +14,16 @@ package org.interguild.editor.tilelist {
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.game.Player;
-	import org.interguild.game.tiles.*;
+	import org.interguild.game.tiles.ArrowCrate;
+	import org.interguild.game.tiles.Collectable;
+	import org.interguild.game.tiles.DynamiteSteelCrate;
+	import org.interguild.game.tiles.DynamiteWoodCrate;
+	import org.interguild.game.tiles.FinishLine;
+	import org.interguild.game.tiles.Platform;
+	import org.interguild.game.tiles.SecretArea;
+	import org.interguild.game.tiles.SteelCrate;
+	import org.interguild.game.tiles.Terrain;
+	import org.interguild.game.tiles.WoodCrate;
 
 	public class TileList extends Sprite {
 
@@ -38,20 +47,29 @@ package org.interguild.editor.tilelist {
 
 		private static var map:Object = new Object();
 		private static var terrainItem:TileListItem;
+		private static var secretAreaItem:TileListItem;
 
 		public static function getIcon(charCode:String):BitmapData {
 			return map[charCode];
 		}
 
 		public static function setTerrainType(id:uint):void {
-			var img:BitmapData = new BitmapData(32, 32);
-			img.copyPixels(Assets.getTerrainImage(id), new Rectangle(0, 0, 32, 32), new Point(0, 0));
-
-			map[Terrain.LEVEL_CODE_CHAR] = img;
 			EditorLevel.forceChange = true;
-			if (terrainItem) {
+			var rect:Rectangle = new Rectangle(0, 0, 32, 32);
+			var point:Point = new Point(0, 0);
+
+			var img:BitmapData = new BitmapData(32, 32);
+			img.copyPixels(Assets.getTerrainImage(id), rect, point);
+			map[Terrain.LEVEL_CODE_CHAR] = img;
+			if (terrainItem)
 				terrainItem.changeIcon(img);
-			}
+
+			var secret:BitmapData = new BitmapData(32, 32, true);
+			var alpha:BitmapData = new BitmapData(32, 32, true, 0x80000000);
+			secret.copyPixels(Assets.getTerrainImage(id), rect, point, alpha, point);
+			map[SecretArea.LEVEL_CODE_CHAR] = secret;
+			if (secretAreaItem)
+				secretAreaItem.changeIcon(secret);
 		}
 
 		private var editor:EditorPage;
@@ -136,6 +154,9 @@ package org.interguild.editor.tilelist {
 			terrainItem = currentSelection;
 			addItem(currentSelection);
 
+			secretAreaItem = new TileListItem("Secret Area", SecretArea.LEVEL_CODE_CHAR);
+			addItem(secretAreaItem);
+
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
 			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
 
@@ -162,25 +183,25 @@ package org.interguild.editor.tilelist {
 
 			map[DynamiteWoodCrate.LEVEL_CODE_CHAR] = DynamiteWoodCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteWoodCrate.LEVEL_CODE_CHAR));
-			
+
 			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT] = ArrowCrate.EDITOR_ICON_WOOD_RIGHT;
 			addItem(new TileListItem("Steel Arrow Right", ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT] = ArrowCrate.EDITOR_ICON_WOOD_LEFT;
 			addItem(new TileListItem("Steel Arrow Left", ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP] = ArrowCrate.EDITOR_ICON_WOOD_UP;
 			addItem(new TileListItem("Steel Arrow Up", ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP));
-			
+
 			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN] = ArrowCrate.EDITOR_ICON_WOOD_DOWN;
 			addItem(new TileListItem("Steel Arrow Down", ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN));
-			
+
 			map[DynamiteSteelCrate.LEVEL_CODE_CHAR] = DynamiteSteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Dynamite Crate", DynamiteSteelCrate.LEVEL_CODE_CHAR));
-			
+
 			map[Platform.LEVEL_CODE_CHAR] = Platform.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Platform", Platform.LEVEL_CODE_CHAR));
 		}

@@ -10,6 +10,7 @@ package org.interguild.editor.levelpane {
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.Player;
+	import org.interguild.game.tiles.SecretArea;
 	import org.interguild.game.tiles.Terrain;
 
 	/**
@@ -147,7 +148,7 @@ package org.interguild.editor.levelpane {
 				for (var r:uint = 0; r < rows; r++) {
 					for (var c:uint = 0; c < cols; c++) {
 						var cell:EditorCell = EditorCell(cells[r][c]);
-						if (cell.char == Terrain.LEVEL_CODE_CHAR) {
+						if (cell.char == Terrain.LEVEL_CODE_CHAR || cell.char == SecretArea.LEVEL_CODE_CHAR) {
 							cell.redraw();
 						}
 					}

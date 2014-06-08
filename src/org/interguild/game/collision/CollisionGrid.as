@@ -2,7 +2,7 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
@@ -12,6 +12,8 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.Platform;
+	import org.interguild.game.tiles.SecretArea;
+	import org.interguild.game.tiles.WoodCrate;
 
 	public class CollisionGrid extends Sprite {
 
@@ -149,6 +151,15 @@ package org.interguild.game.collision {
 
 		/**
 		 * Handle collisions!
+		 * 
+		 * THE PLAN
+		 * Resolve collisions in this order
+		 * 		player on inactive
+		 * 		active on inactive
+		 * 		player on active
+		 * 		active on active
+		 * How to implement this: Create a big list of pairs and then iterate through it?
+		 * will take quite a bit of work, refactoring, debugging
 		 */
 		public function detectAndHandleCollisions(target:CollidableObject):void {
 			if (target is Explosion) {
@@ -192,7 +203,7 @@ package org.interguild.game.collision {
 				//interate through all of the objects in each GridTile
 				for (var j:uint = 0; j < olen; j++) {
 					var obj:CollidableObject = gObjs[j];
-					if (target != obj) {
+					if (target != obj && !(target is Player && obj is SecretArea)) {
 						var distance:Number = getDistance(obj, target);
 						//if potential corner collision
 						if (!target.hitbox.intersects(obj.hitbox)) {
@@ -216,6 +227,9 @@ package org.interguild.game.collision {
 
 			if (activeObject is Player) {
 				p = Player(activeObject);
+				if(otherObject is WoodCrate){
+					trace("hi");
+				}
 			}
 			var isPlatform:Boolean = p && otherObject is Platform;
 
