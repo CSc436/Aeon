@@ -7,7 +7,6 @@ package org.interguild.game.tiles {
 
 
 	public class Arrow extends CollidableObject {
-		public static const LEVEL_CODE_CHAR:String = 'a';
 
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;

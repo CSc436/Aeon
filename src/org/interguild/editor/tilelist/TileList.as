@@ -14,13 +14,7 @@ package org.interguild.editor.tilelist {
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.game.Player;
-	import org.interguild.game.tiles.ArrowCrate;
-	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.DynamiteWoodCrate;
-	import org.interguild.game.tiles.FinishLine;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.*;
 
 	public class TileList extends Sprite {
 
@@ -157,20 +151,23 @@ package org.interguild.editor.tilelist {
 			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_RIGHT] = ArrowCrate.EDITOR_ICON_RIGHT;
-			addItem(new TileListItem("Arrow Crate Right", ArrowCrate.LEVEL_CODE_CHAR_RIGHT));
+			map[ArrowWoodCrate.LEVEL_CODE_CHAR_RIGHT] = ArrowWoodCrate.EDITOR_ICON_RIGHT;
+			addItem(new TileListItem("Arrow Crate Right", ArrowWoodCrate.LEVEL_CODE_CHAR_RIGHT));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_LEFT] = ArrowCrate.EDITOR_ICON_LEFT;
-			addItem(new TileListItem("Arrow Crate Left", ArrowCrate.LEVEL_CODE_CHAR_LEFT));
+			map[ArrowWoodCrate.LEVEL_CODE_CHAR_LEFT] = ArrowWoodCrate.EDITOR_ICON_LEFT;
+			addItem(new TileListItem("Arrow Crate Left", ArrowWoodCrate.LEVEL_CODE_CHAR_LEFT));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_UP] = ArrowCrate.EDITOR_ICON_UP;
-			addItem(new TileListItem("Arrow Crate Up", ArrowCrate.LEVEL_CODE_CHAR_UP));
+			map[ArrowWoodCrate.LEVEL_CODE_CHAR_UP] = ArrowWoodCrate.EDITOR_ICON_UP;
+			addItem(new TileListItem("Arrow Crate Up", ArrowWoodCrate.LEVEL_CODE_CHAR_UP));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_DOWN] = ArrowCrate.EDITOR_ICON_DOWN;
-			addItem(new TileListItem("Arrow Crate Down", ArrowCrate.LEVEL_CODE_CHAR_DOWN));
+			map[ArrowWoodCrate.LEVEL_CODE_CHAR_DOWN] = ArrowWoodCrate.EDITOR_ICON_DOWN;
+			addItem(new TileListItem("Arrow Crate Down", ArrowWoodCrate.LEVEL_CODE_CHAR_DOWN));
 
 			map[DynamiteWoodCrate.LEVEL_CODE_CHAR] = DynamiteWoodCrate.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Dynamite Crate", DynamiteWoodCrate.LEVEL_CODE_CHAR));
+			
+			map[DynamiteSteelCrate.LEVEL_CODE_CHAR] = DynamiteSteelCrate.EDITOR_ICON;
+			addItem(new TileListItem("Steel Dynamite Crate", DynamiteSteelCrate.LEVEL_CODE_CHAR));
 		}
 
 		private function onClick(evt:MouseEvent):void {

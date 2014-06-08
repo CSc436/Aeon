@@ -7,7 +7,7 @@ package org.interguild.game.tiles {
 	import org.interguild.game.Level;
 	import org.interguild.game.collision.Direction;
 
-	public class ArrowCrate extends CollidableObject {
+	public class ArrowWoodCrate extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR_RIGHT:String = '>';
 		public static const LEVEL_CODE_CHAR_DOWN:String = 'v';
@@ -30,7 +30,7 @@ package org.interguild.game.tiles {
 
 		private var sounds:SoundMan;
 
-		public function ArrowCrate(x:int, y:int, direction:int, arrow:Arrow) {
+		public function ArrowWoodCrate(x:int, y:int, direction:int, arrow:Arrow) {
 			super(x, y, Aeon.TILE_WIDTH, Aeon.TILE_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT);
 			CollidableObject.setWoodenCrateDestruction(this);

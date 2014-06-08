@@ -10,7 +10,6 @@ package org.interguild.game {
 	import org.interguild.SoundMan;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.Destruction;
-	import org.interguild.game.collision.GridTile;
 	import org.interguild.game.tiles.CollidableObject;
 
 	public class Player extends CollidableObject {

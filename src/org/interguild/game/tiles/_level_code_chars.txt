@@ -1,0 +1,15 @@
+Arrow					[none]
+ArrowWoodCrate (Right)	>
+ArrowWoodCrate (Left)	<
+ArrowWoodCrate (Up)		^
+ArrowWoodCrate (Down)	v
+Collectable				c
+DynamiteSteelCrate		D
+DynamiteStick			[none]
+DynamiteWoodCrate		d
+Explosion				[none]
+FinishLine				f
+SteelCrate				s
+Terrain					x
+WoodCrate				w
+Player					#

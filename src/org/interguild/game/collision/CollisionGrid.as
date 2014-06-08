@@ -2,12 +2,13 @@ package org.interguild.game.collision {
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.DynamiteWoodCrate;
 	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
 
@@ -243,6 +244,9 @@ package org.interguild.game.collision {
 			 */
 			var destroyed:Boolean = false;
 			if (activeObject.canDestroy(otherObject)) {
+				if(p && otherObject is DynamiteWoodCrate){
+					DynamiteWoodCrate(otherObject).killedByPlayer(direction, activeBoxCurr);
+				}
 				delays.onDeath(otherObject);
 				destroyed = true;
 			}

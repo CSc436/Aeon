@@ -1,6 +1,7 @@
 package org.interguild.game.collision {
 	import org.interguild.game.Player;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.DynamiteStick;
 
 	public class DelayManager {
 
@@ -28,7 +29,7 @@ package org.interguild.game.collision {
 		public function onDeath(obj:CollidableObject):void {
 			if (!obj.markedForDeath) {
 				obj.markedForDeath = true;
-				if (obj is Player) {
+				if (diesImmediately(obj)) {
 					if (deathTimer == 0) {
 						deathList[deathList.length - 1].push(obj);
 					} else {
@@ -38,6 +39,10 @@ package org.interguild.game.collision {
 					deathList[deathTimer].push(obj);
 				}
 			}
+		}
+		
+		private function diesImmediately(obj:CollidableObject):Boolean{
+			return obj is Player || obj is DynamiteStick;
 		}
 
 		public function getDeaths():Array {

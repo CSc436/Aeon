@@ -4,16 +4,7 @@ package org.interguild.loader {
 	import org.interguild.game.Level;
 	import org.interguild.game.Player;
 	import org.interguild.game.collision.Direction;
-	import org.interguild.game.tiles.Arrow;
-	import org.interguild.game.tiles.ArrowCrate;
-	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.DynamiteWoodCrate;
-	import org.interguild.game.tiles.Explosion;
-	import org.interguild.game.tiles.FinishLine;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.*;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -46,6 +37,7 @@ package org.interguild.loader {
 			var tile:CollidableObject;
 			var arrow:Arrow;
 			var explosion:Explosion;
+			var stick:DynamiteStick;
 			switch (curChar) {
 				case Player.LEVEL_CODE_CHAR:
 					level.setPlayer(px, py);
@@ -62,28 +54,28 @@ package org.interguild.loader {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowCrate.LEVEL_CODE_CHAR_RIGHT:
+				case ArrowWoodCrate.LEVEL_CODE_CHAR_RIGHT:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.RIGHT);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowCrate(px, py, Direction.RIGHT, arrow);
+					tile = new ArrowWoodCrate(px, py, Direction.RIGHT, arrow);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowCrate.LEVEL_CODE_CHAR_DOWN:
+				case ArrowWoodCrate.LEVEL_CODE_CHAR_DOWN:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.DOWN);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowCrate(px, py, Direction.DOWN, arrow);
+					tile = new ArrowWoodCrate(px, py, Direction.DOWN, arrow);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowCrate.LEVEL_CODE_CHAR_LEFT:
+				case ArrowWoodCrate.LEVEL_CODE_CHAR_LEFT:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.LEFT);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowCrate(px, py, Direction.LEFT, arrow);
+					tile = new ArrowWoodCrate(px, py, Direction.LEFT, arrow);
 					level.createCollidableObject(tile);
 					break;
-				case ArrowCrate.LEVEL_CODE_CHAR_UP:
+				case ArrowWoodCrate.LEVEL_CODE_CHAR_UP:
 					arrow = new Arrow(FAKE_X, FAKE_Y, Direction.UP);
 					level.createCollidableObject(arrow, true);
-					tile = new ArrowCrate(px, py, Direction.UP, arrow);
+					tile = new ArrowWoodCrate(px, py, Direction.UP, arrow);
 					level.createCollidableObject(tile);
 					break;
 				case Collectable.LEVEL_CODE_CHAR:
@@ -93,7 +85,15 @@ package org.interguild.loader {
 				case DynamiteWoodCrate.LEVEL_CODE_CHAR:
 					explosion = new Explosion(FAKE_X, FAKE_Y);
 					level.createCollidableObject(explosion, true);
-					tile = new DynamiteWoodCrate(px, py, explosion);
+					stick = new DynamiteStick(FAKE_X, FAKE_Y, explosion);
+					level.createCollidableObject(stick, true);
+					tile = new DynamiteWoodCrate(px, py, stick, explosion);
+					level.createCollidableObject(tile);
+					break;
+				case DynamiteSteelCrate.LEVEL_CODE_CHAR:
+					explosion = new Explosion(FAKE_X, FAKE_Y);
+					level.createCollidableObject(explosion, true);
+					tile = new DynamiteSteelCrate(px, py, explosion);
 					level.createCollidableObject(tile);
 					break;
 				case FinishLine.LEVEL_CODE_CHAR:

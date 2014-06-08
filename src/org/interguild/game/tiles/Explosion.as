@@ -6,8 +6,6 @@ package org.interguild.game.tiles {
 
 	public class Explosion extends CollidableObject {
 
-		public static const LEVEL_CODE_CHAR:String = 'e';
-
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;
 		
