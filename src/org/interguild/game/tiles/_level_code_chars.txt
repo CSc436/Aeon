@@ -16,6 +16,10 @@ FinishLine				f
 Platform				-
 Player					#
 SecretArea				z
+SpikeUp					M
+SpikeRight				K
+SpikeDown				W
+SpikeLeft				E
 SteelCrate				s
 Terrain					x
 WoodCrate				w

@@ -13,17 +13,7 @@ package org.interguild.editor.tilelist {
 	import org.interguild.Assets;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
-	import org.interguild.game.tiles.Player;
-	import org.interguild.game.tiles.ArrowCrate;
-	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.DynamiteSteelCrate;
-	import org.interguild.game.tiles.DynamiteWoodCrate;
-	import org.interguild.game.tiles.FinishLine;
-	import org.interguild.game.tiles.Platform;
-	import org.interguild.game.tiles.SecretArea;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.*;
 
 	public class TileList extends Sprite {
 
@@ -204,6 +194,18 @@ package org.interguild.editor.tilelist {
 
 			map[Platform.LEVEL_CODE_CHAR] = Platform.EDITOR_ICON;
 			addItem(new TileListItem("Wooden Platform", Platform.LEVEL_CODE_CHAR));
+
+			map[Spike.LEVEL_CODE_CHAR_FLOOR] = Spike.EDITOR_ICON_FLOOR;
+			addItem(new TileListItem("Floor Spikes", Spike.LEVEL_CODE_CHAR_FLOOR));
+
+			map[Spike.LEVEL_CODE_CHAR_CEILING] = Spike.EDITOR_ICON_CEILING;
+			addItem(new TileListItem("Ceiling Spikes", Spike.LEVEL_CODE_CHAR_CEILING));
+
+			map[Spike.LEVEL_CODE_CHAR_WALL_LEFT] = Spike.EDITOR_ICON_WALL_LEFT;
+			addItem(new TileListItem("Left Wall Spikes", Spike.LEVEL_CODE_CHAR_WALL_LEFT));
+
+			map[Spike.LEVEL_CODE_CHAR_WALL_RIGHT] = Spike.EDITOR_ICON_WALL_RIGHT;
+			addItem(new TileListItem("Right Wall Spikes", Spike.LEVEL_CODE_CHAR_WALL_RIGHT));
 		}
 
 		private function onClick(evt:MouseEvent):void {

@@ -20,10 +20,6 @@ package org.interguild.game.tiles {
 			CollidableObject.setWoodenCrateDestruction(this);
 			
 			setFaces(Assets.WOOD_CRATE);
-			
-			CONFIG::DEBUG{
-				showHitBox();
-			}
 		}
 	}
 }

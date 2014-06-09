@@ -51,6 +51,11 @@ package org.interguild {
 		public static const STARTING_LINE:BitmapData = new StartLineSprite();
 		public static const STEEL_CRATE:BitmapData = new SteelCrateSprite();
 		public static const WOOD_CRATE:BitmapData = new WoodenCrateSprite();
+		public static const WOODEN_PLATFORM:BitmapData = ERASER_TOOL_SPRITE;
+		public static const SPIKE_FLOOR:BitmapData = ERASER_TOOL_SPRITE;
+		public static const SPIKE_CEILING:BitmapData = ERASER_TOOL_SPRITE;
+		public static const SPIKE_WALL_RIGHT:BitmapData = ERASER_TOOL_SPRITE;
+		public static const SPIKE_WALL_LEFT:BitmapData = ERASER_TOOL_SPRITE;
 
 		public static const ARROW_CRATE_WOOD_RIGHT:BitmapData = new LightningBoxRight();
 		public static const ARROW_CRATE_WOOD_LEFT:BitmapData = new LightningBoxLeft();

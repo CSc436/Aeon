@@ -53,6 +53,7 @@ package org.interguild.game.tiles {
 		private var active:Boolean;
 		private var dead:Boolean;
 
+		private var ignoreList:Array;
 		protected var destruction:Destruction;
 		private var solid:Boolean = true;
 		private var gravity:Boolean = true;
@@ -75,6 +76,23 @@ package org.interguild.game.tiles {
 			justCollided = new Dictionary(true);
 			sideBlocked = [false, false, false, false];
 			active = false;
+		}
+		
+		protected function ignore(tile:Class):void{
+			if(ignoreList == null)
+				ignoreList = [];
+			ignoreList.push(tile);
+		}
+		
+		public function isIgnored(obj:CollidableObject):Boolean{
+			if(ignoreList == null)
+				return false;
+			var len:uint = ignoreList.length;
+			for(var i:uint = 0; i < len; i++){
+				if(obj is ignoreList[i])
+					return true;
+			}
+			return false;
 		}
 
 		CONFIG::DEBUG {

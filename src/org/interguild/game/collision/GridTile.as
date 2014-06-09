@@ -102,7 +102,7 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if (!o.isActive && !(o is Platform))
+				if (!o.isActive && o.isSolid() && !(o is Platform))
 					return true;
 			}
 			return false;

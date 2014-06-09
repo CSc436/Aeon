@@ -12,7 +12,6 @@ package org.interguild.game {
 	import org.interguild.Aeon;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.TerrainView;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.FinishLine;

@@ -8,9 +8,9 @@ package org.interguild.game.tiles {
 	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 	import org.interguild.SoundMan;
+	import org.interguild.game.Level;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.Destruction;
-	import org.interguild.game.Level;
 
 	public class Player extends CollidableObject {
 		CONFIG::DEBUG {
@@ -25,9 +25,9 @@ package org.interguild.game.tiles {
 		private static const DEATH_DELAY:uint = 40;
 
 		private static const HITBOX_WIDTH:uint = 24;
-		private static const HITBOX_HEIGHT:uint = 40;
+		private static const STANDING_HEIGHT:uint = 40;
 		private static const CRAWLING_HEIGHT:uint = 28;
-		private static const STANDING_HEIGHT:uint = HITBOX_HEIGHT;
+		private static const CRAWL_OFFSET:uint = STANDING_HEIGHT - CRAWLING_HEIGHT;
 
 		private static const MAX_FALL_SPEED:Number = 14;
 		private static const MAX_RUN_SPEED:Number = 6;
@@ -107,12 +107,14 @@ package org.interguild.game.tiles {
 		public var pressedJump:Boolean;
 
 		public function Player(grid:CollisionGrid) {
-			super(0, 0, HITBOX_WIDTH, HITBOX_HEIGHT);
+			super(0, 0, HITBOX_WIDTH, STANDING_HEIGHT);
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			destruction.destroyedBy(Destruction.ARROWS);
 			destruction.destroyedBy(Destruction.EXPLOSIONS);
+			destruction.destroyedBy(Destruction.SPIKES);
 			destruction.destroyedBy(Destruction.FALLING_SOLID_OBJECTS);
 			destruction.destroyWithMarker(Destruction.PLAYER);
+			ignore(SecretArea);
 
 			initAnimations();
 
@@ -249,7 +251,7 @@ package org.interguild.game.tiles {
 			var doCrawl:Boolean = keys.isKeyDown || mustCrawl;
 			if (doCrawl && !isCrawling && isOnGround) {
 				//start crawling
-				newY += (STANDING_HEIGHT - CRAWLING_HEIGHT);
+				newY += CRAWL_OFFSET;
 				hitbox.height = CRAWLING_HEIGHT;
 				isCrawling = true;
 				CONFIG::DEBUG {
@@ -260,6 +262,9 @@ package org.interguild.game.tiles {
 				newY -= (STANDING_HEIGHT - CRAWLING_HEIGHT);
 				hitbox.height = STANDING_HEIGHT;
 				isCrawling = false;
+				if (currentAnimation == JUMP_UP_ANIMATION || currentAnimation == JUMP_PEAK_FALL_ANIMATION) {
+					currentAnimation.y += CRAWL_OFFSET;
+				}
 				CONFIG::DEBUG {
 					showHitBox();
 				}
@@ -357,10 +362,14 @@ package org.interguild.game.tiles {
 				case JUMP_UP_ANIMATION:
 					currentAnimation.x = JUMP_UP_ANIMATION_X_RIGHT;
 					currentAnimation.y = JUMP_UP_ANIMATION_Y;
+					if (isCrawling)
+						currentAnimation.y -= CRAWL_OFFSET;
 					break;
 				case JUMP_PEAK_FALL_ANIMATION:
 					currentAnimation.x = JUMP_PEAK_FALL_ANIMATION_X_RIGHT;
 					currentAnimation.y = JUMP_PEAK_FALL_ANIMATION_Y;
+					if (isCrawling)
+						currentAnimation.y -= CRAWL_OFFSET;
 					break;
 				case JUMP_LAND_ANIMATION:
 					currentAnimation.x = JUMP_LAND_ANIMATION_X_RIGHT;
@@ -383,10 +392,14 @@ package org.interguild.game.tiles {
 				case JUMP_UP_ANIMATION:
 					currentAnimation.x = JUMP_UP_ANIMATION_X_LEFT;
 					currentAnimation.y = JUMP_UP_ANIMATION_Y;
+					if (isCrawling)
+						currentAnimation.y -= CRAWL_OFFSET;
 					break;
 				case JUMP_PEAK_FALL_ANIMATION:
 					currentAnimation.x = JUMP_PEAK_FALL_ANIMATION_X_LEFT;
 					currentAnimation.y = JUMP_PEAK_FALL_ANIMATION_Y;
+					if (isCrawling)
+						currentAnimation.y -= CRAWL_OFFSET;
 					break;
 				case JUMP_LAND_ANIMATION:
 					currentAnimation.x = JUMP_LAND_ANIMATION_X_LEFT;

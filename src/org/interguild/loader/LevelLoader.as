@@ -2,22 +2,8 @@ package org.interguild.loader {
 
 	import org.interguild.Aeon;
 	import org.interguild.game.Level;
-	import org.interguild.game.tiles.Player;
 	import org.interguild.game.collision.Direction;
-	import org.interguild.game.tiles.Arrow;
-	import org.interguild.game.tiles.ArrowCrate;
-	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.CollidableObject;
-	import org.interguild.game.tiles.DynamiteSteelCrate;
-	import org.interguild.game.tiles.DynamiteStick;
-	import org.interguild.game.tiles.DynamiteWoodCrate;
-	import org.interguild.game.tiles.Explosion;
-	import org.interguild.game.tiles.FinishLine;
-	import org.interguild.game.tiles.Platform;
-	import org.interguild.game.tiles.SecretArea;
-	import org.interguild.game.tiles.SteelCrate;
-	import org.interguild.game.tiles.Terrain;
-	import org.interguild.game.tiles.WoodCrate;
+	import org.interguild.game.tiles.*;
 
 	/**
 	 * Takes in a level encoding and constructs a level.
@@ -69,6 +55,22 @@ package org.interguild.loader {
 					break;
 				case SteelCrate.LEVEL_CODE_CHAR:
 					tile = new SteelCrate(px, py);
+					level.createCollidableObject(tile);
+					break;
+				case Spike.LEVEL_CODE_CHAR_FLOOR:
+					tile = new Spike(px, py, Direction.UP);
+					level.createCollidableObject(tile);
+					break;
+				case Spike.LEVEL_CODE_CHAR_CEILING:
+					tile = new Spike(px, py, Direction.DOWN);
+					level.createCollidableObject(tile);
+					break;
+				case Spike.LEVEL_CODE_CHAR_WALL_RIGHT:
+					tile = new Spike(px, py, Direction.LEFT);
+					level.createCollidableObject(tile);
+					break;
+				case Spike.LEVEL_CODE_CHAR_WALL_LEFT:
+					tile = new Spike(px, py, Direction.RIGHT);
 					level.createCollidableObject(tile);
 					break;
 				case ArrowCrate.LEVEL_CODE_CHAR_WOOD_RIGHT:

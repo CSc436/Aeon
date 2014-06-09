@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
@@ -76,7 +76,7 @@ package org.interguild.editor.levelpane {
 		private var isShiftMouseDown:Boolean;
 		private var isSelectDown:Boolean;
 
-		public function EditorLevel(numRows:uint = 0, numCols:uint = 0, generateBorder:Boolean = true) {
+		public function EditorLevel(numRows:uint = 0, numCols:uint = 0, title:String = null, generateBorder:Boolean = true) {
 			//init dimensions
 			cols = numCols;
 			rows = numRows;
@@ -85,8 +85,12 @@ package org.interguild.editor.levelpane {
 			if (rows <= 0)
 				rows = DEFAULT_HEIGHT;
 
-			levelTitle = "Untitled-" + untitledCount;
-			untitledCount++;
+			if (title) {
+				levelTitle = title;
+			} else {
+				levelTitle = "Untitled-" + untitledCount;
+				untitledCount++;
+			}
 
 			//init undo/redo
 			undoList = new Array();
@@ -498,9 +502,10 @@ package org.interguild.editor.levelpane {
 		public function setTileAt(char:String, row:uint, col:uint):void {
 			if (row < rows && col < cols) {
 				clickCell(EditorCell(cells[row][col]), char);
-			}/* else {
-				throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
-			}*/
+			}
+		/* else {
+			throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
+		}*/
 		}
 
 		public function selectAll():void {

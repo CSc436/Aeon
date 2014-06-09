@@ -5,6 +5,7 @@ package org.interguild.game.collision {
 
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
+	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.DynamiteWoodCrate;
@@ -13,7 +14,6 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Platform;
 	import org.interguild.game.tiles.Player;
-	import org.interguild.game.tiles.SecretArea;
 
 	public class CollisionGrid extends Sprite {
 
@@ -108,7 +108,7 @@ package org.interguild.game.collision {
 			if (tile.isActive)
 				activeObjects.push(tile);
 			if (!fakeObject)
-				updateObject(tile, !tile.isActive);
+				updateObject(tile, (!tile.isActive && tile.isSolid()));
 		}
 
 		/**
@@ -163,10 +163,10 @@ package org.interguild.game.collision {
 		 * surrounding four tiles so that they know that it's not worth
 		 * testing for collisions along that side. This is useful during
 		 * initialization of inactive objects or during deactivations.
-		 * 
+		 *
 		 * Leave the third parameter null to unblock, which is useful during
 		 * object destruction or activations.
-		 * 
+		 *
 		 * This function is labeled internal because GridTile objects often
 		 * call it.
 		 */
@@ -320,7 +320,7 @@ package org.interguild.game.collision {
 				//interate through all of the objects in each GridTile
 				for (var j:uint = 0; j < olen; j++) {
 					var obj:CollidableObject = gObjs[j];
-					if (target != obj && !(target == player && obj is SecretArea)) {
+					if (target != obj && !target.isIgnored(obj)) {
 						var distance:Number = getDistance(obj, target);
 						//if potential corner collision
 						if (!target.hitbox.intersects(obj.hitbox)) {
@@ -434,12 +434,14 @@ package org.interguild.game.collision {
 			 * HANDLE DESTRUCTIONS
 			 */
 			var destroyed:Boolean = false;
+			var otherDestroyed:Boolean = false;
 			if (activeObject.canDestroy(otherObject)) {
 				if (isPlayer && otherObject is DynamiteWoodCrate) {
 					DynamiteWoodCrate(otherObject).killedByPlayer(direction, activeBoxCurr);
 				}
 				delays.onDeath(otherObject);
 				destroyed = true;
+				otherDestroyed = true;
 			}
 			if (otherObject.canDestroy(activeObject)) {
 				delays.onDeath(activeObject);
@@ -468,6 +470,7 @@ package org.interguild.game.collision {
 						player.landedOnGround(otherBoxCurr.top);
 					} else if (!isPlayer) { // something else lands on object
 						deactivateObjects.push(activeObject);
+						landOnTile(activeObject);
 					}
 				} else if (direction == Direction.UP && !isPlatform) {
 					if (otherObject.isActive) {
@@ -480,13 +483,19 @@ package org.interguild.game.collision {
 					} else if (!(isPlayer && player.isStanding)) {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
+						if (activeObject is Arrow && !otherDestroyed)
+							landOnTile(activeObject);
 					}
 				} else if (direction == Direction.RIGHT && !isPlatform) {
 					activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
 					activeObject.speedX = 0;
+					if (activeObject is Arrow && !otherDestroyed)
+						landOnTile(activeObject);
 				} else if (direction == Direction.LEFT && !isPlatform) {
 					activeObject.newX = otherBoxCurr.right;
 					activeObject.speedX = 0;
+					if (activeObject is Arrow && !otherDestroyed)
+						landOnTile(activeObject);
 				}
 			}
 
@@ -508,6 +517,22 @@ package org.interguild.game.collision {
 			}
 
 			activeObject.updateHitBox();
+		}
+
+		/**
+		 * Triggers the landing solid object event.
+		 */
+		private function landOnTile(obj:CollidableObject):void {
+			var gtX:int = obj.newX / 32;
+			var gtY:int = obj.newY / 32;
+			var stuff:Array = GridTile(grid[gtY][gtX]).myCollisionObjects;
+			var len:uint = stuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = stuff[i];
+				if (o.isDestroyedBy(Destruction.LANDING_SOLID_OBJECT)) {
+					delays.onDeath(o);
+				}
+			}
 		}
 
 

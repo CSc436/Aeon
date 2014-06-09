@@ -10,7 +10,7 @@ package org.interguild.game.tiles {
 	public class Platform extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = '-';
-		public static const EDITOR_ICON:BitmapData = Assets.STEEL_CRATE;
+		public static const EDITOR_ICON:BitmapData = Assets.WOODEN_PLATFORM;
 
 		private static const IS_SOLID:Boolean = true;
 		private static const NO_GRAVITY:Boolean = false;

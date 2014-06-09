@@ -9,10 +9,10 @@ package org.interguild.game.tiles {
 		private static const IS_SOLID:Boolean = false;
 		private static const HAS_GRAVITY:Boolean = false;
 		
-		private static const POS_OFFSET_X:int = -16;
-		private static const POS_OFFSET_Y:int = -16;
-		private static const EXP_WIDTH:int = 64;
-		private static const EXP_HEIGHT:int = 64;
+		private static const POS_OFFSET_X:int = -15;
+		private static const POS_OFFSET_Y:int = -15;
+		private static const EXP_WIDTH:int = 62;
+		private static const EXP_HEIGHT:int = 62;
 		
 		public var timeCounter:int = 0;
 		public var exp:MovieClip;

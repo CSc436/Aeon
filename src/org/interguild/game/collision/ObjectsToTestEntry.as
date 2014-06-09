@@ -15,6 +15,10 @@ package org.interguild.game.collision {
 			return obj.isActive;
 		}
 
+		public function get isSolid():Boolean {
+			return obj.isSolid();
+		}
+
 		public function get distance():Number {
 			return dist;
 		}
@@ -24,8 +28,8 @@ package org.interguild.game.collision {
 		}
 
 		public function comesBefore(other:ObjectsToTestEntry):Boolean {
-//			return (!this.isActive && other.isActive) || (this.distance < other.distance && this.isActive == other.isActive);
-			return this.distance < other.distance;
+			return (this.isSolid && !other.isSolid) || (this.distance < other.distance && this.isSolid == other.isSolid);
+//			return this.distance < other.distance;
 		}
 	}
 }

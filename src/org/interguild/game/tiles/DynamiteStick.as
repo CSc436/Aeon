@@ -12,7 +12,7 @@ package org.interguild.game.tiles {
 		public static const LEVEL_CODE_CHAR:String = '%';
 		public static const EDITOR_ICON:BitmapData = Assets.DYNAMITE_WOOD_CRATE;
 
-		private static const IS_NOT_SOLID:Boolean = false;
+		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
 
 		private static const WIDTH:uint = 16;
@@ -29,8 +29,11 @@ package org.interguild.game.tiles {
 
 		public function DynamiteStick(x:Number, y:Number, explosion:Explosion) {
 			super(x, y, WIDTH, HEIGHT);
-			setProperties(IS_NOT_SOLID, HAS_GRAVITY);
+			setProperties(IS_SOLID, HAS_GRAVITY);
 			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
+			ignore(Spike);
+			ignore(Arrow);
+			ignore(DynamiteStick);
 
 			sounds = SoundMan.getMe();
 			this.explosion = explosion;

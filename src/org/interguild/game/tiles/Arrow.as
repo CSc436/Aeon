@@ -8,7 +8,7 @@ package org.interguild.game.tiles {
 
 	public class Arrow extends CollidableObject {
 
-		private static const IS_SOLID:Boolean = false;
+		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = false;
 		
 		private static const HITBOX_WIDTH:int = 16;
@@ -63,6 +63,9 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			destruction.destroyWithMarker(Destruction.ARROWS);
 			destruction.destroyedBy(Destruction.ANY_SOLID_OBJECT);
+			ignore(Spike);
+			ignore(Arrow);
+			ignore(DynamiteStick);
 
 			this.isActive = false;
 			
