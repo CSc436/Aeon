@@ -117,8 +117,7 @@ package org.interguild.game.collision {
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
 				if (!o.isActive && o.isGravible()) {
-					o.isActive = true;
-					grid.activeObjects.push(o);
+					grid.activateObject(o);
 				}
 			}
 			grid.updateBlockedNeighbors(row, col);

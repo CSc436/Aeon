@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.geom.Point;
 	
 	import org.interguild.editor.tilelist.TileList;
-	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Player;
 
 	public class EditorCell extends Sprite {
 

@@ -1,7 +1,6 @@
 package org.interguild.game.tiles {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import flash.display.Graphics;
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -12,6 +11,7 @@ package org.interguild.game.tiles {
 	public class TerrainView extends Sprite {
 
 		private static const BORDER_COLOR:uint = 0x333333;
+		private static const SECRET_AREA_ALPHA:uint = 0x70000000; //50% alpha
 
 		private static var myself:TerrainView;
 
@@ -63,7 +63,7 @@ package org.interguild.game.tiles {
 			var p:Point = new Point();
 			
 			secretImage = new BitmapData(w, h, true);
-			var alpha:BitmapData = new BitmapData(w, h, true, 0x80000000); //50% alpha
+			var alpha:BitmapData = new BitmapData(w, h, true, SECRET_AREA_ALPHA);
 			secretImage.copyPixels(terrainImage, new Rectangle(0, 0, w, h), p, alpha, p);
 		}
 

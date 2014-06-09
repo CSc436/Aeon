@@ -1,4 +1,5 @@
 package org.interguild.game.collision {
+	import org.interguild.game.tiles.CollidableObject;
 
 	/**
 	 * A priority-list of which nearby CollidableObjects to
@@ -8,11 +9,16 @@ package org.interguild.game.collision {
 	public class ObjectsToTestList {
 
 		private var list:Array;
-
 		private var i:uint = 0;
+		private var myTarget:CollidableObject;
 
-		public function ObjectsToTestList() {
+		public function ObjectsToTestList(target:CollidableObject) {
 			list = new Array();
+			myTarget = target;
+		}
+
+		public function get target():CollidableObject {
+			return myTarget;
 		}
 
 		public function insertInOrder(obj:ObjectsToTestEntry):void {
@@ -51,9 +57,10 @@ package org.interguild.game.collision {
 			return i < list.length;
 		}
 
-		public function next():ObjectsToTestEntry {
+		public function next():CollidableObject {
 			i++;
-			return list[i - 1];
+			var entry:ObjectsToTestEntry = list[i - 1];
+			return entry.object;
 		}
 	}
 }

@@ -9,7 +9,7 @@ package org.interguild.editor.levelpane {
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.tilelist.TileList;
-	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Player;
 	import org.interguild.game.tiles.SecretArea;
 	import org.interguild.game.tiles.Terrain;
 

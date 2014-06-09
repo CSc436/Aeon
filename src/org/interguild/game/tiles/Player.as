@@ -1,4 +1,4 @@
-package org.interguild.game {
+package org.interguild.game.tiles {
 
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
@@ -10,7 +10,7 @@ package org.interguild.game {
 	import org.interguild.SoundMan;
 	import org.interguild.game.collision.CollisionGrid;
 	import org.interguild.game.collision.Destruction;
-	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.Level;
 
 	public class Player extends CollidableObject {
 		CONFIG::DEBUG {
@@ -117,6 +117,7 @@ package org.interguild.game {
 			initAnimations();
 
 			this.grid = grid;
+			grid.setPlayer(this);
 			keys = KeyMan.getMe();
 			sounds = SoundMan.getMe();
 			isFacingRight = true;

@@ -18,6 +18,7 @@ package org.interguild.game {
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.gui.LevelHUD;
 	import flash.utils.getTimer;
+	import org.interguild.game.tiles.Player;
 
 	/**
 	 * Level will handle the actual gameplay. It's responsible for
@@ -38,7 +39,7 @@ package org.interguild.game {
 
 		private var camera:Camera;
 		private var player:Player;
-		private var portals:Vector.<FinishLine>;
+		private var portals:Array;
 		private var tv:TerrainView;
 		private var bg:LevelBackground;
 
@@ -54,6 +55,7 @@ package org.interguild.game {
 
 		private var timeDead:int = 0;
 
+		private var hasWon:Boolean;
 		public var onWinCallback:Function;
 
 		CONFIG::DEBUG {
@@ -75,7 +77,7 @@ package org.interguild.game {
 			addChild(bg);
 
 			//init portals list
-			portals = new Vector.<FinishLine>();
+			portals = new Array();
 
 			//init collision grid
 			collisionGrid = new CollisionGrid(lvlWidth, lvlHeight, this);
@@ -159,7 +161,7 @@ package org.interguild.game {
 		}
 
 		public function saveCheckpoint():void {
-
+			trace("TODO: Level.saveCheckpoint()");
 		}
 
 		public function grabbedCollectable():void {
@@ -290,8 +292,7 @@ package org.interguild.game {
 		}
 
 		public function onWonGame():void {
-			pauseGame();
-			onWinCallback();
+			hasWon = true;
 		}
 
 		CONFIG::DEBUG {
@@ -329,18 +330,38 @@ package org.interguild.game {
 		/**
 		 * Called 30 frames per second.
 		 */
-		private function onGameLoop(evt:TimerEvent):void {
-			update();
-			collisions();
-			collisionGrid.handleRemovals(camera);
+		private function onGameLoop(evt:TimerEvent):void { 
+			collisionGrid.updateAllObjects();
+			CONFIG::DEBUG {
+				drawPlayerHitBox();
+			}
+			collisionGrid.doCollisionDetection();
+			collisionGrid.handleRemovalsAndMore(camera);
+			collisionGrid.finishGameLoops();
 			cleanup();
 
 			CONFIG::DEBUG {
+				drawPlayerHitBox();
 				updateMetrics();
 			}
 		}
 
 		CONFIG::DEBUG {
+			private function drawPlayerHitBox(drawWrapper:Boolean = false):void {
+				if(player == null)
+					return;
+				if (isDebuggingMode) {
+					var s:Sprite = player.drawHitBox(false);
+					if (s)
+						debugSprite.addChild(s);
+					if (drawWrapper) {
+						s = player.drawHitBoxWrapper(false);
+						if (s)
+							debugSprite.addChild(s);
+					}
+				}
+			}
+
 			private var lastTime:uint;
 			private var currentSum:Number = 0;
 			private var countPerAverage:uint = 10;
@@ -362,73 +383,17 @@ package org.interguild.game {
 			}
 		}
 
-		private function update():void {
-			player.onGameLoop();
-
-			//update active objects
-			var len:uint = collisionGrid.activeObjects.length;
-			for (var i:uint = 0; i < len; i++) {
-				var obj:GameObject = collisionGrid.activeObjects[i];
-				obj.onGameLoop();
-			}
-		}
-
-		private function collisions():void {
-			CONFIG::DEBUG { //draw collision wireframes
-				if (isDebuggingMode) {
-					var s:Sprite = player.drawHitBox(false);
-					if (s)
-						debugSprite.addChild(s);
-//					s = player.drawHitBoxWrapper(false);
-//					if (s)
-//						debugSprite.addChild(s);
-				}
-			}
-
-			//update everyone's positions
-			if (!player.isDead)
-				collisionGrid.updateObject(player, false);
-			var obj:CollidableObject;
-			var len:uint = collisionGrid.activeObjects.length;
-			for (var i:uint = 0; i < len; i++) {
-				obj = collisionGrid.activeObjects[i];
-				collisionGrid.updateObject(CollidableObject(obj), false);
-			}
-
-			//test and handle collisions
-			if (!player.isDead)
-				collisionGrid.detectAndHandleCollisions(player);
-			len = collisionGrid.activeObjects.length;
-			for (i = 0; i < len; i++) {
-				obj = collisionGrid.activeObjects[i];
-				collisionGrid.detectAndHandleCollisions(obj);
-			}
-		}
-
 		private function cleanup():void {
-			//finish game loops
-			player.finishGameLoop();
-			var len:uint = collisionGrid.activeObjects.length;
-			for (var i:uint = 0; i < len; i++) {
-				var obj:GameObject = collisionGrid.activeObjects[i];
-				obj.finishGameLoop();
-			}
-
 			//update camera
 			if (!player.isDead)
 				camera.updateCamera();
-
-			//if debugging, draw collision wireframes
-			CONFIG::DEBUG {
-				if (isDebuggingMode) {
-					var s:Sprite = player.drawHitBox(true);
-					if (s)
-						debugSprite.addChild(s);
-				}
-			}
-
-			if (player.timeToRestart) {
+			else if (player.timeToRestart) {
 				Aeon.getMe().playLastLevel();
+			}
+			
+			if(hasWon){
+				timer.stop();
+				onWinCallback();
 			}
 		}
 	}

@@ -13,7 +13,7 @@ package org.interguild.editor.tilelist {
 	import org.interguild.Assets;
 	import org.interguild.editor.EditorPage;
 	import org.interguild.editor.levelpane.EditorLevel;
-	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Player;
 	import org.interguild.game.tiles.ArrowCrate;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.DynamiteSteelCrate;

@@ -24,7 +24,8 @@ package org.interguild.game.collision {
 		}
 
 		public function comesBefore(other:ObjectsToTestEntry):Boolean {
-			return (!this.isActive && other.isActive) || (this.distance < other.distance && this.isActive == other.isActive);
+//			return (!this.isActive && other.isActive) || (this.distance < other.distance && this.isActive == other.isActive);
+			return this.distance < other.distance;
 		}
 	}
 }

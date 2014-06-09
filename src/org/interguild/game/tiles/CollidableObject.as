@@ -45,7 +45,7 @@ package org.interguild.game.tiles {
 			private static const SPRITE_ALPHA:Number = 0.5;
 		}
 
-		private var myGrids:Vector.<GridTile>;
+		private var myGrids:Array;
 		private var hit_box:Rectangle;
 		private var hit_box_prev:Rectangle;
 		private var justCollided:Dictionary;
@@ -69,7 +69,7 @@ package org.interguild.game.tiles {
 		public function CollidableObject(_x:Number, _y:Number, width:Number, height:Number) { //, charcode:String, des:int, solid:Boolean, gravity:Boolean, knockback:int) {
 			super(_x, _y);
 			destruction = new Destruction();
-			myGrids = new Vector.<GridTile>();
+			myGrids = new Array();
 			hit_box = new Rectangle(_x, _y, width, height);
 			hit_box_prev = hit_box.clone();
 			justCollided = new Dictionary(true);
@@ -280,7 +280,7 @@ package org.interguild.game.tiles {
 			myGrids.length = 0;
 		}
 
-		public function get myCollisionGridTiles():Vector.<GridTile> {
+		public function get myCollisionGridTiles():Array {
 			return this.myGrids;
 		}
 

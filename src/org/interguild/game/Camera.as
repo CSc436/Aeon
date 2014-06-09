@@ -5,6 +5,7 @@ package org.interguild.game {
 	import flash.display.Sprite;
 
 	import org.interguild.Aeon;
+	import org.interguild.game.tiles.Player;
 
 	/**
 	 * This class controls the camera for the game. It uses a tween object to scroll the camera to the players position, off

@@ -1,5 +1,5 @@
 package org.interguild.game.collision {
-	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Player;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.DynamiteStick;
 

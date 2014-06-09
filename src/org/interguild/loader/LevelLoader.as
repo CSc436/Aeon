@@ -2,7 +2,7 @@ package org.interguild.loader {
 
 	import org.interguild.Aeon;
 	import org.interguild.game.Level;
-	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Player;
 	import org.interguild.game.collision.Direction;
 	import org.interguild.game.tiles.Arrow;
 	import org.interguild.game.tiles.ArrowCrate;
