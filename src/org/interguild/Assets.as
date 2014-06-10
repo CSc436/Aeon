@@ -56,6 +56,7 @@ package org.interguild {
 		public static const SPIKE_CEILING:BitmapData = ERASER_TOOL_SPRITE;
 		public static const SPIKE_WALL_RIGHT:BitmapData = ERASER_TOOL_SPRITE;
 		public static const SPIKE_WALL_LEFT:BitmapData = ERASER_TOOL_SPRITE;
+		public static const BOULDER:BitmapData = ERASER_TOOL_SPRITE;
 
 		public static const ARROW_CRATE_WOOD_RIGHT:BitmapData = new LightningBoxRight();
 		public static const ARROW_CRATE_WOOD_LEFT:BitmapData = new LightningBoxLeft();

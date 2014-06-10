@@ -57,6 +57,10 @@ package org.interguild.loader {
 					tile = new SteelCrate(px, py);
 					level.createCollidableObject(tile);
 					break;
+				case Boulder.LEVEL_CODE_CHAR:
+					tile = new Boulder(px, py);
+					level.createCollidableObject(tile);
+					break;
 				case Spike.LEVEL_CODE_CHAR_FLOOR:
 					tile = new Spike(px, py, Direction.UP);
 					level.createCollidableObject(tile);

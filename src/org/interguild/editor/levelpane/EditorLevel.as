@@ -167,7 +167,8 @@ package org.interguild.editor.levelpane {
 		public function set backgroundType(id:uint):void {
 			if (backgroundID != id) {
 				backgroundID = id;
-				myTab.updateScrollPane();
+				if(myTab)
+					myTab.updateScrollPane();
 			}
 		}
 

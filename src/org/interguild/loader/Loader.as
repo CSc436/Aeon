@@ -319,7 +319,7 @@ package org.interguild.loader {
 					break;
 				case "=":
 					//ignore
-					break;
+					return;
 				default:
 					if (isNumber(curChar)) {
 						var numberString:String = curChar;

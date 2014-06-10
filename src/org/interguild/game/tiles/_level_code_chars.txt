@@ -7,6 +7,7 @@ ArrowSteelCrate (Right)	]
 ArrowSteelCrate (Left)	[
 ArrowSteelCrate (Up)	T
 ArrowSteelCrate (Down)	H
+Boulder					o
 Collectable				c
 DynamiteSteelCrate		D
 DynamiteStick			[none]
