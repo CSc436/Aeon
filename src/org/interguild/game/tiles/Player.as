@@ -4,7 +4,7 @@ package org.interguild.game.tiles {
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 	import org.interguild.SoundMan;
@@ -92,6 +92,7 @@ package org.interguild.game.tiles {
 		private var deathRotation:Number;
 
 		private var isOnGround:Boolean;
+		private var wasOnGround:Boolean;
 		private var isCrawling:Boolean;
 		private var mustCrawl:Boolean;
 		private var mustCrawlY:uint;
@@ -179,6 +180,10 @@ package org.interguild.game.tiles {
 			return isOnGround;
 		}
 
+		public function get wasStanding():Boolean {
+			return wasOnGround;
+		}
+
 		public override function onGameLoop():void {
 			if (isDead) {
 				updateDeath();
@@ -188,6 +193,7 @@ package org.interguild.game.tiles {
 				updateGravity();
 				updateMaxSpeeds();
 
+				wasOnGround = isOnGround;
 				isOnGround = false;
 				newX += speedX;
 				newY += speedY;
@@ -274,6 +280,7 @@ package org.interguild.game.tiles {
 			if (keys.isKeySpace && isOnGround && !pressedJump) {
 				speedY = JUMP_SPEED;
 				pressedJump = true;
+				isOnGround = false;
 				sounds.playSound(SoundMan.JUMP_SOUND);
 			}
 			if (pressedJump && !keys.isKeySpace) {

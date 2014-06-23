@@ -6,10 +6,10 @@ package org.interguild.game.collision {
 	import org.interguild.SoundMan;
 	import org.interguild.game.Level;
 	import org.interguild.game.tiles.Arrow;
+	import org.interguild.game.tiles.Boulder;
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.DynamiteWoodCrate;
-	import org.interguild.game.tiles.Explosion;
 	import org.interguild.game.tiles.FinishLine;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Platform;
@@ -249,12 +249,12 @@ package org.interguild.game.collision {
 			for (var i:uint = 0; i < len; i++) {
 				var obj:CollidableObject = activeObjects[i];
 				obj.onGameLoop();
-				updateObject(obj, false);
-				if (obj is Explosion) {
-					var e:Explosion = Explosion(obj);
-					if (e.timeCounter >= 15)
-						delays.onDeath(e);
-				}
+				if (obj.testForCollisions)
+					updateObject(obj, false);
+				if (obj.timeToDie)
+					delays.onDeath(obj);
+				if (obj.timeToDeactivate)
+					deactivateObjects.push(obj);
 			}
 		}
 
@@ -291,11 +291,13 @@ package org.interguild.game.collision {
 			var len:uint = activeObjects.length;
 			for (var i:uint = 0; i < len; i++) {
 				var obj:CollidableObject = activeObjects[i];
-				onInactive = new ObjectsToTestList(obj);
-				onActive = new ObjectsToTestList(obj);
-				gatherNearbyPairs(onActive, onInactive, obj);
-				inactiveLists.push(onInactive);
-				activeLists.push(onActive);
+				if (obj.testForCollisions) {
+					onInactive = new ObjectsToTestList(obj);
+					onActive = new ObjectsToTestList(obj);
+					gatherNearbyPairs(onActive, onInactive, obj);
+					inactiveLists.push(onInactive);
+					activeLists.push(onActive);
+				}
 			}
 
 			//test all of these pairs in order
@@ -396,6 +398,8 @@ package org.interguild.game.collision {
 			otherObject.setCollidedWith(activeObject);
 			var isPlayer:Boolean = activeObject == player;
 			var isPlatform:Boolean = isPlayer && otherObject is Platform;
+			var b:Boulder;
+			var gridTile:GridTile;
 			var activeBoxPrev:Rectangle = activeObject.hitboxPrev;
 			var otherBoxPrev:Rectangle = otherObject.hitboxPrev;
 			var activeBoxCurr:Rectangle = activeObject.hitbox;
@@ -410,6 +414,10 @@ package org.interguild.game.collision {
 				return;
 
 			//EVERYTHING BELOW THIS LINE IS DEFINITELY A COLLISION
+
+			if (isPlayer && player.wasStanding && otherObject is Boulder && !otherObject.isActive) {
+				b = Boulder(otherObject);
+			}
 
 			if (isPlayer) {
 				/*
@@ -433,45 +441,62 @@ package org.interguild.game.collision {
 			/*
 			 * HANDLE DESTRUCTIONS
 			 */
-			var destroyed:Boolean = false;
+			var meDestroyed:Boolean = false;
 			var otherDestroyed:Boolean = false;
 			if (activeObject.canDestroy(otherObject)) {
 				if (isPlayer && otherObject is DynamiteWoodCrate) {
 					DynamiteWoodCrate(otherObject).killedByPlayer(direction, activeBoxCurr);
 				}
 				delays.onDeath(otherObject);
-				destroyed = true;
 				otherDestroyed = true;
 			}
 			if (otherObject.canDestroy(activeObject)) {
 				delays.onDeath(activeObject);
-				destroyed = true;
+				meDestroyed = true;
 			}
 			if (otherObject.isSolid() && activeObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
 				delays.onDeath(activeObject);
-				destroyed = true;
+				meDestroyed = true;
 			}
 			if (activeObject.isSolid() && otherObject.isDestroyedBy(Destruction.ANY_SOLID_OBJECT)) {
 				delays.onDeath(otherObject);
-				destroyed = true;
+				otherDestroyed = true;
 			}
 
 			/*
 			* SOLID COLLISIONS
 			*/
 			if (activeObject.isSolid() && otherObject.isSolid()) {
-				//handle directions:
+				/*
+				 * DOWN solid collision
+				 */
 				if (direction == Direction.DOWN) {
-					activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
-					activeObject.speedY = 0;
+					var isBoulder:Boolean = activeObject is Boulder;
 					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
 						delays.onDeath(otherObject);
-					} else if (isPlayer && !destroyed) { // player lands on object
-						player.landedOnGround(otherBoxCurr.top);
-					} else if (!isPlayer) { // something else lands on object
-						deactivateObjects.push(activeObject);
-						landOnTile(activeObject);
+					} else if (isBoulder && otherObject is Platform && activeObject.speedY > Level.GRAVITY) {
+						// boulder lands on platform
+						killThreePlatforms(otherObject);
+					} else if (!otherDestroyed) {
+						if (isPlayer) {
+							// player lands on object
+							player.landedOnGround(otherBoxCurr.top);
+						} else if (isBoulder && otherObject is Boulder) {
+							// boulder lands on boulder
+							gridTile = otherObject.myCollisionGridTiles[0];
+							handleBoulderPiling(Boulder(activeObject), gridTile.gridRow, gridTile.gridCol);
+						} else {
+							// something else lands on object
+							if (!meDestroyed)
+								deactivateObjects.push(activeObject);
+							landOnTile(activeObject);
+						}
+						activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
+						activeObject.speedY = 0;
 					}
+					/*
+					 * UP solid collision
+					 */
 				} else if (direction == Direction.UP && !isPlatform) {
 					if (otherObject.isActive) {
 						if (activeObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !activeObject.canDestroy(otherObject)) {
@@ -480,22 +505,46 @@ package org.interguild.game.collision {
 							otherObject.newY = activeBoxCurr.top - otherBoxCurr.height;
 							otherObject.speedY = 0;
 						}
-					} else if (!(isPlayer && player.isStanding)) {
+					} else if (!(isPlayer && player.wasStanding)) {
 						activeObject.newY = otherBoxCurr.bottom;
 						activeObject.speedY = 0;
 						if (activeObject is Arrow && !otherDestroyed)
 							landOnTile(activeObject);
 					}
+					/*
+					 * RIGHT solid collision
+					 */
 				} else if (direction == Direction.RIGHT && !isPlatform) {
-					activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
-					activeObject.speedX = 0;
-					if (activeObject is Arrow && !otherDestroyed)
-						landOnTile(activeObject);
+					if (b && b.speedX < 0) {
+						delays.onDeath(player);
+					} else {
+						activeObject.newX = otherBoxCurr.left - activeBoxCurr.width;
+						activeObject.speedX = 0;
+						if (activeObject is Arrow && !otherDestroyed)
+							landOnTile(activeObject);
+						if (b && canBePushed(b, true)) {
+							b.pushRight();
+							gridTile = b.myCollisionGridTiles[0];
+							delays.onActivate(gridTile);
+						}
+					}
+					/*
+					 * LEFT solid collision
+					 */
 				} else if (direction == Direction.LEFT && !isPlatform) {
-					activeObject.newX = otherBoxCurr.right;
-					activeObject.speedX = 0;
-					if (activeObject is Arrow && !otherDestroyed)
-						landOnTile(activeObject);
+					if (b && b.speedX > 0) {
+						delays.onDeath(player);
+					} else {
+						activeObject.newX = otherBoxCurr.right;
+						activeObject.speedX = 0;
+						if (activeObject is Arrow && !otherDestroyed)
+							landOnTile(activeObject);
+						if (b && canBePushed(b, false)) {
+							b.pushLeft();
+							gridTile = b.myCollisionGridTiles[0];
+							delays.onActivate(gridTile);
+						}
+					}
 				}
 			}
 
@@ -505,9 +554,9 @@ package org.interguild.game.collision {
 			* TODO: use getKnockback, rather than constants?
 			*/
 			if (isPlayer && otherObject.getKnockback() > 0) {
-				if (direction == Direction.DOWN || (!player.isStanding && player.speedY > 0)) {
+				if (direction == Direction.DOWN || (!player.wasStanding && player.speedY > 0)) {
 					activeObject.speedY = Player.KNOCKBACK_JUMP_SPEED;
-				} else if (direction == Direction.UP || (!player.isStanding && player.speedY < 0)) {
+				} else if (direction == Direction.UP || (!player.wasStanding && player.speedY < 0)) {
 					activeObject.speedY = 0;
 				} else if (direction == Direction.RIGHT) {
 					activeObject.speedX = -Player.KNOCKBACK_HORIZONTAL;
@@ -517,6 +566,111 @@ package org.interguild.game.collision {
 			}
 
 			activeObject.updateHitBox();
+		}
+
+		private function canBePushed(b:Boulder, toTheRight:Boolean):Boolean {
+			if (b.isActive)
+				return false;
+			var gTile:GridTile = b.myCollisionGridTiles[0];
+			var nextRow:int = gTile.gridRow;
+			var nextCol:int = gTile.gridCol;
+			if (toTheRight) {
+				nextCol++;
+				if (nextCol > grid[0].length)
+					return true;
+			} else {
+				nextCol--;
+				if (nextCol < 0)
+					return true;
+			}
+			gTile = grid[nextRow][nextCol];
+			return !gTile.isBoulderBlocking();
+		}
+
+		private function killThreePlatforms(otherObject:CollidableObject):void {
+			delays.onDeath(otherObject);
+
+			var gridTile:GridTile = otherObject.myCollisionGridTiles[0];
+			var gRow:uint = gridTile.gridRow;
+			var gCol:uint = gridTile.gridCol;
+
+			if (gCol > 0)
+				killPlatform(grid[gRow][gCol - 1]);
+			if (gCol < grid[0].length - 1)
+				killPlatform(grid[gRow][gCol + 1]);
+		}
+
+		private function killPlatform(gt:GridTile):void {
+			var o:CollidableObject;
+			var list:Array = gt.myCollisionObjects;
+			var len:uint = list.length;
+			for (var i:uint = 0; i < len; i++) {
+				o = list[i];
+				if (o is Platform) {
+					delays.onDeath(o);
+				}
+			}
+		}
+
+		/**
+		 * NEED TO check 2 tiles on each side to see if boulder will fall on that side
+		 */
+		private function handleBoulderPiling(b:Boulder, gRow:uint, gCol:uint):void {
+			var result:Boolean;
+			var bias:Boolean = b.biasToRight;
+			if (bias && tryToPushRight(b, gRow, gCol))
+				return;
+			if (tryToPushLeft(b, gRow, gCol))
+				return;
+			if (!bias && tryToPushRight(b, gRow, gCol))
+				return;
+			//if all else fails, just land on the current tile
+			deactivateObjects.push(b);
+			landOnTile(b);
+		}
+
+		private function tryToPushRight(b:Boulder, gRow:uint, gCol:uint):Boolean {
+			if (gCol == grid[0].length - 1)
+				return false;
+			var nextRow:int, nextCol:int;
+
+			//test top right
+			nextRow = gRow - 1;
+			nextCol = gCol + 1;
+			if (nextRow >= 0 && GridTile(grid[nextRow][nextCol]).isBoulderBlocking())
+				return false;
+
+			//test bottom right
+			nextRow = gRow;
+			nextCol = gCol + 1;
+			if (GridTile(grid[nextRow][nextCol]).isBoulderBlocking())
+				return false;
+
+			//push right
+			b.pushRight();
+			return true;
+		}
+
+		private function tryToPushLeft(b:Boulder, gRow:uint, gCol:uint):Boolean {
+			if (gCol == 0)
+				return false;
+			var nextRow:int, nextCol:int;
+
+			//test top left
+			nextRow = gRow - 1;
+			nextCol = gCol - 1;
+			if (nextRow >= 0 && GridTile(grid[nextRow][nextCol]).isBoulderBlocking())
+				return false;
+
+			//test bottom left
+			nextRow = gRow;
+			nextCol = gCol - 1;
+			if (GridTile(grid[nextRow][nextCol]).isBoulderBlocking())
+				return false;
+
+			//push left
+			b.pushLeft();
+			return true;
 		}
 
 		/**
@@ -580,10 +734,11 @@ package org.interguild.game.collision {
 			for (i = 0; i < toActivate.length; i++) {
 				var tile:GridTile = toActivate[i];
 				var wasGravible:Boolean = tile.isGravible();
+				tile.markedForActivation = false;
 				tile.activate();
 				//active the tile above
-				if (wasGravible && inBounds(tile.gridRow - 1, tile.gridCol)) {
-					delays.onActivate(grid[tile.gridRow - 1][tile.gridCol]);
+				if (wasGravible) {
+					activateNearbyTiles(tile.gridRow, tile.gridCol);
 				}
 			}
 		}
@@ -603,11 +758,7 @@ package org.interguild.game.collision {
 				//unblock neighbors
 				var tile:GridTile = obj.myCollisionGridTiles[0];
 				updateBlockedNeighbors(tile.gridRow, tile.gridCol);
-
-				//activate tile above
-				if (inBounds(tile.gridRow - 1, tile.gridCol)) {
-					delays.onActivate(grid[tile.gridRow - 1][tile.gridCol]);
-				}
+				activateNearbyTiles(tile.gridRow, tile.gridCol);
 			}
 			obj.clearGrids();
 			//call onKillEvent and get list of projectiles that the object threw
@@ -617,6 +768,27 @@ package org.interguild.game.collision {
 				for (var i:uint = 0; i < len; i++) {
 					activateObject(toActivate[i]);
 				}
+			}
+		}
+
+		private function activateNearbyTiles(row:int, col:int):void {
+			var tile:GridTile;
+
+			//activate tile above
+			if (inBounds(row - 1, col)) {
+				delays.onActivate(grid[row - 1][col]);
+			}
+
+			//activate tile to the right
+			if (inBounds(row, col + 1)) {
+				tile = grid[row][col + 1];
+				delays.onActivate(tile);
+			}
+
+			//activate tile to the left
+			if (inBounds(row, col - 1)) {
+				tile = grid[row][col - 1];
+				delays.onActivate(tile);
 			}
 		}
 

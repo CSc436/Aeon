@@ -1,12 +1,12 @@
 package org.interguild.game.collision {
-	import org.interguild.game.tiles.Player;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.DynamiteStick;
+	import org.interguild.game.tiles.Player;
 
 	public class DelayManager {
 
 		private static const DEATH_DELAY:uint = 5;
-		private static const ACTIVATION_DELAY:uint = 10;
+		private static const ACTIVATION_DELAY:uint = 7;
 
 		private var deathList:Array;
 		private var deathTimer:uint = 0;
@@ -56,10 +56,18 @@ package org.interguild.game.collision {
 			return list;
 		}
 
-		public function onActivate(tile:GridTile):void {
+		public function onActivate(tile:GridTile, immediate:Boolean = false):void {
 			if (!tile.markedForActivation) {
 				tile.markedForActivation = true;
-				activateList[activateTimer].push(tile);
+				if (immediate) {
+					if (activateTimer == 0) {
+						activateList[activateList.length - 1].push(tile);
+					} else {
+						activateList[activateTimer - 1].push(tile);
+					}
+				} else {
+					activateList[activateTimer].push(tile);
+				}
 			}
 		}
 

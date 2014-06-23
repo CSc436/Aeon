@@ -28,7 +28,7 @@ package org.interguild.game.gui {
 		}
 
 		CONFIG::OFFLINE {
-			public static const TEST_LEVEL_FILE:String = "../gamesaves/deathtest.txt";
+			public static const TEST_LEVEL_FILE:String = "../levels/livio's demo level.txt";
 		}
 
 		private var level:Level;

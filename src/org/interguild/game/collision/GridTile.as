@@ -1,7 +1,8 @@
 package org.interguild.game.collision {
 
 	import flash.display.Sprite;
-	
+
+	import org.interguild.game.tiles.Boulder;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.Platform;
 	import org.interguild.game.tiles.SecretArea;
@@ -26,8 +27,8 @@ package org.interguild.game.collision {
 				graphics.endFill();
 			}
 		}
-		
-		public function deconstruct():void{
+
+		public function deconstruct():void {
 			myStuff = null;
 			grid = null;
 		}
@@ -108,6 +109,16 @@ package org.interguild.game.collision {
 			return false;
 		}
 
+		public function isBoulderBlocking():Boolean {
+			var len:uint = myStuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = myStuff[i];
+				if (!o.isActive && o.isSolid())
+					return true;
+			}
+			return false;
+		}
+
 		/**
 		 * Wakes up the inActive objects in this grid. This method
 		 * is called when a nearby object does something like move
@@ -122,22 +133,22 @@ package org.interguild.game.collision {
 			}
 			grid.updateBlockedNeighbors(row, col);
 		}
-		
-		public function isGravible():Boolean{
+
+		public function isGravible():Boolean {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(!o.isActive && o.isGravible())
+				if (!o.isActive && o.isGravible())
 					return true;
 			}
 			return false;
 		}
-		
-		public function needToCrawl():Boolean{
+
+		public function needToCrawl():Boolean {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(!o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER) && !(o is Platform) && !(o is SecretArea))
+				if (!o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER) && !(o is Platform) && !(o is SecretArea))
 					return true;
 			}
 			return false;

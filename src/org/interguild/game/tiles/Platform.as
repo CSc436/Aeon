@@ -24,7 +24,6 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, NO_GRAVITY);
 			destruction.destroyedBy(Destruction.ARROWS);
 			destruction.destroyedBy(Destruction.EXPLOSIONS);
-			destruction.destroyedBy(Destruction.BOULDERS);
 
 			CONFIG::DEBUG {
 				showHitBox();

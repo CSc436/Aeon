@@ -51,12 +51,13 @@ package org.interguild.game.tiles {
 		private var justCollided:Dictionary;
 		private var sideBlocked:Array;
 		private var active:Boolean;
+		protected var doActiveCollisions:Boolean;
 		private var dead:Boolean;
 
 		private var ignoreList:Array;
 		protected var destruction:Destruction;
 		private var solid:Boolean = true;
-		private var gravity:Boolean = true;
+		protected var gravity:Boolean = true;
 		private var knockback:int = 0;
 		private var buoyancy:Boolean = false;
 
@@ -76,6 +77,15 @@ package org.interguild.game.tiles {
 			justCollided = new Dictionary(true);
 			sideBlocked = [false, false, false, false];
 			active = false;
+			doActiveCollisions = true;
+		}
+		
+		public function get timeToDeactivate():Boolean{
+			return false;
+		}
+		
+		public function get timeToDie():Boolean{
+			return false;
 		}
 		
 		protected function ignore(tile:Class):void{
@@ -216,7 +226,7 @@ package org.interguild.game.tiles {
 		 */
 		public override function onGameLoop():void {
 			//gravity
-			if (this.isGravible()) {
+			if (gravity) {
 				speedY += GRAVITY;
 
 				if (speedY > MAX_FALL_SPEED) {
@@ -352,15 +362,15 @@ package org.interguild.game.tiles {
 		 * about it so that we don't test for collisions on that side of the tile.
 		 */
 		public function setBlocked(direction:uint):void {
-			sideBlocked[direction] = true;
+			sideBlocked[direction - 1] = true;
 		}
 
 		public function setUnblocked(direction:uint):void {
-			sideBlocked[direction] = false;
+			sideBlocked[direction - 1] = false;
 		}
 
 		public function isBlocked(direction:uint):Boolean {
-			return sideBlocked[direction];
+			return sideBlocked[direction - 1];
 		}
 
 		public function set isActive(b:Boolean):void {
@@ -381,6 +391,10 @@ package org.interguild.game.tiles {
 
 		public function get isActive():Boolean {
 			return active;
+		}
+
+		public function get testForCollisions():Boolean {
+			return doActiveCollisions;
 		}
 	}
 }
