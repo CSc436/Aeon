@@ -222,6 +222,15 @@ package org.interguild.editor.levelpane {
 				zoomLevel -= ZOOM_SUPER_DELTA;
 			}
 			zoomTo(zoomLevel);
+			
+			if(zoomLevel <= ZOOM_SUPER_MIN)
+				editor.disableZoomOut();
+			else
+				editor.enableZoomOut();
+			if(zoomLevel >= ZOOM_MAX)
+				editor.disableZoomIn();
+			else
+				editor.enableZoomIn();
 		}
 
 		private function zoomTo(n:uint):void {

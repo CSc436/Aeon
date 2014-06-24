@@ -41,6 +41,18 @@ package org.interguild {
 		public static const PUBLISH_ROLLOVER:BitmapData = new PublishRolloverSprite();
 
 		public static const EDITOR_BG:BitmapData = new EditorBG();
+		
+		public static const EDITOR_ICON_BG_ON_OVER:BitmapData = new EditorIconBGOnOver();
+		public static const EDITOR_ICON_BG_ON_CLICK:BitmapData = new EditorIconBGOnClick();
+		public static const EDITOR_ICON_NEW:BitmapData = new EditorIconNew();
+		public static const EDITOR_ICON_OPEN:BitmapData = new EditorIconOpen();
+		public static const EDITOR_ICON_SAVE:BitmapData = new EditorIconSave();
+		public static const EDITOR_ICON_UNDO:BitmapData = new EditorIconUndo();
+		public static const EDITOR_ICON_REDO:BitmapData = new EditorIconRedo();
+		public static const EDITOR_ICON_ZOOM_IN:BitmapData = new EditorIconZoomIn();
+		public static const EDITOR_ICON_ZOOM_OUT:BitmapData = new EditorIconZoomOut();
+		public static const EDITOR_ICON_LEVEL_PROPS:BitmapData = new EditorIconLevelProps();
+		public static const EDITOR_ICON_HELP:BitmapData = new EditorIconHelp();
 
 		/*
 		 * LEVEL ASSETS

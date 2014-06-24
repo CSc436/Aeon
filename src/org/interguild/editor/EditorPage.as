@@ -247,6 +247,22 @@ package org.interguild.editor {
 		public function zoomOut():void{
 			levelPane.zoom(false);
 		}
+		
+		public function disableZoomIn():void{
+			topBar.disableZoomIn();
+		}
+		
+		public function disableZoomOut():void{
+			topBar.disableZoomOut();
+		}
+		
+		public function enableZoomIn():void{
+			topBar.enableZoomIn();
+		}
+		
+		public function enableZoomOut():void{
+			topBar.enableZoomOut();
+		}
 
 		/**
 		 * When Esc is pressed, open the file menu, so that the

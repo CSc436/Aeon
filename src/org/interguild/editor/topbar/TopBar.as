@@ -1,38 +1,31 @@
 package org.interguild.editor.topbar {
 	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
-	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-	import flash.net.URLRequest;
-	
+
 	import org.interguild.Assets;
 	import org.interguild.components.FancyButton;
 	import org.interguild.editor.EditorPage;
 
 	public class TopBar extends Sprite {
 
-		private static const NEW_LEVEL_ICON:String = "icons/new-level-icon.png";
-		private static const OPEN_LEVEL_ICON:String = "icons/open-level-icon.png";
-		private static const SAVE_LEVEL_ICON:String = "icons/save-level-icon.png";
-		private static const UNDO_ICON:String = "icons/undo-icon.png";
-		private static const REDO_ICON:String = "icons/redo-icon.png";
-		private static const LEVEL_PROPS_ICON:String = "icons/level-properties-icon.png";
-		private static const ZOOM_IN_ICON:String = "icons/zoom-in-icon.png";
-		private static const ZOOM_OUT_ICON:String = "icons/zoom-out-icon.png";
-		private static const HELP_ICON:String = "icons/help-icon.png";
-		
-		private static const ICON_ROLLOVER:String = "icons/rollover.png";
-		private static const ICON_CLICK:String = "icons/onclick.png";
-		
 		private static const ICON_PADDING_TOP:uint = 1;
 		private static const ICON_PADDING_LEFT:uint = 100;
 		private static const ICON_WIDTH:uint = 48;
 		private static const ICON_SPACING:uint = 0;
 
+		private static const DISABLED_ALPHA:Number = 0.5;
+
 		private var iconX:Number = ICON_PADDING_LEFT;
-		private var iconRollover:Loader;
-		private var iconClick:Loader;
+		private var iconRollover:Bitmap;
+		private var iconClick:Bitmap;
+
+		private var undoBtn:Sprite;
+		private var redoBtn:Sprite;
+		private var zoomInBtn:Sprite;
+		private var zoomOutBtn:Sprite;
 
 		private var editor:EditorPage;
 		private var fileButton:FileMenu;
@@ -41,60 +34,69 @@ package org.interguild.editor.topbar {
 			this.editor = editor;
 
 			initIcons();
-			initButtons();
+			initPlayAndPublishButtons();
 			initFileButton();
 		}
 
 		private function initIcons():void {
 			//rollover image
-			iconRollover = new Loader();
-			iconRollover.load(new URLRequest(ICON_ROLLOVER));
+			iconRollover = new Bitmap(Assets.EDITOR_ICON_BG_ON_OVER);
 			iconRollover.visible = false;
 			iconRollover.y = ICON_PADDING_TOP;
 			addChild(iconRollover);
-			
+
 			//on click image
-			iconClick = new Loader();
-			iconClick.load(new URLRequest(ICON_CLICK));
+			iconClick = new Bitmap(Assets.EDITOR_ICON_BG_ON_CLICK);
 			iconClick.visible = false;
 			iconClick.y = ICON_PADDING_TOP;
 			addChild(iconClick);
 
 			//all the icons
-			loadIcon(NEW_LEVEL_ICON, "New Level (Ctrl+N)", function(evt:MouseEvent):void{
+			initIcon(Assets.EDITOR_ICON_NEW, "New Level (Ctrl+N)", function(evt:MouseEvent):void {
 				editor.newLevel();
 			});
-			loadIcon(OPEN_LEVEL_ICON, "Open Level (Ctrl+O)", function(evt:MouseEvent):void{
+
+			initIcon(Assets.EDITOR_ICON_OPEN, "Open Level (Ctrl+O)", function(evt:MouseEvent):void {
 				editor.openFromFile();
 			});
-			loadIcon(SAVE_LEVEL_ICON, "Save Level (Ctrl+S)", function(evt:MouseEvent):void{
+
+			initIcon(Assets.EDITOR_ICON_SAVE, "Save Level (Ctrl+S)", function(evt:MouseEvent):void {
 				editor.saveToFile();
 			});
-			loadIcon(UNDO_ICON, "Undo (Ctrl+Z)", function(evt:MouseEvent):void{
+
+			undoBtn = initIcon(Assets.EDITOR_ICON_UNDO, "Undo (Ctrl+Z)", function(evt:MouseEvent):void {
 				editor.undo();
 			});
-			loadIcon(REDO_ICON, "Redo (Ctrl+Y)", function(evt:MouseEvent):void{
+			disable(undoBtn);
+
+			redoBtn = initIcon(Assets.EDITOR_ICON_REDO, "Redo (Ctrl+Y)", function(evt:MouseEvent):void {
 				editor.redo();
 			});
-			loadIcon(ZOOM_IN_ICON, "Zoom In (Ctrl++)", function(evt:MouseEvent):void{
+			disable(redoBtn);
+
+			zoomInBtn = initIcon(Assets.EDITOR_ICON_ZOOM_IN, "Zoom In (Ctrl++)", function(evt:MouseEvent):void {
 				editor.zoomIn();
 			});
-			loadIcon(ZOOM_OUT_ICON, "Zoom Out (Ctrl+–)", function(evt:MouseEvent):void{
+			disable(zoomInBtn);
+
+			zoomOutBtn = initIcon(Assets.EDITOR_ICON_ZOOM_OUT, "Zoom Out (Ctrl+–)", function(evt:MouseEvent):void {
 				editor.zoomOut();
 			});
-			loadIcon(LEVEL_PROPS_ICON, "Level Properties", function(evt:MouseEvent):void{
+
+			initIcon(Assets.EDITOR_ICON_LEVEL_PROPS, "Level Properties", function(evt:MouseEvent):void {
 				editor.showLevelProperties();
 			});
-			loadIcon(HELP_ICON, "Help", function(evt:MouseEvent):void{
+
+			initIcon(Assets.EDITOR_ICON_HELP, "Help", function(evt:MouseEvent):void {
 				editor.showHelpScreen();
 			});
 		}
 
-		private function loadIcon(iconURL:String, toolTip:String, onClick:Function):void {
-			var image:Loader = new Loader();
-			image.load(new URLRequest(iconURL));
-
+		private function initIcon(image:BitmapData, toolTip:String, onClick:Function):Sprite {
 			var s:Sprite = new Sprite();
+			s.graphics.beginBitmapFill(image);
+			s.graphics.drawRect(0, 0, image.width, image.height);
+			s.graphics.endFill();
 			s.x = iconX;
 			s.y = ICON_PADDING_TOP;
 			s.buttonMode = true;
@@ -104,13 +106,14 @@ package org.interguild.editor.topbar {
 			s.addEventListener(MouseEvent.MOUSE_DOWN, onIconDown);
 			s.addEventListener(MouseEvent.MOUSE_UP, onIconUp);
 			s.addEventListener(MouseEvent.CLICK, onClick);
-			s.addChild(image);
 			addChild(s);
 
 			var tt:ToolTip = new ToolTip(s, toolTip);
 			addChild(tt);
 
 			iconX += ICON_WIDTH + ICON_SPACING;
+
+			return s;
 		}
 
 		private function onIconOver(evt:MouseEvent):void {
@@ -122,23 +125,20 @@ package org.interguild.editor.topbar {
 		private function onIconOut(evt:MouseEvent):void {
 			iconRollover.visible = false;
 		}
-		
+
 		private function onIconDown(evt:MouseEvent):void {
 			iconClick.x = DisplayObject(evt.target).x;
 			iconClick.visible = true;
 			iconRollover.visible = false;
 		}
-		
+
 		private function onIconUp(evt:MouseEvent):void {
 			iconRollover.x = DisplayObject(evt.target).x;
 			iconRollover.visible = true;
 			iconClick.visible = false;
 		}
 
-		/**
-		 * Initializes the "Play Level" button and "Publish" button
-		 */
-		private function initButtons():void {
+		private function initPlayAndPublishButtons():void {
 			var up:DisplayObject;
 			var over:DisplayObject;
 			var hit:Sprite;
@@ -183,6 +183,32 @@ package org.interguild.editor.topbar {
 		private function initFileButton():void {
 			fileButton = new FileMenu(editor);
 			addChild(fileButton);
+		}
+		
+		private function disable(s:Sprite):void {
+			s.alpha = DISABLED_ALPHA;
+			s.mouseEnabled = false;
+		}
+		
+		private function enable(s:Sprite):void {
+			s.alpha = 1;
+			s.mouseEnabled = true;
+		}
+		
+		public function enableZoomIn():void{
+			enable(zoomInBtn);
+		}
+		
+		public function enableZoomOut():void{
+			enable(zoomOutBtn);
+		}
+		
+		public function disableZoomIn():void{
+			disable(zoomInBtn);
+		}
+		
+		public function disableZoomOut():void{
+			disable(zoomOutBtn);
 		}
 
 		public function toggleMenu():void {

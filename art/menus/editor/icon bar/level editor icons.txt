@@ -12,4 +12,4 @@ Level Settings
 Zoom in
 Zoom out
 
-Exit to Main Menu
+Help

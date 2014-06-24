@@ -103,8 +103,8 @@ package org.interguild {
 				textField.autoSize = TextFieldAutoSize.LEFT;
 				textField.selectable = false;
 				textField.text = "DEBUGGING MODE";
-				textField.x = 5;
-				textField.y = 5;
+				textField.x = 10;
+				textField.y = Aeon.STAGE_HEIGHT - textField.height - 25;
 				addChild(textField);
 			}
 		}

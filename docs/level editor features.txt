@@ -1,0 +1,27 @@
+File
+
+New
+Open
+Save
+Save All
+Save as
+Close
+Close All
+Main Menu
+
+Edit
+
+Undo
+Redo
+Copy
+Paste
+
+set title
+set dimensions
+set background
+select tile from list
+test level
+zoom in
+zoom out
+Zoom...
+Select all
