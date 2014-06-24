@@ -1,0 +1,54 @@
+NOTES & IDEAS
+
+creativity / people making levels
+
+land vs. crashing
+
+land
+
+pirate caves collect treasure, opens the door
+
+collect gems or something, door (point that you reach when you're done with level)
+
+secret bases, with traps inside, open doors with some collectable?
+
+warp point, collectable
+
+warping, start warp point, end warp point
+
+approachable, creative, saturated?
+"mockup screenshot" to experiment with this.
+
+story, motivation: tile-based, rectangular shape
+tapes? replacing the gems?
+
+terrain
+background
+wooden crates
+steel crates
+
+clouds
+
+landscape, horizon shot, repeating horizontally
+terrain? dirt/rocks? steel/building-like?
+
+color palette
+
+///////////SUMMARY///////////////
+
+landing on the planet to look for treasure
+it's like a lost civilization, filled with traps and stuff
+level starts with a warp point (maybe?)
+level ends with a warp gate.
+
+this sprint we want to get sprites in for:
+terrain, background, steel, and wooden crate
+
+TODO:
+determine a better art style for the game, maybe experiment with a mockup screenshot
+want brighter, more saturated colors, sharper outlines, maybe pixelated feel
+
+came up with menu colors: dark/black background, white text, teal highlight color
+TODO:
+experiment with drawing of planet Aeon for main menu.
+what if it was in the same art style as the in-game sprites?
