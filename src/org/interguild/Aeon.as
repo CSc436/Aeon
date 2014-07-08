@@ -21,7 +21,6 @@ package org.interguild {
 
 	/**
 	 * Responsible for managing all of the menu transitions.
-	 *
 	 */
 	[SWF(backgroundColor = "0x999999", width = "900", height = "500", frameRate = "30")]
 	public class Aeon extends Sprite {

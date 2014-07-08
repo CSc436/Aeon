@@ -5,13 +5,14 @@ package org.interguild.game.gui {
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
-
+	
 	import fl.controls.Button;
-
+	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
-	import org.interguild.loader.LevelLoader;
 	import org.interguild.game.Level;
+	import org.interguild.loader.LevelLoader;
 
 	/**
 	 * LevelPage will handle every screen that happens when you're playing a level.

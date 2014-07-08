@@ -9,17 +9,18 @@ package org.interguild.game.collision {
 		private static const ACTIVATION_DELAY:uint = 7;
 
 		private var deathList:Array;
-		private var deathTimer:uint = 0;
+//		private var deathTimer:uint = 0;
 		
 		private var activateList:Array;
 		private var activateTimer:uint = 0;
 
 		public function DelayManager() {
 			var i:uint;
-			deathList = new Array(DEATH_DELAY);
-			for (i = 0; i < deathList.length; i++) {
-				deathList[i] = new Array();
-			}
+			deathList = [];
+//			deathList = new Array(DEATH_DELAY);
+//			for (i = 0; i < deathList.length; i++) {
+//				deathList[i] = new Array();
+//			}
 			activateList = new Array(ACTIVATION_DELAY);
 			for (i = 0; i < activateList.length; i++) {
 				activateList[i] = new Array();
@@ -29,15 +30,16 @@ package org.interguild.game.collision {
 		public function onDeath(obj:CollidableObject):void {
 			if (!obj.markedForDeath) {
 				obj.markedForDeath = true;
-				if (diesImmediately(obj)) {
-					if (deathTimer == 0) {
-						deathList[deathList.length - 1].push(obj);
-					} else {
-						deathList[deathTimer - 1].push(obj);
-					}
-				} else {
-					deathList[deathTimer].push(obj);
-				}
+				deathList.push(obj);
+//				if (diesImmediately(obj)) {
+//					if (deathTimer == 0) {
+//						deathList[deathList.length - 1].push(obj);
+//					} else {
+//						deathList[deathTimer - 1].push(obj);
+//					}
+//				} else {
+//					deathList[deathTimer].push(obj);
+//				}
 			}
 		}
 		
@@ -46,13 +48,14 @@ package org.interguild.game.collision {
 		}
 
 		public function getDeaths():Array {
-			if (deathTimer == 0) {
-				deathTimer = deathList.length - 1;
-			} else {
-				deathTimer--;
-			}
-			var list:Array = deathList[deathTimer];
-			deathList[deathTimer] = new Array();
+//			if (deathTimer == 0) {
+//				deathTimer = deathList.length - 1;
+//			} else {
+//				deathTimer--;
+//			}
+			var list:Array = deathList;//[deathTimer];
+			deathList = [];
+//			deathList[deathTimer] = new Array();
 			return list;
 		}
 

@@ -2,6 +2,9 @@ package org.interguild.game.tiles {
 	CONFIG::DEBUG {
 		import flash.display.Sprite;
 	}
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
 
@@ -9,8 +12,6 @@ package org.interguild.game.tiles {
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
 	import flash.display.DisplayObject;
-	import flash.display.Bitmap;
-	import flash.display.BitmapData;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -53,6 +54,7 @@ package org.interguild.game.tiles {
 		private var active:Boolean;
 		protected var doActiveCollisions:Boolean;
 		private var dead:Boolean;
+		public var prevSpeedY:Number;
 
 		private var ignoreList:Array;
 		protected var destruction:Destruction;
@@ -79,27 +81,27 @@ package org.interguild.game.tiles {
 			active = false;
 			doActiveCollisions = true;
 		}
-		
-		public function get timeToDeactivate():Boolean{
+
+		public function get timeToDeactivate():Boolean {
 			return false;
 		}
-		
-		public function get timeToDie():Boolean{
+
+		public function get timeToDie():Boolean {
 			return false;
 		}
-		
-		protected function ignore(tile:Class):void{
-			if(ignoreList == null)
+
+		protected function ignore(tile:Class):void {
+			if (ignoreList == null)
 				ignoreList = [];
 			ignoreList.push(tile);
 		}
-		
-		public function isIgnored(obj:CollidableObject):Boolean{
-			if(ignoreList == null)
+
+		public function isIgnored(obj:CollidableObject):Boolean {
+			if (ignoreList == null)
 				return false;
 			var len:uint = ignoreList.length;
-			for(var i:uint = 0; i < len; i++){
-				if(obj is ignoreList[i])
+			for (var i:uint = 0; i < len; i++) {
+				if (obj is ignoreList[i])
 					return true;
 			}
 			return false;
@@ -235,6 +237,7 @@ package org.interguild.game.tiles {
 			}
 
 			//update movement
+			prevSpeedY = speedY;
 			newX += speedX;
 			newY += speedY;
 			updateHitBox();

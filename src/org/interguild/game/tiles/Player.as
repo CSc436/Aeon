@@ -30,7 +30,7 @@ package org.interguild.game.tiles {
 		private static const CRAWL_OFFSET:uint = STANDING_HEIGHT - CRAWLING_HEIGHT;
 
 		private static const MAX_FALL_SPEED:Number = 14;
-		private static const MAX_RUN_SPEED:Number = 6;
+		private static const MAX_RUN_SPEED:Number = 8; //6;
 		private static const MAX_CRAWL_SPEED:Number = 3;
 		private static const RUN_ACC:Number = MAX_RUN_SPEED;
 		private static const GROUND_FRICTION:Number = MAX_RUN_SPEED;
@@ -195,6 +195,7 @@ package org.interguild.game.tiles {
 
 				wasOnGround = isOnGround;
 				isOnGround = false;
+				prevSpeedY = speedY;
 				newX += speedX;
 				newY += speedY;
 				updateHitBox();
