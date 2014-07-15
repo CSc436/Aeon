@@ -1,6 +1,8 @@
 package org.interguild {
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
+	
+	import org.interguild.game.tiles.Spike;
 
 	public class Assets {
 		
@@ -64,22 +66,28 @@ package org.interguild {
 		public static const STEEL_CRATE:BitmapData = new SteelCrateSprite();
 		public static const WOOD_CRATE:BitmapData = new WoodenCrateSprite();
 		public static const WOODEN_PLATFORM:BitmapData = ERASER_TOOL_SPRITE;
-		public static const SPIKE_FLOOR:BitmapData = ERASER_TOOL_SPRITE;
-		public static const SPIKE_CEILING:BitmapData = ERASER_TOOL_SPRITE;
-		public static const SPIKE_WALL_RIGHT:BitmapData = ERASER_TOOL_SPRITE;
-		public static const SPIKE_WALL_LEFT:BitmapData = ERASER_TOOL_SPRITE;
+		
+		public static const SPIKE_SPRITE:BitmapData = new SpikeSprite();
+		public static const SPIKE_FLOOR_EDITOR:BitmapData = new SpikeFloorEditorIcon();
+		public static const SPIKE_CEILING_EDITOR:BitmapData = new SpikeCeilingEditorIcon();
+		public static const SPIKE_WALL_RIGHT_EDITOR:BitmapData = new SpikeWallRightEditorIcon();
+		public static const SPIKE_WALL_LEFT_EDITOR:BitmapData = new SpikeWallLeftEditorIcon();
+		
 		public static const BOULDER:BitmapData = ERASER_TOOL_SPRITE;
 
-		public static const ARROW_CRATE_WOOD_RIGHT:BitmapData = new LightningBoxRight();
-		public static const ARROW_CRATE_WOOD_LEFT:BitmapData = new LightningBoxLeft();
-		public static const ARROW_CRATE_WOOD_UP:BitmapData = new LightningBoxUp();
-		public static const ARROW_CRATE_WOOD_DOWN:BitmapData = new LightningBoxDown();
-		public static const ARROW_CRATE_STEEL_RIGHT:BitmapData = new LightningBoxRight();
-		public static const ARROW_CRATE_STEEL_LEFT:BitmapData = new LightningBoxLeft();
-		public static const ARROW_CRATE_STEEL_UP:BitmapData = new LightningBoxUp();
-		public static const ARROW_CRATE_STEEL_DOWN:BitmapData = new LightningBoxDown();
+		public static const ARROW_CRATE_WOOD_RIGHT:BitmapData = new WoodRocketRightSprite();
+		public static const ARROW_CRATE_WOOD_LEFT:BitmapData = new WoodRocketLeftSprite();
+		public static const ARROW_CRATE_WOOD_UP:BitmapData = new WoodRocketUpSprite();
+		public static const ARROW_CRATE_WOOD_DOWN:BitmapData = new WoodRocketDownSprite();
+		public static const ARROW_CRATE_STEEL_RIGHT:BitmapData = new SteelRocketRightSprite();
+		public static const ARROW_CRATE_STEEL_LEFT:BitmapData = new SteelRocketLeftSprite();
+		public static const ARROW_CRATE_STEEL_UP:BitmapData = new SteelRocketUpSprite();
+		public static const ARROW_CRATE_STEEL_DOWN:BitmapData = new SteelRocketDownSprite();
+		
+		public static const DYNAMITE_SPRITE:BitmapData = new DynamiteSprite();
 
 		public static const DYNAMITE_WOOD_CRATE:BitmapData = new WoodenDynamiteSprite();
+		public static const DYNAMITE_STEEL_CRATE:BitmapData = new SteelDynamiteSprite();
 
 		public static const PAUSE_MENU_BG:BitmapData = new PauseMenuBG();
 		

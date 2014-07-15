@@ -1,12 +1,13 @@
 package org.interguild.editor.tilelist {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-
+	
 	import org.interguild.Aeon;
 
 	public class TileListItem extends Sprite {
@@ -22,6 +23,7 @@ package org.interguild.editor.tilelist {
 		private static const SELECTED_COLOR:uint = 0x0c4d68;
 		private static const SELECTED_ALPHA:Number = 0.5;
 
+		private static const ICON_BG_COLOR:uint = 0x417dce;
 		private static const ICON_BORDER_COLOR:uint = 0x222222;
 		private static const ICON_BORDER_WIDTH:uint = 1;
 
@@ -65,10 +67,13 @@ package org.interguild.editor.tilelist {
 			changeIcon(TileList.getIcon(code));
 
 			//draw border
-			var border:Sprite = new Sprite();
+			var border:Shape = new Shape();
 			border.graphics.beginFill(ICON_BORDER_COLOR);
 			border.graphics.drawRect(icon.x - ICON_BORDER_WIDTH, icon.y - ICON_BORDER_WIDTH, icon.width + (2 * ICON_BORDER_WIDTH), icon.height + (2 * ICON_BORDER_WIDTH));
 			border.graphics.endFill();
+			border.graphics.beginFill(ICON_BG_COLOR);
+			border.graphics.drawRect(icon.x, icon.y, icon.width, icon.height);
+			border.graphics.endFill();			
 			addChildAt(border, numChildren - 1);
 
 			//drop shadow
@@ -107,7 +112,7 @@ package org.interguild.editor.tilelist {
 		}
 
 		public function drawBottomBorder():void {
-			var border:Sprite = new Sprite();
+			var border:Shape = new Shape();
 			border.graphics.beginFill(DIVIDER_DARK);
 			border.graphics.drawRect(0, CLICK_AREA_HEIGHT, CLICK_AREA_WIDTH, 1);
 			border.graphics.endFill();

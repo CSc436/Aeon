@@ -9,7 +9,7 @@ package org.interguild.game.tiles {
 	public class DynamiteSteelCrate extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = 'D';
-		public static const EDITOR_ICON:BitmapData = Assets.DYNAMITE_WOOD_CRATE;
+		public static const EDITOR_ICON:BitmapData = Assets.DYNAMITE_STEEL_CRATE;
 
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
@@ -22,7 +22,7 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY);
 			CollidableObject.setSteelCrateDestruction(this);
 
-			setFaces(Assets.DYNAMITE_WOOD_CRATE);
+			setFaces(Assets.DYNAMITE_STEEL_CRATE);
 			sounds = SoundMan.getMe();
 			this.explosion = explosion;
 		}

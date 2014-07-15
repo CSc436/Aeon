@@ -14,7 +14,6 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Platform;
 	import org.interguild.game.tiles.Player;
-	import org.interguild.game.tiles.WoodCrate;
 
 	public class CollisionGrid extends Sprite {
 
@@ -463,8 +462,8 @@ package org.interguild.game.collision {
 				delays.onDeath(otherObject);
 				otherDestroyed = true;
 			}
-			if (otherDestroyed && otherObject.getKnockback() > 0)
-				otherDestroyed = false;
+//			if (otherDestroyed && otherObject.getKnockback() > 0)
+//				otherDestroyed = false;
 
 			/*
 			* SOLID COLLISIONS
@@ -477,26 +476,28 @@ package org.interguild.game.collision {
 					var isBoulder:Boolean = activeObject is Boulder;
 					if (otherObject.isDestroyedBy(Destruction.FALLING_SOLID_OBJECTS) && !otherObject.canDestroy(activeObject)) {
 						delays.onDeath(otherObject);
-					} else if (isBoulder && otherObject is Platform && activeObject.prevSpeedY > Level.GRAVITY) {
-						// boulder lands on platform
-						killThreePlatforms(otherObject);
-					} else if (!otherDestroyed) {
-						if (isPlayer) {
-							// player lands on object
-							if (!otherDestroyed)
-								player.landedOnGround(otherBoxCurr.top);
+					} else if (isBoulder) {
+						if (otherObject is Platform && activeObject.prevSpeedY > Level.GRAVITY) {
+							// boulder lands on platform
+							killThreePlatforms(otherObject);
 						} else if (isBoulder && otherObject is Boulder) {
 							// boulder lands on boulder
 							gridTile = otherObject.myCollisionGridTiles[0];
 							handleBoulderPiling(Boulder(activeObject), gridTile.gridRow, gridTile.gridCol);
 							activeObject.speedY = 0;
-						} else {
-							// something else lands on object
-							if (!meDestroyed)
-								deactivateObjects.push(activeObject);
-							landOnTile(activeObject);
-							activeObject.speedY = 0;
+							activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 						}
+					} else if (isPlayer) {
+						// player lands on object
+						if (!otherDestroyed)
+							player.landedOnGround(otherBoxCurr.top);
+						activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
+					} else if (!otherDestroyed) {
+						// something else lands on object
+						if (!meDestroyed)
+							deactivateObjects.push(activeObject);
+						landOnTile(activeObject);
+						activeObject.speedY = 0;
 						activeObject.newY = otherBoxPrev.top - activeBoxCurr.height;
 					}
 					/*
@@ -560,7 +561,10 @@ package org.interguild.game.collision {
 			*/
 			if (isPlayer && otherObject.getKnockback() > 0) {
 				if (direction == Direction.DOWN || (!player.wasStanding && player.speedY > 0)) {
-					activeObject.speedY = -activeObject.speedY * 1;
+					if (player.speedY > 0)
+						activeObject.speedY = -activeObject.speedY * 1;
+					else
+						trace("what");
 				} else if (direction == Direction.UP || (!player.wasStanding && player.speedY < 0)) {
 					activeObject.speedY = 0;
 				} else if (direction == Direction.RIGHT) {

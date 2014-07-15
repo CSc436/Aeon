@@ -1,4 +1,5 @@
 package org.interguild.game.tiles {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	
 	import org.interguild.Assets;
@@ -19,6 +20,8 @@ package org.interguild.game.tiles {
 		private static const HEIGHT:uint = 16;
 		private static const POS_OFFSET_X:int = 16 - WIDTH / 2;
 		private static const POS_OFFSET_Y:int = 0;
+		private static const SPRITE_OFFSET_X:int = -5;
+		private static const SPRITE_OFFSET_Y:int = -10;
 
 		private static const INIT_SPEED_Y:Number = -12;
 		private static const INIT_SPEED_X:Number = 8;
@@ -37,6 +40,11 @@ package org.interguild.game.tiles {
 
 			sounds = SoundMan.getMe();
 			this.explosion = explosion;
+			
+			var b:Bitmap = new Bitmap(Assets.DYNAMITE_SPRITE);
+			b.x = SPRITE_OFFSET_X;
+			b.y = SPRITE_OFFSET_Y;
+			addChild(b);
 			CONFIG::DEBUG {
 				showHitBox();
 			}

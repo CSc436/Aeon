@@ -177,16 +177,16 @@ package org.interguild.editor.tilelist {
 			map[SteelCrate.LEVEL_CODE_CHAR] = SteelCrate.EDITOR_ICON;
 			addItem(new TileListItem("Steel Crate", SteelCrate.LEVEL_CODE_CHAR));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT] = ArrowCrate.EDITOR_ICON_WOOD_RIGHT;
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT] = ArrowCrate.EDITOR_ICON_STEEL_RIGHT;
 			addItem(new TileListItem("Steel Arrow Right", ArrowCrate.LEVEL_CODE_CHAR_STEEL_RIGHT));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT] = ArrowCrate.EDITOR_ICON_WOOD_LEFT;
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT] = ArrowCrate.EDITOR_ICON_STEEL_LEFT;
 			addItem(new TileListItem("Steel Arrow Left", ArrowCrate.LEVEL_CODE_CHAR_STEEL_LEFT));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP] = ArrowCrate.EDITOR_ICON_WOOD_UP;
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP] = ArrowCrate.EDITOR_ICON_STEEL_UP;
 			addItem(new TileListItem("Steel Arrow Up", ArrowCrate.LEVEL_CODE_CHAR_STEEL_UP));
 
-			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN] = ArrowCrate.EDITOR_ICON_WOOD_DOWN;
+			map[ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN] = ArrowCrate.EDITOR_ICON_STEEL_DOWN;
 			addItem(new TileListItem("Steel Arrow Down", ArrowCrate.LEVEL_CODE_CHAR_STEEL_DOWN));
 
 			map[DynamiteSteelCrate.LEVEL_CODE_CHAR] = DynamiteSteelCrate.EDITOR_ICON;
