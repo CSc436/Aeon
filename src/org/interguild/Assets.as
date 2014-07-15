@@ -33,6 +33,7 @@ package org.interguild {
 
 		public static const SELECTION_TOOL_SPRITE:BitmapData = new SelectionToolSprite();
 		public static const ERASER_TOOL_SPRITE:BitmapData = new EraserToolSprite();
+		public static const SECRET_AREA_ICON:BitmapData = new SecretAreaEditorIcon();
 
 		public static const FILE_BUTTON_SPRITE:BitmapData = new FileButtonSprite();
 		public static const FILE_MOUSE_OEVER_SPRITE:BitmapData = new FileMouseOverSprite();

@@ -489,8 +489,6 @@ package org.interguild.editor.levelpane {
 						if (currentPlayerTile != null)
 							currentPlayerTile.clearTile(isMouseDown);
 						currentPlayerTile = cell;
-					} else {
-						currentPlayerTile = null;
 					}
 					cell.setTile(char);
 					break;
@@ -504,9 +502,6 @@ package org.interguild.editor.levelpane {
 			if (row < rows && col < cols) {
 				clickCell(EditorCell(cells[row][col]), char);
 			}
-		/* else {
-			throw new Error("EditorGrid.placeTile() Invalid (row,col) coordinates: (" + row + "," + col + ")");
-		}*/
 		}
 
 		public function selectAll():void {

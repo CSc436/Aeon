@@ -7,7 +7,7 @@ package org.interguild.editor.tilelist {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
+
 	import org.interguild.Aeon;
 
 	public class TileListItem extends Sprite {
@@ -43,7 +43,7 @@ package org.interguild.editor.tilelist {
 		private var isSelected:Boolean;
 		private var code:String;
 
-		public function TileListItem(name:String, code:String) {
+		public function TileListItem(name:String, code:String, darkBG:Boolean = false) {
 			this.code = code;
 			this.mouseChildren = false;
 
@@ -71,9 +71,12 @@ package org.interguild.editor.tilelist {
 			border.graphics.beginFill(ICON_BORDER_COLOR);
 			border.graphics.drawRect(icon.x - ICON_BORDER_WIDTH, icon.y - ICON_BORDER_WIDTH, icon.width + (2 * ICON_BORDER_WIDTH), icon.height + (2 * ICON_BORDER_WIDTH));
 			border.graphics.endFill();
-			border.graphics.beginFill(ICON_BG_COLOR);
-			border.graphics.drawRect(icon.x, icon.y, icon.width, icon.height);
-			border.graphics.endFill();			
+			//draw icon bg
+			if (!darkBG) {
+				border.graphics.beginFill(ICON_BG_COLOR);
+				border.graphics.drawRect(icon.x, icon.y, icon.width, icon.height);
+				border.graphics.endFill();
+			}
 			addChildAt(border, numChildren - 1);
 
 			//drop shadow

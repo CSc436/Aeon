@@ -55,8 +55,9 @@ package org.interguild.editor.tilelist {
 				terrainItem.changeIcon(img);
 
 			var secret:BitmapData = new BitmapData(32, 32, true);
-			var alpha:BitmapData = new BitmapData(32, 32, true, 0x80000000);
+			var alpha:BitmapData = new BitmapData(32, 32, true, 0xAA000000);
 			secret.copyPixels(Assets.getTerrainImage(id), rect, point, alpha, point);
+			secret.copyPixels(Assets.SECRET_AREA_ICON, rect, point, null, null, true);
 			map[SecretArea.LEVEL_CODE_CHAR] = secret;
 			if (secretAreaItem)
 				secretAreaItem.changeIcon(secret);
@@ -144,7 +145,7 @@ package org.interguild.editor.tilelist {
 			terrainItem = currentSelection;
 			addItem(currentSelection);
 
-			secretAreaItem = new TileListItem("Secret Area", SecretArea.LEVEL_CODE_CHAR);
+			secretAreaItem = new TileListItem("Secret Area", SecretArea.LEVEL_CODE_CHAR, true);
 			addItem(secretAreaItem);
 
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
