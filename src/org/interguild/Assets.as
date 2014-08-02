@@ -61,7 +61,7 @@ package org.interguild {
 		 * LEVEL ASSETS
 		 */
 
-		public static const TREASURE_SPRITE:BitmapData = new CollectibleSprite();
+		public static const TREASURE_SPRITE:BitmapData = new TreasureSprite();
 		public static const FINISH_LINE:BitmapData = new FinishLineSprite();
 		public static const STARTING_LINE:BitmapData = new StartLineSprite();
 		public static const STEEL_CRATE:BitmapData = new SteelCrateSprite();
