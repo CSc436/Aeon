@@ -14,7 +14,7 @@ package org.interguild.game {
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.TerrainView;
 	import org.interguild.game.tiles.Collectable;
-	import org.interguild.game.tiles.FinishLine;
+	import org.interguild.game.tiles.EndGate;
 	import org.interguild.game.gui.LevelHUD;
 	import flash.utils.getTimer;
 	import org.interguild.game.tiles.Player;
@@ -34,13 +34,18 @@ package org.interguild.game {
 		private static const FRAME_RATE:uint = 30;
 		private static const PERIOD:Number = 1000 / FRAME_RATE;
 
+		private static const PORTAL_ANIMATION_DELAY:uint = 8;
+
 		private var myTitle:String;
 
 		private var camera:Camera;
 		private var player:Player;
-		private var portals:Array;
 		private var tv:TerrainView;
 		private var bg:LevelBackground;
+
+		private var portals:Array;
+		private var animatePortals:Boolean = false;
+		private var portalAnim:uint;
 
 		private var collisionGrid:CollisionGrid;
 
@@ -85,11 +90,9 @@ package org.interguild.game {
 			player = new Player(collisionGrid);
 			camera = new Camera(player, bg, widthInPixels, heightInPixels);
 			addChild(camera);
-			camera.addChild(player);
 
 			//init Terrain view
 			tv = TerrainView.init(widthInPixels, heightInPixels);
-			camera.addChild(tv);
 
 			//init level hud
 			hud = new LevelHUD();
@@ -152,7 +155,9 @@ package org.interguild.game {
 		}
 
 		public function finishLoading():void {
+			camera.addChild(player);
 			tv.finishTerrain();
+			camera.addChild(tv);
 			hud.updateMax(collectableCount);
 			if (hud.maxCollected == 0)
 				openPortal();
@@ -169,7 +174,7 @@ package org.interguild.game {
 				openPortal();
 		}
 
-		public function setFinish(o:FinishLine):void {
+		public function setFinish(o:EndGate):void {
 			portals.push(o);
 		}
 
@@ -204,8 +209,20 @@ package org.interguild.game {
 		}
 
 		public function openPortal():void {
-			for each (var p:FinishLine in portals) {
+			for each (var p:EndGate in portals) {
 				p.activate();
+			}
+			animatePortals = true;
+		}
+
+		private function updatePortals():void {
+			if (portalAnim == 0) {
+				for each (var p:EndGate in portals) {
+					p.animate();
+				}
+				portalAnim = PORTAL_ANIMATION_DELAY;
+			} else {
+				portalAnim--;
 			}
 		}
 
@@ -253,7 +270,11 @@ package org.interguild.game {
 
 		public function createCollidableObject(tile:CollidableObject, fakeObject:Boolean = false):void {
 			collisionGrid.addObject(tile, fakeObject);
-			camera.addChild(tile);
+			if (tile is EndGate) {
+				camera.addChildAt(tile, 0);
+			} else {
+				camera.addChild(tile);
+			}
 			if (tile is Collectable)
 				collectableCount++;
 		}
@@ -329,10 +350,13 @@ package org.interguild.game {
 		/**
 		 * Called 30 frames per second.
 		 */
-		private function onGameLoop(evt:TimerEvent):void { 
+		private function onGameLoop(evt:TimerEvent):void {
 			collisionGrid.updateAllObjects();
 			CONFIG::DEBUG {
 				drawPlayerHitBox();
+			}
+			if (animatePortals) {
+				updatePortals();
 			}
 			collisionGrid.doCollisionDetection();
 			collisionGrid.handleRemovalsAndMore(camera);
@@ -347,7 +371,7 @@ package org.interguild.game {
 
 		CONFIG::DEBUG {
 			private function drawPlayerHitBox(drawWrapper:Boolean = false):void {
-				if(player == null)
+				if (player == null)
 					return;
 				if (isDebuggingMode) {
 					var s:Sprite = player.drawHitBox(false);
@@ -389,8 +413,8 @@ package org.interguild.game {
 			else if (player.timeToRestart) {
 				Aeon.getMe().playLastLevel();
 			}
-			
-			if(hasWon){
+
+			if (hasWon) {
 				timer.stop();
 				onWinCallback();
 			}

@@ -13,7 +13,7 @@ DynamiteSteelCrate		D
 DynamiteStick			[none]
 DynamiteWoodCrate		d
 Explosion				[none]
-FinishLine				f
+EndGate					f
 Platform				-
 Player					#
 SecretArea				z

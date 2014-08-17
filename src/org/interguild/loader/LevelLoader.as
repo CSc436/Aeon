@@ -127,10 +127,10 @@ package org.interguild.loader {
 					tile = new DynamiteSteelCrate(px, py, explosion);
 					level.createCollidableObject(tile);
 					break;
-				case FinishLine.LEVEL_CODE_CHAR:
-					tile = new FinishLine(px, py);
+				case EndGate.LEVEL_CODE_CHAR:
+					tile = new EndGate(px, py);
 					level.createCollidableObject(tile);
-					level.setFinish(FinishLine(tile));
+					level.setFinish(EndGate(tile));
 					break;
 				default:
 					//trace("LevelLoader: Unknown level code character: '" + curChar + "'");

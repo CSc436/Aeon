@@ -1,4 +1,5 @@
 package org.interguild.game.tiles {
+	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Rectangle;
 	
@@ -24,6 +25,9 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, NO_GRAVITY);
 			destruction.destroyedBy(Destruction.ARROWS);
 			destruction.destroyedBy(Destruction.EXPLOSIONS);
+			
+			var img:Bitmap = new Bitmap(Assets.WOODEN_PLATFORM);
+			addChild(img);
 
 			CONFIG::DEBUG {
 				showHitBox();

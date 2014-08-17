@@ -62,11 +62,13 @@ package org.interguild {
 		 */
 
 		public static const TREASURE_SPRITE:BitmapData = new TreasureSprite();
-		public static const FINISH_LINE:BitmapData = new FinishLineSprite();
-		public static const STARTING_LINE:BitmapData = new StartLineSprite();
 		public static const STEEL_CRATE:BitmapData = new SteelCrateSprite();
 		public static const WOOD_CRATE:BitmapData = new WoodenCrateSprite();
-		public static const WOODEN_PLATFORM:BitmapData = ERASER_TOOL_SPRITE;
+		public static const WOODEN_PLATFORM:BitmapData = new WoodenPlatformSprite();
+		
+		public static const END_GATE_EDITOR_ICON:BitmapData = new EndGateEditorIcon();
+		public static const END_GATE_SPRITE_ACTIVE:Class = EndGateActive;
+		public static const END_GATE_SPRITE_INACTIVE:BitmapData = new EndGateSpriteInactive();
 		
 		public static const SPIKE_SPRITE:BitmapData = new SpikeSprite();
 		public static const SPIKE_FLOOR_EDITOR:BitmapData = new SpikeFloorEditorIcon();

@@ -10,7 +10,7 @@ package org.interguild.game.collision {
 	import org.interguild.game.tiles.Collectable;
 	import org.interguild.game.tiles.CollidableObject;
 	import org.interguild.game.tiles.DynamiteWoodCrate;
-	import org.interguild.game.tiles.FinishLine;
+	import org.interguild.game.tiles.EndGate;
 	import org.interguild.game.tiles.GameObject;
 	import org.interguild.game.tiles.Platform;
 	import org.interguild.game.tiles.Player;
@@ -433,7 +433,7 @@ package org.interguild.game.collision {
 				/*
 				* PLAYER ENTERS ACTIVE PORTAL
 				*/
-				if (otherObject is FinishLine && FinishLine(otherObject).canWin()) {
+				if (otherObject is EndGate && EndGate(otherObject).canWin()) {
 					level.onWonGame();
 				}
 			}

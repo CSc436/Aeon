@@ -151,8 +151,8 @@ package org.interguild.editor.tilelist {
 			map[Player.LEVEL_CODE_CHAR] = Player.EDITOR_ICON;
 			addItem(new TileListItem("Starting Position", Player.LEVEL_CODE_CHAR));
 
-			map[FinishLine.LEVEL_CODE_CHAR] = FinishLine.EDITOR_ICON;
-			addItem(new TileListItem("End Portal", FinishLine.LEVEL_CODE_CHAR));
+			map[EndGate.LEVEL_CODE_CHAR] = EndGate.EDITOR_ICON;
+			addItem(new TileListItem("End Gate", EndGate.LEVEL_CODE_CHAR));
 
 			map[Collectable.LEVEL_CODE_CHAR] = Collectable.EDITOR_ICON;
 			addItem(new TileListItem("Treasure", Collectable.LEVEL_CODE_CHAR));
