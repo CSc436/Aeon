@@ -44,7 +44,6 @@ package org.interguild.game {
 		private var bg:LevelBackground;
 
 		private var portals:Array;
-		private var animatePortals:Boolean = false;
 		private var portalAnim:uint;
 
 		private var collisionGrid:CollisionGrid;
@@ -212,18 +211,6 @@ package org.interguild.game {
 			for each (var p:EndGate in portals) {
 				p.activate();
 			}
-			animatePortals = true;
-		}
-
-		private function updatePortals():void {
-			if (portalAnim == 0) {
-				for each (var p:EndGate in portals) {
-					p.animate();
-				}
-				portalAnim = PORTAL_ANIMATION_DELAY;
-			} else {
-				portalAnim--;
-			}
 		}
 
 		/**
@@ -355,9 +342,7 @@ package org.interguild.game {
 			CONFIG::DEBUG {
 				drawPlayerHitBox();
 			}
-			if (animatePortals) {
-				updatePortals();
-			}
+
 			collisionGrid.doCollisionDetection();
 			collisionGrid.handleRemovalsAndMore(camera);
 			collisionGrid.finishGameLoops();

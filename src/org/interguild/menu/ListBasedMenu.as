@@ -92,7 +92,7 @@ package org.interguild.menu {
 			animTimer.start();
 		}
 		
-		private function onKeyDown(keyCode:uint):void {
+		protected function onKeyDown(keyCode:uint):void {
 			if (!isEnabled)
 				return;
 			switch (keyCode) {

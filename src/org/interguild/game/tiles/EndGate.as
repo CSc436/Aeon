@@ -48,9 +48,5 @@ package org.interguild.game.tiles {
 			addChild(active);
 			active.play();
 		}
-		
-		public function animate():void{
-			
-		}
 	}
 }

@@ -5,9 +5,9 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
-	
+
 	import fl.containers.ScrollPane;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.editor.EditorPage;
@@ -143,6 +143,25 @@ package org.interguild.editor.levelpane {
 				scroll.verticalScrollPosition = lvl.verticalScrollPosition;
 				zoomLevel = lvl.zoomLevel;
 			}
+			//update topbar
+			if (editor.hasInitialized()) {
+				if (lvl.canZoomIn)
+					editor.enableZoomIn();
+				else
+					editor.disableZoomIn();
+				if (lvl.canZoomOut)
+					editor.enableZoomOut();
+				else
+					editor.disableZoomIn();
+				if (lvl.canUndo)
+					editor.enableUndo();
+				else
+					editor.disableUndo();
+				if (lvl.canRedo)
+					editor.enableRedo();
+				else
+					editor.disableRedo();
+			}
 			currentLevel = lvl;
 			currentLevel.x = 1;
 			currentLevel.y = 1;
@@ -222,15 +241,21 @@ package org.interguild.editor.levelpane {
 				zoomLevel -= ZOOM_SUPER_DELTA;
 			}
 			zoomTo(zoomLevel);
-			
-			if(zoomLevel <= ZOOM_SUPER_MIN)
+
+			if (zoomLevel <= ZOOM_SUPER_MIN) {
 				editor.disableZoomOut();
-			else
+				currentLevel.canZoomOut = false;
+			} else {
 				editor.enableZoomOut();
-			if(zoomLevel >= ZOOM_MAX)
+				currentLevel.canZoomOut = true;
+			}
+			if (zoomLevel >= ZOOM_MAX) {
 				editor.disableZoomIn();
-			else
+				currentLevel.canZoomIn = false;
+			} else {
 				editor.enableZoomIn();
+				currentLevel.canZoomIn = true;
+			}
 		}
 
 		private function zoomTo(n:uint):void {

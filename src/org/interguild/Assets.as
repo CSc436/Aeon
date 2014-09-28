@@ -1,8 +1,6 @@
 package org.interguild {
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
-	
-	import org.interguild.game.tiles.Spike;
 
 	public class Assets {
 		
@@ -93,6 +91,7 @@ package org.interguild {
 		public static const DYNAMITE_STEEL_CRATE:BitmapData = new SteelDynamiteSprite();
 
 		public static const PAUSE_MENU_BG:BitmapData = new PauseMenuBG();
+		public static const WIN_MENU_BG:BitmapData = new WinMenuBG();
 		
 		public static const PLAYER_EDITOR_SPRITE:BitmapData = new StartingPositionSprite();
 		public static const PLAYER_DEATH_SPRITE:BitmapData = new PlayerDeathSprite();

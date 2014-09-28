@@ -807,6 +807,7 @@ package org.interguild.game.collision {
 		 */
 		public function activateObject(o:CollidableObject):void {
 			o.isActive = true;
+			o.visible = true;
 			activeObjects.push(o);
 		}
 

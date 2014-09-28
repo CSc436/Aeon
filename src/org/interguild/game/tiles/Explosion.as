@@ -1,7 +1,7 @@
 package org.interguild.game.tiles {
 
 	import flash.display.MovieClip;
-
+	
 	import org.interguild.game.collision.Destruction;
 
 	public class Explosion extends CollidableObject {

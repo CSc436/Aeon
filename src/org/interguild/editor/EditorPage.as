@@ -8,7 +8,7 @@ package org.interguild.editor {
 	import flash.net.FileReference;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.editor.help.EditorHelpScreen;
@@ -24,7 +24,7 @@ package org.interguild.editor {
 
 		//public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 		public static const OVERLAY_ALPHA:Number = 0.25;
-		
+
 		private static var selectedTile:String;
 		//TODO, replace this with a simple check in the undo/redo feature
 		public static var hasMadeFirstChange:Boolean = false;
@@ -59,32 +59,32 @@ package org.interguild.editor {
 
 			levelPane = new EditorLevelPane(this);
 			addChild(levelPane);
-			
+
 			loader = new EditorLoader();
 			loader.addInitializedListener(levelPane.addLevel);
 			loader.addErrorListener(onLoadError);
 
 			// these must be initialized last so that overlay can cover everything
 			// and disable editor mouse evemts for certain menus
-			
+
 			topBar = new TopBar(this);
 			addChild(topBar);
-			
+
 			levelProps = new LevelPropertiesScreen(keys, levelPane);
 			addChild(levelProps);
-			
+
 			help = new EditorHelpScreen();
 			addChild(help);
 		}
-		
+
 		private var myBG:BitmapData;
 
 		private function initBG():void {
 			myBG = Assets.EDITOR_BG;
 			addChild(new Bitmap(myBG));
 		}
-		
-		public function getBG():BitmapData{
+
+		public function getBG():BitmapData {
 			return myBG;
 		}
 
@@ -120,7 +120,7 @@ package org.interguild.editor {
 				filereader.removeEventListener(Event.SELECT, selectHandler);
 				filereader.load();
 			}
-			
+
 //			function errorHandler(evt:IOErrorEvent):void{
 //				trace(evt);
 //			}
@@ -150,12 +150,12 @@ package org.interguild.editor {
 		private function returnFromError(e:Array):void {
 			Aeon.getMe().returnFromError(e, "Editor");
 		}
-		
-		public function showLevelProperties():void{
+
+		public function showLevelProperties():void {
 			levelProps.visible = true;
 		}
-		
-		public function showHelpScreen():void{
+
+		public function showHelpScreen():void {
 			help.visible = true;
 		}
 
@@ -193,7 +193,7 @@ package org.interguild.editor {
 		public function selectAll():void {
 			levelPane.level.selectAll();
 		}
-		
+
 		/**
 		 * TileList notifies EditorLevel when it's time to deselect
 		 */
@@ -208,15 +208,15 @@ package org.interguild.editor {
 		private function getLevelCode():String {
 			return levelPane.level.getLevelCode();
 		}
-		
+
 		/**
 		 * When spacebar is pressed, allow user to click-and-drag to scroll
 		 * through the level.
 		 */
-		public function set handToolEnabled(b:Boolean):void{
-			if(b){
+		public function set handToolEnabled(b:Boolean):void {
+			if (b) {
 				Mouse.cursor = MouseCursor.HAND;
-			}else{
+			} else {
 				Mouse.cursor = MouseCursor.AUTO;
 			}
 			levelPane.handToolEnabled = b;
@@ -239,29 +239,50 @@ package org.interguild.editor {
 			topBar.hideMenu();
 			trace("TODO");
 		}
-		
-		public function zoomIn():void{
+
+		public function zoomIn():void {
 			levelPane.zoom(true);
 		}
-		
-		public function zoomOut():void{
+
+		public function zoomOut():void {
 			levelPane.zoom(false);
 		}
-		
-		public function disableZoomIn():void{
+
+		public function enableRedo():void {
+			topBar.enableRedo();
+		}
+
+		public function enableUndo():void {
+			topBar.enableUndo();
+		}
+		public function disableRedo():void {
+			topBar.disableRedo();
+		}
+
+		public function disableUndo():void {
+			topBar.disableUndo();
+		}
+
+		public function disableZoomIn():void {
 			topBar.disableZoomIn();
 		}
-		
-		public function disableZoomOut():void{
+
+		public function disableZoomOut():void {
 			topBar.disableZoomOut();
 		}
-		
-		public function enableZoomIn():void{
+
+		public function enableZoomIn():void {
 			topBar.enableZoomIn();
 		}
-		
-		public function enableZoomOut():void{
+
+		public function enableZoomOut():void {
 			topBar.enableZoomOut();
+		}
+		
+		public function hasInitialized():Boolean{
+			if(topBar)
+				return true;
+			return false;
 		}
 
 		/**

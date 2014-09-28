@@ -1,6 +1,8 @@
 package org.interguild.menu {
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
+	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.MouseEvent;
@@ -23,7 +25,7 @@ package org.interguild.menu {
 
 		//logo offset from top left
 //		private static const LOGO_X:uint = 70;
-		private static const LOGO_Y:uint = 60;
+		private static const LOGO_Y:uint = 70;
 
 		//selector offset from buttons
 //		private static const SELECTOR_X:int = -16;
@@ -31,7 +33,7 @@ package org.interguild.menu {
 
 		//button positions
 //		private static const BUTTONS_X:uint = 90;
-		private static const PLAY_GAME_Y:uint = LOGO_Y + 145;
+		private static const PLAY_GAME_Y:uint = LOGO_Y + 170;
 		private static const PLAY_USER_LEVELS_Y:uint = PLAY_GAME_Y + 60;
 		private static const LEVEL_EDITOR_Y:uint = PLAY_USER_LEVELS_Y + 60;
 		private static const OPTIONS_Y:uint = LEVEL_EDITOR_Y + 60;
@@ -40,12 +42,13 @@ package org.interguild.menu {
 		private static const TODO_PLAY_GAME:uint = 0x0;
 		private static const TODO_PLAY_LEVELS:uint = 0x1;
 		private static const TODO_LEVEL_EDITOR:uint = 0x2;
-		private static const TODO_OPTIONS:uint = 0x3;
+//		private static const TODO_OPTIONS:uint = 0x3;
 		private static const NUMBER_OF_MENU_BUTTONS:uint = 4;
 
 		//offset from bottom right of screen
 		private static const CREDIT_PADDING_X:uint = 10;
 		private static const CREDIT_PADDING_Y:uint = 10;
+		private static const CREDITS_PADDING:uint = 10;
 
 		//offset from bottom left of screen
 		private static const LOGIN_PADDING_X:uint = 10;
@@ -65,6 +68,9 @@ package org.interguild.menu {
 		private var userText:TextField;
 		private var loginLink:TextField;
 		private var logoutLink:TextField;
+		
+		private var creditsList:MovieClip;
+		private var clickCatcher:Sprite;
 
 		public function MainMenuPage() {
 			super(CENTER_X, SELECTOR_Y);
@@ -108,12 +114,12 @@ package org.interguild.menu {
 			addButton(editorButton);
 
 			//int play user levels button
-			var optionsButton:MovieClip = new OptionsButton();
-			optionsButton.buttonMode = true;
-			optionsButton.x = CENTER_X;
-			optionsButton.y = OPTIONS_Y;
-			this.addChild(optionsButton);
-			addButton(optionsButton);
+//			var optionsButton:MovieClip = new OptionsButton();
+//			optionsButton.buttonMode = true;
+//			optionsButton.x = CENTER_X;
+//			optionsButton.y = OPTIONS_Y;
+//			this.addChild(optionsButton);
+//			addButton(optionsButton);
 
 			selectItem(playButton);
 		}
@@ -134,8 +140,25 @@ package org.interguild.menu {
 			creditLink.addEventListener(MouseEvent.MOUSE_UP, onLinkUp);
 			creditLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
 			creditLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
+			creditLink.addEventListener(MouseEvent.CLICK, onCreditsClick);
 			addChild(creditLink);
-
+			
+			//init thing that listens for clicks to tell crredits list to go away
+			clickCatcher = new Sprite();
+			clickCatcher.graphics.beginFill(0, 0.3);
+			clickCatcher.graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
+			clickCatcher.graphics.endFill();
+			clickCatcher.addEventListener(MouseEvent.CLICK, onCreditsClickCaught);
+			clickCatcher.visible = false;
+			addChild(clickCatcher);
+			
+			//init credits list
+			creditsList = new CreditsList();
+			creditsList.x = Aeon.STAGE_WIDTH - creditsList.width / 2 - CREDITS_PADDING;
+			creditsList.y = creditLink.y - CREDITS_PADDING;
+			creditsList.visible = false;
+			addChild(creditsList);
+			
 			//init copyright
 			var copyText:TextField = new TextField();
 			copyText.defaultTextFormat = textFormat;
@@ -188,6 +211,25 @@ package org.interguild.menu {
 
 			Aeon.STAGE.focus = Aeon.STAGE;
 			Aeon.STAGE.addEventListener(FocusEvent.FOCUS_OUT, listenForChange);
+		}
+		
+		private function onCreditsClick(evt:MouseEvent):void{
+			clickCatcher.visible = true;
+			creditsList.visible = true;
+		}
+		
+		private function onCreditsClickCaught(evt:MouseEvent):void{
+			clickCatcher.visible = false;
+			creditsList.visible = false;
+		}
+		
+		protected override function onKeyDown(keyCode:uint):void {
+			if(creditsList.visible){
+				if(keyCode == 27 || keyCode == 13)// Esc OR Enter
+					onCreditsClickCaught(null);
+			}else{
+				super.onKeyDown(keyCode);
+			}
 		}
 
 		/**
@@ -254,8 +296,8 @@ package org.interguild.menu {
 				case TODO_LEVEL_EDITOR:
 					Aeon.getMe().gotoEditorPage();
 					break;
-				case TODO_OPTIONS:
-					break;
+//				case TODO_OPTIONS:
+//					break;
 			}
 		}
 

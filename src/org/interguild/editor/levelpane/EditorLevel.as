@@ -5,9 +5,12 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
+	import org.interguild.editor.history.Change;
+	import org.interguild.editor.history.ChangeTile;
+	import org.interguild.editor.history.EditorHistory;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.game.tiles.Player;
 	import org.interguild.game.tiles.SecretArea;
@@ -69,12 +72,16 @@ package org.interguild.editor.levelpane {
 		private var scrollPosY:Number = 0;
 		private var scrollZoom:uint = 100;
 
-		private var undoList:Array;
-		private var redoList:Array;
-
 		private var isMouseDown:Boolean;
 		private var isShiftMouseDown:Boolean;
 		private var isSelectDown:Boolean;
+
+		private var history:EditorHistory;
+		
+		public var canUndo:Boolean = false;
+		public var canRedo:Boolean = false;
+		public var canZoomIn:Boolean = false;
+		public var canZoomOut:Boolean = true;
 
 		public function EditorLevel(numRows:uint = 0, numCols:uint = 0, title:String = null, generateBorder:Boolean = true) {
 			//init dimensions
@@ -92,9 +99,7 @@ package org.interguild.editor.levelpane {
 				untitledCount++;
 			}
 
-			//init undo/redo
-			undoList = new Array();
-			redoList = new Array();
+			history = new EditorHistory(this);
 
 			//init 2D array
 			initGridCells(generateBorder);
@@ -120,6 +125,22 @@ package org.interguild.editor.levelpane {
 			Aeon.STAGE.addEventListener(MouseEvent.MOUSE_UP, onUp, false, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OVER, onOver, true, 0, true);
 			this.addEventListener(MouseEvent.MOUSE_OUT, onOut, false, 0, true);
+		}
+
+		public function get undoEnabled():Boolean {
+			return canUndo;
+		}
+
+		public function get redoEnabled():Boolean {
+			return canRedo;
+		}
+
+		public function set undoEnabled(b:Boolean):void {
+			canUndo = b;
+		}
+
+		public function set redoEnabled(b:Boolean):void {
+			canRedo = b;
 		}
 
 		public function set tab(t:EditorTab):void {
@@ -167,7 +188,7 @@ package org.interguild.editor.levelpane {
 		public function set backgroundType(id:uint):void {
 			if (backgroundID != id) {
 				backgroundID = id;
-				if(myTab)
+				if (myTab)
 					myTab.updateScrollPane();
 			}
 		}
@@ -304,10 +325,16 @@ package org.interguild.editor.levelpane {
 					previewSelection(cell);
 				} else {
 					//user is placing down a tile
-					clickCell(cell);
+					userClickCell(cell);
 				}
 				EditorPage.hasMadeFirstChange = true;
 			}
+		}
+
+		private function userClickCell(cell:EditorCell):void {
+			var change:Change = new ChangeTile(cell, cell.char, EditorPage.currentTile);
+			change.doChange(this);
+			history.addHistory(change);
 		}
 
 		private function onUp(evt:MouseEvent):void {
@@ -358,7 +385,7 @@ package org.interguild.editor.levelpane {
 						cell.addChild(previewSprite);
 							//if user is click-and-dragging over many cells
 					} else if (isMouseDown) {
-						clickCell(cell);
+						setCell(cell);
 							//if user is moving the preview cell around
 					} else {
 						previewCell(cell);
@@ -472,7 +499,7 @@ package org.interguild.editor.levelpane {
 		 *
 		 * If `tile` is null, the currently selected tile will be used.
 		 */
-		private function clickCell(cell:EditorCell, tile:String = null):void {
+		public function setCell(cell:EditorCell, tile:String = null):void {
 			var char:String = tile;
 			if (char == null) {
 				char = EditorPage.currentTile;
@@ -500,7 +527,7 @@ package org.interguild.editor.levelpane {
 		 */
 		public function setTileAt(char:String, row:uint, col:uint):void {
 			if (row < rows && col < cols) {
-				clickCell(EditorCell(cells[row][col]), char);
+				setCell(EditorCell(cells[row][col]), char);
 			}
 		}
 
@@ -546,7 +573,7 @@ package org.interguild.editor.levelpane {
 				finY = false;
 				for (var iy:int = selectStart.y; !finY; iy += incY) {
 					var cell:EditorCell = EditorCell(cells[iy][ix]);
-					clickCell(cell);
+					setCell(cell);
 					if (iy == selectEnd.y)
 						finY = true;
 				}
@@ -679,7 +706,7 @@ package org.interguild.editor.levelpane {
 				} else if (inBounds(iy, ix)) {
 					var c:EditorCell = EditorCell(cells[iy][ix]);
 					if (char != " " || pasteBlanks)
-						clickCell(c, char);
+						setCell(c, char);
 					ix++;
 				}
 				i++;

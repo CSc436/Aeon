@@ -184,31 +184,47 @@ package org.interguild.editor.topbar {
 			fileButton = new FileMenu(editor);
 			addChild(fileButton);
 		}
-		
+
 		private function disable(s:Sprite):void {
 			s.alpha = DISABLED_ALPHA;
 			s.mouseEnabled = false;
 		}
-		
+
 		private function enable(s:Sprite):void {
 			s.alpha = 1;
 			s.mouseEnabled = true;
 		}
-		
-		public function enableZoomIn():void{
+
+		public function enableZoomIn():void {
 			enable(zoomInBtn);
 		}
-		
-		public function enableZoomOut():void{
+
+		public function enableZoomOut():void {
 			enable(zoomOutBtn);
 		}
-		
-		public function disableZoomIn():void{
+
+		public function disableZoomIn():void {
 			disable(zoomInBtn);
 		}
-		
-		public function disableZoomOut():void{
+
+		public function disableZoomOut():void {
 			disable(zoomOutBtn);
+		}
+
+		public function enableUndo():void {
+			enable(undoBtn);
+		}
+
+		public function disableUndo():void {
+			disable(undoBtn);
+		}
+
+		public function enableRedo():void {
+			enable(redoBtn);
+		}
+
+		public function disableRedo():void {
+			disable(redoBtn);
 		}
 
 		public function toggleMenu():void {
