@@ -56,7 +56,7 @@ package org.interguild.components {
 		private var buttonFace:DisplayObject;
 		private var buttonOver:DisplayObject;
 
-		private var popup:DropdownMenuPopup;
+		protected var popup:DropdownMenuPopup;
 		private var clickArea:Sprite;
 
 		/**
@@ -155,6 +155,7 @@ package org.interguild.components {
 
 		protected function showPopup():void {
 			popup.visible = true;
+			addChild(popup);
 			clickArea.visible = true;
 			if (parent) {
 				parent.addChild(this);

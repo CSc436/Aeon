@@ -1,6 +1,8 @@
 package org.interguild {
 	import flash.display.BitmapData;
 	import flash.display.MovieClip;
+	
+	import org.interguild.game.tiles.Terrain;
 
 	public class Assets {
 		
@@ -107,8 +109,12 @@ package org.interguild {
 
 		private static function initMapTT():void {
 			TT_MAP = [];
-			TT_MAP.push([new TerrainWoodSprite(), "Wood Pattern"]);
-			TT_MAP.push([new TerrainSteelSprite(), "Steel Pattern"]);
+			TT_MAP.push([new TerrainWoodSprite(), "Wood"]);
+			TT_MAP.push([new TerrainSteelSprite(), "Steel"]);
+			TT_MAP.push([new TerrainBlueBrickSprite(), "Blue Bricks"]);
+			TT_MAP.push([new TerrainBlackBrickSprite(), "Black Bricks"]);
+			TT_MAP.push([new TerrainGreenBrickSprite(), "Green Bricks"]);
+			TT_MAP.push([new TerrainPurpleBrickSprite(), "Purple Bricks"]);
 		}
 
 		private static function isInBoundsTT(id:Number):Boolean {
@@ -147,9 +153,13 @@ package org.interguild {
 
 		private static function initMapBG():void {
 			BG_MAP = [];
-			BG_MAP.push([new BackgroundTeal(), new BackgroundTealMini(), "Teal"]);
-			BG_MAP.push([new BackgroundGreen(), new BackgroundGreenMini(), "Green"]);
-			BG_MAP.push([new BackgroundPurple(), new BackgroundPurpleMini(), "Purple"]);
+			BG_MAP.push([new BackgroundTeal(), new BackgroundTealMini(), "Teal Hills"]);
+//			BG_MAP.push([new BackgroundGreen(), new BackgroundGreenMini(), "Green"]);
+			BG_MAP.push([new BackgroundPurple(), new BackgroundPurpleMini(), "Purple Hills"]);
+//			BG_MAP.push([new TerrainBlackBrickSprite(), new TerrainBlackBrickSprite(), "Black Bricks"]);
+			for each(var a:Array in TT_MAP){
+				BG_MAP.push([a[TT_BITMAP], a[TT_BITMAP], a[TT_NAME]]);
+			}
 		}
 
 		private static function isInBoundsBG(id:Number):Boolean {

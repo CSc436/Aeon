@@ -12,9 +12,13 @@ package org.interguild.game {
 			var bmd:BitmapData = Assets.getBGImge(bgID);
 			bg.graphics.beginBitmapFill(bmd);
 //			bg.graphics.beginFill(0xFFFFFF);
-			bg.graphics.drawRect(0, 0, w << 2, bmd.height);
+			var drawHeight:Number = bmd.height;
+			if (drawHeight < 200) {
+				drawHeight = Aeon.STAGE_HEIGHT;
+			}
+			bg.graphics.drawRect(0, 0, w << 2, drawHeight);
 			bg.graphics.endFill();
-			bg.y = Aeon.STAGE_HEIGHT - bmd.height;
+			bg.y = Aeon.STAGE_HEIGHT - drawHeight;
 			addChild(bg);
 		}
 	}

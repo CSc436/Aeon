@@ -21,10 +21,10 @@ package org.interguild.game.gui {
 		private static const CENTER_Y:Number = Aeon.STAGE_HEIGHT / 2;
 		
 		private static const SPACING_Y:uint = 56;
-		private static const RESUME_Y:uint = 165;
+		private static const RESUME_Y:uint = 198;
 		private static const RESTART_Y:uint = RESUME_Y + SPACING_Y;
-		private static const CHECKPOINTS_Y:uint = RESTART_Y + SPACING_Y;
-		private static const LEVEL_EDITOR_Y:uint = CHECKPOINTS_Y + SPACING_Y;
+//		private static const CHECKPOINTS_Y:uint = RESTART_Y + SPACING_Y;
+		private static const LEVEL_EDITOR_Y:uint = RESTART_Y + SPACING_Y;
 		private static const QUIT_Y:uint = LEVEL_EDITOR_Y + SPACING_Y;
 		
 		private static const SELECTOR_X:int = -111;
@@ -68,13 +68,12 @@ package org.interguild.game.gui {
 			addChild(restartGameButton);
 			addButton(restartGameButton);
 			
-			// Make button for going to the level editor
-			checkpointsButton = new CheckpointsButton();
-			checkpointsButton.buttonMode = true;
-			checkpointsButton.x = CENTER_X;
-			checkpointsButton.y = CHECKPOINTS_Y;
-			addChild(checkpointsButton);
-			addButton(checkpointsButton);
+//			checkpointsButton = new CheckpointsButton();
+//			checkpointsButton.buttonMode = true;
+//			checkpointsButton.x = CENTER_X;
+//			checkpointsButton.y = CHECKPOINTS_Y;
+//			addChild(checkpointsButton);
+//			addButton(checkpointsButton);
 			
 			// Make button for going to the level editor
 			editorButton = new LevelEditorPauseButton();

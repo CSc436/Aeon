@@ -214,27 +214,32 @@ package org.interguild.editor.levelpane {
 			levelBGID = id;
 
 			var bg:BitmapData = Assets.getBGImge(id);
-			var matrix:Matrix = new Matrix();
-			var scaleV:Number = scroll.height / bg.height + 0.0000000001; //roundoff errors
-			var newWidth:Number;
-			var newHeight:Number;
-			matrix.scale(scaleV, scaleV);
-			newWidth = bg.width * scaleV;
-			newHeight = bg.height * scaleV;
-			var bd:BitmapData = new BitmapData(newWidth, newHeight);
-			bd.draw(bg, matrix);
+			var bd:BitmapData;
+			if (bg.width > 200) {
+				var matrix:Matrix = new Matrix();
+				var scaleV:Number = scroll.height / bg.height + 0.0000000001; //roundoff errors
+				var newWidth:Number;
+				var newHeight:Number;
+				matrix.scale(scaleV, scaleV);
+				newWidth = bg.width * scaleV;
+				newHeight = bg.height * scaleV;
+				bd = new BitmapData(newWidth, newHeight);
+				bd.draw(bg, matrix);
+			}else{
+				bd = bg;
+			}
 
 			levelBG.graphics.clear();
 			levelBG.graphics.beginBitmapFill(bd);
 			levelBG.graphics.drawRect(0, 0, scroll.width, scroll.height);
 			levelBG.graphics.endFill();
 		}
-		
-		public function undo():void{
+
+		public function undo():void {
 			currentLevel.undo();
 		}
-		
-		public function redo():void{
+
+		public function redo():void {
 			currentLevel.redo();
 		}
 

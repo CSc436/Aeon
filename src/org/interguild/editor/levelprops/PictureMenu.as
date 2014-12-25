@@ -61,6 +61,8 @@ package org.interguild.editor.levelprops {
 		}
 
 		protected override function showPopup():void {
+//			popup.x = clickFace.width+1;
+			popup.y = -popup.height / 2;
 			super.showPopup();
 			clickFace.visible = true;
 		}
