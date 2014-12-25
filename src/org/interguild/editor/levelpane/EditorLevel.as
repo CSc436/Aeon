@@ -5,10 +5,9 @@ package org.interguild.editor.levelpane {
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.editor.EditorPage;
-	import org.interguild.editor.history.Change;
 	import org.interguild.editor.history.ChangeTile;
 	import org.interguild.editor.history.EditorHistory;
 	import org.interguild.editor.tilelist.TileList;
@@ -66,7 +65,7 @@ package org.interguild.editor.levelpane {
 
 		private var selectStart:Point;
 		private var selectEnd:Point;
-		private var currentPlayerTile:EditorCell;
+		public var currentPlayerTile:EditorCell;
 
 		private var scrollPosX:Number = 0;
 		private var scrollPosY:Number = 0;
@@ -76,8 +75,9 @@ package org.interguild.editor.levelpane {
 		private var isShiftMouseDown:Boolean;
 		private var isSelectDown:Boolean;
 
-		private var history:EditorHistory;
-		
+		public var history:EditorHistory;
+		private var editorPage:EditorPage;
+
 		public var canUndo:Boolean = false;
 		public var canRedo:Boolean = false;
 		public var canZoomIn:Boolean = false;
@@ -100,6 +100,7 @@ package org.interguild.editor.levelpane {
 			}
 
 			history = new EditorHistory(this);
+			editorPage = EditorPage.myself;
 
 			//init 2D array
 			initGridCells(generateBorder);
@@ -137,10 +138,26 @@ package org.interguild.editor.levelpane {
 
 		public function set undoEnabled(b:Boolean):void {
 			canUndo = b;
+			if (b)
+				editorPage.enableUndo();
+			else
+				editorPage.disableUndo();
 		}
 
 		public function set redoEnabled(b:Boolean):void {
 			canRedo = b;
+			if (b)
+				editorPage.enableRedo();
+			else
+				editorPage.disableRedo();
+		}
+
+		public function undo():void {
+			history.undo();
+		}
+
+		public function redo():void {
+			history.redo();
 		}
 
 		public function set tab(t:EditorTab):void {
@@ -298,6 +315,8 @@ package org.interguild.editor.levelpane {
 			}
 		}
 
+		private var curChange:ChangeTile;
+
 		private function onDown(evt:MouseEvent):void {
 			if (evt.target is EditorCell) {
 				var cell:EditorCell = EditorCell(evt.target);
@@ -325,19 +344,31 @@ package org.interguild.editor.levelpane {
 					previewSelection(cell);
 				} else {
 					//user is placing down a tile
-					userClickCell(cell);
+					curChange = new ChangeTile();
+					if (cell.char != EditorPage.currentTile) {
+						curChange.addTileChanged(cell, cell.char, EditorPage.currentTile, currentPlayerTile);
+						setCell(cell);
+//						userClickCell(cell);
+					}
 				}
 				EditorPage.hasMadeFirstChange = true;
 			}
 		}
 
-		private function userClickCell(cell:EditorCell):void {
-			var change:Change = new ChangeTile(cell, cell.char, EditorPage.currentTile);
-			change.doChange(this);
-			history.addHistory(change);
-		}
+//		private function userClickCell(cell:EditorCell):void {
+//			var change:ChangeTile = new ChangeTile();
+//			change.addTileChanged(cell, cell.char, EditorPage.currentTile);
+//			change.doChange(this);
+//			history.addHistory(change);
+//		}
 
 		private function onUp(evt:MouseEvent):void {
+			//if click and dragging
+			if (curChange) {
+				if (curChange.hasChanges)
+					history.addHistory(curChange);
+				curChange = null;
+			}
 			//if user was shift-clicking a tile, then commit the changes
 			if (isShiftMouseDown && !isSelectDown) {
 				fillSelection();
@@ -385,6 +416,8 @@ package org.interguild.editor.levelpane {
 						cell.addChild(previewSprite);
 							//if user is click-and-dragging over many cells
 					} else if (isMouseDown) {
+						if (curChange)
+							curChange.addTileChanged(cell, cell.char, EditorPage.currentTile);
 						setCell(cell);
 							//if user is moving the preview cell around
 					} else {
@@ -499,7 +532,7 @@ package org.interguild.editor.levelpane {
 		 *
 		 * If `tile` is null, the currently selected tile will be used.
 		 */
-		public function setCell(cell:EditorCell, tile:String = null):void {
+		public function setCell(cell:EditorCell, tile:String = null, undoing:Boolean = false):void {
 			var char:String = tile;
 			if (char == null) {
 				char = EditorPage.currentTile;
@@ -509,13 +542,17 @@ package org.interguild.editor.levelpane {
 					cell.clearTile();
 					if (cell == currentPlayerTile)
 						currentPlayerTile = null;
-					previewCell(cell);
+					if (!undoing)
+						previewCell(cell);
 					break;
 				default:
 					if (char == Player.LEVEL_CODE_CHAR) {
-						if (currentPlayerTile != null)
+						if (currentPlayerTile != null) {
 							currentPlayerTile.clearTile(isMouseDown);
+						}
 						currentPlayerTile = cell;
+					} else if (cell == currentPlayerTile) {
+						currentPlayerTile = null;
 					}
 					cell.setTile(char);
 					break;
@@ -560,6 +597,8 @@ package org.interguild.editor.levelpane {
 		 * only used by the shift-click feature.
 		 */
 		private function fillSelection():void {
+			var c:ChangeTile = new ChangeTile();
+
 			var incX:int = 1;
 			var incY:int = 1;
 			if (selectEnd.x < selectStart.x)
@@ -573,6 +612,7 @@ package org.interguild.editor.levelpane {
 				finY = false;
 				for (var iy:int = selectStart.y; !finY; iy += incY) {
 					var cell:EditorCell = EditorCell(cells[iy][ix]);
+					c.addTileChanged(cell, cell.char, EditorPage.currentTile, currentPlayerTile);
 					setCell(cell);
 					if (iy == selectEnd.y)
 						finY = true;
@@ -580,6 +620,8 @@ package org.interguild.editor.levelpane {
 				if (ix == selectEnd.x)
 					finX = true;
 			}
+
+			history.addHistory(c);
 		}
 
 		/**
@@ -601,6 +643,10 @@ package org.interguild.editor.levelpane {
 		public function copy(toCut:Boolean = false):void {
 			if (!selectionSquare.visible)
 				return;
+
+			var c:ChangeTile;
+			if (toCut)
+				c = new ChangeTile();
 
 			//selection boundaries
 			var top:int = Math.min(selectStart.y, selectEnd.y);
@@ -644,11 +690,18 @@ package org.interguild.editor.levelpane {
 					}
 
 					//if cutting, delete the cell
-					if (toCut)
+					if (toCut) {
+						c.addTileChanged(cell, cell.char, TileList.ERASER_TOOL_CHAR, currentPlayerTile);
 						cell.clearTile();
+						if (cell == currentPlayerTile)
+							currentPlayerTile = null;
+					}
 				}
 				clipboard += "\n";
 			}
+
+			if (toCut)
+				history.addHistory(c);
 
 			//finalize preview images
 			pastePreview = new Bitmap(image);
@@ -695,6 +748,8 @@ package org.interguild.editor.levelpane {
 		private function paste(cell:EditorCell, pasteBlanks:Boolean):void {
 			var pasteLoc:Point = cell.getPoint();
 
+			var change:ChangeTile = new ChangeTile();
+
 			var iy:int = pasteLoc.y;
 			var ix:int = pasteLoc.x;
 			var i:uint = 0;
@@ -705,12 +760,16 @@ package org.interguild.editor.levelpane {
 					iy++;
 				} else if (inBounds(iy, ix)) {
 					var c:EditorCell = EditorCell(cells[iy][ix]);
-					if (char != " " || pasteBlanks)
+					if (char != " " || pasteBlanks) {
+						change.addTileChanged(c, c.char, char, currentPlayerTile);
 						setCell(c, char);
+					}
 					ix++;
 				}
 				i++;
 			}
+
+			history.addHistory(change);
 		}
 
 		/**
@@ -719,6 +778,8 @@ package org.interguild.editor.levelpane {
 		public function deleteSelection():void {
 			if (!selectionSquare.visible)
 				return;
+
+			var c:ChangeTile = new ChangeTile();
 
 			//selection boundaries
 			var top:int = Math.min(selectStart.y, selectEnd.y);
@@ -730,9 +791,14 @@ package org.interguild.editor.levelpane {
 			for (var iy:int = top; iy <= bottom; iy++) {
 				for (var ix:int = left; ix <= right; ix++) {
 					var cell:EditorCell = EditorCell(cells[iy][ix]);
+					c.addTileChanged(cell, cell.char, TileList.ERASER_TOOL_CHAR, currentPlayerTile);
 					cell.clearTile();
+					if (cell == currentPlayerTile)
+						currentPlayerTile = null;
 				}
 			}
+
+			history.addHistory(c);
 		}
 
 		/**

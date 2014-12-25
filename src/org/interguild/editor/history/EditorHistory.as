@@ -3,7 +3,7 @@ package org.interguild.editor.history {
 
 	public class EditorHistory {
 		
-		private var editor:EditorLevel;
+		private var level:EditorLevel;
 		private var pastHistory:Array;
 		private var futureHistory:Array;
 		
@@ -17,24 +17,38 @@ package org.interguild.editor.history {
 		 * 	ChangeProperties
 		 */
 		public function EditorHistory(editor:EditorLevel) {
-			this.editor = editor;
+			this.level = editor;
 			pastHistory = new Array();
 			futureHistory = new Array();
 		}
 		
 		public function addHistory(c:Change):void{
-			futureHistory = new Array();
+			futureHistory = new Array(); //reset future history
 			pastHistory.push(c);
-			editor.undoEnabled = true;
-			editor.redoEnabled = false;
+			level.undoEnabled = true;
+			level.redoEnabled = false;
 		}
 		
 		public function undo():void{
-			
+			if(pastHistory.length > 0){
+				var c:Change = pastHistory.pop();
+				futureHistory.push(c);
+				c.undoChange(level);
+				level.redoEnabled = true;
+				if(pastHistory.length == 0)
+					level.undoEnabled = false;
+			}
 		}
 		
 		public function redo():void{
-			
+			if(futureHistory.length > 0){
+				var c:Change = futureHistory.pop();
+				pastHistory.push(c);
+				c.doChange(level);
+				level.undoEnabled = true;
+				if(futureHistory.length == 0)
+					level.redoEnabled = false;
+			}
 		}
 	}
 }

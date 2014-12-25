@@ -33,9 +33,12 @@ package org.interguild.editor.topbar {
 			addItem(new FileMenuItem("Save to File", "Ctrl+S", function(evt:MouseEvent):void {
 				editor.saveToFile();
 			}));
-			addItem(new FileMenuItem("Save As...", "Ctrl+Shift+S", function(evt:MouseEvent):void {
-				trace("SAVE AS...");
+			addItem(new FileMenuItem("Publish to Forums", "", function(evt:MouseEvent):void {
+				editor.publishLevel();
 			}));
+//			addItem(new FileMenuItem("Save As...", "Ctrl+Shift+S", function(evt:MouseEvent):void {
+//				trace("SAVE AS...");
+//			}));
 
 			addItem(new DropdownMenuDivider());
 

@@ -208,8 +208,8 @@ package org.interguild.editor.tilelist {
 			map[Spike.LEVEL_CODE_CHAR_WALL_RIGHT] = Spike.EDITOR_ICON_WALL_RIGHT;
 			addItem(new TileListItem("Right Wall Spikes", Spike.LEVEL_CODE_CHAR_WALL_RIGHT));
 
-			map[Boulder.LEVEL_CODE_CHAR] = Boulder.EDITOR_ICON;
-			addItem(new TileListItem("Boulder", Boulder.LEVEL_CODE_CHAR));
+//			map[Boulder.LEVEL_CODE_CHAR] = Boulder.EDITOR_ICON;
+//			addItem(new TileListItem("Boulder", Boulder.LEVEL_CODE_CHAR));
 		}
 
 		private function onClick(evt:MouseEvent):void {

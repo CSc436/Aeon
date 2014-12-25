@@ -16,7 +16,7 @@ package org.interguild {
 	import flash.system.Security;
 	import flash.display.Stage;
 	import org.interguild.menu.MainMenuPage;
-	import org.interguild.menu.UserLevelsPage;
+	import org.interguild.menu.LevelsPage;
 
 
 	/**
@@ -55,7 +55,7 @@ package org.interguild {
 		private var mainMenu:MainMenuPage;
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;
-		private var userLevelsPage:UserLevelsPage;
+		private var userLevelsPage:LevelsPage;
 
 		private var keys:KeyMan;
 
@@ -91,7 +91,7 @@ package org.interguild {
 			addChild(editorPage);
 
 			//init user levels page
-			userLevelsPage = new UserLevelsPage();
+			userLevelsPage = new LevelsPage();
 			userLevelsPage.visible = false;
 			addChild(userLevelsPage);
 

@@ -1,7 +1,6 @@
 package org.interguild.menu {
 	import flash.display.Bitmap;
 	import flash.display.MovieClip;
-	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
@@ -81,7 +80,7 @@ package org.interguild.menu {
 
 		private function initMainItems():void {
 			//init bg image
-			this.addChildAt(new Bitmap(Assets.MAIN_MENU_BG), 0); //numChildren - 1);
+			this.addChildAt(new Bitmap(Assets.MAIN_MENU_BG), 0);
 
 			//init logo image
 			var logo:MovieClip = Assets.AEON_LOGO;

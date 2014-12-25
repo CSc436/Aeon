@@ -229,6 +229,14 @@ package org.interguild.editor.levelpane {
 			levelBG.graphics.drawRect(0, 0, scroll.width, scroll.height);
 			levelBG.graphics.endFill();
 		}
+		
+		public function undo():void{
+			currentLevel.undo();
+		}
+		
+		public function redo():void{
+			currentLevel.redo();
+		}
 
 		public function zoom(zoomIn:Boolean):void {
 			if (zoomIn && zoomLevel < ZOOM_MIN) {

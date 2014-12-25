@@ -6,9 +6,13 @@ package org.interguild.editor {
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.net.FileReference;
+	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
+	import flash.net.URLVariables;
+	import flash.net.navigateToURL;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-
+	
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.editor.help.EditorHelpScreen;
@@ -21,7 +25,7 @@ package org.interguild.editor {
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
-
+		
 		//public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 		public static const OVERLAY_ALPHA:Number = 0.25;
 
@@ -35,6 +39,12 @@ package org.interguild.editor {
 
 		public static function set currentTile(s:String):void {
 			selectedTile = s;
+		}
+		
+		private static var instance:EditorPage;
+		
+		public static function get myself():EditorPage{
+			return instance;
 		}
 
 		private var loader:Loader;
@@ -50,6 +60,7 @@ package org.interguild.editor {
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
+			instance = this;
 			keys = new EditorKeyMan(this, stage);
 
 			initBG();
@@ -208,6 +219,20 @@ package org.interguild.editor {
 		private function getLevelCode():String {
 			return levelPane.level.getLevelCode();
 		}
+		
+		private function getLevelTitle():String {
+			return levelPane.level.title;
+		}
+		
+		public function publishLevel():void{
+			var request:URLRequest = new URLRequest("http://www.interguild.org/levels/add.php?game=37");
+			var postData:URLVariables = new URLVariables();
+			postData.lvltitle = getLevelTitle();
+			postData.lvlcode = getLevelCode();
+			request.data = postData;
+			request.method = URLRequestMethod.POST;
+			navigateToURL(request, "_blank");
+		}
 
 		/**
 		 * When spacebar is pressed, allow user to click-and-drag to scroll
@@ -231,13 +256,11 @@ package org.interguild.editor {
 		}
 
 		public function undo():void {
-			topBar.hideMenu();
-			trace("TODO");
+			levelPane.undo();
 		}
 
 		public function redo():void {
-			topBar.hideMenu();
-			trace("TODO");
+			levelPane.redo();
 		}
 
 		public function zoomIn():void {

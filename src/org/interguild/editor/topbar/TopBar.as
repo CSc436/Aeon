@@ -4,7 +4,11 @@ package org.interguild.editor.topbar {
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
-
+	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
+	import flash.net.URLVariables;
+	import flash.net.navigateToURL;
+	
 	import org.interguild.Assets;
 	import org.interguild.components.FancyButton;
 	import org.interguild.editor.EditorPage;
@@ -176,7 +180,9 @@ package org.interguild.editor.topbar {
 			var publishButton:FancyButton = new FancyButton(up, over, hit);
 			publishButton.x = 738;
 			publishButton.y = 19;
-			//todo make button publish to website
+			publishButton.addEventListener(MouseEvent.CLICK, function(e:MouseEvent):void{
+				editor.publishLevel();
+			});
 			addChild(publishButton);
 		}
 

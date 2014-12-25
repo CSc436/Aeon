@@ -4,7 +4,7 @@ package org.interguild.loader {
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.utils.Timer;
-
+	
 	import org.interguild.Assets;
 
 	public class Loader {

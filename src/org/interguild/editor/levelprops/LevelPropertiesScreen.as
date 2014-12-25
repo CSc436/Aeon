@@ -9,9 +9,9 @@ package org.interguild.editor.levelprops {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
-	
+
 	import fl.controls.TextInput;
-	
+
 	import org.interguild.Aeon;
 	import org.interguild.Assets;
 	import org.interguild.components.BetterTextInput;
@@ -19,6 +19,7 @@ package org.interguild.editor.levelprops {
 	import org.interguild.components.SquareButton;
 	import org.interguild.editor.EditorKeyMan;
 	import org.interguild.editor.EditorPage;
+	import org.interguild.editor.history.ChangedProperties;
 	import org.interguild.editor.levelpane.EditorLevel;
 	import org.interguild.editor.levelpane.EditorLevelPane;
 	import org.interguild.game.LevelBackground;
@@ -297,8 +298,20 @@ package org.interguild.editor.levelprops {
 
 		private function okay(evt:MouseEvent = null):void {
 			visible = false;
-			currentLevel.title = titleInput.text;
-			currentLevel.resize(Number(sizeHeightInput.text), Number(sizeWidthInput.text));
+			var c:ChangedProperties = new ChangedProperties();
+			c.changeTitle(currentLevel.title, titleInput.text);
+//			currentLevel.title = titleInput.text;
+			c.changeWidth(currentLevel.widthInTiles, Number(sizeWidthInput.text));
+			c.changeHeight(currentLevel.heightInTiles, Number(sizeHeightInput.text));
+			c.prepareResize();
+			c.changeTerrain(originalTerrainID, terrainDropdown.currentID);
+			c.changeBackground(originalBackgroundID, backgroundDropdown.currentID);
+//			currentLevel.resize(Number(sizeHeightInput.text), Number(sizeWidthInput.text));
+
+			if (c.hasChanges()) {
+				c.doChange(currentLevel);
+				currentLevel.history.addHistory(c);
+			}
 		}
 
 		public function cancel(evt:MouseEvent = null):void {

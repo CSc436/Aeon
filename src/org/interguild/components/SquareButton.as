@@ -9,19 +9,20 @@ package org.interguild.components {
 		private static const BUTTON_FONT_FAMILY:String = "Verdana";
 		private static const BUTTON_FONT_COLOR:uint = 0xf1f1f1;
 		private static const BUTTON_SIZE:uint = 14;
+		private static const OPTIONAL_ROUNDING:uint = 20;
 
-		public function SquareButton(label:String, upColor:uint, overColor:uint, borderColor:uint, width:Number, height:Number) {
+		public function SquareButton(label:String, upColor:uint, overColor:uint, borderColor:uint, width:Number, height:Number, rounded:Boolean = false) {
 			var upState:Sprite = new Sprite();
-			drawButtonBorder(upState, width, height, borderColor);
-			drawButtonBG(upState, width, height, upColor);
+			drawButtonBorder(upState, width, height, borderColor, 1, rounded);
+			drawButtonBG(upState, width, height, upColor, 1, rounded);
 
 			var overState:Sprite = new Sprite();
-			drawButtonBorder(overState, width, height, borderColor);
-			drawButtonBG(overState, width, height, overColor);
+			drawButtonBorder(overState, width, height, borderColor, 1, rounded);
+			drawButtonBG(overState, width, height, overColor, 1, rounded);
 
 			var hitState:Sprite = new Sprite();
-			drawButtonBorder(hitState, width, height, 0, 0);
-			drawButtonBG(hitState, width, height, 0, 0);
+			drawButtonBorder(hitState, width, height, 0, 0, rounded);
+			drawButtonBG(hitState, width, height, 0, 0, rounded);
 
 			super(upState, overState, hitState);
 
@@ -36,15 +37,21 @@ package org.interguild.components {
 			addChild(text);
 		}
 
-		private function drawButtonBorder(button:Sprite, width:Number, height:Number, color:uint, alpha:Number = 1):void {
+		private function drawButtonBorder(button:Sprite, width:Number, height:Number, color:uint, alpha:Number = 1, rounded:Boolean = false):void {
 			button.graphics.beginFill(color, alpha);
-			button.graphics.drawRect(0, 0, width + 2, height + 2);
+			if (rounded)
+				button.graphics.drawRoundRect(0, 0, width + 2, height + 2, OPTIONAL_ROUNDING, OPTIONAL_ROUNDING);
+			else
+				button.graphics.drawRect(0, 0, width + 2, height + 2);
 			button.graphics.endFill();
 		}
 
-		private function drawButtonBG(button:Sprite, width:Number, height:Number, color:uint, alpha:Number = 1):void {
+		private function drawButtonBG(button:Sprite, width:Number, height:Number, color:uint, alpha:Number = 1, rounded:Boolean = false):void {
 			button.graphics.beginFill(color, alpha);
-			button.graphics.drawRect(1, 1, width, height);
+			if (rounded)
+				button.graphics.drawRoundRect(1, 1, width, height, OPTIONAL_ROUNDING, OPTIONAL_ROUNDING);
+			else
+				button.graphics.drawRect(1, 1, width, height);
 			button.graphics.endFill();
 		}
 	}

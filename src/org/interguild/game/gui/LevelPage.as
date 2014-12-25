@@ -2,8 +2,8 @@ package org.interguild.game.gui {
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	
-	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	import org.interguild.KeyMan;
 	import org.interguild.game.Level;
 	import org.interguild.loader.LevelLoader;
