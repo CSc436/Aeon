@@ -28,7 +28,7 @@ package org.interguild.game.tiles {
 		public static const EDITOR_ICON_STEEL_DOWN:BitmapData = Assets.ARROW_CRATE_STEEL_DOWN;
 
 		private static const IS_SOLID:Boolean = true;
-		private static const HAS_GRAVITY:Boolean = false;
+		private static const HAS_GRAVITY:Boolean = true;
 		private static const KNOCKBACK_AMOUNT:int = 5;
 
 		public var arrow:Arrow;
@@ -84,7 +84,7 @@ package org.interguild.game.tiles {
 		}
 
 		public override function onKillEvent(level:Level):Array {
-			arrow.moveTo(xPos, yPos);
+			arrow.moveTo(newX, newY);
 			sounds.playSound(SoundMan.ARROW_FIRING_SOUND);
 			return [arrow];
 		}

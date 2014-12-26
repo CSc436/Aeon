@@ -19,11 +19,12 @@ package org.interguild.game.gui {
 	public class LevelPage extends Sprite {
 
 		CONFIG::ONLINE {
-			public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/levels/levels/65182.txt";
+			public static const TEST_LEVEL_FILE:String = INTERGUILD.ORG + "/aeon_demo/demo.txt";
+//			public static const TEST_LEVEL_FILE:String = "demo.txt";
 		}
 
 		CONFIG::OFFLINE {
-			public static const TEST_LEVEL_FILE:String = "../levels/test arrow firing.txt";
+//			public static const TEST_LEVEL_FILE:String = "../levels/demo.txt";
 		}
 
 		private var level:Level;

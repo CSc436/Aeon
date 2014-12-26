@@ -32,9 +32,9 @@ package org.interguild.game.gui {
 		
 		private static const TODO_RESUME:uint = 0x0;
 		private static const TODO_RESTART:uint = 0x1;
-		private static const TODO_CHECKPOINTS:uint = 0x2;
-		private static const TODO_LEVEL_EDITOR:uint = 0x3;
-		private static const TODO_QUIT:uint = 0x4;
+//		private static const TODO_CHECKPOINTS:uint = 0x2;
+		private static const TODO_LEVEL_EDITOR:uint = 0x2;
+		private static const TODO_QUIT:uint = 0x3;
 		
 		// Buttons for the pause menu
 		private var resumeButton:MovieClip;
@@ -103,9 +103,9 @@ package org.interguild.game.gui {
 					this.stage.focus = stage;
 					Aeon.getMe().playLastLevel();
 					break;
-				case TODO_CHECKPOINTS:
-					trace("check the point");
-					break;
+//				case TODO_CHECKPOINTS:
+//					trace("check the point");
+//					break;
 				case TODO_LEVEL_EDITOR:
 					Aeon.getMe().gotoEditorPage();
 					break;

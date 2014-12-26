@@ -1,5 +1,6 @@
 package org.interguild.loader {
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.events.TimerEvent;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
@@ -132,6 +133,7 @@ package org.interguild.loader {
 		public function loadFromFile(filename:String):void {
 			var getFile:URLLoader = new URLLoader();
 			getFile.addEventListener(Event.COMPLETE, onFileLoad);
+//			getFile.addEventListener(IOErrorEvent.IO_ERROR, onFileError);
 			getFile.load(new URLRequest(filename));
 		}
 
@@ -267,6 +269,10 @@ package org.interguild.loader {
 		private function onFileLoad(evt:Event):void {
 			loadFromCode(evt.target.data, "LevelLoader");
 		}
+//		
+//		private function onFileError(evt:IOErrorEvent):void{
+//			progressCallback(-1);
+//		}
 
 		/**
 		 * We use a timer so that we can interrupt the loading code every once in

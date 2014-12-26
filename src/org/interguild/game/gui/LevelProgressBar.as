@@ -47,5 +47,9 @@ package org.interguild.game.gui {
 			percent *= 100;
 			progressText.text = LOADING_TEXT + Math.round(percent) + "%";
 		}
+		
+		public function setError(text:String):void{
+			progressText.text = text;
+		}
 	}
 }

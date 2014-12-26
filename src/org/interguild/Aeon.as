@@ -61,7 +61,9 @@ package org.interguild {
 
 		public function Aeon() {
 			instance = this;
-			Security.allowDomain(INTERGUILD.ORG);
+//			Security.allowDomain(INTERGUILD.ORG);
+			Security.allowDomain("interguild.org");
+			Security.allowDomain("www.interguild.org");
 
 			//stop stage from scaling and stuff
 			stage.scaleMode = StageScaleMode.NO_SCALE;

@@ -21,6 +21,7 @@ package org.interguild.menu {
 	import fl.controls.ScrollPolicy;
 	
 	import org.interguild.Aeon;
+	import org.interguild.INTERGUILD;
 	
 
 	/**
@@ -29,7 +30,7 @@ package org.interguild.menu {
 	 */
 	public class LevelLister extends Sprite {
 		
-		private static const LEVEL_LIST_URL:String = "http://interguild.org/levels/xml.php";
+		private static const LEVEL_LIST_URL:String = INTERGUILD.ORG + "/levels/xml.php";
 
 		private var loader:URLLoader;
 		private var loadingText:TextField;
@@ -233,7 +234,7 @@ package org.interguild.menu {
 			addLevelLoadListeners();
 			loadingText.text = "Loading level ID #" + theID + "...";
 			loadingText.visible = true;
-			loader.load(new URLRequest("http://www.interguild.org/levels/xml.php?id=" + theID));
+			loader.load(new URLRequest(INTERGUILD.ORG + "/levels/xml.php?id=" + theID));
 		}
 
 

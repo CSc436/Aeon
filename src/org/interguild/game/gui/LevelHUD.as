@@ -27,7 +27,7 @@ package org.interguild.game.gui {
 		public function LevelHUD() {
 
 			container = new Sprite();
-			drawContainer();
+			rect = new Shape();
 			container.addChild(rect);
 
 			iconBM = new Bitmap(Assets.TREASURE_SPRITE);
@@ -57,6 +57,7 @@ package org.interguild.game.gui {
 			container.addChild(collectedCount);
 
 			addChild(container);
+			drawContainer();
 			this.visible = false;
 
 		}
@@ -72,18 +73,20 @@ package org.interguild.game.gui {
 		public function increaseCollected():void {
 			collected++;
 			collectedCount.text = String(collected) + " / " + String(maxCollected);
+			drawContainer();
 		}
 
 		public function updateMax(ct:int):void {
 			maxCollected = ct;
 			collectedCount.text = String(collected) + " / " + String(maxCollected);
+			drawContainer();
 		}
 
 		private function drawContainer():void {
-			rect = new Shape();
+			rect.graphics.clear();
 			rect.graphics.lineStyle(1);
 			rect.graphics.beginFill(0X303030, .5);
-			rect.graphics.drawRect(XCOORD, YCOORD, 120, 50);
+			rect.graphics.drawRect(XCOORD, YCOORD, collectedCount.x + collectedCount.width, 50);
 		}
 
 	}
