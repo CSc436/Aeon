@@ -1,6 +1,8 @@
 package org.interguild.editor {
 	import flash.display.Stage;
 	import flash.events.KeyboardEvent;
+	
+	import org.interguild.editor.levelpane.EditorLevel;
 
 	public class EditorKeyMan {
 
@@ -26,6 +28,10 @@ package org.interguild.editor {
 
 		private function onKeyDown(evt:KeyboardEvent):void {
 			var isNotDown:Boolean = isDown[evt.keyCode] == null;
+			
+			if(evt.keyCode == 16) // SHIFT key
+				EditorLevel.isShiftDown = true;
+			
 			if (evt.ctrlKey) {
 				switch (evt.keyCode) {
 					case 78: //CTRL + N
@@ -60,16 +66,19 @@ package org.interguild.editor {
 						if (isNotDown)
 							editor.paste();
 						break;
+					case 65: //CTRL + A
+						editor.selectAll();
+						break;
 					case 68: //CTRL + D
 						editor.deselect();
 						break;
 					case 13: //CTRL + ENTER
 						editor.playLevel();
 						break;
-					case 189: //CTROL + -
+					case 189: //CTRL + -
 						editor.zoomOut();
 						break;
-					case 187:
+					case 187: //CTRL + +
 						editor.zoomIn();
 						break;
 					default:
@@ -100,6 +109,8 @@ package org.interguild.editor {
 			isDown[evt.keyCode] = null;
 			if(evt.keyCode == 32) //spacebar
 				editor.handToolEnabled = false;
+			if(evt.keyCode == 16) // SHIFT key
+				EditorLevel.isShiftDown = false;
 		}
 	}
 }

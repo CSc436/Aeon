@@ -1,0 +1,27 @@
+Demo Level
+40x25|0|0
+x34> 3Dx
+x4W4x5W3  cc  W3  c 3W3s 3[x
+xx 8xx 6ww 7s 11x
+xx 8wx 27x
+xx 8ww 24<  x
+xx 8ww 23D[  x
+x3  #  c ww 6ss 7^  > 4D[  x
+x13 5ss 5x7 7x
+x13 5s3 3x8 7x
+x14 c x5  x9 5^x
+x34s3DDx
+x34ss 3x
+x6 3x22 4s 3x
+x5 5x19 6s 3x
+x5 5x19 6s wwx
+x5 3f x5WWssWWss 3x3 4c s 3x
+x5--x7W  ss  ss 3xx 5- s 3x
+x5 5x3W 3ss  ss ccxx 7s 3x
+x5 3c x3 >  ]]  ]s --xx 7sww x
+x7-3xx 14xx 4c  s 3x
+x6 8^ 12s 3-3 s 3x
+x5 22s 11x
+x6 21s 9wwx
+x13 4MM  MM 4s 4d  wwcwx
+x40

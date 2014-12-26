@@ -10,6 +10,7 @@ package org.interguild.editor.levelpane {
 		private static const POSITION_X:uint = 3;
 
 		private static const TAB_WIDTH:uint = 134;
+		private static const TAB_OFFSET_Y:uint = 2;
 
 		private var tabs:Array;
 		private var currentTab:EditorTab;
@@ -27,24 +28,31 @@ package org.interguild.editor.levelpane {
 
 		public function addTab(level:EditorLevel = null):void {
 			var cTab:EditorTab = null;
-			
-			if (level == null){
+
+			if (level == null) {
 				level = new EditorLevel();
-			}else if(!EditorPage.hasMadeFirstChange){
+			} else if (!EditorPage.hasMadeFirstChange) {
 				cTab = currentTab;
 			}
 
 			var tab:EditorTab = new EditorTab(level, this);
 			tab.x = tabs.length * TAB_WIDTH;
+			tab.doubleClickEnabled = true;
 			tab.addEventListener(MouseEvent.CLICK, onTabClick, false, 0, true);
+			tab.addEventListener(MouseEvent.DOUBLE_CLICK, onDoubleClick, false, 0, true);
 			tabs.push(tab);
 
 			switchToTab(tab);
 			addChild(tab);
-			
-			if(cTab){
+
+			if (cTab) {
 				closeLevel(cTab);
+				EditorPage.hasMadeFirstChange = true;
 			}
+		}
+
+		public function updateScrollPane():void {
+			levelPane.updateScrollPane();
 		}
 
 		private function onTabClick(evt:MouseEvent):void {
@@ -52,11 +60,19 @@ package org.interguild.editor.levelpane {
 			switchToTab(tab);
 		}
 
+		private function onDoubleClick(evt:MouseEvent):void {
+			levelPane.showLevelProperties();
+		}
+
 		private function switchToTab(tab:EditorTab):void {
-			if (currentTab != null)
+			if (currentTab != null) {
 				currentTab.deactivate();
+				currentTab.y = TAB_OFFSET_Y;
+			}
 			tab.activate();
+			tab.y = - TAB_OFFSET_Y;
 			currentTab = tab;
+			addChild(currentTab); //move to top
 			levelPane.level = tab.level;
 		}
 

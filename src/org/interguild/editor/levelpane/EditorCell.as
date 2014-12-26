@@ -5,7 +5,7 @@ package org.interguild.editor.levelpane {
 	import flash.geom.Point;
 	
 	import org.interguild.editor.tilelist.TileList;
-	import org.interguild.game.Player;
+	import org.interguild.game.tiles.Player;
 
 	public class EditorCell extends Sprite {
 
@@ -13,7 +13,9 @@ package org.interguild.editor.levelpane {
 		public static const CELL_HEIGHT:uint = 32;
 
 		public static const LINE_COLOR:uint = 0x444444;//0x777777;
+		public static const LINE_ALPHA:Number = 0.5;
 		private static const CELL_BG_COLOR:uint = 0x000000;
+		private static const CELL_BG_ALPHA:Number = 0;//.25;
 
 		private var tileChar:String = TileList.ERASER_TOOL_CHAR;
 		private var tileBeforePlayer:String = tileChar;
@@ -22,13 +24,13 @@ package org.interguild.editor.levelpane {
 
 		public function EditorCell() {
 			//init bg
-			graphics.beginFill(CELL_BG_COLOR);
+			graphics.beginFill(CELL_BG_COLOR, CELL_BG_ALPHA);
 			graphics.drawRect(0, 0, CELL_WIDTH - 1, CELL_HEIGHT - 1);
 			graphics.endFill();
 
 			//init border
 			border = new Sprite();
-			border.graphics.beginFill(LINE_COLOR);
+			border.graphics.beginFill(LINE_COLOR, LINE_ALPHA);
 			border.graphics.drawRect(CELL_WIDTH - 1, 0, 1, CELL_HEIGHT);
 			border.graphics.drawRect(0, CELL_HEIGHT - 1, CELL_WIDTH, 1);
 			border.graphics.endFill();
@@ -59,6 +61,13 @@ package org.interguild.editor.levelpane {
 				}
 				addChild(border);
 			}
+		}
+		
+		public function redraw():void{
+			removeChildren();
+			var icon:BitmapData = TileList.getIcon(tileChar);
+			addChild(new Bitmap(icon));
+			addChild(border);
 		}
 
 		public function clearTile(clearFromPLayer:Boolean = false):void {

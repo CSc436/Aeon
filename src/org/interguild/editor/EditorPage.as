@@ -1,16 +1,23 @@
 package org.interguild.editor {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.events.IOErrorEvent;
 	import flash.net.FileReference;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
+	import flash.net.URLRequest;
+	import flash.net.URLRequestMethod;
+	import flash.net.URLVariables;
+	import flash.net.navigateToURL;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
 	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
+	import org.interguild.editor.help.EditorHelpScreen;
 	import org.interguild.editor.levelpane.EditorLevelPane;
+	import org.interguild.editor.levelprops.LevelPropertiesScreen;
 	import org.interguild.editor.tilelist.TileList;
 	import org.interguild.editor.topbar.TopBar;
 	import org.interguild.loader.EditorLoader;
@@ -18,12 +25,9 @@ package org.interguild.editor {
 
 	// EditorPage handles all the initialization for the level editor gui and more
 	public class EditorPage extends Sprite {
-
-		private static const BACKGROUND_COLOR:uint = 0x0f1d2f;
 		
-		private static const HINT_FONT:String = "Verdana";
-		private static const HINT_SIZE:Number = 12;
-		private static const HINT_COLOR:uint = 0xFFFFFF;
+		//public static const BACKGROUND_COLOR:uint = 0x0f1d2f;
+		public static const OVERLAY_ALPHA:Number = 0.25;
 
 		private static var selectedTile:String;
 		//TODO, replace this with a simple check in the undo/redo feature
@@ -36,6 +40,12 @@ package org.interguild.editor {
 		public static function set currentTile(s:String):void {
 			selectedTile = s;
 		}
+		
+		private static var instance:EditorPage;
+		
+		public static function get myself():EditorPage{
+			return instance;
+		}
 
 		private var loader:Loader;
 		private var keys:EditorKeyMan;
@@ -43,12 +53,14 @@ package org.interguild.editor {
 		private var topBar:TopBar;
 		private var levelPane:EditorLevelPane;
 		private var tileList:TileList
-		private var hint:TextField;
+		private var levelProps:LevelPropertiesScreen;
+		private var help:EditorHelpScreen;
 
 		/**
 		 * Creates grid holder and populates it with objects.
 		 */
 		public function EditorPage(stage:Stage):void {
+			instance = this;
 			keys = new EditorKeyMan(this, stage);
 
 			initBG();
@@ -58,47 +70,33 @@ package org.interguild.editor {
 
 			levelPane = new EditorLevelPane(this);
 			addChild(levelPane);
-			
-			initHintText();
 
 			loader = new EditorLoader();
 			loader.addInitializedListener(levelPane.addLevel);
 			loader.addErrorListener(onLoadError);
 
-			// must be initialized last so that overlay can cover everything
+			// these must be initialized last so that overlay can cover everything
 			// and disable editor mouse evemts for certain menus
+
 			topBar = new TopBar(this);
 			addChild(topBar);
+
+			levelProps = new LevelPropertiesScreen(keys, levelPane);
+			addChild(levelProps);
+
+			help = new EditorHelpScreen();
+			addChild(help);
 		}
 
+		private var myBG:BitmapData;
+
 		private function initBG():void {
-			graphics.beginFill(BACKGROUND_COLOR);
-			graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
-			graphics.endFill();
+			myBG = Assets.EDITOR_BG;
+			addChild(new Bitmap(myBG));
 		}
-		
-		private function initHintText():void{
-			var tip:TextField = new TextField();
-			tip.autoSize = TextFieldAutoSize.LEFT;
-			tip.defaultTextFormat = new TextFormat(HINT_FONT, HINT_SIZE, HINT_COLOR, true, true);
-			tip.selectable = false;
-			tip.text = "Tip: ";
-			tip.y = Aeon.STAGE_HEIGHT - tip.height - 1;
-			tip.x = 2;
-			addChild(tip);
-			
-			hint = new TextField();
-			hint.autoSize = TextFieldAutoSize.LEFT;
-			hint.defaultTextFormat = new TextFormat(HINT_FONT, HINT_SIZE, HINT_COLOR);
-			hint.selectable = false;
-			hint.y = tip.y;
-			hint.x = tip.x + tip.width;
-			hint.text = Hints.HINT_SHIFT_DRAWING;
-			addChild(hint);
-		}
-		
-		public function set hintText(s:String):void{
-			hint.text = s;
+
+		public function getBG():BitmapData {
+			return myBG;
 		}
 
 		public function newLevel():void {
@@ -126,12 +124,17 @@ package org.interguild.editor {
 			var filereader:FileReference = new FileReference();
 			filereader.addEventListener(Event.SELECT, selectHandler);
 			filereader.addEventListener(Event.COMPLETE, loadCompleteHandler);
+			filereader.addEventListener(IOErrorEvent.IO_ERROR, loadCompleteHandler);
 			filereader.browse(); // ask user for file
 
 			function selectHandler(event:Event):void {
 				filereader.removeEventListener(Event.SELECT, selectHandler);
 				filereader.load();
 			}
+
+//			function errorHandler(evt:IOErrorEvent):void{
+//				trace(evt);
+//			}
 
 			function loadCompleteHandler(event:Event):void {
 				filereader.removeEventListener(Event.COMPLETE, loadCompleteHandler);
@@ -159,6 +162,14 @@ package org.interguild.editor {
 			Aeon.getMe().returnFromError(e, "Editor");
 		}
 
+		public function showLevelProperties():void {
+			levelProps.visible = true;
+		}
+
+		public function showHelpScreen():void {
+			help.visible = true;
+		}
+
 		/**
 		 * This function returns to the title menu
 		 */
@@ -169,7 +180,6 @@ package org.interguild.editor {
 		public function copy():void {
 			topBar.hideMenu();
 			levelPane.level.copy();
-			hintText = Hints.HINT_SHIFT_PASTE;
 		}
 
 		public function cut():void {
@@ -191,6 +201,10 @@ package org.interguild.editor {
 			levelPane.level.deleteSelection();
 		}
 
+		public function selectAll():void {
+			levelPane.level.selectAll();
+		}
+
 		/**
 		 * TileList notifies EditorLevel when it's time to deselect
 		 */
@@ -206,14 +220,28 @@ package org.interguild.editor {
 			return levelPane.level.getLevelCode();
 		}
 		
+		private function getLevelTitle():String {
+			return levelPane.level.title;
+		}
+		
+		public function publishLevel():void{
+			var request:URLRequest = new URLRequest("http://www.interguild.org/levels/add.php?game=37");
+			var postData:URLVariables = new URLVariables();
+			postData.lvltitle = getLevelTitle();
+			postData.lvlcode = getLevelCode();
+			request.data = postData;
+			request.method = URLRequestMethod.POST;
+			navigateToURL(request, "_blank");
+		}
+
 		/**
 		 * When spacebar is pressed, allow user to click-and-drag to scroll
 		 * through the level.
 		 */
-		public function set handToolEnabled(b:Boolean):void{
-			if(b){
+		public function set handToolEnabled(b:Boolean):void {
+			if (b) {
 				Mouse.cursor = MouseCursor.HAND;
-			}else{
+			} else {
 				Mouse.cursor = MouseCursor.AUTO;
 			}
 			levelPane.handToolEnabled = b;
@@ -228,21 +256,56 @@ package org.interguild.editor {
 		}
 
 		public function undo():void {
-			topBar.hideMenu();
-			trace("TODO");
+			levelPane.undo();
 		}
 
 		public function redo():void {
-			topBar.hideMenu();
-			trace("TODO");
+			levelPane.redo();
 		}
-		
-		public function zoomIn():void{
+
+		public function zoomIn():void {
 			levelPane.zoom(true);
 		}
-		
-		public function zoomOut():void{
+
+		public function zoomOut():void {
 			levelPane.zoom(false);
+		}
+
+		public function enableRedo():void {
+			topBar.enableRedo();
+		}
+
+		public function enableUndo():void {
+			topBar.enableUndo();
+		}
+		public function disableRedo():void {
+			topBar.disableRedo();
+		}
+
+		public function disableUndo():void {
+			topBar.disableUndo();
+		}
+
+		public function disableZoomIn():void {
+			topBar.disableZoomIn();
+		}
+
+		public function disableZoomOut():void {
+			topBar.disableZoomOut();
+		}
+
+		public function enableZoomIn():void {
+			topBar.enableZoomIn();
+		}
+
+		public function enableZoomOut():void {
+			topBar.enableZoomOut();
+		}
+		
+		public function hasInitialized():Boolean{
+			if(topBar)
+				return true;
+			return false;
 		}
 
 		/**

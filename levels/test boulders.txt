@@ -1,0 +1,35 @@
+Untitled-1
+25x35|0|0
+x25
+x 23x
+x 13o 9x
+x 12xx 9x
+x 9o  x 10x
+x 3# o 6x 10x
+x  -x13 7x
+x 8x4 11x
+x 23x
+x 3o 3o 8o 4x x
+x -xx- xx  xx  x3 4x x
+x  x 3x - x 3x M3  x x
+x  x 3x 3x-3x-6x x
+x  x20 x
+x 23x
+x  o  o  o  o 3o 7x
+x -x -- -- -- -3 7x
+x 23x
+x 3M 5Mo  o  M 6x
+x 3o  oo o  oo o3 5x
+x -  M 18x
+x  x13 8x
+x 23x
+x 23x
+x22 -x
+ 24x
+ 24x
+ 15o  o  o  x
+ 15-- -- x4
+ 13o
+ 14o oo  o
+
+ 12x11

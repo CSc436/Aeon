@@ -5,12 +5,14 @@
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 
+	import org.interguild.Assets;
+
 	public class EditorTab extends Sprite {
 
 		private static const CLOSE_BUTTON_X:uint = 113;
 		private static const CLOSE_BUTTON_Y:uint = 7;
 
-		private static const FONT_COLOR:uint = 0x000000;
+		private static const FONT_COLOR:uint = 0xFFFFFF;
 		private static const FONT_SIZE:uint = 15;
 		private static const FONT_FAMILY:String = "Arial";
 		private static const FONT_X:uint = 10;
@@ -22,6 +24,8 @@
 		private var inactiveBG:Bitmap;
 		private var isActive:Boolean;
 
+		private var title:TextField;
+
 		private var closeNormal:Bitmap;
 		private var closeOver:Bitmap;
 		private var closeButton:Sprite;
@@ -30,21 +34,22 @@
 		private var myLevel:EditorLevel;
 
 		public function EditorTab(level:EditorLevel, tabMan:EditorTabManager) {
-			this.myLevel = level;
+			myLevel = level;
+			myLevel.tab = this;
 
 			//init main tab color
-			activeBG = new Bitmap(new TabActiveSprite());
+			activeBG = new Bitmap(Assets.TAB_ACTIVE_SPRITE);
 			activeBG.visible = false;
 			addChild(activeBG);
 			this.tabMan = tabMan;
 
 			//init inactive tab color
-			inactiveBG = new Bitmap(new TabInactiveSprite());
+			inactiveBG = new Bitmap(Assets.TAB_INACTIVE_SPRITE);
 			addChild(inactiveBG);
 
 			//init title
 			var format:TextFormat = new TextFormat(FONT_FAMILY, FONT_SIZE, FONT_COLOR);
-			var title:TextField = new TextField();
+			title = new TextField();
 			title.defaultTextFormat = format;
 			title.x = FONT_X;
 			title.y = FONT_Y;
@@ -65,15 +70,23 @@
 			addChild(closeButton);
 
 			//init default close button
-			closeNormal = new Bitmap(new TabCloseButtonSprite());
+			closeNormal = new Bitmap(Assets.TAB_CLOSE_BUTTON_SPRITE);
 			closeButton.addChild(closeNormal);
 
 			//init rollover close button
-			closeOver = new Bitmap(new TabCloseOverSprite());
+			closeOver = new Bitmap(Assets.TAB_CLOSE_OVER_SPRITE);
 			closeOver.visible = false;
 			closeButton.addChild(closeOver);
 
 			addEventListener(MouseEvent.MOUSE_OVER, onTabOver, false, 0, true);
+		}
+
+		public function updateTitle():void {
+			title.text = myLevel.title;
+		}
+
+		public function updateScrollPane():void {
+			tabMan.updateScrollPane();
 		}
 
 		private function onTabOver(evt:MouseEvent):void {

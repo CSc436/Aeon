@@ -1,0 +1,15 @@
+"File"	//will open an extra menu
+
+New Level
+Open Level
+Save Level
+
+Undo
+Redo
+
+Level Settings
+
+Zoom in
+Zoom out
+
+Help

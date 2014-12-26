@@ -1,6 +1,7 @@
 package org.interguild.game.tiles {
 	import flash.display.Sprite;
-	import org.interguild.game.level.Level;
+	
+	import org.interguild.game.Level;
 
 	/**
 	 * Treat this like an abstract class. Defines general
@@ -20,6 +21,7 @@ package org.interguild.game.tiles {
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS
+		 * Create a subclass instead.
 		 */
 		public function GameObject(_x:Number, _y:Number) {
 			newX = startX = x = _x;
@@ -32,7 +34,12 @@ package org.interguild.game.tiles {
 		public function onGameLoop():void {
 		}
 		
-		public function onKillEvent(level:Level):void {	
+		/**
+		 * Called when this object is destroyed. Returns an
+		 * array of objects that need to be activated.
+		 */
+		public function onKillEvent(level:Level):Array {
+			return null;
 		}
 		
 		public function finishGameLoop():void{

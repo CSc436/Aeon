@@ -1,0 +1,26 @@
+Arrow					[none]
+ArrowWoodCrate (Right)	>
+ArrowWoodCrate (Left)	<
+ArrowWoodCrate (Up)		^
+ArrowWoodCrate (Down)	v
+ArrowSteelCrate (Right)	]
+ArrowSteelCrate (Left)	[
+ArrowSteelCrate (Up)	T
+ArrowSteelCrate (Down)	H
+Boulder					o
+Collectable				c
+DynamiteSteelCrate		D
+DynamiteStick			[none]
+DynamiteWoodCrate		d
+Explosion				[none]
+EndGate					f
+Platform				-
+Player					#
+SecretArea				z
+SpikeUp					M
+SpikeRight				K
+SpikeDown				W
+SpikeLeft				E
+SteelCrate				s
+Terrain					x
+WoodCrate				w

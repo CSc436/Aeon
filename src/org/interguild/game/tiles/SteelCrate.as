@@ -1,15 +1,14 @@
 package org.interguild.game.tiles {
 
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	
 	import org.interguild.Aeon;
-	import org.interguild.game.collision.Destruction;
+	import org.interguild.Assets;
 
 	public class SteelCrate extends CollidableObject {
 
 		public static const LEVEL_CODE_CHAR:String = 's';
-		public static const EDITOR_ICON:BitmapData = new SteelCrateSprite();
+		public static const EDITOR_ICON:BitmapData = Assets.STEEL_CRATE;
 
 		private static const IS_SOLID:Boolean = true;
 		private static const HAS_GRAVITY:Boolean = true;
@@ -21,7 +20,7 @@ package org.interguild.game.tiles {
 			setProperties(IS_SOLID, HAS_GRAVITY, KNOCKBACK_AMOUNT, IS_BUOYANT);
 			CollidableObject.setSteelCrateDestruction(this);
 			
-			addChild(new Bitmap(new SteelCrateSprite()));
+			setFaces(Assets.STEEL_CRATE);
 		}
 	}
 }

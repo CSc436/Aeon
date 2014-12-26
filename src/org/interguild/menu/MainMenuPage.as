@@ -1,5 +1,7 @@
 package org.interguild.menu {
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.FocusEvent;
 	import flash.events.MouseEvent;
@@ -10,24 +12,27 @@ package org.interguild.menu {
 	import flash.text.TextFormat;
 	import flash.ui.Mouse;
 	import flash.ui.MouseCursor;
-
-	import org.interguild.game.level.LevelPage;
+	
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.User;
+	import org.interguild.game.gui.LevelPage;
 
 	public class MainMenuPage extends ListBasedMenu {
 
+		private static const CENTER_X:Number = Aeon.STAGE_WIDTH / 2;
+
 		//logo offset from top left
-		private static const LOGO_X:uint = 70;
-		private static const LOGO_Y:uint = 65;
+//		private static const LOGO_X:uint = 70;
+		private static const LOGO_Y:uint = 70;
 
 		//selector offset from buttons
-		private static const SELECTOR_X:int = -16;
+//		private static const SELECTOR_X:int = -16;
 		private static const SELECTOR_Y:int = -7;
 
 		//button positions
-		private static const BUTTONS_X:uint = 90;
-		private static const PLAY_GAME_Y:uint = 210;
+//		private static const BUTTONS_X:uint = 90;
+		private static const PLAY_GAME_Y:uint = LOGO_Y + 170;
 		private static const PLAY_USER_LEVELS_Y:uint = PLAY_GAME_Y + 60;
 		private static const LEVEL_EDITOR_Y:uint = PLAY_USER_LEVELS_Y + 60;
 		private static const OPTIONS_Y:uint = LEVEL_EDITOR_Y + 60;
@@ -36,24 +41,25 @@ package org.interguild.menu {
 		private static const TODO_PLAY_GAME:uint = 0x0;
 		private static const TODO_PLAY_LEVELS:uint = 0x1;
 		private static const TODO_LEVEL_EDITOR:uint = 0x2;
-		private static const TODO_OPTIONS:uint = 0x3;
+//		private static const TODO_OPTIONS:uint = 0x3;
 		private static const NUMBER_OF_MENU_BUTTONS:uint = 4;
 
 		//offset from bottom right of screen
 		private static const CREDIT_PADDING_X:uint = 10;
 		private static const CREDIT_PADDING_Y:uint = 10;
+		private static const CREDITS_PADDING:uint = 10;
 
-		//offset from top right of screen
+		//offset from bottom left of screen
 		private static const LOGIN_PADDING_X:uint = 10;
 		private static const LOGIN_PADDING_Y:uint = 10;
 
 		//hyperlink colors
 		private static const LINK_NORMAL_COLOR:uint = 0x00daf2;
 		private static const LINK_DOWN_COLOR:uint = 0x97ffed;
-		
+
 		private static const LOGGED_OUT_TEXT:String = "to rate and share levels.";
 		private static const COPYRIGHT:String = "© 2014 Interguild.org";
-		
+
 		private static const LOGOUT_URL:String = "http://interguild.org/logout.php";
 		private static const LOGIN_URL:String = "http://interguild.org/login.php";
 
@@ -61,25 +67,31 @@ package org.interguild.menu {
 		private var userText:TextField;
 		private var loginLink:TextField;
 		private var logoutLink:TextField;
+		
+		private var creditsList:MovieClip;
+		private var clickCatcher:Sprite;
 
 		public function MainMenuPage() {
-			super(SELECTOR_X, SELECTOR_Y);
+			super(CENTER_X, SELECTOR_Y);
 
 			initMainItems();
 			initSideItems();
 		}
 
 		private function initMainItems():void {
+			//init bg image
+			this.addChildAt(new Bitmap(Assets.MAIN_MENU_BG), 0);
+
 			//init logo image
-			var logo:MovieClip = new AeonLogo();
-			logo.x = LOGO_X;
+			var logo:MovieClip = Assets.AEON_LOGO;
+			logo.x = CENTER_X;
 			logo.y = LOGO_Y;
 			this.addChild(logo);
 
 			//int play game button
 			var playButton:MovieClip = new PlayGameButton();
 			playButton.buttonMode = true;
-			playButton.x = BUTTONS_X;
+			playButton.x = CENTER_X;
 			playButton.y = PLAY_GAME_Y;
 			this.addChild(playButton);
 			addButton(playButton);
@@ -87,7 +99,7 @@ package org.interguild.menu {
 			//int play user levels button
 			var playLevels:MovieClip = new PlayUserLevelsButton();
 			playLevels.buttonMode = true;
-			playLevels.x = BUTTONS_X;
+			playLevels.x = CENTER_X;
 			playLevels.y = PLAY_USER_LEVELS_Y;
 			this.addChild(playLevels);
 			addButton(playLevels);
@@ -95,18 +107,18 @@ package org.interguild.menu {
 			//init editor button
 			var editorButton:MovieClip = new LevelEditorButton();
 			editorButton.buttonMode = true;
-			editorButton.x = BUTTONS_X;
+			editorButton.x = CENTER_X;
 			editorButton.y = LEVEL_EDITOR_Y;
 			this.addChild(editorButton);
 			addButton(editorButton);
 
 			//int play user levels button
-			var optionsButton:MovieClip = new OptionsButton();
-			optionsButton.buttonMode = true;
-			optionsButton.x = BUTTONS_X;
-			optionsButton.y = OPTIONS_Y;
-			this.addChild(optionsButton);
-			addButton(optionsButton);
+//			var optionsButton:MovieClip = new OptionsButton();
+//			optionsButton.buttonMode = true;
+//			optionsButton.x = CENTER_X;
+//			optionsButton.y = OPTIONS_Y;
+//			this.addChild(optionsButton);
+//			addButton(optionsButton);
 
 			selectItem(playButton);
 		}
@@ -127,8 +139,25 @@ package org.interguild.menu {
 			creditLink.addEventListener(MouseEvent.MOUSE_UP, onLinkUp);
 			creditLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
 			creditLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
+			creditLink.addEventListener(MouseEvent.CLICK, onCreditsClick);
 			addChild(creditLink);
-
+			
+			//init thing that listens for clicks to tell crredits list to go away
+			clickCatcher = new Sprite();
+			clickCatcher.graphics.beginFill(0, 0.3);
+			clickCatcher.graphics.drawRect(0, 0, Aeon.STAGE_WIDTH, Aeon.STAGE_HEIGHT);
+			clickCatcher.graphics.endFill();
+			clickCatcher.addEventListener(MouseEvent.CLICK, onCreditsClickCaught);
+			clickCatcher.visible = false;
+			addChild(clickCatcher);
+			
+			//init credits list
+			creditsList = new CreditsList();
+			creditsList.x = Aeon.STAGE_WIDTH - creditsList.width / 2 - CREDITS_PADDING;
+			creditsList.y = creditLink.y - CREDITS_PADDING;
+			creditsList.visible = false;
+			addChild(creditsList);
+			
 			//init copyright
 			var copyText:TextField = new TextField();
 			copyText.defaultTextFormat = textFormat;
@@ -138,6 +167,16 @@ package org.interguild.menu {
 			copyText.x = creditLink.x - copyText.width;
 			copyText.y = creditLink.y;
 			addChild(copyText);
+			
+			//init user text // displays welcome message, or login link
+			userText = new TextField();
+			userText.defaultTextFormat = textFormat;
+			userText.autoSize = TextFieldAutoSize.LEFT;
+			userText.selectable = false;
+			userText.text = "Welcome.";
+			userText.y = Aeon.STAGE_HEIGHT - userText.height - LOGIN_PADDING_Y;
+			userText.visible = false;
+			addChild(userText);
 
 			//init logout
 			logoutLink = new TextField();
@@ -150,11 +189,10 @@ package org.interguild.menu {
 			logoutLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
 			logoutLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
 			logoutLink.addEventListener(MouseEvent.CLICK, onLogoutClick);
-			logoutLink.x = Aeon.STAGE_WIDTH - logoutLink.width - LOGIN_PADDING_X;
-			logoutLink.y = LOGIN_PADDING_Y;
+			logoutLink.y = userText.y;
 			logoutLink.visible = false;
 			addChild(logoutLink);
-			
+
 			//init login
 			loginLink = new TextField();
 			loginLink.defaultTextFormat = linkFormat;
@@ -166,21 +204,31 @@ package org.interguild.menu {
 			loginLink.addEventListener(MouseEvent.MOUSE_OVER, onLinkOver);
 			loginLink.addEventListener(MouseEvent.MOUSE_OUT, onLinkOut);
 			loginLink.addEventListener(MouseEvent.CLICK, onLoginClick);
-			loginLink.y = LOGIN_PADDING_Y;
+			loginLink.y = userText.y;
 			loginLink.visible = false;
 			addChild(loginLink);
 
-			//init user text // displays welcome message, or login link
-			userText = new TextField();
-			userText.defaultTextFormat = textFormat;
-			userText.autoSize = TextFieldAutoSize.LEFT;
-			userText.selectable = false;
-			userText.y = LOGIN_PADDING_Y;
-			userText.visible = false;
-			addChild(userText);
-			
 			Aeon.STAGE.focus = Aeon.STAGE;
 			Aeon.STAGE.addEventListener(FocusEvent.FOCUS_OUT, listenForChange);
+		}
+		
+		private function onCreditsClick(evt:MouseEvent):void{
+			clickCatcher.visible = true;
+			creditsList.visible = true;
+		}
+		
+		private function onCreditsClickCaught(evt:MouseEvent):void{
+			clickCatcher.visible = false;
+			creditsList.visible = false;
+		}
+		
+		protected override function onKeyDown(keyCode:uint):void {
+			if(creditsList.visible){
+				if(keyCode == 27 || keyCode == 13)// Esc OR Enter
+					onCreditsClickCaught(null);
+			}else{
+				super.onKeyDown(keyCode);
+			}
 		}
 
 		/**
@@ -190,43 +238,47 @@ package org.interguild.menu {
 		public function updateUser():void {
 			if (User.IS_LOGGED_IN) {
 				loginLink.visible = false;
+				
 				userText.text = "Welcome, " + User.NAME + "!";
-				userText.x = logoutLink.x - userText.width;
+				userText.x = LOGIN_PADDING_X;
 				userText.visible = true;
+				
+				logoutLink.x = userText.x + userText.width;
 				logoutLink.visible = true;
-			} else {				
+			} else {
 				logoutLink.visible = false;
 				
-				userText.text = LOGGED_OUT_TEXT;
-				userText.x = Aeon.STAGE_WIDTH - userText.width - LOGIN_PADDING_X;
-				userText.visible = true;
-
-				loginLink.x = userText.x - loginLink.width;
+				loginLink.x = userText.x + userText.width;
+				loginLink.x = LOGIN_PADDING_X;
 				loginLink.visible = true;
+				
+				userText.text = LOGGED_OUT_TEXT;
+				userText.x = loginLink.x + loginLink.width;
+				userText.visible = true;
 			}
 		}
-		
-		private function onLoginClick(evt:MouseEvent):void{
+
+		private function onLoginClick(evt:MouseEvent):void {
 			navigateToURL(new URLRequest(LOGIN_URL), "_blank");
 //			listenForChange();
 		}
-		
-		private function onLogoutClick(evt:MouseEvent):void{
+
+		private function onLogoutClick(evt:MouseEvent):void {
 			navigateToURL(new URLRequest(LOGOUT_URL), "_blank");
 //			listenForChange();
 		}
-		
-		private function listenForChange(evt:FocusEvent = null):void{
+
+		private function listenForChange(evt:FocusEvent = null):void {
 			trace("lost focus");
 			stage.removeEventListener(FocusEvent.FOCUS_OUT, listenForChange);
 			stage.addEventListener(FocusEvent.FOCUS_IN, onFocus);
 			stage.addEventListener(MouseEvent.MOUSE_MOVE, onFocus);
-			
-			function onFocus(evt:Event = null):void{
+
+			function onFocus(evt:Event = null):void {
 				stage.removeEventListener(FocusEvent.FOCUS_IN, onFocus);
 				stage.removeEventListener(MouseEvent.MOUSE_MOVE, onFocus);
 				stage.addEventListener(FocusEvent.FOCUS_OUT, listenForChange);
-				
+
 				User.init(updateUser);
 				trace("FOCUS");
 			}
@@ -243,8 +295,8 @@ package org.interguild.menu {
 				case TODO_LEVEL_EDITOR:
 					Aeon.getMe().gotoEditorPage();
 					break;
-				case TODO_OPTIONS:
-					break;
+//				case TODO_OPTIONS:
+//					break;
 			}
 		}
 

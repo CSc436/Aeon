@@ -2,12 +2,16 @@ package org.interguild.game.tiles {
 	CONFIG::DEBUG {
 		import flash.display.Sprite;
 	}
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.Sprite;
 	import flash.geom.Rectangle;
 	import flash.utils.Dictionary;
-	
+
+	import org.interguild.game.Level;
 	import org.interguild.game.collision.Destruction;
 	import org.interguild.game.collision.GridTile;
-	import org.interguild.game.level.Level;
+	import flash.display.DisplayObject;
 
 	/**
 	 * Treat this class as an abstract class. It provides the
@@ -20,31 +24,47 @@ package org.interguild.game.tiles {
 	public class CollidableObject extends GameObject {
 
 		private static const GRAVITY:Number = Level.GRAVITY;
-		private static const MAX_FALL_SPEED:Number = 6;
-		
-		public static function setWoodenCrateDestruction(obj:CollidableObject):void{
+		private static const MAX_FALL_SPEED:Number = 14;
+		private static const FALL_TILT_ANGLE:Number = 10;
+
+//		private static const FALL_TILT_ANGLE_MAX:Number = 14;
+//		private static const FALL_TILT_ANGLE_MIN:Number = 5;
+
+		public static function setWoodenCrateDestruction(obj:CollidableObject):void {
 			obj.destruction.destroyedBy(Destruction.ARROWS);
 			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
 			obj.destruction.destroyedBy(Destruction.PLAYER);
 		}
-		
-		public static function setSteelCrateDestruction(obj:CollidableObject):void{
+
+		public static function setSteelCrateDestruction(obj:CollidableObject):void {
 			obj.destruction.destroyedBy(Destruction.ARROWS);
 			obj.destruction.destroyedBy(Destruction.EXPLOSIONS);
 		}
 
-		private var myGrids:Vector.<GridTile>;
+		CONFIG::DEBUG {
+			private static const HITBOX_COLOR:uint = 0xFF0000;
+			private static const SPRITE_ALPHA:Number = 0.5;
+		}
+
+		private var myGrids:Array;
 		private var hit_box:Rectangle;
 		private var hit_box_prev:Rectangle;
 		private var justCollided:Dictionary;
 		private var sideBlocked:Array;
 		private var active:Boolean;
+		protected var doActiveCollisions:Boolean;
+		private var dead:Boolean;
+		public var prevSpeedY:Number;
 
+		private var ignoreList:Array;
 		protected var destruction:Destruction;
 		private var solid:Boolean = true;
-		private var gravity:Boolean = true;
+		protected var gravity:Boolean = true;
 		private var knockback:int = 0;
 		private var buoyancy:Boolean = false;
+
+		private var tiltFace:Sprite;
+		private var normalFace:Bitmap;
 
 		/**
 		 * DO NOT INSTANTIATE THIS CLASS. Please instantiate
@@ -53,12 +73,57 @@ package org.interguild.game.tiles {
 		public function CollidableObject(_x:Number, _y:Number, width:Number, height:Number) { //, charcode:String, des:int, solid:Boolean, gravity:Boolean, knockback:int) {
 			super(_x, _y);
 			destruction = new Destruction();
-			myGrids = new Vector.<GridTile>();
+			myGrids = new Array();
 			hit_box = new Rectangle(_x, _y, width, height);
 			hit_box_prev = hit_box.clone();
 			justCollided = new Dictionary(true);
 			sideBlocked = [false, false, false, false];
 			active = false;
+			doActiveCollisions = true;
+		}
+
+		public function get timeToDeactivate():Boolean {
+			return false;
+		}
+
+		public function get timeToDie():Boolean {
+			return false;
+		}
+
+		protected function ignore(tile:Class):void {
+			if (ignoreList == null)
+				ignoreList = [];
+			ignoreList.push(tile);
+		}
+
+		public function isIgnored(obj:CollidableObject):Boolean {
+			if (ignoreList == null)
+				return false;
+			var len:uint = ignoreList.length;
+			for (var i:uint = 0; i < len; i++) {
+				if (obj is ignoreList[i])
+					return true;
+			}
+			return false;
+		}
+
+		CONFIG::DEBUG {
+			protected function showHitBox():void {
+				graphics.clear();
+				graphics.beginFill(HITBOX_COLOR);
+				graphics.drawRect(0, 0, hitbox.width, hitbox.height);
+				graphics.endFill();
+			}
+
+			public override function addChild(child:DisplayObject):DisplayObject {
+				child.alpha = SPRITE_ALPHA;
+				return super.addChild(child);
+			}
+
+			public override function addChildAt(child:DisplayObject, index:int):DisplayObject {
+				child.alpha = SPRITE_ALPHA;
+				return super.addChildAt(child, index);
+			}
 		}
 
 		/**
@@ -71,18 +136,35 @@ package org.interguild.game.tiles {
 			this.buoyancy = buoyancy;
 		}
 
-//		/**
-//		 * returns value indicating whether or not
-//		 * a tile should be destroyed and by what.
-//		 *
-//		 * 0 = indestructible (terrain)
-//		 * 1 = destructible by arrows and dynamite (steel)
-//		 * 2 = destructible by arrows, dynamite and touch (wooden)
-//		 *
-//		 */
-//		public function getDestructibility():int {
-//			return destruct;
-//		}
+		protected function setFaces(normal:BitmapData, falling:BitmapData = null):void {
+			//normal
+			normalFace = new Bitmap(normal);
+			addChild(normalFace);
+
+			//falling
+			if (falling == null)
+				falling = normal;
+			var face:Bitmap = new Bitmap(falling);
+			face.x = -face.width / 2;
+			face.y = -face.height / 2;
+			tiltFace = new Sprite();
+			tiltFace.addChild(face);
+			tiltFace.rotation = FALL_TILT_ANGLE;
+//			tiltFace.rotation = FALL_TILT_ANGLE_MIN + (Math.random() * (FALL_TILT_ANGLE_MAX - FALL_TILT_ANGLE_MIN));
+//			if (Math.random() > 0.5)
+//				tiltFace.rotation *= -1;
+			tiltFace.x = 16;
+			tiltFace.y = 16;
+			tiltFace.visible = false;
+			addChild(tiltFace);
+		}
+
+		public function moveTo(_x:Number, _y:Number):void {
+			x = newX = _x;
+			y = newY = _y;
+			updateHitBox();
+		}
+
 
 		/**
 		 * Will this object destroy that other object?
@@ -90,9 +172,19 @@ package org.interguild.game.tiles {
 		public function canDestroy(other:CollidableObject):Boolean {
 			return destruction.canDestroy(other.destruction);
 		}
-		
-		public function isDestroyedBy(constant:uint):Boolean{
+
+		public function isDestroyedBy(constant:uint):Boolean {
 			return destruction.isDestroyedBy(constant);
+		}
+
+		public function set markedForDeath(b:Boolean):void {
+			dead = b;
+			speedX = speedY = 0;
+//			visible = false;
+		}
+
+		public function get markedForDeath():Boolean {
+			return dead;
 		}
 
 		/**
@@ -136,7 +228,7 @@ package org.interguild.game.tiles {
 		 */
 		public override function onGameLoop():void {
 			//gravity
-			if (this.isGravible()) {
+			if (gravity) {
 				speedY += GRAVITY;
 
 				if (speedY > MAX_FALL_SPEED) {
@@ -145,6 +237,7 @@ package org.interguild.game.tiles {
 			}
 
 			//update movement
+			prevSpeedY = speedY;
 			newX += speedX;
 			newY += speedY;
 			updateHitBox();
@@ -199,6 +292,14 @@ package org.interguild.game.tiles {
 		}
 
 		/**
+		 * Returns true if the CollidableObject is within the bounds
+		 * of the level.
+		 */
+		public function isInGridTiles():Boolean {
+			return myGrids.length > 0;
+		}
+
+		/**
 		 * Removes the GameObject from all of the collision
 		 * grid tiles that it is currently in.
 		 */
@@ -210,7 +311,7 @@ package org.interguild.game.tiles {
 			myGrids.length = 0;
 		}
 
-		public function get myCollisionGridTiles():Vector.<GridTile> {
+		public function get myCollisionGridTiles():Array {
 			return this.myGrids;
 		}
 
@@ -264,15 +365,15 @@ package org.interguild.game.tiles {
 		 * about it so that we don't test for collisions on that side of the tile.
 		 */
 		public function setBlocked(direction:uint):void {
-			sideBlocked[direction] = true;
+			sideBlocked[direction - 1] = true;
 		}
 
 		public function setUnblocked(direction:uint):void {
-			sideBlocked[direction] = false;
+			sideBlocked[direction - 1] = false;
 		}
 
 		public function isBlocked(direction:uint):Boolean {
-			return sideBlocked[direction];
+			return sideBlocked[direction - 1];
 		}
 
 		public function set isActive(b:Boolean):void {
@@ -280,10 +381,23 @@ package org.interguild.game.tiles {
 			if (b != active)
 				sideBlocked = [false, false, false, false];
 			active = b;
+			if (tiltFace) {
+				if (active) {
+					tiltFace.visible = true;
+					normalFace.visible = false;
+				} else {
+					tiltFace.visible = false;
+					normalFace.visible = true;
+				}
+			}
 		}
 
 		public function get isActive():Boolean {
 			return active;
+		}
+
+		public function get testForCollisions():Boolean {
+			return doActiveCollisions;
 		}
 	}
 }

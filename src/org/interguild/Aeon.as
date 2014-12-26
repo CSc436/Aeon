@@ -10,22 +10,19 @@ package org.interguild {
 	}
 
 	import org.interguild.editor.EditorPage;
-	import org.interguild.game.level.LevelPage;
+	import org.interguild.game.gui.LevelPage;
 
 	import org.interguild.loader.ErrorDialog;
 	import flash.system.Security;
 	import flash.display.Stage;
 	import org.interguild.menu.MainMenuPage;
-	import org.interguild.menu.UserLevelsPage;
+	import org.interguild.menu.LevelsPage;
 
 
 	/**
 	 * Responsible for managing all of the menu transitions.
-	 * 
 	 */
-
 	[SWF(backgroundColor = "0x999999", width = "900", height = "500", frameRate = "30")]
-
 	public class Aeon extends Sprite {
 
 		private static var instance:Aeon;
@@ -37,8 +34,8 @@ package org.interguild {
 		public static function getMe():Aeon {
 			return instance;
 		}
-		
-		public static function get STAGE():Stage{
+
+		public static function get STAGE():Stage {
 			return instance.stage;
 		}
 
@@ -48,9 +45,9 @@ package org.interguild {
 		public static const STAGE_WIDTH:uint = 900;
 		public static const STAGE_HEIGHT:uint = 500;
 
-		private static const BG_COLOR:uint = 0x000b17;
-		private static const BORDER_COLOR:uint = 0x000b17; //no border
-		
+		private static const BG_COLOR:uint = 0x134c7d;
+		private static const BORDER_COLOR:uint = BG_COLOR; //no border
+
 		private var lastLevel:String;
 		private var wasLastLevelCode:Boolean;
 
@@ -58,13 +55,15 @@ package org.interguild {
 		private var mainMenu:MainMenuPage;
 		private var levelPage:LevelPage;
 		private var editorPage:EditorPage;
-		private var userLevelsPage:UserLevelsPage;
+		private var userLevelsPage:LevelsPage;
 
 		private var keys:KeyMan;
 
 		public function Aeon() {
 			instance = this;
-			Security.allowDomain(INTERGUILD.ORG);
+//			Security.allowDomain(INTERGUILD.ORG);
+			Security.allowDomain("interguild.org");
+			Security.allowDomain("www.interguild.org");
 
 			//stop stage from scaling and stuff
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -92,9 +91,9 @@ package org.interguild {
 			editorPage = new EditorPage(stage);
 			editorPage.visible = false;
 			addChild(editorPage);
-			
+
 			//init user levels page
-			userLevelsPage = new UserLevelsPage();
+			userLevelsPage = new LevelsPage();
 			userLevelsPage.visible = false;
 			addChild(userLevelsPage);
 
@@ -105,8 +104,8 @@ package org.interguild {
 				textField.autoSize = TextFieldAutoSize.LEFT;
 				textField.selectable = false;
 				textField.text = "DEBUGGING MODE";
-				textField.x = 5;
-				textField.y = Aeon.STAGE_HEIGHT - textField.height - 5;
+				textField.x = 10;
+				textField.y = Aeon.STAGE_HEIGHT - textField.height - 25;
 				addChild(textField);
 			}
 		}
@@ -116,7 +115,7 @@ package org.interguild {
 			mainMenu.visible = true;
 			currentPage = mainMenu;
 		}
-		
+
 		public function gotoUserLevels():void {
 			hideCurrentPage();
 			userLevelsPage.visible = true;
@@ -157,9 +156,9 @@ package org.interguild {
 			this.addChild(levelPage);
 			currentPage = levelPage;
 		}
-		
-		public function playLastLevel():void{
-			if(wasLastLevelCode)
+
+		public function playLastLevel():void {
+			if (wasLastLevelCode)
 				playLevelCode(lastLevel);
 			else
 				playLevelFile(lastLevel);
@@ -174,8 +173,8 @@ package org.interguild {
 		public function hideCurrentPage():void {
 			currentPage.visible = false;
 			if (currentPage == levelPage) {
-				levelPage.shutdown();
 				removeChild(levelPage);
+				levelPage.deconstruct();
 				levelPage = null;
 			}
 		}

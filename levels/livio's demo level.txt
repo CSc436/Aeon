@@ -1,0 +1,32 @@
+Demo Level
+14x30|1|0
+xxxxxxxxxxxxxx
+xxxxx  xxxxxxx
+xx      xxxxxx
+xx      xxxxxx
+x       xxxxxx
+xx #     xxxxx
+xxxxx    xxxxx
+xxxxxx   xxxxx
+xxxxxx    xxxx
+xxx       xxxx
+xx      w xxxx
+xx        xxxx
+xx  c w   xxxx
+xx        xxxx
+x    w  w xxxx
+x         xxxx
+x w w w  cxxxx
+x        wxxxx
+x     w   xxxx
+x  ^      xxxx
+x       w xxxx
+x    w    xxxx
+x  w    ^ xxxx
+x    cw   xxxx
+x         xxxx
+x   ^    w  xx
+x      w    xx
+x   w       fx
+x^^^^^^^^^  fx
+xxxxxxxxxxxxxx

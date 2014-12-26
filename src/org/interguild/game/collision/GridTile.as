@@ -1,27 +1,36 @@
 package org.interguild.game.collision {
 
 	import flash.display.Sprite;
-	
+
+	import org.interguild.game.tiles.Boulder;
 	import org.interguild.game.tiles.CollidableObject;
+	import org.interguild.game.tiles.Platform;
+	import org.interguild.game.tiles.SecretArea;
 
 	public class GridTile extends Sprite {
 
-		private var myStuff:Vector.<CollidableObject>;
+		private var myStuff:Array;
 		private var row:uint;
 		private var col:uint;
 		private var grid:CollisionGrid;
+		public var markedForActivation:Boolean;
 
 		public function GridTile(r:uint, c:uint, g:CollisionGrid) {
 			row = r;
 			col = c;
 			grid = g;
 			mouseEnabled = false;
-			myStuff = new Vector.<CollidableObject>();
+			myStuff = new Array();
 			CONFIG::DEBUG {
 				graphics.beginFill(0xCCCCCC, 0.5);
 				graphics.drawRect(0, 0, 31, 31);
 				graphics.endFill();
 			}
+		}
+
+		public function deconstruct():void {
+			myStuff = null;
+			grid = null;
 		}
 
 		public function get gridRow():uint {
@@ -58,7 +67,7 @@ package org.interguild.game.collision {
 			}
 		}
 
-		public function get myCollisionObjects():Vector.<CollidableObject> {
+		public function get myCollisionObjects():Array {
 			return myStuff;
 		}
 
@@ -94,7 +103,17 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if (!o.isActive)
+				if (!o.isActive && o.isSolid() && !(o is Platform))
+					return true;
+			}
+			return false;
+		}
+
+		public function isBoulderBlocking():Boolean {
+			var len:uint = myStuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = myStuff[i];
+				if (!o.isActive && o.isSolid())
 					return true;
 			}
 			return false;
@@ -108,19 +127,28 @@ package org.interguild.game.collision {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if (!o.isActive && o is CollidableObject && o.isGravible()) {
-					o.isActive = true;
-					grid.activeObjects.push(o);
+				if (!o.isActive && o.isGravible()) {
+					grid.activateObject(o);
 				}
 			}
 			grid.updateBlockedNeighbors(row, col);
 		}
-		
-		public function isGravible():Boolean{
+
+		public function isGravible():Boolean {
 			var len:uint = myStuff.length;
 			for (var i:uint = 0; i < len; i++) {
 				var o:CollidableObject = myStuff[i];
-				if(o is CollidableObject && !o.isActive && o.isGravible())
+				if (!o.isActive && o.isGravible())
+					return true;
+			}
+			return false;
+		}
+
+		public function needToCrawl():Boolean {
+			var len:uint = myStuff.length;
+			for (var i:uint = 0; i < len; i++) {
+				var o:CollidableObject = myStuff[i];
+				if (!o.isActive && o.isSolid() && !o.isDestroyedBy(Destruction.PLAYER) && !(o is Platform) && !(o is SecretArea))
 					return true;
 			}
 			return false;

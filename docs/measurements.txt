@@ -1,0 +1,18 @@
+ON DEATH
+	no death delay, block gone immediately
+	fire projectiles and debris immediately
+	knockback applied next frame
+	sprite removed next frame??
+
+PLAYER MOVEMENT
+	running speed 10 pixels per frame
+
+ARROW SPEED
+	29 - 12 = 17
+	70 - 35 = 35 //skipped a frame
+	42 - 24 = 18
+	59 - 42 = 17
+
+ARROW EXPLOSION
+	4 frames
+	5 frames

@@ -5,6 +5,8 @@ package org.interguild.menu {
 	import flash.events.MouseEvent;
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
+	
+	import org.interguild.Assets;
 	import org.interguild.KeyMan;
 
 	public class ListBasedMenu extends Sprite {
@@ -24,18 +26,17 @@ package org.interguild.menu {
 		
 		private var isEnabled:Boolean = true;
 		
-		public function ListBasedMenu(selectorOffsetX:int, selectorOffsetY:int) {
-			offsetX = selectorOffsetX;
-			offsetY = selectorOffsetY;
-			
-			
+		public function ListBasedMenu(centerX:int, selectorOffsetY:int) {			
 			//init selectors
-			buttonSelect = new Bitmap(new MenuButtonSelectBG());
-			buttonClick = new Bitmap(new MenuButtonClickBG());
+			buttonSelect = new Bitmap(Assets.MENU_BTN_SELECT);
+			buttonClick = new Bitmap(Assets.MENU_BTN_CLICK);
 			buttonSelect.visible = false;
 			buttonClick.visible = false;
 			addChild(buttonSelect);
 			addChild(buttonClick);
+			
+			offsetX = centerX - buttonSelect.width / 2;
+			offsetY = selectorOffsetY;
 			
 			listOfButtons = new Array();
 			
@@ -56,14 +57,14 @@ package org.interguild.menu {
 		}
 		
 		protected function selectItem(t:MovieClip):void {
-			buttonSelect.x = t.x + offsetX;
+			buttonSelect.x = offsetX;
 			buttonSelect.y = t.y + offsetY;
 			buttonSelect.visible = true;
 			buttonClick.visible = false;
 		}
 		
 		protected function simMouseDown(t:MovieClip):void {
-			buttonClick.x = t.x + offsetX;
+			buttonClick.x = offsetX;
 			buttonClick.y = t.y + offsetY;
 			buttonClick.visible = true;
 			buttonSelect.visible = false;
@@ -91,7 +92,7 @@ package org.interguild.menu {
 			animTimer.start();
 		}
 		
-		private function onKeyDown(keyCode:uint):void {
+		protected function onKeyDown(keyCode:uint):void {
 			if (!isEnabled)
 				return;
 			switch (keyCode) {

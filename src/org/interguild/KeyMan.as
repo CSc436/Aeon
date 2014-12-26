@@ -1,10 +1,7 @@
 package org.interguild {
 	import flash.display.Stage;
-	import flash.events.Event;
 	import flash.events.KeyboardEvent;
-	import flash.events.TimerEvent;
 	import flash.media.Sound;
-	import flash.net.URLRequest;
 	import flash.utils.Timer;
 
 	public class KeyMan {
@@ -24,15 +21,17 @@ package org.interguild {
 		public var isKeyDown:Boolean = false;
 		public var isKeySpace:Boolean = false;
 		public var isKeyEsc:Boolean = false;
-		
+		public var isKeyR:Boolean = false;
+
 		public var walkingSound:Sound;
 		public var walkSoundPlaying:Boolean = false;
 		public var timer:Timer;
 
 		public var spacebarCallback:Function;
 		private var escapeCallback:Function;
+		private var restartCallback:Function;
 		private var menuCallback:Function;
-		CONFIG::DEBUG{
+		CONFIG::DEBUG {
 			private var debugToggleCallback:Function;
 			private var slowDownToggleCallback:Function;
 			private var slowDownNextCallback:Function;
@@ -44,12 +43,23 @@ package org.interguild {
 			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp, false, 0, true);
 		}
 
+		public function forgetMe():void {
+			spacebarCallback = null;
+			escapeCallback = null;
+			restartCallback = null;
+		}
+
 		private function onKeyDown(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key
-					if(escapeCallback && !isKeyEsc)
+					if (escapeCallback && !isKeyEsc)
 						escapeCallback();
 					isKeyEsc = true;
+					break;
+				case 82: // R key
+					if (restartCallback && !isKeyR)
+						restartCallback();
+					isKeyR = true;
 					break;
 				case 39: //right arrow key
 					isKeyRight = true;
@@ -65,22 +75,22 @@ package org.interguild {
 					break;
 				case 32: //spacebar
 					isKeySpace = true;
-					if(spacebarCallback)
+					if (spacebarCallback)
 						spacebarCallback();
 					break;
 			}
 			CONFIG::DEBUG {
-				switch(evt.keyCode){
+				switch (evt.keyCode) {
 					case 66: //b key
-						if(debugToggleCallback)
+						if (debugToggleCallback)
 							debugToggleCallback();
 						break;
 					case 191: // "/" or "?" key
-						if(slowDownToggleCallback)
+						if (slowDownToggleCallback)
 							slowDownToggleCallback();
 						break;
 					case 190: // "." or ">" key
-						if(slowDownNextCallback)
+						if (slowDownNextCallback)
 							slowDownNextCallback();
 						break;
 				}
@@ -88,12 +98,14 @@ package org.interguild {
 			if (menuCallback)
 				menuCallback(evt.keyCode);
 		}
-		
+
 		private function onKeyUp(evt:KeyboardEvent):void {
 			switch (evt.keyCode) {
 				case 27: //Esc key
 					isKeyEsc = false;
 					break;
+				case 82: // R key
+					isKeyR = false;
 				case 39: //right arrow key
 					isKeyRight = false;
 					break;
@@ -111,9 +123,9 @@ package org.interguild {
 					break;
 			}
 		}
-		
+
 		public function resumeFromButton():void {
-			if(escapeCallback)
+			if (escapeCallback)
 				escapeCallback();
 		}
 
@@ -125,16 +137,20 @@ package org.interguild {
 			spacebarCallback = cb;
 		}
 
+		public function addRestartListener(f:Function):void {
+			restartCallback = f;
+		}
+
 		public function addMenuCallback(cb:Function):void {
 			menuCallback = cb;
 		}
 
-		CONFIG::DEBUG{
+		CONFIG::DEBUG {
 			public function addSlowdownListeners(onToggle:Function, onNext:Function):void {
 				slowDownToggleCallback = onToggle;
 				slowDownNextCallback = onNext;
 			}
-			
+
 			public function addDebugListeners(onToggle:Function):void {
 				debugToggleCallback = onToggle;
 			}

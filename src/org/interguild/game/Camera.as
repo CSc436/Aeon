@@ -2,10 +2,16 @@ package org.interguild.game {
 //	import com.greensock.TweenLite;
 //	import com.greensock.easing.Back;
 
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
-
+	
 	import org.interguild.Aeon;
-	import org.interguild.game.level.LevelBackground;
+	import org.interguild.game.tiles.Arrow;
+	import org.interguild.game.tiles.ArrowExplosion;
+	import org.interguild.game.tiles.DynamiteStick;
+	import org.interguild.game.tiles.Explosion;
+	import org.interguild.game.tiles.Player;
+	import org.interguild.game.tiles.TerrainView;
 
 	/**
 	 * This class controls the camera for the game. It uses a tween object to scroll the camera to the players position, off
@@ -13,8 +19,6 @@ package org.interguild.game {
 	 * It takes the player as a reference so it can update it's location based on the players coordinates.
 	 */
 	public class Camera extends Sprite {
-		private var player:Player;
-
 		private static const UPWARD_DISTANCE:uint = 125;
 		private static const LEFT_DISTANCE:uint = 0;
 		private static const RIGHT_DISTANCE:uint = 0;
@@ -27,7 +31,14 @@ package org.interguild.game {
 		private var levelWidth:int;
 		private var levelHeight:int;
 
+		private var player:Player;
 		private var bg:LevelBackground;
+		
+		private var effectsLayer:Sprite;
+		private var projectileLayer:Sprite;
+		private var terrainLayer:Sprite;
+		private var playerLayer:Sprite;
+		private var tilesLayer:Sprite;
 
 		public function Camera(player:Player, bg:LevelBackground, w:Number, h:Number) {
 			this.player = player;
@@ -35,6 +46,17 @@ package org.interguild.game {
 			this.levelWidth = w;
 			this.levelHeight = h;
 //			TweenLite.defaultEase = Back.easeOut;
+			
+			tilesLayer = new Sprite();
+			super.addChild(tilesLayer);
+			playerLayer = new Sprite();
+			super.addChild(playerLayer);
+			terrainLayer = new Sprite();
+			super.addChild(terrainLayer);
+			projectileLayer = new Sprite();
+			super.addChild(projectileLayer);
+			effectsLayer = new Sprite();
+			super.addChild(effectsLayer);
 		}
 //
 //		/**
@@ -84,6 +106,11 @@ package org.interguild.game {
 //				TweenLite.to(this, RESET_TWEEN_SPEED, {x: cameraX, y: cameraY});
 //			}
 //		}
+		
+		public function deconstruct():void{
+			removeChildren();
+			player = null;
+		}
 
 		public function updateCamera():void {
 			var cameraX:int = -player.x - player.width / 2 + Aeon.STAGE_WIDTH / 2.0;
@@ -112,7 +139,39 @@ package org.interguild.game {
 			super.x = n;
 			bg.x += (n - bg.x) / 4;
 		}
+		
+		/**
+		 * Order from top to bottom:
+		 * 
+		 * Effects (explosions)
+		 * Projectiles (arrows and tnt)
+		 * TerrainView
+		 * Player
+		 * Tiles
+		 * Background (not a child of camera)
+		 */
+		public override function addChild(child:DisplayObject):DisplayObject{
+			if(child is Explosion || child is ArrowExplosion)
+				return effectsLayer.addChild(child);
+			if(child is Arrow || child is DynamiteStick)
+				return projectileLayer.addChild(child);
+			if(child is TerrainView)
+				return terrainLayer.addChild(child);
+			if(child is Player)
+				return playerLayer.addChild(child);
+			return tilesLayer.addChild(child);
+		}
+		
+		public override function removeChild(child:DisplayObject):DisplayObject{
+			if(child is Explosion || child is ArrowExplosion)
+				return effectsLayer.removeChild(child);
+			if(child is Arrow || child is DynamiteStick)
+				return projectileLayer.removeChild(child);
+			if(child is TerrainView)
+				return terrainLayer.removeChild(child);
+			if(child is Player)
+				return playerLayer.removeChild(child);
+			return tilesLayer.removeChild(child);
+		}
 	}
-
-
 }

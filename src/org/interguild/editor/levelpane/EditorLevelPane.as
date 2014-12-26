@@ -1,13 +1,17 @@
 package org.interguild.editor.levelpane {
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
-	
+
 	import fl.containers.ScrollPane;
-	
+
 	import org.interguild.Aeon;
+	import org.interguild.Assets;
 	import org.interguild.editor.EditorPage;
+	import org.interguild.editor.tilelist.TileList;
 
 	public class EditorLevelPane extends Sprite {
 
@@ -15,18 +19,31 @@ package org.interguild.editor.levelpane {
 		private static const POSITION_Y:uint = 89;
 
 		private static const BORDER_COLOR:uint = 0x222222;
-		private static const BORDER_WIDTH:uint = 1;
-		private static const BG_COLOR:uint = 0x115867;
+		private static const BORDER_WIDTH:uint = 0;
+		private static const BG_COLOR:uint = 0x999999;
 
-		private static const HINTS_TEXT_HEIGHT:uint = 20;
 		private static const WIDTH:uint = 636;
 		private static const HEIGHT:uint = Aeon.STAGE_HEIGHT - POSITION_Y - BORDER_WIDTH;
+		private static var VIEWPORT_WIDTH:uint = 0; //to be calculated
+		private static var VIEWPORT_HEIGHT:uint = 0; //to be calculated
+
+		private static const ZOOM_DEFAULT:uint = 100;
+		private static const ZOOM_MIN:uint = 10;
+		private static const ZOOM_SUPER_MIN:uint = 1;
+		private static const ZOOM_MAX:uint = 100;
+		private static const ZOOM_DELTA:uint = 10;
+		private static const ZOOM_SUPER_DELTA:uint = 1;
+
+		private var zoomLevel:uint = 100;
 
 		private var editor:EditorPage;
 		private var tabMan:EditorTabManager;
 		private var currentLevel:EditorLevel;
 
 		private var scroll:ScrollPane;
+		private var levelBG:Sprite;
+		private var levelBGID:int = -1;
+		private var cornerCover:Sprite;
 		private var lastClick:Point;
 		private var handToolRegion:Sprite;
 
@@ -40,21 +57,44 @@ package org.interguild.editor.levelpane {
 			graphics.beginFill(BORDER_COLOR);
 			graphics.drawRect(0, 0, WIDTH + (2 * BORDER_WIDTH), HEIGHT + (2 * BORDER_WIDTH));
 			graphics.endFill();
-			graphics.beginFill(BG_COLOR);
-			graphics.drawRect(BORDER_WIDTH, BORDER_WIDTH, WIDTH, HEIGHT);
-			graphics.endFill();
+//			graphics.beginFill(BG_COLOR);
+//			graphics.drawRect(BORDER_WIDTH, BORDER_WIDTH, WIDTH, HEIGHT);
+//			graphics.endFill();
+
+			//init level background
+			levelBG = new Sprite();
+			levelBG.x = BORDER_WIDTH;
+			levelBG.y = BORDER_WIDTH;
+			addChild(levelBG);
 
 			//init scrollpane
 			scroll = new ScrollPane();
 			scroll.x = BORDER_WIDTH;
 			scroll.y = BORDER_WIDTH;
 			scroll.width = WIDTH;
-			scroll.height = HEIGHT - HINTS_TEXT_HEIGHT;
+			scroll.height = HEIGHT;
 			addChild(scroll);
+
+			//calculate viewport sizes when scrollbar is active
+			var scrollBarWidth:Number = scroll.verticalScrollBar.width;
+			VIEWPORT_WIDTH = WIDTH - scrollBarWidth;
+			VIEWPORT_HEIGHT = HEIGHT - scrollBarWidth;
+
+			//init blue square that covers scrollpane's bottom-right corner
+			cornerCover = new Sprite();
+			cornerCover.graphics.beginFill(BG_COLOR);
+			cornerCover.graphics.drawRect(VIEWPORT_WIDTH + 1, VIEWPORT_HEIGHT + 1, scrollBarWidth, scrollBarWidth);
+			cornerCover.graphics.endFill();
+			cornerCover.visible = false;
+			addChildAt(cornerCover, 1);
 
 			//init tabs
 			tabMan = new EditorTabManager(this);
 			addChild(tabMan);
+		}
+
+		public function updateScrollPane():void {
+			level = currentLevel;
 		}
 
 		public function addLevel(level:EditorLevel = null):void {
@@ -67,6 +107,14 @@ package org.interguild.editor.levelpane {
 
 		public function closeAllLevels():void {
 			tabMan.closeAllLevels();
+		}
+
+		public function showLevelProperties():void {
+			editor.showLevelProperties();
+		}
+
+		public function renameLevel(s:String):void {
+			level.title = s;
 		}
 
 		public function get level():EditorLevel {
@@ -82,31 +130,56 @@ package org.interguild.editor.levelpane {
 				return;
 			}
 
+			var doZoom:Boolean = false;
 			//remember that level's scroll position
-			if (currentLevel != null) {
+			if (currentLevel != null && currentLevel != lvl) {
+				doZoom = true;
 				currentLevel.horizontalScrollPosition = scroll.horizontalScrollPosition;
 				currentLevel.verticalScrollPosition = scroll.verticalScrollPosition;
+				currentLevel.zoomLevel = zoomLevel;
 
 				//can only be set if scrollpane used to have a currentLevel
 				scroll.horizontalScrollPosition = lvl.horizontalScrollPosition;
 				scroll.verticalScrollPosition = lvl.verticalScrollPosition;
+				zoomLevel = lvl.zoomLevel;
+			}
+			//update topbar
+			if (editor.hasInitialized()) {
+				if (lvl.canZoomIn)
+					editor.enableZoomIn();
+				else
+					editor.disableZoomIn();
+				if (lvl.canZoomOut)
+					editor.enableZoomOut();
+				else
+					editor.disableZoomIn();
+				if (lvl.canUndo)
+					editor.enableUndo();
+				else
+					editor.disableUndo();
+				if (lvl.canRedo)
+					editor.enableRedo();
+				else
+					editor.disableRedo();
 			}
 			currentLevel = lvl;
 			currentLevel.x = 1;
 			currentLevel.y = 1;
+			TileList.setTerrainType(currentLevel.terrainType);
+			this.backgroundType = currentLevel.backgroundType;
 
 			var container:Sprite = new Sprite();
+			container.addEventListener(MouseEvent.MOUSE_DOWN, currentLevel.onDownElsewhere);
 			container.addChild(currentLevel);
+
 			//if the editor is smaller than the scrollpane, do this so that mouse wheel events still work nicely
-			if (container.width < WIDTH) {
-				container.graphics.beginFill(0, 0);
-				container.graphics.drawRect(0, 0, WIDTH - 16, currentLevel.height);
-				container.graphics.endFill();
-			}
+			container.graphics.beginFill(0, 0);
+			container.graphics.drawRect(0, 0, Math.max(VIEWPORT_WIDTH, currentLevel.width), Math.max(VIEWPORT_HEIGHT, currentLevel.height));
+			container.graphics.endFill();
 			//add a border to the top and left sides of the grid
-			container.graphics.beginFill(EditorCell.LINE_COLOR);
+			container.graphics.beginFill(EditorCell.LINE_COLOR); //, EditorCell.LINE_ALPHA);
 			container.graphics.drawRect(0, 0, currentLevel.width + 1, 1);
-			container.graphics.drawRect(0, 0, 1, currentLevel.height + 1);
+			container.graphics.drawRect(0, 1, 1, currentLevel.height);
 			container.graphics.endFill();
 			scroll.source = container;
 
@@ -118,16 +191,57 @@ package org.interguild.editor.levelpane {
 			handToolRegion.visible = false;
 			handToolRegion.addEventListener(MouseEvent.MOUSE_DOWN, onDragMouseDown, false, 0, true);
 			container.addChild(handToolRegion);
+
+			//remember zoom value
+			if (doZoom)
+				zoomTo(currentLevel.zoomLevel);
 		}
 
-		private static const ZOOM_MIN:Number = 10;
-		private static const ZOOM_SUPER_MIN:Number = 1;
-		private static const ZOOM_MAX:Number = 100;
-		private static const ZOOM_DELTA:Number = 10;
-		private static const ZOOM_SUPER_DELTA:Number = 1;
+		public function get backgroundType():uint {
+			return currentLevel.backgroundType;
+		}
 
-		private var zoomLevel:uint = 100;
+		public function set backgroundType(id:uint):void {
+			if (currentLevel.width > VIEWPORT_WIDTH && currentLevel.height > VIEWPORT_HEIGHT) {
+				cornerCover.visible = true;
+			} else {
+				cornerCover.visible = false;
+			}
 
+			if (levelBGID == id)
+				return;
+
+			levelBGID = id;
+
+			var bg:BitmapData = Assets.getBGImge(id);
+			var bd:BitmapData;
+			if (bg.width > 200) {
+				var matrix:Matrix = new Matrix();
+				var scaleV:Number = scroll.height / bg.height + 0.0000000001; //roundoff errors
+				var newWidth:Number;
+				var newHeight:Number;
+				matrix.scale(scaleV, scaleV);
+				newWidth = bg.width * scaleV;
+				newHeight = bg.height * scaleV;
+				bd = new BitmapData(newWidth, newHeight);
+				bd.draw(bg, matrix);
+			}else{
+				bd = bg;
+			}
+
+			levelBG.graphics.clear();
+			levelBG.graphics.beginBitmapFill(bd);
+			levelBG.graphics.drawRect(0, 0, scroll.width, scroll.height);
+			levelBG.graphics.endFill();
+		}
+
+		public function undo():void {
+			currentLevel.undo();
+		}
+
+		public function redo():void {
+			currentLevel.redo();
+		}
 
 		public function zoom(zoomIn:Boolean):void {
 			if (zoomIn && zoomLevel < ZOOM_MIN) {
@@ -139,9 +253,28 @@ package org.interguild.editor.levelpane {
 			} else if (!zoomIn && zoomLevel > ZOOM_SUPER_MIN) {
 				zoomLevel -= ZOOM_SUPER_DELTA;
 			}
+			zoomTo(zoomLevel);
+
+			if (zoomLevel <= ZOOM_SUPER_MIN) {
+				editor.disableZoomOut();
+				currentLevel.canZoomOut = false;
+			} else {
+				editor.enableZoomOut();
+				currentLevel.canZoomOut = true;
+			}
+			if (zoomLevel >= ZOOM_MAX) {
+				editor.disableZoomIn();
+				currentLevel.canZoomIn = false;
+			} else {
+				editor.enableZoomIn();
+				currentLevel.canZoomIn = true;
+			}
+		}
+
+		private function zoomTo(n:uint):void {
 			var container:Sprite = Sprite(scroll.source);
-			container.scaleX = container.scaleY = zoomLevel / 100;
-			scroll.source = container;
+			currentLevel.scaleX = currentLevel.scaleY = n / 100;
+			level = currentLevel;
 		}
 
 		/**
@@ -171,10 +304,6 @@ package org.interguild.editor.levelpane {
 			scroll.verticalScrollPosition -= delta.y;
 
 			lastClick = curClick;
-		}
-
-		public function resize(rows:int, cols:int):void {
-			currentLevel.resize(rows, cols);
 		}
 	}
 }
